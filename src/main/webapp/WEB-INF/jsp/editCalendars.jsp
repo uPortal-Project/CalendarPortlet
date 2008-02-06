@@ -75,7 +75,7 @@
         		</td>
         	</tr>
         	<tr>
-        		<td colspan="2"><h3>YaleInfo Calendars</h3></td>
+        		<td colspan="2"><h3>Built-in Calendars</h3></td>
         		<td class="instruction">Edit</td>
         		<td class="instruction">&nbsp;</td>
         		<td class="instruction">Displayed</td>
