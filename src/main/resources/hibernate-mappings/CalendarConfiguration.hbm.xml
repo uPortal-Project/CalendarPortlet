@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" default-cascade="all-delete-orphan">
+    
+    <class name="edu.yale.its.tp.portlets.calendar.CalendarConfiguration" table="CALENDAR_CONFIGURATION">
+        
+        <!-- BASE CLASS PROPERTIES -->
+        <!-- We don't actually intend to use the base class on its own -->
+        
+        <!-- unique id -->
+        <id name="id" type="long" unsaved-value="-1">
+            <column name="CALENDAR_CONFIGURATION_ID" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        
+        <!-- discriminator to determine whether this is an administratively 
+            or user-defined calendar definition -->
+        <discriminator column="CALENDAR_CONFIGURATION_TYPE" type="string"/>
+        
+        <!-- portlet subscription id --> 
+        <property name="subscribeId" type="string">
+            <column name="SUBSCRIBE_ID" length="50"/>
+        </property>
+        
+        <!-- flag to determine whether this calendar should be displayed by default -->
+        <property name="displayed" type="boolean">
+            <column name="DISPLAYED"/>
+        </property>
+        
+        
+        <!-- SUBCLASSES -->
+        
+        <!-- user-defined calendars and their configurations -->
+        <subclass name="edu.yale.its.tp.portlets.calendar.PredefinedCalendarConfiguration"
+            discriminator-value="PD">
+            
+            <many-to-one 
+                name="calendarDefinition" 
+                class="edu.yale.its.tp.portlets.calendar.PredefinedCalendarDefinition" 
+                column="CALENDAR_ID" 
+                cascade="none" lazy="false"/> 
+            
+            <!-- other user-specific preferences -->
+            <map name="preferences" lazy="false" table="CALENDAR_PREFERENCE" cascade="all-delete-orphan"> 
+                <key column="CALENDAR_CONFIGURATION_ID"/>
+                <index column="CALENDAR_PREFERENCE_NAME" type="string"/>
+                <element type="string" column="CALENDAR_PREFERENCE_VALUE" not-null="true"/> 
+            </map> 
+                        
+        </subclass>
+        
+        
+        <!-- admin-defined, system-wide calendars -->
+        <subclass name="edu.yale.its.tp.portlets.calendar.UserDefinedCalendarConfiguration"
+            discriminator-value="UD">
+            
+            <many-to-one 
+                name="calendarDefinition" 
+                class="edu.yale.its.tp.portlets.calendar.UserDefinedCalendarDefinition"
+                column="CALENDAR_ID"
+                cascade="all" lazy="false"/> 
+            
+        </subclass>
+        
+    </class>
+    
+</hibernate-mapping>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC '-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN'
+        'http://java.sun.com/dtd/web-app_2_3.dtd'>
+<web-app>
+
+    <display-name>Calendar Portlets</display-name>
+    <description>Calendar Portlets</description>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/context/applicationContext.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/classes/log4j.properties</param-value>
+    </context-param>
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>calendar.root</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>CasProxyCallback</servlet-name>
+        <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
+        <init-param>
+            <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
+            <param-value>https://secure.its.yale.edu/cas/proxy</param-value>
+        </init-param>
+    </servlet>
+
+    <!-- [INSERT JSPC FRAGMENT HERE] -->
+    
+    <servlet-mapping>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <url-pattern>/WEB-INF/servlet/view</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/getEvent</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>CasProxyCallback</servlet-name>
+        <url-pattern>/CasProxyCallback</url-pattern>
+    </servlet-mapping>
+        
+    <taglib>
+        <taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+        <taglib-location>/WEB-INF/tags/c.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://java.sun.com/portlet</taglib-uri>
+        <taglib-location>/WEB-INF/tld/portlet.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://www.springframework.org/tags</taglib-uri>
+        <taglib-location>/WEB-INF/tags/spring.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://java.sun.com/jsp/jstl/fmt</taglib-uri>
+        <taglib-location>/WEB-INF/tags/fmt.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://java.sun.com/jsp/jstl/functions</taglib-uri>
+        <taglib-location>/WEB-INF/tags/fn.tld</taglib-location>
+    </taglib>
+    
+</web-app>

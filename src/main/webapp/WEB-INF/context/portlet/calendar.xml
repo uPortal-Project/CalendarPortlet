@@ -1,0 +1,100 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+    http://www.springmodules.org/schema/ehcache
+    http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+
+    <!-- Controllers -->
+
+    <!-- main portlet view -->
+    <bean id="viewCalendarController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.CalendarController">
+        <property name="calendarStore" ref="calendarStore"/>
+        <property name="initializationServices">
+            <list>
+                <!--
+                <bean class="edu.yale.its.tp.portlets.calendar.service.CasProxyInitializationService">
+                    <property name="proxyTicketService" ref="casService"/>
+                </bean>
+                -->
+            </list>
+        </property>
+    </bean>
+
+    <!-- view and edit calendar preferences -->
+    <bean id="editCalendarController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
+        <property name="predefinedEditActions">
+            <map>
+                <!-- Add edit screens for custom calendar adapters -->
+                <!--
+                <entry key="edu.yale.its.tp.portlets.calendar.adapter.SomeOtherCalendarAdapter" value="editSomeOtherCalendar"/>
+                -->
+            </map>
+        </property>
+        <property name="calendarStore" ref="calendarStore"/>
+    </bean>
+
+    <!-- add or edit a user-defined calendar -->
+    <bean id="editCalendarDefinitionController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditUserHttpICalController">
+        <property name="formView">
+            <value>editCalendarUrl</value>
+        </property>
+        <property name="sessionForm">
+            <value>false</value>
+        </property>
+        <property name="commandName" value="calendarListingCommand"/>
+        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand"/>
+        <property name="validator" ref="beanValidator"/>
+        <property name="calendarStore" ref="calendarStore"/>
+    </bean>
+    
+    
+    <!-- Handler Mapping -->
+
+    <bean id="parameterMappingInterceptor"
+        class="org.springframework.web.portlet.handler.ParameterMappingInterceptor"/>
+
+    <bean id="portletModeParameterHandlerMapping"
+        class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
+        <property name="order" value="1"/>
+        <property name="interceptors">
+            <list>
+                <ref bean="parameterMappingInterceptor"/>
+            </list>
+        </property>
+        <property name="portletModeParameterMap">
+            <map>
+                <entry key="view">
+                    <map>
+                        <entry key="list" value-ref="viewCalendarController"/>
+                    </map>
+                </entry>
+                <entry key="edit">
+                    <map>
+                        <entry key="editPreferences" value-ref="editCalendarController"/>
+                        <entry key="editUrl" value-ref="editCalendarDefinitionController"/>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="portletModeHandlerMapping"
+        class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="order" value="2"/>
+        <property name="portletModeMap">
+            <map>
+                <entry key="view" value-ref="viewCalendarController"/>
+                <entry key="edit" value-ref="editCalendarController"/>
+            </map>
+        </property>
+    </bean>
+
+</beans>

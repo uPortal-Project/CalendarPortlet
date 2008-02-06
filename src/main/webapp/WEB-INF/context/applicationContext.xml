@@ -1,0 +1,169 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+	http://www.springmodules.org/schema/ehcache
+	http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+
+	<!-- EHCache Configuration -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation">
+			<value>classpath:ehcache.xml</value>
+		</property>
+	</bean>
+	
+	<bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref local="cacheManager"/>
+		</property>
+		<property name="cacheName">
+			<value>calendarCache</value>
+		</property>
+	</bean>
+
+	<!-- Properties configuration -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		lazy-init="false">
+		<property name="locations">
+			<list>
+				<value>classpath:datasource.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- CALENDAR ADAPTER REGISTRATIONS -->
+	
+	<!-- basic HttpClient iCal feed adapter -->
+	<bean id="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter">
+		<property name="cache" ref="calendarCache"/>
+	</bean>
+
+	<!-- 
+		Uncomment the following section to enable CAS Proxy calendars.
+	-->
+	<!--
+	<bean id="casService" class="edu.yale.its.tp.cas.portlet.ProxyTicketService">
+		<property name="casValidateUrl" value="https://cas.school.edu/cas/proxyValidate"/>
+		<property name="serviceUrl" value="https://portal.school.edu/CalendarPortlet"/>
+		<property name="urlOfProxyCallbackServlet" value="https://portal.school.edu/CalendarPortlet/CasProxyCallback"/>
+	</bean>
+	<bean id="edu.yale.its.tp.portlets.calendar.adapter.CasifiedICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.CasifiedICalAdapter">
+		<property name="proxyTicketService" ref="casService"/>
+		<property name="cache" ref="calendarCache"/>
+	</bean>
+	-->
+	
+	<!-- register more calendar adapter implementations here -->
+
+	<!-- Message source for this context, loaded from localized "messages_xx" files -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean>
+	
+
+	<!-- Default View Resolver -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="cache" value="false"/>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+	<bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator">
+		<property name="validatorFactory" ref="validatorFactory"/>
+	</bean>
+	
+	<bean id="validatorFactory" class="org.springmodules.validation.commons.DefaultValidatorFactory">
+		<property name="validationConfigLocations">
+			<list>
+				<value>/WEB-INF/validator-rules.xml</value>
+				<value>/WEB-INF/validation.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Abstract Default Exception Handler Bean -->
+	<bean id="defaultExceptionHandlerTemplate"
+		class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver"
+		abstract="true">
+		<property name="defaultErrorView" value="defError"/>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
+				<prop key="javax.portlet.UnavailableException">notAvailable</prop>
+			</props>
+		</property>
+	</bean>
+	
+
+	<!-- HIBERNATE CONFIGURATION -->
+
+	<bean id="calendarStore" parent="abstractStoreTransactionProxy">
+		<property name="target" ref="calendarStoreTarget"/>
+	</bean>
+
+	<bean id="calendarStoreTarget"
+		class="edu.yale.its.tp.portlets.calendar.dao.HibernateCalendarStore"
+		parent="abstractHibernateTemplate"> </bean>
+
+	<bean id="abstractStoreTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="create*">PROPAGATION_REQUIRED</prop>
+				<prop key="store*">PROPAGATION_REQUIRED</prop>
+				<prop key="remove*">PROPAGATION_REQUIRED</prop>
+				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="abstractHibernateTemplate" abstract="true">
+		<property name="sessionFactory">
+			<ref local="sessionFactory"/>
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${hibernate.connection.driver_class}</value>
+		</property>
+		<property name="url">
+			<value>${hibernate.connection.url}</value>
+		</property>
+		<property name="username">
+			<value>${hibernate.connection.username}</value>
+		</property>
+		<property name="password">
+			<value>${hibernate.connection.password}</value>
+		</property>
+	</bean>
+
+</beans>
