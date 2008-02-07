@@ -1,0 +1,1 @@
+Documentation currently resides at http://www.ja-sig.org/wiki/display/PLT/CalendarPortlet.
