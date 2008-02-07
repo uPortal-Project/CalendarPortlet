@@ -20,11 +20,20 @@ import edu.yale.its.tp.portlets.calendar.PredefinedCalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.PredefinedCalendarDefinition;
 import edu.yale.its.tp.portlets.calendar.UserDefinedCalendarConfiguration;
 
+/**
+ * HibernateCalendarStore provides a hibernate implementation of the CalendarStore.
+ *
+ * @author Jen Bourey
+ */
 public class HibernateCalendarStore extends HibernateDaoSupport implements
 		CalendarStore {
 
 	private static Log log = LogFactory.getLog(HibernateCalendarStore.class);
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#storeCalendarDefinition(edu.yale.its.tp.portlets.calendar.CalendarDefinition)
+	 */
 	public void storeCalendarDefinition(CalendarDefinition listing) {
 		try {
 
@@ -36,6 +45,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#storeCalendarConfiguration(edu.yale.its.tp.portlets.calendar.CalendarConfiguration)
+	 */
 	public void storeCalendarConfiguration(CalendarConfiguration configuration) {
 		try {
 
@@ -47,17 +60,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
-	public List<CalendarDefinition> getCalendarDefinitions(String subscribeId) {
-		try {
-
-			return (List<CalendarDefinition>) getHibernateTemplate().find(
-					"from CalendarDefinition def");
-
-		} catch (HibernateException ex) {
-			throw convertHibernateAccessException(ex);
-		}
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getCalendarConfigurations(java.lang.String)
+	 */
 	public List<CalendarConfiguration> getCalendarConfigurations(
 			String subscribeId) {
 		try {
@@ -73,6 +79,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getUserDefinedCalendarConfigurations(java.lang.String, boolean)
+	 */
 	public List<UserDefinedCalendarConfiguration> getUserDefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly) {
 		try {
@@ -92,6 +102,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getPredefinedCalendarConfigurations(java.lang.String, boolean)
+	 */
 	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly) {
 		try {
@@ -110,6 +124,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getHiddenPredefinedCalendarDefinitions(java.lang.String, java.lang.String)
+	 */
 	public List<PredefinedCalendarDefinition> getHiddenPredefinedCalendarDefinitions(String subscribeId, String role){
 		try {
 			
@@ -126,6 +144,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#initCalendar(java.lang.String, java.lang.String)
+	 */
 	public void initCalendar(String subscribeId, String role) {
 		try {
 
@@ -149,6 +171,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getCalendarDefinition(java.lang.Long)
+	 */
 	public CalendarDefinition getCalendarDefinition(Long id) {
 
 		try {
@@ -161,6 +187,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getCalendarConfiguration(java.lang.Long)
+	 */
 	public CalendarConfiguration getCalendarConfiguration(Long id) {
 
 		try {
@@ -174,6 +204,10 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#deleteCalendarConfiguration(edu.yale.its.tp.portlets.calendar.CalendarConfiguration)
+	 */
 	public void deleteCalendarConfiguration(CalendarConfiguration configuration) {
 		try {
 

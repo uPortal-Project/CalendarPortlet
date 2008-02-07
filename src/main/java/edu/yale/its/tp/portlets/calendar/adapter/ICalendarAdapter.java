@@ -15,8 +15,28 @@ import net.fortuna.ical4j.model.Period;
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarEvent;
 
+/**
+ * ICalendarAdapter defines an interface for retrieving calendar event data.
+ * All new calendar types must define an adapter using this interface, then be 
+ * registered in the spring context files.
+ *
+ * @author Jen Bourey
+ */
 public interface ICalendarAdapter {
 
+	/**
+	 * Get events for the defined calendar and time period.  The user's 
+	 * PortletRequest is made available to give the calendar adapter access
+	 * to useful information such as the UserInfo map, session data, etc.
+	 * These items can be used to identify the user, provide access to 
+	 * authentication resources, or other useful operations.
+	 * 
+	 * @param calendar calendar configuration for which to retrieve events
+	 * @param period time period for which to retrieve events
+	 * @param request user's portlet request
+	 * @return Set of events for this calendar and time period
+	 * @throws CalendarException
+	 */
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar,
 			Period period, PortletRequest request) throws CalendarException;
 

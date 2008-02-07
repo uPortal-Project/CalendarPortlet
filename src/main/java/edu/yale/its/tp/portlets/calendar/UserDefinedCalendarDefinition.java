@@ -7,32 +7,57 @@
  */
 package edu.yale.its.tp.portlets.calendar;
 
+/**
+ * UserDefinedCalendarDefinition represents a user-added calendar definition.
+ *
+ * @author Jen Bourey
+ */
 public class UserDefinedCalendarDefinition extends CalendarDefinition{
 
 	private UserDefinedCalendarConfiguration userConfiguration;
 
+	/**
+	 * Default constructor
+	 */
 	public UserDefinedCalendarDefinition() {
 		super();
 	}
 
+	/**
+	 * Construct a new user-defined calendar definition
+	 * 
+	 * @param id
+	 * @param className
+	 * @param name
+	 */
 	public UserDefinedCalendarDefinition(Long id, String className, String name) {
 		super(id, className, name);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "id: " + getId() + ", name: " + getName() + ", parameters: "
 				+ getParameters().toString();
 	}
 
+	/**
+	 * Get the calendar configuration for this definition. 
+	 * 
+	 * @return
+	 */
 	public UserDefinedCalendarConfiguration getUserConfiguration() {
 		return userConfiguration;
 	}
 
+	/**
+	 * Set the calendar configuration for this definition.
+	 * 
+	 * @param userConfiguration
+	 */
 	public void setUserConfiguration(
 			UserDefinedCalendarConfiguration userConfiguration) {
 		this.userConfiguration = userConfiguration;

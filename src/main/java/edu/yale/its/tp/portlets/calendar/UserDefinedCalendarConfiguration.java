@@ -7,18 +7,38 @@
  */
 package edu.yale.its.tp.portlets.calendar;
 
+/**
+ * UserDefinedCalendarConfiguration represents a user-created calendar configuration.
+ * There should only be one calendar configuration for each user-defined calendar
+ * definition.  Since this is a one-to-one relationship, the 
+ * UserDefinedCalendarConfiguration doesn't need to define an extra bucket for
+ * user-specific configuration information.
+ *
+ * @author Jen Bourey
+ */
 public class UserDefinedCalendarConfiguration extends CalendarConfiguration {
 
 	private UserDefinedCalendarDefinition calendarDefinition;
-	
+
+	/**
+	 * Default Constructor
+	 */
 	public UserDefinedCalendarConfiguration() {
 		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.CalendarConfiguration#getCalendarDefinition()
+	 */
 	public UserDefinedCalendarDefinition getCalendarDefinition() {
 		return calendarDefinition;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.CalendarConfiguration#setCalendarDefinition(edu.yale.its.tp.portlets.calendar.CalendarDefinition)
+	 */
 	public void setCalendarDefinition(
 			UserDefinedCalendarDefinition calendarDefinition) {
 		this.calendarDefinition = calendarDefinition;

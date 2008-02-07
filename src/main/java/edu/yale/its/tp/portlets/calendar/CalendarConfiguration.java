@@ -7,6 +7,12 @@
  */
 package edu.yale.its.tp.portlets.calendar;
 
+/**
+ * CalendarConfiguration represents a user-specific registration and configuration 
+ * for a CalendarDefinition.
+ *
+ * @author Jen Bourey
+ */
 public class CalendarConfiguration {
 	
 	private Long id = new Long(-1);
@@ -14,27 +20,74 @@ public class CalendarConfiguration {
 	private boolean displayed = true;
 	private String subscribeId;
 	
+	/**
+	 * Determine whether this calendar should be displayed or hidden.
+	 * 
+	 * @return
+	 */
 	public boolean isDisplayed() {
 		return displayed;
 	}
+	
+	/**
+	 * Set whether this calendar should be displayed or hidden.
+	 * 
+	 * @param displayed
+	 */
 	public void setDisplayed(boolean displayed) {
 		this.displayed = displayed;
 	}
+	
+	/**
+	 * Get the unique ID for this portlet subscription.
+	 * 
+	 * @return
+	 */
 	public String getSubscribeId() {
 		return subscribeId;
 	}
+	
+	/**
+	 * Set the unique ID for this portlet subscription.
+	 * 
+	 * @param subscribeId
+	 */
 	public void setSubscribeId(String subscribeId) {
 		this.subscribeId = subscribeId;
 	}
+	
+	/**
+	 * Get the unique ID for this CalendarConfiguration.
+	 * 
+	 * @return
+	 */
 	public Long getId() {
 		return id;
 	}
+	
+	/**
+	 * Set the unique ID for this CalendarConfiguration.
+	 * 
+	 * @param id
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	/**
+	 * Get the CalendarDefinition for the calendar being configured.
+	 * 
+	 * @return
+	 */
 	public CalendarDefinition getCalendarDefinition() {
 		return calendarDefinition;
 	}
+	
+	/**
+	 * Set the CalendarDefinition for the calendar being configured.
+	 * 
+	 * @param definition
+	 */
 	public void setCalendarDefinition(CalendarDefinition definition) {
 		this.calendarDefinition = definition;
 	}

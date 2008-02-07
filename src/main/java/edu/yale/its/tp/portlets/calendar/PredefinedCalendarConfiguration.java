@@ -13,6 +13,14 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * PredefinedCalendarConfiguration represents a user configuration of a built-in
+ * calendar definition.  There may be many configurations for each predefined
+ * calendar definition.  This class defines an extra place to put user-specific
+ * configuration information and preferences.
+ *
+ * @author Jen Bourey
+ */
 public class PredefinedCalendarConfiguration extends CalendarConfiguration {
 
 	private static Log log = LogFactory.getLog(PredefinedCalendarConfiguration.class);
@@ -20,24 +28,54 @@ public class PredefinedCalendarConfiguration extends CalendarConfiguration {
 	private PredefinedCalendarDefinition calendarDefinition;
 	private Map<String, String> preferences = new HashMap<String, String>();
 	
+	/**
+	 * Default constructor
+	 */
 	public PredefinedCalendarConfiguration() {
 		super();
 		this.calendarDefinition = new PredefinedCalendarDefinition();
 	}
 	
+	/**
+	 * Get the user-specific preferences for this configuration.
+	 * 
+	 * @return
+	 */
 	public Map<String, String> getPreferences() {
 		return preferences;
 	}
+	
+	/**
+	 * Set the user-specific preferences for this configuration.
+	 * 
+	 * @param preferences
+	 */
 	public void setPreferences(Map<String, String> preferences) {
 		this.preferences = preferences;
 	}
 	
+	/**
+	 * Add a user preference for this configuration.
+	 * 
+	 * @param name		parameter name (key)
+	 * @param value		value to be stored
+	 */
 	public void addPreference(String name, String value) {
 		this.preferences.put(name, value);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.CalendarConfiguration#getCalendarDefinition()
+	 */
 	public PredefinedCalendarDefinition getCalendarDefinition() {
 		return calendarDefinition;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.CalendarConfiguration#setCalendarDefinition(edu.yale.its.tp.portlets.calendar.CalendarDefinition)
+	 */
 	public void setCalendarDefinition(PredefinedCalendarDefinition definition) {
 		this.calendarDefinition = definition;
 	}

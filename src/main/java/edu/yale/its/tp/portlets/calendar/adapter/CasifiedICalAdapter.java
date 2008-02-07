@@ -90,6 +90,13 @@ public class CasifiedICalAdapter extends HttpICalAdapter {
 
 	}
 
+	/**
+	 * Get a cache key for this calendar request.
+	 * 
+	 * @param url URL of this calendar
+	 * @param netid login id of the requesting user
+	 * @return String representing this request
+	 */
 	private String getCacheKey(String url, String netid) {
 		StringBuffer key = new StringBuffer();
 		key.append("CasifiedICalFeed.");

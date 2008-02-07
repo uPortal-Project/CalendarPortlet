@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * CalendarDefinition represents the base class for calendar registrations.
+ * CalendarDefinition represents the base class for calendar registrations.  
+ * Information required to retrieve the calendar, such as the calendar's URL
+ * or important default system-wide configuration information may be stored 
+ * in the parameters map.  In order to add this calendar for a specific user,
+ * a CalendarConfiguration referencing this calendar definition must be 
+ * created.
  * 
  * @author Jen Bourey
  */
@@ -22,7 +27,11 @@ public class CalendarDefinition {
 	private String name;
 	private Map<String, String> parameters = new HashMap<String, String>();
 	
+	/**
+	 * Default constructor.
+	 */
 	public CalendarDefinition() {
+		super();
 	}
 	
 	public CalendarDefinition(Long id, String className, String name) {
@@ -50,7 +59,9 @@ public class CalendarDefinition {
 	}
 
 	/**
-	 * Returns the name of the adapter class for this calendar.
+	 * Returns the name of the adapter class for this calendar which will
+	 * determine how the calendar is retrieved.  This id must match a 
+	 * calendar adapter registered in the spring context files.
 	 * 
 	 * @return
 	 */
@@ -59,8 +70,9 @@ public class CalendarDefinition {
 	}
 	
 	/**
-	 * Set the name of the adapter class for this calendar.  The adapter will
-	 * determine how the calendar is retrieved.
+	 * Set the name of the adapter class for this calendar which will
+	 * determine how the calendar is retrieved.  This id must match a
+	 * calendar adapter registered in the spring context files.
 	 * 
 	 * @param className
 	 */
@@ -91,7 +103,7 @@ public class CalendarDefinition {
 	 * any extra information needed by the particular adapter used by
 	 * this calendar, such as a URL. 
 	 * 
-	 * @return
+	 * @return parameter map
 	 */
 	public Map<String, String> getParameters() {
 		return parameters;
@@ -102,7 +114,7 @@ public class CalendarDefinition {
 	 * any extra information needed by the particular adapter used by
 	 * this calendar, such as a URL.
 	 * 
-	 * @param parameters
+	 * @param parameters parameter map
 	 */
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
@@ -120,6 +132,7 @@ public class CalendarDefinition {
 		this.parameters.put(name, value);
 	}
 	
+	@Override
 	public String toString() {
 		return "id: " + this.id + ", class: " + this.className + ", name: " + this.name;
 	}

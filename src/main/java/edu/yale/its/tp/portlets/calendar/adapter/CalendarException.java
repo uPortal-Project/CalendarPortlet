@@ -7,6 +7,11 @@
  */
 package edu.yale.its.tp.portlets.calendar.adapter;
 
+/**
+ * CalendarException represents a generic Calendar exception.
+ *
+ * @author Jen Bourey
+ */
 public class CalendarException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

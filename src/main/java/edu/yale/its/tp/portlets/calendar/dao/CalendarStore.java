@@ -15,6 +15,11 @@ import edu.yale.its.tp.portlets.calendar.PredefinedCalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.PredefinedCalendarDefinition;
 import edu.yale.its.tp.portlets.calendar.UserDefinedCalendarConfiguration;
 
+/**
+ * CalendarStore provides a data store for calendar listings and configurations.
+ *
+ * @author Jen Bourey
+ */
 public interface CalendarStore {
 
 	/**
@@ -24,27 +29,85 @@ public interface CalendarStore {
 	 */
 	public void storeCalendarDefinition(CalendarDefinition definition);
 
-	public List<CalendarDefinition> getCalendarDefinitions(String subscribeId);
-
+	/**
+	 * Retrieve a calendar definition.
+	 * 
+	 * @param id ID of the calendar definition to be retrieved
+	 * @return
+	 */
 	public CalendarDefinition getCalendarDefinition(Long id);
 
+	/**
+	 * Save or update a calendar configuration.
+	 * 
+	 * @param configuration	CalendarConfiguration to be persisted
+	 */
 	public void storeCalendarConfiguration(CalendarConfiguration configuration);
 
+	/**
+	 * Retrieve a calendar configuration.
+	 * 
+	 * @param id ID of the calendar configuration to be retrieved
+	 * @return
+	 */
 	public CalendarConfiguration getCalendarConfiguration(Long id);
 
+	/**
+	 * Retrieve a list of calendar configurations for the specified portlet.
+	 * 
+	 * @param subscribeId unique ID for this portlet subscription
+	 * @return
+	 */
 	public List<CalendarConfiguration> getCalendarConfigurations(
 			String subscribeId);
 
+	/**
+	 * Retrieve a list of user-defined calendar configurations for 
+	 * the specified portlet.
+	 * 
+	 * @param subscribeId unique ID for this portlet subscription
+	 * @param visibleOnly <code>true</code> to retrieve only non-hidden calendar
+	 * 			configurations, <code>false</code> otherwise
+	 * @return
+	 */
 	public List<UserDefinedCalendarConfiguration> getUserDefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly);
 
+	/**
+	 * Retrieve a list of pre-defined calendar configurations for 
+	 * the specified portlet.
+	 * 
+	 * @param subscribeId unique ID for this portlet subscription
+	 * @param visibleOnly <code>true</code> to retrieve only non-hidden calendar
+	 * 			configurations, <code>false</code> otherwise
+	 * @return
+	 */
 	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly);
 
+	/**
+	 * Remove a calendar configuration from the data store
+	 * 
+	 * @param configuration configuration to be removed
+	 */
 	public void deleteCalendarConfiguration(CalendarConfiguration configuration);
 
+	/**
+	 * Initialize calendar subscriptions for a given portlet subscription and role.
+	 * 
+	 * @param subscribeId unique ID for this portlet subscription
+	 * @param role user role to use to find default calendars
+	 */
 	public void initCalendar(String subscribeId, String role);
 
+	/**
+	 * Retrieve a list of hidden predefined calendars for this portlet subscription
+	 * and role.
+	 * 
+	 * @param subscribeId unique ID for this portlet subscription
+	 * @param role user role to use to find default calendars
+	 * @return
+	 */
 	public List<PredefinedCalendarDefinition> getHiddenPredefinedCalendarDefinitions(
 			String subscribeId, String role);
 

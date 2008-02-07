@@ -9,8 +9,19 @@ package edu.yale.its.tp.portlets.calendar.service;
 
 import javax.portlet.PortletRequest;
 
+/**
+ * IInitializationService defines an interface for performing actions when a 
+ * new portlet session is created.
+ *
+ * @author Jen Bourey
+ */
 public interface IInitializationService {
 	
+	/**
+	 * Perform some action.
+	 * 
+	 * @param request user's portlet request
+	 */
 	public void initialize(PortletRequest request);
 
 }
