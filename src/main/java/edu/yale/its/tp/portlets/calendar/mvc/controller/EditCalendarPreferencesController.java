@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -46,9 +47,9 @@ public class EditCalendarPreferencesController extends AbstractController {
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		// get user information
-		Map userinfo = (Map) request.getAttribute("javax.portlet.userinfo");
-		String role = (String) userinfo.get("contentGroup");
-		String subscribeId = (String) userinfo.get("user.login.id");
+		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+		String role = (String) userinfo.get(roleToken);
+		String subscribeId = (String) userinfo.get(userToken);
 
 		// add the user-defined calendars to the model
 		List<UserDefinedCalendarConfiguration> mycalendars = calendarStore.getUserDefinedCalendarConfigurations(subscribeId, false);
@@ -92,8 +93,8 @@ public class EditCalendarPreferencesController extends AbstractController {
 			hidden.remove(config.getId());
 		} else if (actionCode.equals("showNew")) {
 			// get user information
-			Map userinfo = (Map) request.getAttribute("javax.portlet.userinfo");
-			String subscribeId = (String) userinfo.get("user.login.id");
+			Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+			String subscribeId = (String) userinfo.get(userToken);
 			PredefinedCalendarDefinition definition = (PredefinedCalendarDefinition) calendarStore.getCalendarDefinition(id);
 			log.debug("definition to save " + definition.toString());
 			PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
@@ -104,15 +105,23 @@ public class EditCalendarPreferencesController extends AbstractController {
 	}
 
 
-	private Map predefinedEditActions;
+	private String roleToken = "contentGroup";
+	public void setRoleToken(String roleToken) {
+		this.roleToken = roleToken;
+	}
+	
+	private String userToken = "user.login.id";
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
+	}
+	
 
+	private Map predefinedEditActions;
 	public void setPredefinedEditActions(Map predefinedEditActions) {
 		this.predefinedEditActions = predefinedEditActions;
 	}
 
-
 	private CalendarStore calendarStore;
-
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}

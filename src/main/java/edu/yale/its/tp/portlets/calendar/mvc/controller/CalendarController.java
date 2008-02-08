@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -50,13 +51,14 @@ public class CalendarController extends AbstractController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		PortletSession session = request.getPortletSession(true);
 		HashMap<Long, String> hiddenCalendars = null;
-		Map userinfo = (Map) request.getAttribute("javax.portlet.userinfo");
+		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
 
+		log.debug(roleToken + " " + userToken);
 		// get the user's role
 		String role = (String) userinfo.get(roleToken);
 
 		// get this portlet's unique subscription id
-		String subscribeId = (String) userinfo.get("user.login.id");
+		String subscribeId = (String) userinfo.get(userToken);
 
 		/**
 		 * If this is a new session, perform any necessary 
@@ -225,9 +227,13 @@ public class CalendarController extends AbstractController {
 	}
 
 	private String roleToken = "contentGroup";
-
 	public void setRoleToken(String roleToken) {
 		this.roleToken = roleToken;
+	}
+	
+	private String userToken = "user.login.id";
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
 	}
 	
 	private int defaultDays = 2;
@@ -236,7 +242,6 @@ public class CalendarController extends AbstractController {
 	}
 
 	private List<IInitializationService> initializationServices;
-
 	public void setInitializationServices(List<IInitializationService> services) {
 		this.initializationServices = services;
 	}

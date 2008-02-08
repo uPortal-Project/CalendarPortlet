@@ -9,12 +9,26 @@
     http://www.springmodules.org/schema/ehcache
     http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
+    <!-- Properties configuration -->
+    <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:datasource.properties</value>
+                <value>classpath:configuration.properties</value>
+            </list>
+        </property>
+    </bean>
+    
     <!-- Controllers -->
 
     <!-- main portlet view -->
     <bean id="viewCalendarController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.CalendarController">
         <property name="calendarStore" ref="calendarStore"/>
+        <property name="userToken"><value>${userinfo.userid.key}</value></property>
+        <property name="roleToken"><value>${userinfo.role.key}</value></property>
         <property name="initializationServices">
             <list>
                 <!--
@@ -29,6 +43,8 @@
     <!-- view and edit calendar preferences -->
     <bean id="editCalendarController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
+        <property name="userToken" value="${userinfo.userid.key}"/>
+        <property name="roleToken" value="${userinfo.role.key}"/>
         <property name="predefinedEditActions">
             <map>
                 <!-- Add edit screens for custom calendar adapters -->
@@ -49,6 +65,7 @@
         <property name="sessionForm">
             <value>false</value>
         </property>
+        <property name="userToken" value="${userinfo.userid.key}"/>
         <property name="commandName" value="calendarListingCommand"/>
         <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand"/>
         <property name="validator" ref="beanValidator"/>

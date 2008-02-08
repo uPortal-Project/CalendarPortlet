@@ -32,9 +32,12 @@
 		<property name="locations">
 			<list>
 				<value>classpath:datasource.properties</value>
+				<value>classpath:configuration.properties</value>
 			</list>
 		</property>
 	</bean>
+	
+	<bean class="java.lang.String"></bean>
 	
 	<!-- CALENDAR ADAPTER REGISTRATIONS -->
 	
@@ -43,6 +46,10 @@
 		<property name="cache" ref="calendarCache"/>
 	</bean>
 
+	<!-- Rss feed adapter -->
+	<bean id="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter">
+	</bean>
+	
 	<!-- 
 		Uncomment the following section to enable CAS Proxy calendars.
 	-->

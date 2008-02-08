@@ -68,8 +68,8 @@ public class EditUserHttpICalController extends SimpleFormController {
 				// otherwise, construct a brand new form
 
 				// get user information
-				Map userinfo = (Map) request.getAttribute("javax.portlet.userinfo");
-				String subscribeId = (String) userinfo.get("user.login.id");
+				Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+				String subscribeId = (String) userinfo.get(userToken);
 				
 				// create the form
 				CalendarListingCommand command =  new CalendarListingCommand();
@@ -81,8 +81,8 @@ public class EditUserHttpICalController extends SimpleFormController {
 			// otherwise, construct a brand new form
 
 			// get user information
-			Map userinfo = (Map) request.getAttribute("javax.portlet.userinfo");
-			String subscribeId = (String) userinfo.get("user.login.id");
+			Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+			String subscribeId = (String) userinfo.get(userToken);
 			
 			// create the form
 			CalendarListingCommand command =  new CalendarListingCommand();
@@ -135,6 +135,11 @@ public class EditUserHttpICalController extends SimpleFormController {
 
 	}
 
+	private String userToken = "user.login.id";
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
+	}
+	
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
