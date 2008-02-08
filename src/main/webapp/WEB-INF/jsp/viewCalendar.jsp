@@ -128,13 +128,13 @@
                                 <td class="time color-${ class }">All day</td>
                             </c:when>
                             <c:otherwise>
-                                <td class="time color-${ class }">${startTime} <c:if test="${ event.startDate.date != event.endDate.date}"> - ${ endTime } </c:if></td>
+                                <td class="time color-${ class }">${startTime} <c:if test="${ not empty event.endDate and event.startDate.date != event.endDate.date}"> - ${ endTime } </c:if></td>
                             </c:otherwise>
                         </c:choose>
                         <td class="color-${ class }">
                         	<c:choose>
                         		<c:when test="${ not empty event.url }">
-                        			<a href="http://${ event.url.value }" class="color-${ class }" target="_blank">${ event.summary.value }</a>
+                        			<a href="${ event.url.value }" class="color-${ class }" target="_blank">${ event.summary.value }</a>
                         		</c:when>
                         		<c:otherwise>${ event.summary.value }</c:otherwise>
                         	</c:choose>
