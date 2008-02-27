@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.portlet.PortletRequest;
@@ -53,10 +55,6 @@ public class CalendarController extends AbstractController {
 		HashMap<Long, String> hiddenCalendars = null;
 		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
 
-		log.debug(roleToken + " " + userToken);
-		// get the user's role
-		String role = (String) userinfo.get(roleToken);
-
 		// get this portlet's unique subscription id
 		String subscribeId = (String) userinfo.get(userToken);
 
@@ -67,10 +65,30 @@ public class CalendarController extends AbstractController {
 
 		if (session.getAttribute("initialized") == null) {
 
+			// get a set of all role names currently configured for
+			// default calendars
+			List<String> allRoles = calendarStore.getUserRoles();
+			log.debug("all roles: " + allRoles);
+			
+			// determine which of the above roles the user belongs to
+			// and store the resulting list in the session
+			Set<String> userRoles = new HashSet<String>();
+			for (String role : allRoles) {
+				if (request.isUserInRole(role))
+					userRoles.add(role);
+			}
+			session.setAttribute("userRoles", userRoles);
+			
+			// determine if this user belongs to the defined calendar
+			// administration group and store the result in the session
+			session.setAttribute("isAdmin", 
+					request.isUserInRole("calendarAdmin"),
+					PortletSession.APPLICATION_SCOPE);
+
 			// update the user's calendar subscriptions to include
 			// any calendars that have been associated with his or 
 			// her role
-			calendarStore.initCalendar(subscribeId, role);
+			calendarStore.initCalendar(subscribeId, userRoles);
 
 			// create a list of hidden calendars
 			hiddenCalendars = new HashMap<Long, String>();
@@ -221,16 +239,10 @@ public class CalendarController extends AbstractController {
 	}
 
 	private CalendarStore calendarStore;
-
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
 
-	private String roleToken = "contentGroup";
-	public void setRoleToken(String roleToken) {
-		this.roleToken = roleToken;
-	}
-	
 	private String userToken = "user.login.id";
 	public void setUserToken(String userToken) {
 		this.userToken = userToken;

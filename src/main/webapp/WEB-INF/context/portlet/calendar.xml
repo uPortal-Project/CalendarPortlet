@@ -5,9 +5,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
     http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-    http://www.springmodules.org/schema/ehcache
-    http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
     <!-- Properties configuration -->
     <bean id="propertyConfigurer"
@@ -28,7 +26,6 @@
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.CalendarController">
         <property name="calendarStore" ref="calendarStore"/>
         <property name="userToken"><value>${userinfo.userid.key}</value></property>
-        <property name="roleToken"><value>${userinfo.role.key}</value></property>
         <property name="initializationServices">
             <list>
                 <!--
@@ -44,7 +41,6 @@
     <bean id="editCalendarController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
         <property name="userToken" value="${userinfo.userid.key}"/>
-        <property name="roleToken" value="${userinfo.role.key}"/>
         <property name="predefinedEditActions">
             <map>
                 <!-- Add edit screens for custom calendar adapters -->
@@ -56,8 +52,14 @@
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
 
+    <!-- view and edit calendar preferences -->
+    <bean id="adminCalendarController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.AdminCalendarController">
+        <property name="calendarStore" ref="calendarStore"/>
+    </bean>
+    
     <!-- add or edit a user-defined calendar -->
-    <bean id="editCalendarDefinitionController"
+    <bean id="editCalendarConfigurationController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditUserHttpICalController">
         <property name="formView">
             <value>editCalendarUrl</value>
@@ -69,6 +71,20 @@
         <property name="commandName" value="calendarListingCommand"/>
         <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand"/>
         <property name="validator" ref="beanValidator"/>
+        <property name="calendarStore" ref="calendarStore"/>
+    </bean>
+    
+    <!-- add or edit a pre-defined calendar -->
+    <bean id="editCalendarDefinitionController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarDefinitionController">
+        <property name="formView">
+            <value>editCalendarDefinition</value>
+        </property>
+        <property name="sessionForm">
+            <value>false</value>
+        </property>
+        <property name="commandName" value="calendarDefinitionForm"/>
+        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarDefinitionForm"/>
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
     
@@ -96,7 +112,9 @@
                 <entry key="edit">
                     <map>
                         <entry key="editPreferences" value-ref="editCalendarController"/>
-                        <entry key="editUrl" value-ref="editCalendarDefinitionController"/>
+                        <entry key="editUrl" value-ref="editCalendarConfigurationController"/>
+                        <entry key="administration" value-ref="adminCalendarController"/>
+                        <entry key="editCalendarDefinition" value-ref="editCalendarDefinitionController"/>
                     </map>
                 </entry>
             </map>

@@ -8,10 +8,12 @@
 package edu.yale.its.tp.portlets.calendar.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
@@ -123,21 +125,48 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 			throw convertHibernateAccessException(ex);
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getPredefinedCalendarConfigurations()
+	 */
+	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations() {
+		try {
+
+			String query = "from CalendarDefinition def "
+					+ "where def.class = PredefinedCalendarDefinition "
+					+ "order by def.name";
+			return (List<PredefinedCalendarConfiguration>) getHibernateTemplate()
+					.find(query);
+
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getHiddenPredefinedCalendarDefinitions(java.lang.String, java.lang.String)
 	 */
-	public List<PredefinedCalendarDefinition> getHiddenPredefinedCalendarDefinitions(String subscribeId, String role){
+	public List<PredefinedCalendarDefinition> getHiddenPredefinedCalendarDefinitions(String subscribeId, Set<String> roles){
 		try {
 			
 			String query = "from PredefinedCalendarDefinition def "
-				+ "where ? not in elements(def.defaultRoles) "
-				+ "and ? not in (select config.subscribeId "
+				+ "where :subscribeId not in (select config.subscribeId "
 				+ "from def.userConfigurations config) ";
+			for (int i = 0; i < roles.size(); i++) {
+				query = query.concat(
+					"and :role" + i + " not in elements(def.defaultRoles) ");
+			}
 			
-			return (List<PredefinedCalendarDefinition>) getHibernateTemplate()
-					.find(query, new Object[]{role, subscribeId});
+			Query q = this.getSession().createQuery(query);
+			q.setString("subscribeId", subscribeId);
+			int count = 0;
+			for (String role : roles) {
+				q.setString("role" + count, role);
+				count++;
+			}
+			return (List<PredefinedCalendarDefinition>) q.list();
 
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
@@ -146,19 +175,29 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#initCalendar(java.lang.String, java.lang.String)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#initCalendar(java.lang.String, java.util.Set)
 	 */
-	public void initCalendar(String subscribeId, String role) {
+	public void initCalendar(String subscribeId, Set<String> roles) {
 		try {
 
-			List<PredefinedCalendarDefinition> defs = getHibernateTemplate()
-					.find(
-							"from PredefinedCalendarDefinition def "
-									+ "left join fetch def.defaultRoles role " 
-									+ "where role = ? and ? not in "
-									+ "(select config.subscribeId "
-									+ "from def.userConfigurations config) ",
-							new Object[] { role, subscribeId });
+			// if the user doesn't have any roles, we don't have any
+			// chance of getting predefined calendars, so just go ahead
+			// and return
+			if (roles.isEmpty())
+				return;
+			
+			String query = "from PredefinedCalendarDefinition def "
+				+ "left join fetch def.defaultRoles role where " 
+				+ ":subscribeId not in (select config.subscribeId "
+				+ "from def.userConfigurations config)";
+			if (roles.size() > 0)
+				query = query.concat("and role in (:roles)");
+			Query q = this.getSession().createQuery(query);
+			q.setString("subscribeId", subscribeId);
+			if (roles.size() > 0)
+				q.setParameterList("roles", roles);
+			List<PredefinedCalendarDefinition> defs = q.list();
+
 			for (PredefinedCalendarDefinition def : defs) {
 				PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
 				config.setCalendarDefinition(def);
@@ -169,6 +208,27 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getPredefinedCalendarDefinition(java.lang.Long)
+	 */
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(Long id) {
+
+		try {
+
+			String query = "from PredefinedCalendarDefinition def "
+				+ "left join fetch def.defaultRoles role where " 
+				+ "def.id = :id";
+			Query q = this.getSession().createQuery(query);
+			q.setLong("id", id);
+			return (PredefinedCalendarDefinition) q.uniqueResult();
+			
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+
 	}
 
 	/*
@@ -213,6 +273,35 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 
 			getHibernateTemplate().delete(configuration);
 			getHibernateTemplate().flush();
+
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+	}
+	
+	public void deleteCalendarDefinition(CalendarDefinition definition) {
+		try {
+
+			getHibernateTemplate().delete(definition);
+			getHibernateTemplate().flush();
+
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.dao.CalendarStore#getUserRoles()
+	 */
+	public List<String> getUserRoles() {
+		try {
+			
+			String query = "select distinct elements(def.defaultRoles) " +
+					"from PredefinedCalendarDefinition def ";
+
+			return (List<String>) getHibernateTemplate()
+					.find(query);
 
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);

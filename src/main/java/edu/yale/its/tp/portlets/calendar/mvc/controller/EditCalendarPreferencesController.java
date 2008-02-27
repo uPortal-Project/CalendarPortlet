@@ -10,6 +10,7 @@ package edu.yale.its.tp.portlets.calendar.mvc.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -48,7 +49,6 @@ public class EditCalendarPreferencesController extends AbstractController {
 
 		// get user information
 		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-		String role = (String) userinfo.get(roleToken);
 		String subscribeId = (String) userinfo.get(userToken);
 
 		// add the user-defined calendars to the model
@@ -59,7 +59,13 @@ public class EditCalendarPreferencesController extends AbstractController {
 		List<PredefinedCalendarConfiguration> calendars = calendarStore.getPredefinedCalendarConfigurations(subscribeId, false);
 		model.put("calendars", calendars);
 		
-		List<PredefinedCalendarDefinition> definitions = calendarStore.getHiddenPredefinedCalendarDefinitions(subscribeId, role);
+		// get the user's role listings
+		PortletSession session = request.getPortletSession();
+		Set<String> userRoles = (Set<String>) session.getAttribute("userRoles");
+
+		// get a list of predefined calendars the user doesn't 
+		// currently have configured
+		List<PredefinedCalendarDefinition> definitions = calendarStore.getHiddenPredefinedCalendarDefinitions(subscribeId, userRoles);
 		model.put("hiddencalendars", definitions);
 		
 		model.put("predefinedEditActions", predefinedEditActions);
@@ -105,11 +111,6 @@ public class EditCalendarPreferencesController extends AbstractController {
 	}
 
 
-	private String roleToken = "contentGroup";
-	public void setRoleToken(String roleToken) {
-		this.roleToken = roleToken;
-	}
-	
 	private String userToken = "user.login.id";
 	public void setUserToken(String userToken) {
 		this.userToken = userToken;

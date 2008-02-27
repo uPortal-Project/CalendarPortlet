@@ -62,6 +62,10 @@ public class HttpICalAdapter implements ICalendarAdapter {
 
 		// get the URL for this calendar
 		String url = (String) calendarListing.getCalendarDefinition().getParameters().get("url");
+		if (url == null) {
+			log.error("HttpICalAdapter with ID " + calendarListing.getCalendarDefinition().getId() + " has no URL parameter");
+			throw new CalendarException("Calendar is not configured correctly");
+		}
 		
 		// try to get the cached calendar
 		String key = getCacheKey(url);

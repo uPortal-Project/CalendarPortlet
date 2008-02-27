@@ -96,8 +96,6 @@ public class EditUserHttpICalController extends SimpleFormController {
 			ActionResponse response, Object command, BindException errors)
 			throws Exception {
 		
-		log.debug("called onsubmitaction");
-
 		// get the form data
 		CalendarListingCommand form = (CalendarListingCommand) command;
 

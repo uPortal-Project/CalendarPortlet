@@ -8,6 +8,7 @@
 package edu.yale.its.tp.portlets.calendar.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarDefinition;
@@ -36,6 +37,14 @@ public interface CalendarStore {
 	 * @return
 	 */
 	public CalendarDefinition getCalendarDefinition(Long id);
+
+	/**
+	 * Retrieve a pre-defined calendar definition
+	 * 
+	 * @param id ID of the calendar definition to be retrieved
+	 * @return
+	 */
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(Long id);
 
 	/**
 	 * Save or update a calendar configuration.
@@ -86,19 +95,33 @@ public interface CalendarStore {
 			String subscribeId, boolean visibleOnly);
 
 	/**
+	 * Retrieve a list of all pre-defined calendar configurations.
+	 * 
+	 * @return
+	 */
+	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations();
+
+	/**
 	 * Remove a calendar configuration from the data store
 	 * 
 	 * @param configuration configuration to be removed
 	 */
 	public void deleteCalendarConfiguration(CalendarConfiguration configuration);
+	
+	/**
+	 * Remove a calendar definition from the data store.
+	 * 
+	 * @param definition definition to be removed
+	 */
+	public void deleteCalendarDefinition(CalendarDefinition definition);
 
 	/**
 	 * Initialize calendar subscriptions for a given portlet subscription and role.
 	 * 
 	 * @param subscribeId unique ID for this portlet subscription
-	 * @param role user role to use to find default calendars
+	 * @param roles user roles to use to find default calendars
 	 */
-	public void initCalendar(String subscribeId, String role);
+	public void initCalendar(String subscribeId, Set<String> roles);
 
 	/**
 	 * Retrieve a list of hidden predefined calendars for this portlet subscription
@@ -109,7 +132,14 @@ public interface CalendarStore {
 	 * @return
 	 */
 	public List<PredefinedCalendarDefinition> getHiddenPredefinedCalendarDefinitions(
-			String subscribeId, String role);
+			String subscribeId, Set<String> role);
+	
+	/**
+	 * Get a list of all user roles currently in use.
+	 * 
+	 * @return
+	 */
+	public List<String> getUserRoles();
 
 }
 

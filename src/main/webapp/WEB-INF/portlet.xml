@@ -21,6 +21,26 @@
         <portlet-info>
             <title>My Calendar</title>
         </portlet-info>
+        <security-role-ref>
+            <role-name>everyone</role-name>
+            <role-link>local.0</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>calendarAdmin</role-name>
+            <role-link>local.14</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>student</role-name>
+            <role-link>local.1</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>faculty</role-name>
+            <role-link>local.2</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>staff</role-name>
+            <role-link>local.3</role-link>
+        </security-role-ref>
     </portlet>
     
     <user-attribute>
@@ -35,5 +55,5 @@
     <user-attribute>
         <name>contentGroup</name>
     </user-attribute>
-    
+
 </portlet-app>

@@ -57,13 +57,13 @@
             <!-- user configurations and preferences for pre-defined calendars 
                 these allow users to hide default system calendars and potentially 
                 set user-specific parameters -->
-            <set name="userConfigurations" inverse="true" cascade="none">
+            <set name="userConfigurations" inverse="true" cascade="delete">
                 <key column="CALENDAR_ID"/>
                 <one-to-many
                     class="edu.yale.its.tp.portlets.calendar.PredefinedCalendarConfiguration"/>
             </set>
             
-            <set name="defaultRoles" lazy="true" table="CALENDAR_ROLE"> 
+            <set name="defaultRoles" lazy="true" table="CALENDAR_ROLE" cascade="all-delete-orphan"> 
                 <key column="CALENDAR_ID"/> 
                 <element type="string" column="ROLE_NAME" not-null="true"/> 
             </set> 

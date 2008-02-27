@@ -147,6 +147,14 @@
             </table>
         </div>
         
+        <c:if test="${ sessionScope.isAdmin }">
+        	<p>
+	        	<a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>">
+	        		Calendar Administration</a>
+        	</p>
+        </c:if>
+        
+        
     </body>
     
 </html>

@@ -37,7 +37,6 @@
 		</property>
 	</bean>
 	
-	<bean class="java.lang.String"></bean>
 	
 	<!-- CALENDAR ADAPTER REGISTRATIONS -->
 	
