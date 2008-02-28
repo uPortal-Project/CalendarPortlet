@@ -1,0 +1,69 @@
+------------------------
+Blackboard Vista Adapter
+------------------------
+
+Why is this here instead of in src/main/java?
+
+The Blackboard Vista adapter source code depends on proprietary Blackboard libraries that we can't
+redistribute.  However, licensees of the Blackboard Vista product should have access to these
+resources.
+
+
+------------------
+Required resources
+------------------
+
+Required jars:
+	Blackboard Vista SDK client
+	Techtrader Bytecode
+
+These resources are available for download at http://www.edugarage.com/display/BBDN/downloads.
+
+
+----------------------
+Installing the adapter
+----------------------
+
+To use this adapter, first copy the Java file BlackboardVistaICalAdapter.java 
+into the edu.yale.its.tp.portlets.calendar.adapter package.  You will also need to get the 
+Blackboard library jars, manually add them to your maven repository, and then reference them from
+the project's pom.xml.  You will also need to add a bean definition for the adapter to
+context/applicationContext.xml.  
+
+Samples are provided below for both the pom.xml and applicationContext.xml additions.
+
+
+Add the following to pom.xml:
+
+    <!--  Blackboard dependencies -->
+    <dependency>
+        <groupId>blackboard</groupId>
+        <artifactId>vista-sdk-client</artifactId>
+        <version>4.2.0</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>axis</groupId>
+        <artifactId>axis</artifactId>
+        <version>1.0</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>techtrader</groupId>
+        <artifactId>bytecode</artifactId>
+        <version>unknown</version>
+    </dependency>
+    <dependency>
+        <groupId>wsdl4j</groupId>
+        <artifactId>wsdl4j</artifactId>
+        <version>1.6.1</version>
+    </dependency>
+
+
+Add the following to applicationContext.xml:
+
+	<bean id="edu.yale.its.tp.portlets.calendar.adapter.BlackboardVistaICalAdapter" 
+			class="edu.yale.its.tp.portlets.calendar.adapter.BlackboardVistaICalAdapter">
+		<property name="cache" ref="calendarCache"/>
+		<property name="userToken" value="${userinfo.userid.key}"/>
+	</bean>
