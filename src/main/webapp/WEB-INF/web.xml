@@ -61,6 +61,11 @@
     </servlet-mapping>
     
     <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/listEvents</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
         <servlet-name>CasProxyCallback</servlet-name>
         <url-pattern>/CasProxyCallback</url-pattern>
     </servlet-mapping>

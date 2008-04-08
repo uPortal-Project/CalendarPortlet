@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import net.fortuna.ical4j.model.Period;
 import net.sf.ehcache.Cache;
@@ -38,10 +40,6 @@ public class CasifiedICalAdapter extends HttpICalAdapter {
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
 			Period period, PortletRequest request) throws CalendarException {
 
-		// get the iCal feed's url from the calendar definition parameter list
-		String url = calendarListing.getCalendarDefinition().getParameters()
-				.get("url");
-
 		// get the session
 		PortletSession session = request.getPortletSession(false);
 		if (session == null) {
@@ -56,6 +54,46 @@ public class CasifiedICalAdapter extends HttpICalAdapter {
 			throw new CalendarException();
 		}
 		
+		return getEvents(calendarListing, period, receipt);
+
+	}
+
+	@Override
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
+			Period period, HttpServletRequest request) throws CalendarException {
+
+		// get the session
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			log.warn("CasifiedICalFeed requested with a null session");
+			throw new CalendarException();
+		}
+
+		// retrieve the CAS receipt for the current user's session
+		CASReceipt receipt = (CASReceipt) session.getAttribute("CasReceipt");
+		if (receipt == null) {
+			log.warn("CasifiedICalFeed cannot find a CAS receipt object");
+			throw new CalendarException();
+		}
+	
+		return getEvents(calendarListing, period, receipt);
+
+	}
+		
+	/**
+	 * 
+	 * @param calendarListing
+	 * @param period
+	 * @param receipt
+	 * @return
+	 * @throws CalendarException
+	 */
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing, Period period, CASReceipt receipt) throws CalendarException {
+		
+		// get the iCal feed's url from the calendar definition parameter list
+		String url = calendarListing.getCalendarDefinition().getParameters()
+				.get("url");
+
 		net.fortuna.ical4j.model.Calendar calendar = null;
 
 		// attempt to retrieve the calendar from the cache

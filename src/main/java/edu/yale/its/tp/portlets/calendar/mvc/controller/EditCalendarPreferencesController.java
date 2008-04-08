@@ -61,7 +61,7 @@ public class EditCalendarPreferencesController extends AbstractController {
 		
 		// get the user's role listings
 		PortletSession session = request.getPortletSession();
-		Set<String> userRoles = (Set<String>) session.getAttribute("userRoles");
+		Set<String> userRoles = (Set<String>) session.getAttribute("userRoles", PortletSession.APPLICATION_SCOPE);
 
 		// get a list of predefined calendars the user doesn't 
 		// currently have configured
@@ -83,19 +83,19 @@ public class EditCalendarPreferencesController extends AbstractController {
 		if (actionCode.equals("delete")) {
 			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
 			calendarStore.deleteCalendarConfiguration(config);
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
 			hidden.remove(config.getId());
 		} else if (actionCode.equals("show")) {
 			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
 			config.setDisplayed(true);
 			calendarStore.storeCalendarConfiguration(config);
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
 			hidden.remove(config.getId());
 		} else if (actionCode.equals("hide")) {
 			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
 			config.setDisplayed(false);
 			calendarStore.storeCalendarConfiguration(config);
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
 			hidden.remove(config.getId());
 		} else if (actionCode.equals("showNew")) {
 			// get user information

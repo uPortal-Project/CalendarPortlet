@@ -9,3 +9,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%@ taglib prefix="html" tagdir="/WEB-INF/tags/html" %>
+<%@ taglib prefix="uwfn" tagdir="/WEB-INF/tags/uwfn" %>
+
+<portlet:defineObjects/>

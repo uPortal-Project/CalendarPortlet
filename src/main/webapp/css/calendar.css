@@ -1,0 +1,18 @@
+table#calendar { width: 100%; text-align: center; }
+table.yaleEvents tr td { vertical-align: top; padding: 5px; }
+table.yaleEvents tr td.time {  }
+.othermonth { color: #999; padding: 6px; }
+.thismonth { padding: 6px; background-color: #eef2ff; }
+.calendarTitle { text-align: center; padding: 6px; font-size: 1.2em; }
+.today { background-color: #bcc6e4; font-weight: bold; }
+.selectedDate { background-color: #c4c6ce; }
+.color-0, a.color-0 { color: #1062a5; }
+.color-1, a.color-1 { color: #477300; }
+.color-2, a.color-2 { color: #990000; }
+.color-3, a.color-3 { color: #683099; }
+.color-4, a.color-4 { color: #8b4500; }
+.color-5, a.color-5 { color: #008b78; }
+.color-6, a.color-6 { color: #b62162; }
+.color-7, a.color-7 { color: #bb5b1d; }
+.color-8, a.color-8 { color: #7b7b7b; }
+.color-9, a.color-9 { color: #000000; }

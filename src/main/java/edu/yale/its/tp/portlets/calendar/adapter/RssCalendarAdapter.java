@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -66,7 +67,21 @@ public class RssCalendarAdapter implements ICalendarAdapter {
 	 */
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar,
 			Period period, PortletRequest request) throws CalendarException {
+		return getEvents(calendar, period);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.servlet.http.HttpServletRequest)
+	 */
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar,
+			Period period, HttpServletRequest request) throws CalendarException {
+		return getEvents(calendar, period);
+	}
 
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar,
+			Period period) throws CalendarException {
+		
 		// get the URL for this calendar
 		String url = (String) calendar.getCalendarDefinition().getParameters().get("url");
 		
@@ -79,6 +94,7 @@ public class RssCalendarAdapter implements ICalendarAdapter {
 		return getEvents(calendar.getId(), url, dateFormat, period.getStart().getTime(), period.getEnd().getTime());
 
 	}
+	
 	
 	/**
 	 * 

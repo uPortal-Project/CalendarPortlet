@@ -54,6 +54,7 @@ public class CalendarController extends AbstractController {
 		PortletSession session = request.getPortletSession(true);
 		HashMap<Long, String> hiddenCalendars = null;
 		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+		Calendar cal = Calendar.getInstance();
 
 		// get this portlet's unique subscription id
 		String subscribeId = (String) userinfo.get(userToken);
@@ -64,6 +65,8 @@ public class CalendarController extends AbstractController {
 		 */
 
 		if (session.getAttribute("initialized") == null) {
+			
+			session.setAttribute("subscribeId", subscribeId, PortletSession.APPLICATION_SCOPE);
 
 			// get a set of all role names currently configured for
 			// default calendars
@@ -77,7 +80,7 @@ public class CalendarController extends AbstractController {
 				if (request.isUserInRole(role))
 					userRoles.add(role);
 			}
-			session.setAttribute("userRoles", userRoles);
+			session.setAttribute("userRoles", userRoles, PortletSession.APPLICATION_SCOPE);
 			
 			// determine if this user belongs to the defined calendar
 			// administration group and store the result in the session
@@ -92,10 +95,13 @@ public class CalendarController extends AbstractController {
 
 			// create a list of hidden calendars
 			hiddenCalendars = new HashMap<Long, String>();
-			session.setAttribute("hiddenCalendars", hiddenCalendars);
+			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
 
+			// set now as the starting date
+			session.setAttribute("startDate", cal.getTime(), PortletSession.APPLICATION_SCOPE);
+			
 			// set the default number of days to display
-			session.setAttribute("days", defaultDays);
+			session.setAttribute("days", defaultDays, PortletSession.APPLICATION_SCOPE);
 
 			// perform any other configured initialization tasks
 			for (IInitializationService service : initializationServices) {
@@ -109,7 +115,7 @@ public class CalendarController extends AbstractController {
 		} else {
 			// get the list of hidden calendars
 			hiddenCalendars = (HashMap<Long, String>) session
-					.getAttribute("hiddenCalendars");
+					.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
 		}
 
 		/**
@@ -122,7 +128,7 @@ public class CalendarController extends AbstractController {
 		String hideCalendar = request.getParameter("hideCalendar");
 		if (hideCalendar != null) {
 			hiddenCalendars.put(Long.valueOf(hideCalendar), "true");
-			session.setAttribute("hiddenCalendars", hiddenCalendars);
+			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
 		}
 
 		// check the request parameters to see if we need to remove
@@ -130,37 +136,36 @@ public class CalendarController extends AbstractController {
 		String showCalendar = request.getParameter("showCalendar");
 		if (showCalendar != null) {
 			hiddenCalendars.remove(Long.valueOf(showCalendar));
-			session.setAttribute("hiddenCalendars", hiddenCalendars);
+			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
 		}
 
 		/**
 		 * Find our desired starting and ending dates.
 		 */
 
-		// construct a default starting date of today
-		Calendar cal = Calendar.getInstance();
-		Date startDate = cal.getTime();
-		model.put("startDate", startDate);
 
-		// if the user requested a specific date, use it instead
+		// if the user requested a specific date, use it
+		Date startDate = (Date) session.getAttribute("startDate", PortletSession.APPLICATION_SCOPE);
 		DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd");
 		String requestedDate = (String) request.getParameter("date");
 		if (requestedDate != null && !requestedDate.equals("")) {
 			try {
 				startDate = df.parse(requestedDate);
 				cal.setTime(startDate);
+				session.setAttribute("startDate", startDate, PortletSession.APPLICATION_SCOPE);
 			} catch (ParseException ex) {
 				log.warn("Failed to parse starting date for event", ex);
 			}
 		}
+		model.put("startDate", startDate);
 
 		// find how many days into the future we should display events
-		int days = (Integer) session.getAttribute("days");
+		int days = (Integer) session.getAttribute("days", PortletSession.APPLICATION_SCOPE);
 		String timePeriod = (String) request.getParameter("timePeriod");
 		if (timePeriod != null && !timePeriod.equals("")) {
 			try {
 				days = Integer.parseInt(timePeriod);
-				session.setAttribute("days", days);
+				session.setAttribute("days", days, PortletSession.APPLICATION_SCOPE);
 			} catch (NumberFormatException ex) {
 				log.warn("Failed to parse desired time period", ex);
 			}

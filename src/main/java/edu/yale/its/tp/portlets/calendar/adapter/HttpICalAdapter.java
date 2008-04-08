@@ -9,11 +9,14 @@ package edu.yale.its.tp.portlets.calendar.adapter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -44,7 +47,8 @@ import edu.yale.its.tp.portlets.calendar.CalendarEvent;
  * ICalFeed is a CalendarAdapter for standard ICalendar .ics feeds available
  * online via http or https.
  * 
- * Note: This class isn't designed to access calendars via the webcal:// protocol.
+ * Note: This class isn't designed to access calendars via the webcal://
+ * protocol.
  * 
  * @author Jen Bourey
  */
@@ -54,46 +58,97 @@ public class HttpICalAdapter implements ICalendarAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see edu.yale.its.tp.portlets.calendar.CalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarDefinition, net.fortuna.ical4j.model.Period, java.util.Map)
+	 * 
+	 * @see edu.yale.its.tp.portlets.calendar.CalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarDefinition,
+	 *      net.fortuna.ical4j.model.Period, java.util.Map)
 	 */
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing, Period period, PortletRequest request) throws CalendarException { 
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
+			Period period, PortletRequest request) throws CalendarException {
+		return getEvents(calendarListing, period);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.servlet.http.HttpServletRequest)
+	 */
+	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
+			Period period, HttpServletRequest request) throws CalendarException {
+		return getEvents(calendarListing, period);
+	}
+	
+	/**
+	 * 
+	 * @param calendarListing
+	 * @return
+	 * @throws CalendarException
+	 */
+	private Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing, Period period) throws CalendarException {
 		net.fortuna.ical4j.model.Calendar calendar = null;
 
 		// get the URL for this calendar
-		String url = (String) calendarListing.getCalendarDefinition().getParameters().get("url");
+		String url = (String) calendarListing.getCalendarDefinition()
+				.getParameters().get("url");
 		if (url == null) {
-			log.error("HttpICalAdapter with ID " + calendarListing.getCalendarDefinition().getId() + " has no URL parameter");
+			log.error("HttpICalAdapter with ID "
+					+ calendarListing.getCalendarDefinition().getId()
+					+ " has no URL parameter");
 			throw new CalendarException("Calendar is not configured correctly");
 		}
-		
+
 		// try to get the cached calendar
 		String key = getCacheKey(url);
 		Element cachedElement = cache.get(key);
 		if (cachedElement == null) {
-			
+
 			// read in the calendar
 			calendar = getCalendar(url);
-			
+
 			// save the calendar to the cache
 			cachedElement = new Element(key, calendar);
 			cache.put(cachedElement);
 
 		} else
-			calendar = (net.fortuna.ical4j.model.Calendar) cachedElement.getValue();
-		
+			calendar = (net.fortuna.ical4j.model.Calendar) cachedElement
+					.getValue();
+
 		// return the event list
 		return getEvents(calendarListing.getId(), calendar, period);
 	}
-	
+
+	public URL getDownloadUrl(CalendarConfiguration calendar,
+			PortletRequest request) throws CalendarException {
+
+		// If the optional download URL parameter has been configured for this
+		// calendar,
+		// use it. Otherwise, just use the URL of the calendar itself.
+		String downloadUrl = (String) calendar.getCalendarDefinition()
+				.getParameters().get("downloadUrl");
+		if (downloadUrl == null || downloadUrl.equals("")) {
+			downloadUrl = (String) calendar.getCalendarDefinition()
+					.getParameters().get("url");
+		}
+
+		// make sure this is really a valid URL before we return it
+		try {
+			return new URL(downloadUrl);
+		} catch (MalformedURLException e) {
+			log.warn("Calendar download url for calendar with ID "
+					+ calendar.getCalendarDefinition().getId()
+					+ " has the malformed url: " + downloadUrl);
+			return null;
+		}
+	}
+
 	/**
-	 * Retrieve the entire .ics file at a specified URL and use it to
-	 * build an iCal4j Calendar object.
+	 * Retrieve the entire .ics file at a specified URL and use it to build an
+	 * iCal4j Calendar object.
 	 * 
-	 * @param url URL of the calendar to be retrieved
+	 * @param url
+	 *            URL of the calendar to be retrieved
 	 * @return ical4j Calendar object
 	 */
-	protected net.fortuna.ical4j.model.Calendar getCalendar(String url) throws CalendarException {
+	protected net.fortuna.ical4j.model.Calendar getCalendar(String url)
+			throws CalendarException {
 
 		CalendarBuilder builder = new CalendarBuilder();
 		HttpClient client = new HttpClient();
@@ -103,7 +158,7 @@ public class HttpICalAdapter implements ICalendarAdapter {
 
 			if (log.isDebugEnabled())
 				log.debug("Retrieving calendar " + url);
-			
+
 			get = new GetMethod(url);
 			int rc = client.executeMethod(get);
 			if (rc != HttpStatus.SC_OK) {
@@ -130,29 +185,35 @@ public class HttpICalAdapter implements ICalendarAdapter {
 			if (get != null)
 				get.releaseConnection();
 		}
-		
+
 	}
-	
+
 	/**
-	 * Extract a list of events from an iCal4j Calendar for a specified
-	 * time period.
+	 * Extract a list of events from an iCal4j Calendar for a specified time
+	 * period.
 	 * 
-	 * @param calendarId id of the CalendarConfiguration
-	 * @param calendar ical4j calendar object
-	 * @param period time period to retrieve events for
+	 * @param calendarId
+	 *            id of the CalendarConfiguration
+	 * @param calendar
+	 *            ical4j calendar object
+	 * @param period
+	 *            time period to retrieve events for
 	 * @return Set of calendar events
 	 */
-	protected Set<CalendarEvent> getEvents(Long calendarId, net.fortuna.ical4j.model.Calendar calendar, Period period) throws CalendarException {
-		
+	protected Set<CalendarEvent> getEvents(Long calendarId,
+			net.fortuna.ical4j.model.Calendar calendar, Period period)
+			throws CalendarException {
+
 		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
-		
+
 		// if the calendar is null, throw an error
 		if (calendar == null)
 			throw new CalendarException();
 
 		// retrieve the list of events for this calendar within the
 		// specified time period
-		for (Iterator<Component> i = calendar.getComponents().iterator(); i.hasNext();) {
+		for (Iterator<Component> i = calendar.getComponents().iterator(); i
+				.hasNext();) {
 			Component component = i.next();
 			if (component.getName().equals("VEVENT")) {
 				VEvent event = (VEvent) component;
@@ -172,9 +233,10 @@ public class HttpICalAdapter implements ICalendarAdapter {
 					PropertyList newprops = new PropertyList();
 					newprops.add(new DtStart(eventper.getStart()));
 					newprops.add(new DtEnd(eventper.getEnd()));
-					for (Iterator<Property> iter2 = props.iterator(); iter2.hasNext();) {
+					for (Iterator<Property> iter2 = props.iterator(); iter2
+							.hasNext();) {
 						Property prop = iter2.next();
-						
+
 						// only add non-date-related properties
 						if (!(prop instanceof DtStart)
 								&& !(prop instanceof DtEnd)
@@ -184,7 +246,8 @@ public class HttpICalAdapter implements ICalendarAdapter {
 					}
 
 					// create the new event from our property list
-					CalendarEvent newevent = new CalendarEvent(calendarId, newprops);
+					CalendarEvent newevent = new CalendarEvent(calendarId,
+							newprops);
 					events.add(newevent);
 				}
 
@@ -192,13 +255,14 @@ public class HttpICalAdapter implements ICalendarAdapter {
 		}
 
 		return events;
-		
+
 	}
-	
+
 	/**
 	 * Get a cache key for this calendar.
 	 * 
-	 * @param url URL of the calendar
+	 * @param url
+	 *            URL of the calendar
 	 * @return String representing this iCalendar feed
 	 */
 	private String getCacheKey(String url) {
@@ -209,12 +273,12 @@ public class HttpICalAdapter implements ICalendarAdapter {
 	}
 
 	private Cache cache;
+
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}
-	
-}
 
+}
 
 /*
  * HttpICalAdapter.java
