@@ -86,7 +86,7 @@
 				</div>
 			</c:forEach>
 			<div style="padding: 5px;">
-				<a href="javascript:;" onclick="addRole('role-list')">
+				<a href="javascript:;" onclick="addRole('<portlet:namespace/>role-list')">
 					<img style="vertical-align: middle;" src="<c:url value="/images/add.png"/>"/>
 					add a role</a>
 			</div>
@@ -103,7 +103,7 @@
 				</div>
 			</c:forEach>
 			<div style="padding: 5px;">
-				<a href="javascript:;" onclick="addParameter('parameter-list')">
+				<a href="javascript:;" onclick="addParameter('<portlet:namespace/>parameter-list')">
 					<img style="vertical-align: middle;" src="<c:url value="/images/add.png"/>"/>
 					add a parameter</a>
 			</div>
