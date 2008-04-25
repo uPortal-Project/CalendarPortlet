@@ -4,10 +4,14 @@
     
     <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
     <script type="text/javascript" src="<c:url value="/scripts/ui.datepicker.js"/>"></script>
+    <c:if test="${model.includeJQuery}">
+        <script type="text/javascript" src="<c:url value="/scripts/jquery-1.2.3.min.js"/>"></script>
+    </c:if>
     <script type="text/javascript">
 	     $(document).ready(function(){
 		    $('#<portlet:namespace/>inlineCalendar').datepicker(
 		    	{ 
+		    	    inline: true,
 		    		changeMonth: false,
 		    		changeYear: false,
 				    onSelect: function(date) {
@@ -25,7 +29,7 @@
     <table width="100%">
         <tr>
         <td>
-            <div id="<portlet:namespace/>inlineCalendar"></div>
+            <div id="<portlet:namespace/>inlineCalendar" class="jqueryui"></div>
         </td>
         <td>
         
