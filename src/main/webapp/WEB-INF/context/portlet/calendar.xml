@@ -26,6 +26,7 @@
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.CalendarController">
         <property name="calendarStore" ref="calendarStore"/>
         <property name="userToken"><value>${userinfo.userid.key}</value></property>
+        <property name="includeJQuery"><value>${javascript.jQuery.include}</value></property>
         <property name="initializationServices">
             <list>
                 <!--
