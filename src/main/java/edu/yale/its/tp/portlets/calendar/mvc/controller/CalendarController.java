@@ -58,6 +58,12 @@ public class CalendarController extends AbstractController {
 
 		// get this portlet's unique subscription id
 		String subscribeId = (String) userinfo.get(userToken);
+		if (subscribeId == null) {
+			subscribeId = "guest";
+			model.put("guest", true);
+		} else {
+			model.put("guest", false);
+		}
 
 		/**
 		 * If this is a new session, perform any necessary 

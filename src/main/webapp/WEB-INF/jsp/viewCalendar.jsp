@@ -154,17 +154,20 @@
 	
 	</div>
 	
-    <br />
-    <hr />
-    <p>
-        <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>">
-            <img src="<c:url value="/images/calendar_edit.png"/>" style="vertical-align: middle">
-            Edit and download calendars</a>
-     
-	    <c:if test="${ sessionScope.isAdmin }">
-	         | <a href="<portlet:renderURL portletMode="edit">
-	             <portlet:param name="action" value="administration"/></portlet:renderURL>">
-	             Calendar Administration
-	         </a>
-	    </c:if>
-    </p>
+    <c:if test="${ !model.guest }">
+	    <br />
+	    <hr />
+	    <p>
+	        <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>">
+	            <img src="<c:url value="/images/calendar_edit.png"/>" style="vertical-align: middle">
+	            Edit and download calendars</a>
+	     
+		    <c:if test="${ sessionScope.isAdmin }">
+		         | <a href="<portlet:renderURL portletMode="edit">
+		             <portlet:param name="action" value="administration"/></portlet:renderURL>">
+		             Calendar Administration
+		         </a>
+		    </c:if>
+	    </p>
+    </c:if>
+    

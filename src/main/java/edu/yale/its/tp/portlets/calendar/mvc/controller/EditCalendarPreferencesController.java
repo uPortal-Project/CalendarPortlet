@@ -50,6 +50,10 @@ public class EditCalendarPreferencesController extends AbstractController {
 		// get user information
 		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
 		String subscribeId = (String) userinfo.get(userToken);
+		if (subscribeId == null) {
+			subscribeId = "guest";
+			model.put("guest", true);
+		}
 
 		// add the user-defined calendars to the model
 		List<UserDefinedCalendarConfiguration> mycalendars = calendarStore.getUserDefinedCalendarConfigurations(subscribeId, false);
