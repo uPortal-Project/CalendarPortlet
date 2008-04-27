@@ -1,4 +1,5 @@
     <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
+    <fmt:setTimeZone value="${ model.timezone }"/>
     <fmt:formatDate var="today" value="${model.today}" pattern="EEEE MMMM d"/>
     <fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
     

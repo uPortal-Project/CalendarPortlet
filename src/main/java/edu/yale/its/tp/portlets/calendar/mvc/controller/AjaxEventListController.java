@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -140,6 +139,7 @@ public class AjaxEventListController extends AbstractController {
 		}
 		log.debug("events: " + events.size());
 
+		model.put("timezone", session.getAttribute("timezone"));
 		model.put("events", events);
 		model.put("colors", colors);
 		model.put("hiddenCalendars", hiddenCalendars);

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
@@ -117,6 +118,10 @@ public class CalendarController extends AbstractController {
 			// mark this session as initialized
 			session.setAttribute("initialized", "true");
 			session.setMaxInactiveInterval(60*60*2);
+			
+			PortletPreferences prefs = request.getPreferences();
+			String timezone = prefs.getValue("timezone", "America/New_York");
+			session.setAttribute("timezone", timezone, PortletSession.APPLICATION_SCOPE);
 
 		} else {
 			// get the list of hidden calendars
@@ -241,6 +246,7 @@ public class CalendarController extends AbstractController {
 
 		}
 
+		model.put("timezone", session.getAttribute("timezone", PortletSession.APPLICATION_SCOPE));
 		model.put("events", events);
 		model.put("colors", colors);
 		model.put("hiddenCalendars", hiddenCalendars);

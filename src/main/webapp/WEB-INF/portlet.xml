@@ -21,13 +21,31 @@
         <portlet-info>
             <title>My Calendar</title>
         </portlet-info>
+        
+        <portlet-preferences>
+            <preference>
+                <name>timezone</name>
+                <value>America/Chicago</value>
+            </preference>
+        </portlet-preferences>
+        
+        <!--
+            Adminisrative role mapping.  This mapping is required if you
+            want to use the administrative features.
+        -->
+        <security-role-ref>
+            <role-name>calendarAdmin</role-name>
+            <role-link>local.2</role-link>
+        </security-role-ref>
+
+
+        <!-- 
+            Additional roles for assigning default calendars.  Any roles
+            you wish to use must be assigned keys here. 
+        -->
         <security-role-ref>
             <role-name>everyone</role-name>
             <role-link>local.0</role-link>
-        </security-role-ref>
-        <security-role-ref>
-            <role-name>calendarAdmin</role-name>
-            <role-link>local.14</role-link>
         </security-role-ref>
         <security-role-ref>
             <role-name>student</role-name>
@@ -45,15 +63,6 @@
     
     <user-attribute>
         <name>user.login.id</name>
-    </user-attribute>
-    <user-attribute>
-        <name>user.name</name>
-    </user-attribute>
-    <user-attribute>
-        <name>user.name.full</name>
-    </user-attribute>
-    <user-attribute>
-        <name>contentGroup</name>
     </user-attribute>
 
 </portlet-app>
