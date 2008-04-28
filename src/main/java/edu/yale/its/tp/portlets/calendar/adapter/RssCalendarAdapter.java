@@ -16,15 +16,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -42,11 +37,12 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.thoughtworks.xstream.XStream;
+
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarEvent;
-import edu.yale.its.tp.portlets.calendar.jaxb.TRssChannel;
-import edu.yale.its.tp.portlets.calendar.jaxb.TRss;
-import edu.yale.its.tp.portlets.calendar.jaxb.TRssItem;
+import edu.yale.its.tp.portlets.calendar.service.rss.xstream.RssCalendar;
+import edu.yale.its.tp.portlets.calendar.service.rss.xstream.RssItem;
 
 /**
  * RssCalendarAdapter is a generic CalendarAdapter for RSS-formatted event feeds.
@@ -127,15 +123,11 @@ public class RssCalendarAdapter implements ICalendarAdapter {
 			// retrieve the feed
 			InputStream in = get.getResponseBodyAsStream();
 			
-			// unmarshall the feed as an RSS 2.0 object
-			JAXBContext jaxbContext = JAXBContext
-					.newInstance("edu.yale.its.tp.portlets.calendar.jaxb");
-			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			JAXBElement<TRss> rss = (JAXBElement<TRss>) unmarshaller.unmarshal(in);
+			XStream stream = new XStream();
+			stream.processAnnotations(RssCalendar.class);
+			RssCalendar cal = (RssCalendar) stream.fromXML(in);
 
-			// get the event items from the feed
-			List<TRssItem> items = rss.getValue().getChannel().getItem();
-			for (TRssItem item : items) {
+			for (RssItem item : cal.getChannel().getItems()) {
 				
 				PropertyList props = new PropertyList();
 				
@@ -160,7 +152,7 @@ public class RssCalendarAdapter implements ICalendarAdapter {
 
 					// use the RSS item Guid as the Uid for this event
 					if (item.getGuid() != null)
-						props.add(new Uid(item.getGuid().getValue()));
+						props.add(new Uid(item.getGuid()));
 					
 					// try to find a link for this event
 					if (item.getLink() != null) {
@@ -185,9 +177,6 @@ public class RssCalendarAdapter implements ICalendarAdapter {
 		} catch (IOException e) {
 			log.warn("Error fetching RSS calendar feed", e);
 			throw new CalendarException("Error fetching iCalendar feed");
-		} catch (JAXBException e1) {
-			log.warn("Error parsing RSS calendar feed", e1);
-			throw new CalendarException("Error parsing iCalendar feed");
 		} finally {
 			if (get != null)
 				get.releaseConnection();
