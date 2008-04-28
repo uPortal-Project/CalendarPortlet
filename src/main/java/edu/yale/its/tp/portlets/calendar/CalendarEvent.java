@@ -120,13 +120,16 @@ public class CalendarEvent extends VEvent {
 	 * @return
 	 */
 	public boolean isAllDay() {
-		Calendar start = Calendar.getInstance();
-		start.setTimeInMillis(this.getStartDate().getDate().getTime());
-		long oneday = 1000 * 60 * 60 * 24;
-		if (start.get(Calendar.HOUR_OF_DAY) == 0 && start.get(Calendar.MINUTE) == 0 && this.getEndDate().getDate().getTime() - this.getStartDate().getDate().getTime() >= oneday)
-			return true;
-		else
+		Calendar cal = Calendar.getInstance();
+		
+		if (this.getStartDate().getDate().getTime() > cal.getTimeInMillis())
 			return false;
+
+		cal.add(Calendar.DATE, 1);
+		if (this.getEndDate() != null && this.getEndDate().getDate().getTime() < cal.getTimeInMillis())
+			return false;
+		
+		return true;
 	}
 	
 }
