@@ -38,9 +38,9 @@
         </property>
     </bean>
 
-    <!-- view and edit calendar preferences -->
-    <bean id="editCalendarController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
+    <!-- view and edit calendar subscriptions -->
+    <bean id="editCalendarSubscriptionsController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarSubscriptionsController">
         <property name="userToken" value="${userinfo.userid.key}"/>
         <property name="predefinedEditActions">
             <map>
@@ -53,7 +53,20 @@
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
 
-    <!-- view and edit calendar preferences -->
+    <!-- edit calendar preferences -->
+    <bean id="editCalendarPreferencesController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
+        <property name="formView">
+            <value>editCalendarPreferences</value>
+        </property>
+        <property name="sessionForm">
+            <value>false</value>
+        </property>
+        <property name="commandName" value="calendarPreferencesCommand"/>
+        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarPreferencesCommand"/>
+    </bean>
+    
+    <!-- adminstrate pre-defined calendars -->
     <bean id="adminCalendarController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.AdminCalendarController">
         <property name="calendarStore" ref="calendarStore"/>
@@ -112,7 +125,8 @@
                 </entry>
                 <entry key="edit">
                     <map>
-                        <entry key="editPreferences" value-ref="editCalendarController"/>
+                        <entry key="editSubscriptions" value-ref="editCalendarSubscriptionsController"/>
+                        <entry key="editPreferences" value-ref="editCalendarPreferencesController"/>
                         <entry key="editUrl" value-ref="editCalendarConfigurationController"/>
                         <entry key="administration" value-ref="adminCalendarController"/>
                         <entry key="editCalendarDefinition" value-ref="editCalendarDefinitionController"/>
@@ -128,7 +142,7 @@
         <property name="portletModeMap">
             <map>
                 <entry key="view" value-ref="viewCalendarController"/>
-                <entry key="edit" value-ref="editCalendarController"/>
+                <entry key="edit" value-ref="editCalendarSubscriptionsController"/>
             </map>
         </property>
     </bean>

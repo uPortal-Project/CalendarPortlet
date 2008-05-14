@@ -111,6 +111,11 @@
         		</tr>
         	</c:forEach>
         </table>
+        <br/>
+        <p>
+            <a href="<portlet:renderURL><portlet:param name="action" value="editPreferences"/></portlet:renderURL>">Edit calendar preferences</a>
+        </p>
+        
         
         <br />
         <hr />

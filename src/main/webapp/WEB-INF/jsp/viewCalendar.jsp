@@ -159,7 +159,7 @@
 	    <br />
 	    <hr />
 	    <p>
-	        <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>">
+	        <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>">
 	            <img src="<c:url value="/images/calendar_edit.png"/>" style="vertical-align: middle">
 	            Edit and download calendars</a>
 	     

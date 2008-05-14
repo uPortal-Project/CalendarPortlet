@@ -129,7 +129,7 @@ public class EditUserHttpICalController extends SimpleFormController {
 		calendarStore.storeCalendarConfiguration(config);
 
 		// send the user back to the main edit page
-		response.setRenderParameter("action", "editPreferences");
+		response.setRenderParameter("action", "editSubscriptions");
 
 	}
 

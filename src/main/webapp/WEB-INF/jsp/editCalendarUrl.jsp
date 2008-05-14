@@ -32,6 +32,6 @@
     <br />
     <hr />
     <p>
-      	<a href="<portlet:renderURL><portlet:param name="action" value="editPrefences"/></portlet:renderURL>">
+      	<a href="<portlet:renderURL><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>">
             <img src="<c:url value="/images/arrow_left.png"/>" style="vertical-align: middle"> Return to main edit page</a>
     </p>

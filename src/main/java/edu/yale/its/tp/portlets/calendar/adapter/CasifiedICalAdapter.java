@@ -88,7 +88,7 @@ public class CasifiedICalAdapter extends HttpICalAdapter {
 	 * @return
 	 * @throws CalendarException
 	 */
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing, Period period, CASReceipt receipt) throws CalendarException {
+	private Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing, Period period, CASReceipt receipt) throws CalendarException {
 		
 		// get the iCal feed's url from the calendar definition parameter list
 		String url = calendarListing.getCalendarDefinition().getParameters()
