@@ -48,6 +48,16 @@
 	<!-- Rss feed adapter -->
 	<bean id="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter">
 	</bean>
+
+	<!--
+		Uncomment the following section to enable cached password basic authentication calendars.
+	-->
+	<!-- Basic authentication HttpClient iCal feed adapter -->
+	<!--
+	<bean id="edu.yale.its.tp.portlets.calendar.adapter.BasicAuthHttpICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.BasicAuthHttpICalAdapter">
+		<property name="cache" ref="calendarCache"/>
+	</bean>
+	-->
 	
 	<!-- 
 		Uncomment the following section to enable CAS Proxy calendars.
