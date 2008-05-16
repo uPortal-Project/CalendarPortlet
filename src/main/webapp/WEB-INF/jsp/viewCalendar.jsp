@@ -16,10 +16,11 @@
 		    		changeMonth: false,
 		    		changeYear: false,
 				    onSelect: function(date) {
+				        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
 				        $.get(
 				            '<c:url value="/listEvents"/>', 
 				            { startDate: date }, 
-				            function(xml){ $("#events").html(xml) }
+				            function(xml){ $("#<portlet:namespace/>events").html(xml) }
 				        );
 				    } 
 				}
@@ -32,7 +33,7 @@
         <td>
             <div id="<portlet:namespace/>inlineCalendar" class="jqueryui"></div>
         </td>
-        <td>
+        <td style="padding: 5px;">
         
 		<div style="padding-bottom: 3px;">
 			Calendars:
@@ -91,7 +92,7 @@
         </tr>
     </table>
     
-    <div id="events">
+    <div id="<portlet:namespace/>events">
         
 	<c:if test="${ not empty model.errors }">
 		<p class="portlet-msg-error">
