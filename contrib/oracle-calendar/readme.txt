@@ -62,3 +62,18 @@ Add the following to applicationContext.xml:
 		<property name="cache" ref="calendarCache"/>
 		<property name="userToken" value="${userinfo.userid.key}"/>
 	</bean>
+
+	Uncomment the Cached Credentials initialization service
+	 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
+		<property name="userToken"><value>${userinfo.userid.key}</value></property>
+	 </bean>
+	
+----------------------
+Publishing a calendar
+----------------------
+
+When publishing a Oracle calendar, you need to specify 'url' Calendar parameter:
+
+Example:
+	url = https://calendar.myschool.edu/ocws-bin/ocas.fcgi
+	

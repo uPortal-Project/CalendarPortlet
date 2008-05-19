@@ -67,3 +67,18 @@ Add the following to applicationContext.xml:
 		<property name="cache" ref="calendarCache"/>
 		<property name="userToken" value="${userinfo.userid.key}"/>
 	</bean>
+	
+Uncomment the Cached Credentials initialization service
+	 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
+		<property name="userToken"><value>${userinfo.userid.key}</value></property>
+	 </bean>
+	
+----------------------
+Publishing a calendar
+----------------------
+
+When publishing a Blackboard calendar, you need to specify 'url' and 'glcid' Calendar parameters:
+
+Example:
+	url = https://blackboard.myschool.edu/webct/axis/
+	glcid = URN:X-WEBCT-VISTA-V1:00000000-0000-0000-0000-000000000000
