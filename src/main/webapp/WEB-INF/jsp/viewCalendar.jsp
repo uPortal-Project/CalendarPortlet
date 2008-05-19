@@ -4,6 +4,8 @@
     <fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
     
     <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
+    <link rel="stylesheet" href="<c:url value="/css/datePicker.css"/>" type="text/css" media="screen"/>
+    
     <script type="text/javascript" src="<c:url value="/scripts/ui.datepicker.js"/>"></script>
     <c:if test="${model.includeJQuery}">
         <script type="text/javascript" src="<c:url value="/scripts/jquery-1.2.3.min.js"/>"></script>
