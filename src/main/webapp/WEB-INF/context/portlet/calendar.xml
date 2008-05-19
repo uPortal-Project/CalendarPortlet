@@ -29,11 +29,23 @@
         <property name="includeJQuery"><value>${javascript.jQuery.include}</value></property>
         <property name="initializationServices">
             <list>
+            	<!--
+					Uncomment the following section if you are using CAS authenticated calendar adapters.
+				-->
                 <!--
                 <bean class="edu.yale.its.tp.portlets.calendar.service.CasProxyInitializationService">
                     <property name="proxyTicketService" ref="casService"/>
                 </bean>
                 -->
+                
+                <!--
+					Uncomment the following section if you are using cached password authenticated calendar adapters.
+				-->
+                <!-- 
+                 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
+                    <property name="userToken"><value>${userinfo.userid.key}</value></property>
+                </bean>
+                 -->
             </list>
         </property>
     </bean>
