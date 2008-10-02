@@ -57,6 +57,7 @@ import org.apache.commons.logging.LogFactory;
 
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarEvent;
+import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 
 /**
  * OracleICalAdapter is a CalendarAdapter for Oracle Calendar.
@@ -76,21 +77,43 @@ public class OracleICalAdapter implements ICalendarAdapter {
 		// get the session
 		HttpSession session = request.getSession(false);
 		if (session == null) {
-			log.warn("BlackboardVistaICalAdapter requested with a null session");
+			log.warn("OracleICalAdapter requested with a null session");
 			throw new CalendarException();
 		}
-
-		// retrieve the CAS receipt for the current user's session
-		String username = (String) session.getAttribute(userToken);
+		
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("OracleICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
+		}
 		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("OracleICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
+			throw new CalendarException();
+		}
 		
 		return getEvents(calendar,period,username,password);
 	}
 
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarException {
-		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-		String username = (String) userinfo.get(userToken);	
-		String password = (String) userinfo.get("password");
+		// get the session
+		PortletSession session = request.getSession(false);
+		if (session == null) {
+			log.warn("OracleICalAdapter requested with a null session");
+			throw new CalendarException();
+		}
+		
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("OracleICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
+		}
+		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("OracleICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
+			throw new CalendarException();
+		}
+		
 		return getEvents(calendar,period,username,password);
 	}
 	
@@ -136,9 +159,6 @@ public class OracleICalAdapter implements ICalendarAdapter {
 	 * @return ical4j Calendar object
 	 */
 	protected net.fortuna.ical4j.model.Calendar getCalendar(String url, String username, String password, Period period) throws CalendarException {
-		System.out.println("Username: "+username);
-		System.out.println("Password: "+password);
-		
 		// initialize the authentication information and set the user id
 		BasicAuth auth = new BasicAuth();
 
@@ -350,10 +370,6 @@ public class OracleICalAdapter implements ICalendarAdapter {
 		this.cache = cache;
 	}
 
-	private String userToken = "user.login.id";
-    public void setUserToken(String userToken) {
-            this.userToken = userToken;
-    }	
 }
 
 /*

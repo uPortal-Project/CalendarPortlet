@@ -60,12 +60,10 @@ Add the following to applicationContext.xml:
 	<bean id="edu.yale.its.tp.portlets.calendar.adapter.OracleICalAdapter" 
 			class="edu.yale.its.tp.portlets.calendar.adapter.OracleICalAdapter">
 		<property name="cache" ref="calendarCache"/>
-		<property name="userToken" value="${userinfo.userid.key}"/>
 	</bean>
 
 	Uncomment the Cached Credentials initialization service
 	 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
-		<property name="userToken"><value>${userinfo.userid.key}</value></property>
 	 </bean>
 	
 ----------------------

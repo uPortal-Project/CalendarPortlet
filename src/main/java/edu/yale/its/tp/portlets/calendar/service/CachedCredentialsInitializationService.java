@@ -42,21 +42,10 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
 		
 		// get the credentials for this portlet from the UserInfo map
-		String username = (String) userinfo.get(userToken);
 		String password = (String) userinfo.get("password");
 			
-		session.setAttribute(userToken, username, PortletSession.APPLICATION_SCOPE);
 		session.setAttribute("password", password, PortletSession.APPLICATION_SCOPE);
-	
-		// increase the length of the portlet session to outlast the portal's session
-		session.setMaxInactiveInterval(60*60*2);
-
 	}	
-	
-	private String userToken = "user.login.id";
-    public void setUserToken(String userToken) {
-            this.userToken = userToken;
-    }	
 }
 
 /*

@@ -29,7 +29,7 @@ import edu.yale.its.tp.portlets.calendar.CalendarEvent;
 
 public class BasicAuthHttpICalAdapter extends HttpICalAdapter {
 
-	private static Log log = LogFactory.getLog(CasifiedICalAdapter.class);
+	private static Log log = LogFactory.getLog(BasicAuthHttpICalAdapter.class);
 
 	@Override
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
@@ -38,45 +38,50 @@ public class BasicAuthHttpICalAdapter extends HttpICalAdapter {
 		// get the session
 		PortletSession session = request.getPortletSession(false);
 		if (session == null) {
-			log.warn("BasicAuthHttpICalAdapter requested with a null session");
+			log.error("BasicAuthHttpICalAdapter requested with a null session");
 			throw new CalendarException();
 		}
 
 		// retrieve the user's credentials
-		String password = (String) session.getAttribute("password",
-				PortletSession.APPLICATION_SCOPE);
-		if (password == null) {
-			Map<String, String> userinfo = (Map<String, String>) request
-					.getAttribute(PortletRequest.USER_INFO);
-			password = userinfo.get("password");
-			session.setAttribute("password", password,
-					PortletSession.APPLICATION_SCOPE);
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("BasicAuthHttpICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
 		}
-		String userid = (String) session.getAttribute("subscribeId",
-				PortletSession.APPLICATION_SCOPE);
-
-		return getEvents(calendarListing, period,
-				new UsernamePasswordCredentials(userid, password));
+		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("BasicAuthHttpICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
+			throw new CalendarException();
+		}
+		
+		return getEvents(calendarListing, period,new UsernamePasswordCredentials(username, password));
 
 	}
 
 	@Override
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarListing,
 			Period period, HttpServletRequest request) throws CalendarException {
-
+		
 		// get the session
 		HttpSession session = request.getSession(false);
 		if (session == null) {
-			log.warn("CasifiedICalFeed requested with a null session");
+			log.warn("BasicAuthHttpICalAdapter requested with a null session");
+			throw new CalendarException();
+		}
+		
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("BasicAuthHttpICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
+		}
+		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("BasicAuthHttpICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
 			throw new CalendarException();
 		}
 
-		// retrieve the user's credentials
-		String password = (String) session.getAttribute("password");
-		String userid = (String) session.getAttribute("subscribeId");
-
 		return getEvents(calendarListing, period,
-				new UsernamePasswordCredentials(userid, password));
+				new UsernamePasswordCredentials(username, password));
 
 	}
 

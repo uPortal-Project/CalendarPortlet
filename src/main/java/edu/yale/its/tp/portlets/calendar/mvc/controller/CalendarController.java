@@ -54,24 +54,26 @@ public class CalendarController extends AbstractController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		PortletSession session = request.getPortletSession(true);
 		HashMap<Long, String> hiddenCalendars = null;
-		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
 		Calendar cal = Calendar.getInstance();
-
-		// get this portlet's unique subscription id
-		String subscribeId = (String) userinfo.get(userToken);
-		if (subscribeId == null) {
-			subscribeId = "guest";
-			model.put("guest", true);
-		} else {
-			model.put("guest", false);
-		}
-
+		
+		//default to guest
+		String subscribeId = "guest";
+		
 		/**
 		 * If this is a new session, perform any necessary 
 		 * portlet initialization.
 		 */
 
 		if (session.getAttribute("initialized") == null) {
+			
+			if(userToken == null) {
+				subscribeId = request.getRemoteUser();
+	    	}
+	    	else {
+	    		// get the credentials for this portlet from the UserInfo map
+	    		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+	    		subscribeId = (String) userinfo.get(userToken);    		
+	    	}
 			
 			session.setAttribute("subscribeId", subscribeId, PortletSession.APPLICATION_SCOPE);
 
@@ -129,6 +131,15 @@ public class CalendarController extends AbstractController {
 					.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
 		}
 
+		
+		// get this portlet's unique subscription id
+		if ("guest".equalsIgnoreCase(subscribeId)) {
+			model.put("guest", true);
+		} else {
+			model.put("guest", false);
+		}
+		
+		
 		/**
 		 * Add and remove calendars from the hidden list.  Hidden calendars
 		 * will be fetched, but rendered invisible in the view.
@@ -261,7 +272,7 @@ public class CalendarController extends AbstractController {
 		this.calendarStore = calendarStore;
 	}
 
-	private String userToken = "user.login.id";
+	private String userToken = null;
 	public void setUserToken(String userToken) {
 		this.userToken = userToken;
 	}

@@ -51,6 +51,7 @@ import com.webct.platform.sdk.context.gen.SessionVO;
 import edu.yale.its.tp.cas.client.CASReceipt;
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarEvent;
+import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 
 /**
  * BlackboardVistaICalAdapter is a CalendarAdapter for Blackboard Vista Learning System's Calendar.
@@ -70,21 +71,42 @@ public class BlackboardVistaICalAdapter implements ICalendarAdapter {
 		// get the session
 		HttpSession session = request.getSession(false);
 		if (session == null) {
-			log.warn("BlackboardVistaICalAdapter requested with a null session");
+			log.error("BlackboardVistaICalAdapter requested with a null session");
 			throw new CalendarException();
 		}
 
-		// retrieve the CAS receipt for the current user's session
-		String username = (String) session.getAttribute(userToken);
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("BlackboardVistaICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
+		}
 		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("BlackboardVistaICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
+			throw new CalendarException();
+		}
 		
 		return getEvents(calendar,period,username,password);
 	}
 
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarException {
-		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-		String username = (String) userinfo.get(userToken);	
-		String password = (String) userinfo.get("password");
+		PortletSession session = request.getSession(false);
+		if (session == null) {
+			log.warn("BlackboardVistaICalAdapter requested with a null session");
+			throw new CalendarException();
+		}
+		
+		String username = (String) session.getAttribute("subscribeId");
+		if (username == null) {
+			log.error("BlackboardVistaICalAdapter cannot find the subscribeId");
+			throw new CalendarException();
+		}
+		String password = (String) session.getAttribute("password");
+		if (password == null) {
+			log.error("BlackboardVistaICalAdapter cannot find the users password, try configuring the CachedCredentialsInitializationService");
+			throw new CalendarException();
+		}
+		
 		return getEvents(calendar,period,username,password);
 	}
 	
@@ -332,11 +354,6 @@ public class BlackboardVistaICalAdapter implements ICalendarAdapter {
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}
-	
-	private String userToken = "user.login.id";
-    public void setUserToken(String userToken) {
-            this.userToken = userToken;
-    }	
 }
 
 /*

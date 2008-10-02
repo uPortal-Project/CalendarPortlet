@@ -43,7 +43,6 @@
 				-->
                 <!-- 
                  <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
-                    <property name="userToken"><value>${userinfo.userid.key}</value></property>
                 </bean>
                  -->
             </list>
