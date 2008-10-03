@@ -90,7 +90,7 @@ public class BlackboardVistaICalAdapter implements ICalendarAdapter {
 	}
 
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarException {
-		PortletSession session = request.getSession(false);
+		PortletSession session = request.getPortletSession(false);
 		if (session == null) {
 			log.warn("BlackboardVistaICalAdapter requested with a null session");
 			throw new CalendarException();

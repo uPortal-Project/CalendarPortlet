@@ -13,11 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -37,10 +37,8 @@ import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Version;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-
 import oracle.calendar.soap.client.CalendarUtils;
 import oracle.calendar.soap.client.CalendaringResponse;
 import oracle.calendar.soap.client.Calendarlet;
@@ -57,7 +55,6 @@ import org.apache.commons.logging.LogFactory;
 
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.CalendarEvent;
-import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 
 /**
  * OracleICalAdapter is a CalendarAdapter for Oracle Calendar.
@@ -97,7 +94,7 @@ public class OracleICalAdapter implements ICalendarAdapter {
 
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarException {
 		// get the session
-		PortletSession session = request.getSession(false);
+		PortletSession session = request.getPortletSession(false);
 		if (session == null) {
 			log.warn("OracleICalAdapter requested with a null session");
 			throw new CalendarException();
