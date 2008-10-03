@@ -55,9 +55,7 @@ public class CalendarController extends AbstractController {
 		PortletSession session = request.getPortletSession(true);
 		HashMap<Long, String> hiddenCalendars = null;
 		Calendar cal = Calendar.getInstance();
-		
-		//default to guest
-		String subscribeId = "guest";
+		String subscribeId = null;
 		
 		/**
 		 * If this is a new session, perform any necessary 
@@ -75,6 +73,10 @@ public class CalendarController extends AbstractController {
 	    		subscribeId = (String) userinfo.get(userToken);    		
 	    	}
 			
+			//default to guest
+			if (subscribeId == null) {
+				subscribeId = "guest";
+			}
 			session.setAttribute("subscribeId", subscribeId, PortletSession.APPLICATION_SCOPE);
 
 			// get a set of all role names currently configured for
@@ -127,18 +129,15 @@ public class CalendarController extends AbstractController {
 
 		} else {
 			// get the list of hidden calendars
-			hiddenCalendars = (HashMap<Long, String>) session
-					.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
+			hiddenCalendars = (HashMap<Long, String>) session.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
+			subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
 		}
 
-		
-		// get this portlet's unique subscription id
 		if ("guest".equalsIgnoreCase(subscribeId)) {
 			model.put("guest", true);
 		} else {
 			model.put("guest", false);
 		}
-		
 		
 		/**
 		 * Add and remove calendars from the hidden list.  Hidden calendars
