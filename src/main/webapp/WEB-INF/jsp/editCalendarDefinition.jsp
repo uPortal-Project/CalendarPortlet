@@ -65,12 +65,12 @@
        <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
        	<form:hidden path="id"/>
 		<p>
-			<label class="portlet-form-field-label">Calendar name:</label>
+			<label class="portlet-form-field-label">Calendar Display Name:</label>
 			<form:input path="name" size="50"/>
 			<form:errors path="name" cssClass="portlet-msg-error"/>
 		</p>
           	<p>
-               <label class="portlet-form-field-label">Calendar class:</label>
+               <label class="portlet-form-field-label">Context Bean Name:</label>
                <form:input path="className" size="50"/>
 			<form:errors path="className" cssClass="portlet-msg-error"/>
 		</p>

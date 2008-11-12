@@ -21,7 +21,6 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.UserDefinedCalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.UserDefinedCalendarDefinition;
-import edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter;
 import edu.yale.its.tp.portlets.calendar.dao.CalendarStore;
 import edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand;
 
@@ -113,7 +112,7 @@ public class EditUserHttpICalController extends SimpleFormController {
 		} else {
 			
 			definition = new UserDefinedCalendarDefinition();
-			definition.setClassName(HttpICalAdapter.class.getName());
+			definition.setClassName("httpIcalAdapter");
 			definition.addParameter("url", form.getUrl());
 			definition.setName(form.getName());
 			calendarStore.storeCalendarDefinition(definition);

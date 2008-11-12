@@ -8,7 +8,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/context/applicationContext.xml</param-value>
+        <param-value>/WEB-INF/context/applicationContext.xml,/WEB-INF/context/calendarContext.xml</param-value>
     </context-param>
     <context-param>
         <param-name>log4jConfigLocation</param-name>
@@ -18,6 +18,7 @@
         <param-name>webAppRootKey</param-name>
         <param-value>calendar.root</param-value>
     </context-param>
+    
     <listener>
         <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
     </listener>
@@ -44,7 +45,7 @@
         <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
         <init-param>
             <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-            <param-value>https://secure.its.yale.edu/cas/proxy</param-value>
+            <param-value>https://localhost:8443/cas/proxy</param-value>
         </init-param>
     </servlet>
 

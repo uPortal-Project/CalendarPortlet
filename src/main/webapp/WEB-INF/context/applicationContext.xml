@@ -37,45 +37,6 @@
 		</property>
 	</bean>
 	
-	
-	<!-- CALENDAR ADAPTER REGISTRATIONS -->
-	
-	<!-- basic HttpClient iCal feed adapter -->
-	<bean id="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter">
-		<property name="cache" ref="calendarCache"/>
-	</bean>
-
-	<!-- Rss feed adapter -->
-	<bean id="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter">
-	</bean>
-
-	<!--
-		Uncomment the following section to enable cached password basic authentication calendars.
-	-->
-	<!-- Basic authentication HttpClient iCal feed adapter -->
-	<!--
-	<bean id="edu.yale.its.tp.portlets.calendar.adapter.BasicAuthHttpICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.BasicAuthHttpICalAdapter">
-		<property name="cache" ref="calendarCache"/>
-	</bean>
-	-->
-	
-	<!-- 
-		Uncomment the following section to enable CAS Proxy calendars.
-	-->
-	<!--
-	<bean id="casService" class="edu.yale.its.tp.cas.portlet.ProxyTicketService">
-		<property name="casValidateUrl" value="https://cas.school.edu/cas/proxyValidate"/>
-		<property name="serviceUrl" value="https://portal.school.edu/CalendarPortlet"/>
-		<property name="urlOfProxyCallbackServlet" value="https://portal.school.edu/CalendarPortlet/CasProxyCallback"/>
-	</bean>
-	<bean id="edu.yale.its.tp.portlets.calendar.adapter.CasifiedICalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.CasifiedICalAdapter">
-		<property name="proxyTicketService" ref="casService"/>
-		<property name="cache" ref="calendarCache"/>
-	</bean>
-	-->
-	
-	<!-- register more calendar adapter implementations here -->
-
 	<!-- Message source for this context, loaded from localized "messages_xx" files -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
@@ -84,7 +45,6 @@
 			</list>
 		</property>
 	</bean>
-	
 
 	<!-- Default View Resolver -->
 	<bean id="viewResolver"

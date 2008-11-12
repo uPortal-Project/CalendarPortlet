@@ -41,10 +41,10 @@
                 <!--
 					Uncomment the following section if you are using cached password authenticated calendar adapters.
 				-->
-                <!-- 
-                 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
-                </bean>
-                 -->
+                <!--
+                <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService"/>
+                -->
+                
             </list>
         </property>
     </bean>

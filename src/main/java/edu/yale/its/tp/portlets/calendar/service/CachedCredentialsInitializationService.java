@@ -45,6 +45,7 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		String password = (String) userinfo.get("password");
 			
 		session.setAttribute("password", password, PortletSession.APPLICATION_SCOPE);
+		session.setAttribute("username", request.getRemoteUser(), PortletSession.APPLICATION_SCOPE);
 	}	
 }
 
