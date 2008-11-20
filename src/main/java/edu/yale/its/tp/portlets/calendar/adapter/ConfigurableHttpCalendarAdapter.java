@@ -266,6 +266,13 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, 
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter#getLink(edu.yale.its.tp.portlets.calendar.CalendarConfiguration)
+	 */
+	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
+		throw new CalendarLinkException("This calendar has no link");
+	}
+	
 	/**
 	 * Uses Commons HttpClient to retrieve the specified url (optionally with the provided 
 	 * {@link Credentials}.

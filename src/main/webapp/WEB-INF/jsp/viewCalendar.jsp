@@ -38,7 +38,7 @@
         <td style="padding: 5px;">
         
 		<div style="padding-bottom: 3px;">
-			Calendars:
+			Show calendar:
 			<div style="padding-left: 7px; padding-right: 7px;">
 				<c:forEach items="${ model.calendars }" var="calendar">
 					<span class="color-${ model.colors[calendar.id] }">
@@ -58,6 +58,18 @@
 						</c:choose>
 						${ calendar.calendarDefinition.name }
 	 				</span>
+				</c:forEach>
+			</div>
+        </div>
+         <div style="padding-bottom: 3px;">
+			Go to calendar:
+			<div style="padding-left: 7px; padding-right: 7px;">
+				<c:forEach items="${ model.calendars }" var="calendar">
+					<c:if test="${ empty model.hiddenCalendars[calendar.id] && not empty model.links[calendar.id]}">
+						<a href="${ model.links[calendar.id] }" rel="popup" class="color-${ model.colors[calendar.id] }">
+							${ calendar.calendarDefinition.name }	
+						</a> |
+					</c:if>
 				</c:forEach>
 			</div>
         </div>
@@ -89,7 +101,7 @@
 					</c:otherwise>
 				</c:choose>
 			</div>
-        </div>
+        </div> 
         </td>
         </tr>
     </table>

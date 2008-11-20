@@ -147,6 +147,13 @@ public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingl
 
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter#getLink(edu.yale.its.tp.portlets.calendar.CalendarConfiguration)
+	 */
+	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
+		throw new CalendarLinkException("This calendar has no link");
+	}
+	
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}

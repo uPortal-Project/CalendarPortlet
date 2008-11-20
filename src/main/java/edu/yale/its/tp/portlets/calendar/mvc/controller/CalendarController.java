@@ -40,6 +40,7 @@ import org.springframework.web.portlet.mvc.AbstractController;
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.VEventStartComparator;
 import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
+import edu.yale.its.tp.portlets.calendar.adapter.CalendarLinkException;
 import edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter;
 import edu.yale.its.tp.portlets.calendar.dao.CalendarStore;
 import edu.yale.its.tp.portlets.calendar.service.IInitializationService;
@@ -64,7 +65,7 @@ public class CalendarController extends AbstractController {
 
 		if (session.getAttribute("initialized") == null) {
 			
-			if(userToken == null) {
+			if(userToken == null || userToken.equalsIgnoreCase("")) {
 				subscribeId = request.getRemoteUser();
 	    	}
 	    	else {
@@ -224,6 +225,7 @@ public class CalendarController extends AbstractController {
 		ApplicationContext ctx = this.getApplicationContext();
 		TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
+		Map<Long, String> links = new HashMap<Long, String>();
 		int index = 0;
 		List<String> errors = new ArrayList<String>();
 		for (CalendarConfiguration callisting : calendars) {
@@ -241,13 +243,16 @@ public class CalendarController extends AbstractController {
 					// time period
 					events.addAll(adapter.getEvents(callisting, period, request));
 	
+					links.put(callisting.getId(), adapter.getLink(callisting, period, request));
+					
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
+				} catch (CalendarLinkException linkEx) {
+					log.warn(linkEx);
 				} catch (CalendarException ex) {
 					log.warn(ex);
 					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
 				}
-
 			}
 
 			// add this calendar's id to the color map
@@ -259,6 +264,7 @@ public class CalendarController extends AbstractController {
 		model.put("timezone", session.getAttribute("timezone", PortletSession.APPLICATION_SCOPE));
 		model.put("events", events);
 		model.put("colors", colors);
+		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);
 		model.put("errors", errors);
 		model.put("includeJQuery", includeJQuery);
