@@ -43,9 +43,7 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		
 		// get the credentials for this portlet from the UserInfo map
 		String password = (String) userinfo.get("password");
-			
 		session.setAttribute("password", password, PortletSession.APPLICATION_SCOPE);
-		session.setAttribute("username", request.getRemoteUser(), PortletSession.APPLICATION_SCOPE);
 	}	
 }
 
