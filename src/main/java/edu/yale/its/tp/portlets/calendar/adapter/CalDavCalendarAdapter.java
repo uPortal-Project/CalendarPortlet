@@ -153,6 +153,13 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		return events;
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter#getLink(edu.yale.its.tp.portlets.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
+	 */
+	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarLinkException {
+		throw new CalendarLinkException("This calendar has no link");
+	}
+	
 	protected final List<net.fortuna.ical4j.model.Calendar> retrieveCalendars(
 			String url, Period period, Credentials credentials) {
 
