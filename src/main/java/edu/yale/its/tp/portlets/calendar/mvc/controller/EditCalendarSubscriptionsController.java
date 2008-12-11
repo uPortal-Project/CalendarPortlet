@@ -46,13 +46,14 @@ public class EditCalendarSubscriptionsController extends AbstractController {
 			RenderResponse response) throws Exception {
 
 		Map<String, Object> model = new HashMap<String, Object>();
+		PortletSession session = request.getPortletSession();
 
 		// get user information
-		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-		String subscribeId = (String) userinfo.get(userToken);
-		if (subscribeId == null) {
-			subscribeId = "guest";
+		String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
+		if ("guest".equalsIgnoreCase(subscribeId)) {
 			model.put("guest", true);
+		} else {
+			model.put("guest", false);
 		}
 
 		// add the user-defined calendars to the model
@@ -64,7 +65,6 @@ public class EditCalendarSubscriptionsController extends AbstractController {
 		model.put("calendars", calendars);
 		
 		// get the user's role listings
-		PortletSession session = request.getPortletSession();
 		Set<String> userRoles = (Set<String>) session.getAttribute("userRoles", PortletSession.APPLICATION_SCOPE);
 
 		// get a list of predefined calendars the user doesn't 
@@ -103,8 +103,7 @@ public class EditCalendarSubscriptionsController extends AbstractController {
 			hidden.remove(config.getId());
 		} else if (actionCode.equals("showNew")) {
 			// get user information
-			Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-			String subscribeId = (String) userinfo.get(userToken);
+			String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
 			PredefinedCalendarDefinition definition = (PredefinedCalendarDefinition) calendarStore.getCalendarDefinition(id);
 			log.debug("definition to save " + definition.toString());
 			PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
@@ -113,13 +112,6 @@ public class EditCalendarSubscriptionsController extends AbstractController {
 			calendarStore.storeCalendarConfiguration(config);
 		}
 	}
-
-
-	private String userToken = "user.login.id";
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
-	}
-	
 
 	private Map predefinedEditActions;
 	public void setPredefinedEditActions(Map predefinedEditActions) {

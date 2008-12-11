@@ -52,7 +52,6 @@
     <!-- view and edit calendar subscriptions -->
     <bean id="editCalendarSubscriptionsController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarSubscriptionsController">
-        <property name="userToken" value="${userinfo.userid.key}"/>
         <property name="predefinedEditActions">
             <map>
                 <!-- Add edit screens for custom calendar adapters -->
@@ -92,7 +91,6 @@
         <property name="sessionForm">
             <value>false</value>
         </property>
-        <property name="userToken" value="${userinfo.userid.key}"/>
         <property name="commandName" value="calendarListingCommand"/>
         <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand"/>
         <property name="validator" ref="beanValidator"/>

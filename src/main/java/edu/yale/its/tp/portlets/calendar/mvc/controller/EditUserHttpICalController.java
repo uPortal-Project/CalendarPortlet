@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +46,7 @@ public class EditUserHttpICalController extends SimpleFormController {
 	 * @see org.springframework.web.portlet.mvc.AbstractFormController#formBackingObject(javax.portlet.PortletRequest)
 	 */
 	protected Object formBackingObject(PortletRequest request) throws Exception {
+		PortletSession session = request.getPortletSession();
 
 		// if we're editing a calendar, retrieve the calendar definition from
 		// the database and add the information to the form
@@ -67,8 +69,8 @@ public class EditUserHttpICalController extends SimpleFormController {
 				// otherwise, construct a brand new form
 
 				// get user information
-				Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-				String subscribeId = (String) userinfo.get(userToken);
+				// get user information
+				String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
 				
 				// create the form
 				CalendarListingCommand command =  new CalendarListingCommand();
@@ -80,8 +82,8 @@ public class EditUserHttpICalController extends SimpleFormController {
 			// otherwise, construct a brand new form
 
 			// get user information
-			Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
-			String subscribeId = (String) userinfo.get(userToken);
+			// get user information
+			String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
 			
 			// create the form
 			CalendarListingCommand command =  new CalendarListingCommand();
@@ -132,11 +134,6 @@ public class EditUserHttpICalController extends SimpleFormController {
 
 	}
 
-	private String userToken = "user.login.id";
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
-	}
-	
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
