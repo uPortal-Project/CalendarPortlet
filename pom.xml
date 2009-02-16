@@ -25,6 +25,11 @@
             <url>http://developer.ja-sig.org/maven2</url>
         </repository>
         <repository>
+            <id>caldav4j.repo</id>
+            <name>CalDav4J Repository</name>
+            <url>http://caldav4j.googlecode.com/svn/trunk/maven/</url>
+        </repository>
+        <repository>
             <id>Codehaus Snapshots</id>
             <url>http://snapshots.repository.codehaus.org/</url>
             <snapshots>
