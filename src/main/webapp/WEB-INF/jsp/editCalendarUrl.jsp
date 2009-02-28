@@ -33,5 +33,5 @@
     <hr />
     <p>
       	<a href="<portlet:renderURL><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>">
-            <img src="<c:url value="/images/arrow_left.png"/>" style="vertical-align: middle"> Return to main edit page</a>
+            <img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>" style="vertical-align: middle"> Return to main edit page</a>
     </p>

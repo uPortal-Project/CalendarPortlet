@@ -21,7 +21,7 @@
       			<a href="<portlet:renderURL><portlet:param name="action" value="editCalendarDefinition"/>
       					<portlet:param name="id" value="${ calendar.id }"/></portlet:renderURL>"
       					title="Edit calendar">
-     					<img alt="edit" src="<c:url value="/images/calendar_edit.png"/>"/>
+     					<img alt="edit" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_edit.png"/>"/>
     					</a>
       		</td>
       		<td class="instruction">
@@ -29,7 +29,7 @@
       					<portlet:param name="actionCode" value="delete"/>
       					<portlet:param name="id" value="${ calendar.id }"/></portlet:actionURL>"
       					title="Delete calendar">
-      				<img alt="delete" src="<c:url value="/images/calendar_delete.png"/>"/>
+      				<img alt="delete" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_delete.png"/>"/>
       			</a>
       		</td>
       	</tr>
@@ -37,7 +37,7 @@
      </table>
      <p>
      	<a href="<portlet:renderURL><portlet:param name="action" value="editCalendarDefinition"/></portlet:renderURL>">
-     		<img src="<c:url value="/images/calendar_add.png"/>" style="vertical-align: middle"/> 
+     		<img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_add.png"/>" style="vertical-align: middle"/> 
      		add a calendar
      	</a>
      </p>
@@ -45,5 +45,5 @@
      <br />
      <hr />
      <p>
-     	<a href="<portlet:renderURL portletMode="view"/>"><img src="<c:url value="/images/arrow_left.png"/>" style="vertical-align: middle"> Return to calendar</a>
+     	<a href="<portlet:renderURL portletMode="view"/>"><img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>" style="vertical-align: middle"> Return to calendar</a>
      </p>

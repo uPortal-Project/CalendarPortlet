@@ -32,14 +32,14 @@
 	        			<a href="<portlet:renderURL><portlet:param name="action" value="editUrl"/>
 	        					<portlet:param name="id" value="${ calendar.id }"/></portlet:renderURL>"
 	        					title="Edit calendar">
-	        				<img alt="edit" src="<c:url value="/images/calendar_edit.png"/>"/>
+	        				<img alt="edit" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_edit.png"/>"/>
 	        			</a>
 	        		</td>
 	        		<td class="instruction">
 	        			<a href="<portlet:actionURL><portlet:param name="actionCode" value="delete"/>
 	        					<portlet:param name="id" value="${ calendar.id }"/></portlet:actionURL>"
 	        					title="Delete calendar">
-	        				<img alt="delete" src="<c:url value="/images/calendar_delete.png"/>"/>
+	        				<img alt="delete" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_delete.png"/>"/>
 	        			</a>
 	        		</td>
 	        	</tr>
@@ -47,7 +47,7 @@
         	<tr>
         		<td width="7px;">&nbsp;</td>
         		<td colspan="4" style="padding-top: 10px; padding-bottom: 15px; padding-left:5px;">
-			        	<a href="<portlet:renderURL><portlet:param name="action" value="editUrl"/></portlet:renderURL>"><img src="<c:url value="/images/calendar_add.png"/>" style="vertical-align: middle"/> add a calendar</a>
+			        	<a href="<portlet:renderURL><portlet:param name="action" value="editUrl"/></portlet:renderURL>"><img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_add.png"/>" style="vertical-align: middle"/> add a calendar</a>
 			        	<br/>
         		</td>
         	</tr>
@@ -70,7 +70,7 @@
 			        			<a href="<portlet:renderURL><portlet:param name="action" value="${ editAction }"/>
 			        					<portlet:param name="id" value="${ calendar.id }"/></portlet:renderURL>"
 			        					title="Edit calendar">
-		        					<img alt="edit" src="<c:url value="/images/calendar_edit.png"/>"/>
+		        					<img alt="edit" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_edit.png"/>"/>
 	        					</a>
 							</c:when>
 							<c:otherwise>&nbsp;</c:otherwise>
@@ -120,5 +120,5 @@
         <br />
         <hr />
         <p>
-        	<a href="<portlet:renderURL portletMode="view"/>"><img src="<c:url value="/images/arrow_left.png"/>" style="vertical-align: middle"> Return to calendar</a>
+        	<a href="<portlet:renderURL portletMode="view"/>"><img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>" style="vertical-align: middle"> Return to calendar</a>
         </p>

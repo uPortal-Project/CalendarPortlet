@@ -4,30 +4,34 @@
     <fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
     
     <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
-    <link rel="stylesheet" href="<c:url value="/css/datePicker.css"/>" type="text/css" media="screen"/>
     
-    <script type="text/javascript" src="<c:url value="/scripts/ui.datepicker.js"/>"></script>
     <c:if test="${model.includeJQuery}">
-        <script type="text/javascript" src="<c:url value="/scripts/jquery-1.2.3.min.js"/>"></script>
+	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.1/jquery-1.3.1.min.js"/>"></script>
+	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.6rc6/jquery-ui-1.6rc6.min.js"/>"></script>
     </c:if>
     <script type="text/javascript">
-	     $(document).ready(function(){
-		    $('#<portlet:namespace/>inlineCalendar').datepicker(
-		    	{ 
-		    	    inline: true,
-		    		changeMonth: false,
-		    		changeYear: false,
-				    onSelect: function(date) {
-				        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
-				        $.get(
-				            '<c:url value="/listEvents"/>', 
-				            { startDate: date }, 
-				            function(xml){ $("#<portlet:namespace/>events").html(xml) }
-				        );
-				    } 
-				}
-			);
-		}); 
+    	var cal = cal || {};
+    	cal.jQuery = jQuery.noConflict(${model.includeJQuery});
+    	cal.jQuery(function(){
+    		var $ = cal.jQuery;
+	    	$(document).ready(function(){
+			    $('#<portlet:namespace/>inlineCalendar').datepicker(
+			    	{ 
+			    	    inline: true,
+			    		changeMonth: false,
+			    		changeYear: false,
+					    onSelect: function(date) {
+					        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
+					        $.get(
+					            '<c:url value="/listEvents"/>', 
+					            { startDate: date }, 
+					            function(xml){ $("#<portlet:namespace/>events").html(xml) }
+					        );
+					    } 
+					}
+				);
+			});
+		});
     </script>
 
     <table width="100%">
@@ -35,10 +39,10 @@
         <td>
             <div id="<portlet:namespace/>inlineCalendar" class="jqueryui"></div>
         </td>
-        <td style="padding: 5px;">
+        <td style="padding: 5px; vertical-align: top">
         
-		<div style="padding-bottom: 3px;">
-			Show calendar:
+		<div style="padding-bottom: 10px;">
+			<span>Show calendar:</span>
 			<div style="padding-left: 7px; padding-right: 7px;">
 				<c:forEach items="${ model.calendars }" var="calendar">
 					<span class="color-${ model.colors[calendar.id] }">
@@ -74,7 +78,7 @@
 			</div>
         </div>
 		<div style="padding-bottom: 3px;">
-        	Range:
+        	<span>Range:</span>
 			<div style="padding-left: 7px; padding-right: 7px;">
 				<c:choose>
 					<c:when test="${ model.days == 1 }">today</c:when>
@@ -175,7 +179,7 @@
 	    <hr />
 	    <p>
 	        <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>">
-	            <img src="<c:url value="/images/calendar_edit.png"/>" style="vertical-align: middle">
+	            <img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/calendar_edit.png"/>" style="vertical-align: middle">
 	            Edit and download calendars</a>
 	     
 		    <c:if test="${ sessionScope.isAdmin }">

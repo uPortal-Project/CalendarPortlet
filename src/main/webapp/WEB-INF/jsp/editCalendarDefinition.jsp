@@ -14,7 +14,7 @@
 			remove.onclick = function(){removeRole(this)};
 			remove.appendChild(document.createTextNode(' '));
 			var img = document.createElement('img');
-			img.src = '<c:url value="/images/delete.png"/>';
+			img.src = '<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>';
 			img.style.verticalAlign = 'middle';
 			remove.appendChild(img);
 			container.appendChild(remove);
@@ -45,7 +45,7 @@
 			remove.onclick = function(){removeRole(this)};
 			remove.appendChild(document.createTextNode(' '));
 			var img = document.createElement('img');
-			img.src = '<c:url value="/images/delete.png"/>';
+			img.src = '<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>';
 			img.style.verticalAlign = 'middle';
 			remove.appendChild(img);
 			container.appendChild(remove);
@@ -81,13 +81,13 @@
 				<div style="padding-left: 5px;">
 					<input name="role" type="text" value="${ role }" size="20"/>
 					<a href="javascript:;" onclick="removeRole(this)">
-						<img style="vertical-align: middle;" src="<c:url value="/images/delete.png"/>"/>
+						<img style="vertical-align: middle;" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>"/>
 					</a>
 				</div>
 			</c:forEach>
 			<div style="padding: 5px;">
 				<a href="javascript:;" onclick="addRole('<portlet:namespace/>role-list')">
-					<img style="vertical-align: middle;" src="<c:url value="/images/add.png"/>"/>
+					<img style="vertical-align: middle;" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/add.png"/>"/>
 					add a role</a>
 			</div>
 		</p>
@@ -98,13 +98,13 @@
 					<input name="parameterName" type="text" value="${ paramName }" size="20"/>
 					<input name="parameterValue" type="text" value="${ calendarDefinitionForm.parameterValue[status.index] }" size="20"/>
 					<a href="javascript:;" onclick="removeParameter(this)">
-						<img style="vertical-align: middle;" src="<c:url value="/images/delete.png"/>"/>
+						<img style="vertical-align: middle;" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>"/>
 					</a>
 				</div>
 			</c:forEach>
 			<div style="padding: 5px;">
 				<a href="javascript:;" onclick="addParameter('<portlet:namespace/>parameter-list')">
-					<img style="vertical-align: middle;" src="<c:url value="/images/add.png"/>"/>
+					<img style="vertical-align: middle;" src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/add.png"/>"/>
 					add a parameter</a>
 			</div>
 		</p>
@@ -115,5 +115,5 @@
        <br />
        <hr />
        <p>
-       	<a href="<portlet:renderURL><portlet:param name="action" value="administration"/></portlet:renderURL>"><img src="<c:url value="/images/arrow_left.png"/>" style="vertical-align: middle"> Return to main administration page</a>
+       	<a href="<portlet:renderURL><portlet:param name="action" value="administration"/></portlet:renderURL>"><img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>" style="vertical-align: middle"> Return to main administration page</a>
        </p>

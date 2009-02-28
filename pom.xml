@@ -209,7 +209,13 @@
         </dependency>
         
         <!-- ===== Runtime Dependencies ================================== -->
-
+        
+        <dependency>
+            <groupId>org.jasig.resourceserver</groupId>
+            <artifactId>resource-server-utils</artifactId>
+            <version>1.0.0-RC1</version>            
+        </dependency>
+    
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>

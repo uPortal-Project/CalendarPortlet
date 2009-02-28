@@ -10,5 +10,6 @@
 
 <%@ taglib prefix="html" tagdir="/WEB-INF/tags/html" %>
 <%@ taglib prefix="uwfn" tagdir="/WEB-INF/tags/uwfn" %>
+<%@ taglib prefix="rs" uri="http://www.jasig.org/resource-server" %>
 
 <portlet:defineObjects/>
