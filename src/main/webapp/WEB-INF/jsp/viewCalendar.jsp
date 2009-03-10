@@ -14,14 +14,13 @@
     	cal.jQuery = jQuery.noConflict(${model.includeJQuery});
     	cal.jQuery(function(){
     		var $ = cal.jQuery;
-		$(document).ready(function(){
-			$("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
-			$.get('<c:url value="/listEvents"/>',
-					{ startDate: <fmt:formatDate value="${startDate}" type="date" pattern="MM/dd/yyyy"/> },
-					function(xml){ $("#<portlet:namespace/>events").html(xml) }
+    		console.log('hi?');
+			$(document).ready(function(){
+				$("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
+				$.post('<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',
+						{ startDate: <fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/> },
+						function(xml){ $("#<portlet:namespace/>events").html(xml) }
 				);
-			});
-	    	$(document).ready(function(){
 			    $('#<portlet:namespace/>inlineCalendar').datepicker(
 			    	{ 
 			    	    inline: true,
@@ -29,8 +28,9 @@
 			    		changeYear: false,
 					    onSelect: function(date) {
 					        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
-					        $.get(
-					            '<c:url value="/listEvents"/>', 
+					        $.post(
+					        	'<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',
+					            //'<c:url value="/listEvents"/>', 
 					            { startDate: date }, 
 					            function(xml){ $("#<portlet:namespace/>events").html(xml) }
 					        );

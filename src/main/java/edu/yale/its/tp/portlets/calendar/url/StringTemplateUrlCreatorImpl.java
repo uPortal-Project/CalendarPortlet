@@ -47,8 +47,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 		if (session == null) {
 			throw new CalendarException();
 		}
-		String username = (String) session.getAttribute("username",
-				PortletSession.APPLICATION_SCOPE);
+		String username = (String) session.getAttribute("username");
 
 		return constructUrlInternal(configuration, period, username);
 	}

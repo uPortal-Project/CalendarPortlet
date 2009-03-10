@@ -35,6 +35,20 @@
     <bean id="fileIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableFileCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
     </bean>
+
+    <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
+    <bean id="calDavAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.CalDavCalendarAdapter">
+        <property name="cache" ref="calendarCache"/>
+        <property name="credentialsExtractor">
+            <bean class="edu.yale.its.tp.portlets.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
+        </property>
+        <property name="cacheKeyGenerator">
+            <bean class="edu.yale.its.tp.portlets.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+        </property>
+        <property name="urlCreator">
+            <bean class="edu.yale.its.tp.portlets.calendar.url.StringTemplateUrlCreatorImpl"/>
+        </property>
+    </bean>
     
     
     <!--

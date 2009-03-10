@@ -109,12 +109,12 @@ public class RequestAttributeCredentialsExtractorImpl implements ICredentialsExt
 		}
 
 		// retrieve the user's credentials
-		String username = (String) session.getAttribute(usernameAttribute, PortletSession.APPLICATION_SCOPE);
+		String username = (String) session.getAttribute(usernameAttribute);
 		if (username == null) {
 			log.error("username attribute (" + usernameAttribute + ") does not exist in session");
 			throw new CalendarException();
 		}
-		String password = (String) session.getAttribute(passwordAttribute, PortletSession.APPLICATION_SCOPE);
+		String password = (String) session.getAttribute(passwordAttribute);
 		if (password == null) {
 			log.error("password attribute (" + passwordAttribute + ") does not exist in session");
 			throw new CalendarException();

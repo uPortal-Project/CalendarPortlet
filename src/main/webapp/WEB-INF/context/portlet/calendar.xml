@@ -19,6 +19,11 @@
         </property>
     </bean>
     
+    <bean id="sessionKeyGenerator" class="edu.yale.its.tp.portlets.calendar.mvc.util.DefaultSessionKeyGenerator">
+        <property name="seed" value="0" />
+    </bean>
+    
+    
     <!-- Controllers -->
 
     <!-- main portlet view -->
@@ -111,25 +116,23 @@
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
     
+    <bean id="ajaxCalendarController"
+        class="edu.yale.its.tp.portlets.calendar.mvc.controller.AjaxCalendarController">
+        <property name="calendarStore" ref="calendarStore"/>
+        <property name="sessionKeyGenerator" ref="sessionKeyGenerator"/>
+    </bean>
     
     <!-- Handler Mapping -->
-
-    <bean id="parameterMappingInterceptor"
-        class="org.springframework.web.portlet.handler.ParameterMappingInterceptor"/>
 
     <bean id="portletModeParameterHandlerMapping"
         class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
         <property name="order" value="1"/>
-        <property name="interceptors">
-            <list>
-                <ref bean="parameterMappingInterceptor"/>
-            </list>
-        </property>
         <property name="portletModeParameterMap">
             <map>
                 <entry key="view">
                     <map>
                         <entry key="list" value-ref="viewCalendarController"/>
+                        <entry key="events" value-ref="ajaxCalendarController"/>
                     </map>
                 </entry>
                 <entry key="edit">
@@ -139,6 +142,7 @@
                         <entry key="editUrl" value-ref="editCalendarConfigurationController"/>
                         <entry key="administration" value-ref="adminCalendarController"/>
                         <entry key="editCalendarDefinition" value-ref="editCalendarDefinitionController"/>
+                        <entry key="editStoredCredentialsCalendar" value-ref="editStoredCredentialsController"/>
                     </map>
                 </entry>
             </map>

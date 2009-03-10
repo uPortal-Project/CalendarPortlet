@@ -7,10 +7,6 @@
  */
 package edu.yale.its.tp.portlets.calendar.mvc.controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -28,7 +23,6 @@ import javax.portlet.RenderResponse;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,8 +32,6 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
-import edu.yale.its.tp.portlets.calendar.VEventStartComparator;
-import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 import edu.yale.its.tp.portlets.calendar.adapter.CalendarLinkException;
 import edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter;
 import edu.yale.its.tp.portlets.calendar.dao.CalendarStore;
@@ -78,7 +70,7 @@ public class CalendarController extends AbstractController {
 			if (subscribeId == null) {
 				subscribeId = "guest";
 			}
-			session.setAttribute("subscribeId", subscribeId, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("subscribeId", subscribeId);
 
 			// get a set of all role names currently configured for
 			// default calendars
@@ -92,13 +84,12 @@ public class CalendarController extends AbstractController {
 				if (request.isUserInRole(role))
 					userRoles.add(role);
 			}
-			session.setAttribute("userRoles", userRoles, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("userRoles", userRoles);
 			
 			// determine if this user belongs to the defined calendar
 			// administration group and store the result in the session
 			session.setAttribute("isAdmin", 
-					request.isUserInRole("calendarAdmin"),
-					PortletSession.APPLICATION_SCOPE);
+					request.isUserInRole("calendarAdmin"));
 
 			// update the user's calendar subscriptions to include
 			// any calendars that have been associated with his or 
@@ -107,13 +98,13 @@ public class CalendarController extends AbstractController {
 
 			// create a list of hidden calendars
 			hiddenCalendars = new HashMap<Long, String>();
-			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("hiddenCalendars", hiddenCalendars);
 
 			// set now as the starting date
-			session.setAttribute("startDate", cal.getTime(), PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("startDate", cal.getTime());
 			
 			// set the default number of days to display
-			session.setAttribute("days", defaultDays, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("days", defaultDays);
 
 			// perform any other configured initialization tasks
 			for (IInitializationService service : initializationServices) {
@@ -126,12 +117,12 @@ public class CalendarController extends AbstractController {
 			
 			PortletPreferences prefs = request.getPreferences();
 			String timezone = prefs.getValue("timezone", "America/New_York");
-			session.setAttribute("timezone", timezone, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("timezone", timezone);
 
 		} else {
 			// get the list of hidden calendars
-			hiddenCalendars = (HashMap<Long, String>) session.getAttribute("hiddenCalendars", PortletSession.APPLICATION_SCOPE);
-			subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
+			hiddenCalendars = (HashMap<Long, String>) session.getAttribute("hiddenCalendars");
+			subscribeId = (String) session.getAttribute("subscribeId");
 		}
 
 		if ("guest".equalsIgnoreCase(subscribeId)) {
@@ -150,7 +141,7 @@ public class CalendarController extends AbstractController {
 		String hideCalendar = request.getParameter("hideCalendar");
 		if (hideCalendar != null) {
 			hiddenCalendars.put(Long.valueOf(hideCalendar), "true");
-			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("hiddenCalendars", hiddenCalendars);
 		}
 
 		// check the request parameters to see if we need to remove
@@ -158,7 +149,7 @@ public class CalendarController extends AbstractController {
 		String showCalendar = request.getParameter("showCalendar");
 		if (showCalendar != null) {
 			hiddenCalendars.remove(Long.valueOf(showCalendar));
-			session.setAttribute("hiddenCalendars", hiddenCalendars, PortletSession.APPLICATION_SCOPE);
+			session.setAttribute("hiddenCalendars", hiddenCalendars);
 		}
 
 		/**
@@ -166,19 +157,19 @@ public class CalendarController extends AbstractController {
 		 */
 
 		//StartDate can only be changed via an AJAX request
-		Date startDate = (Date) session.getAttribute("startDate", PortletSession.APPLICATION_SCOPE);
+		Date startDate = (Date) session.getAttribute("startDate");
 		log.debug("startDate from session is: "+startDate);
 		cal.setTime(startDate);
 		model.put("startDate", startDate);
 
 		// find how many days into the future we should display events
-		int days = (Integer) session.getAttribute("days", PortletSession.APPLICATION_SCOPE);
+		int days = (Integer) session.getAttribute("days");
 		//check whether the number of days has been changed in this request
 		String timePeriod = (String) request.getParameter("timePeriod");
 		if (timePeriod != null && !timePeriod.equals("")) {
 			try {
 				days = Integer.parseInt(timePeriod);
-				session.setAttribute("days", days, PortletSession.APPLICATION_SCOPE);
+				session.setAttribute("days", days);
 			} catch (NumberFormatException ex) {
 				log.warn("Failed to parse desired time period", ex);
 			}
@@ -245,7 +236,7 @@ public class CalendarController extends AbstractController {
 
 		}
 
-		model.put("timezone", session.getAttribute("timezone", PortletSession.APPLICATION_SCOPE));
+		model.put("timezone", session.getAttribute("timezone"));
 		model.put("colors", colors);
 		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);

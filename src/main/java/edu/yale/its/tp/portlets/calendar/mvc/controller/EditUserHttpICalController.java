@@ -70,7 +70,7 @@ public class EditUserHttpICalController extends SimpleFormController {
 
 				// get user information
 				// get user information
-				String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
+				String subscribeId = (String) session.getAttribute("subscribeId");
 				
 				// create the form
 				CalendarListingCommand command =  new CalendarListingCommand();
@@ -83,7 +83,7 @@ public class EditUserHttpICalController extends SimpleFormController {
 
 			// get user information
 			// get user information
-			String subscribeId = (String) session.getAttribute("subscribeId", PortletSession.APPLICATION_SCOPE);
+			String subscribeId = (String) session.getAttribute("subscribeId");
 			
 			// create the form
 			CalendarListingCommand command =  new CalendarListingCommand();

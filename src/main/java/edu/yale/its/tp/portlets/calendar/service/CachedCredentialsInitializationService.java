@@ -7,19 +7,13 @@
  */
 package edu.yale.its.tp.portlets.calendar.service;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
-
-import edu.yale.its.tp.cas.client.CASReceipt;
-import edu.yale.its.tp.cas.portlet.ProxyTicketService;
 
 /**
  * CachedCredentialsInitializationService initializes authentication resources when a 
@@ -43,7 +37,7 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		
 		// get the credentials for this portlet from the UserInfo map
 		String password = (String) userinfo.get("password");
-		session.setAttribute("password", password, PortletSession.APPLICATION_SCOPE);
+		session.setAttribute("password", password);
 	}	
 }
 

@@ -131,7 +131,7 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		}
 
 		// retrieve the CAS receipt for the current user's session
-		CASReceipt receipt = (CASReceipt) session.getAttribute("CasReceipt", PortletSession.APPLICATION_SCOPE);
+		CASReceipt receipt = (CASReceipt) session.getAttribute("CasReceipt");
 		if (receipt == null) {
 			log.warn("CasifiedICalFeed cannot find a CAS receipt object");
 			throw new CalendarException();

@@ -54,7 +54,7 @@ public class CasProxyInitializationService implements IInitializationService {
 					// construct a CASReceipt from this proxy ticket and save
 					// it to the portlet session
 					CASReceipt receipt = proxyTicketService.getProxyTicket(ticket);
-					session.setAttribute("CasReceipt", receipt, PortletSession.APPLICATION_SCOPE);
+					session.setAttribute("CasReceipt", receipt);
 					session.setAttribute("username", receipt.getUserName());
 					
 				} catch (IOException e) {

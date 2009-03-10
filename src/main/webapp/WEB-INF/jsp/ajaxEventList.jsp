@@ -1,22 +1,22 @@
     <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-    <fmt:setTimeZone value="${ model.timezone }"/>
-    <fmt:formatDate var="today" value="${model.today}" pattern="EEEE MMMM d"/>
-    <fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
+    <fmt:setTimeZone value="${ timezone }"/>
+    <fmt:formatDate var="today" value="${today}" pattern="EEEE MMMM d"/>
+    <fmt:formatDate var="tomorrow" value="${tomorrow}" pattern="EEEE MMMM d"/>
     
-    <c:if test="${ not empty model.errors }">
+    <c:if test="${ not empty errors }">
         <p class="portlet-msg-error">
-            <c:forEach items="${ model.errors }" var="error">${ error }<br/></c:forEach>
+            <c:forEach items="${ errors }" var="error">${ error }<br/></c:forEach>
         </p>
     </c:if>
     
-    <c:if test="${ empty model.events }">
+    <c:if test="${ empty events }">
         <p>No events.</p>
     </c:if>
     
     <div id="calEvents" style="padding-bottom: 10px;">
         <table id="calendarEventsListTable" class="yaleEvents"
             style="align-vertical: top; width: 100%">
-            <c:forEach items="${model.events}" var="event" varStatus="status">
+            <c:forEach items="${events}" var="event" varStatus="status">
                <fmt:formatDate var="startDate" value="${event.startDate.date}"
                    pattern="EEEE MMMM d"/>
                <fmt:formatDate var="endDate" value="${event.endDate.date}"
@@ -38,7 +38,7 @@
                <tr>
                    <fmt:formatDate var="startTime" value="${event.startDate.date}" pattern="h:mm a"/>
                    <fmt:formatDate var="endTime" value="${event.endDate.date}" pattern="h:mm a"/>
-                   <c:set var="class" value="${ model.colors[event.calendarId] }"/>
+                   <c:set var="class" value="${ colors[event.calendarId] }"/>
                    <c:choose>
                        <c:when test="${event.allDay}">
                            <td class="time color-${ class }">All day</td>

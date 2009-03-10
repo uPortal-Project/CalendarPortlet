@@ -34,7 +34,7 @@ public class EditCalendarPreferencesController extends SimpleFormController {
 		prefs.store();
 
 		PortletSession session = request.getPortletSession();
-		session.setAttribute("timezone", form.getTimezone(), PortletSession.APPLICATION_SCOPE);
+		session.setAttribute("timezone", form.getTimezone());
 
 		// send the user back to the main edit page
 		response.setRenderParameter("action", "editSubscriptions");
