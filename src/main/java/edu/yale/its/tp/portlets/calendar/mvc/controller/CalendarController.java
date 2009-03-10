@@ -165,24 +165,15 @@ public class CalendarController extends AbstractController {
 		 * Find our desired starting and ending dates.
 		 */
 
-
-		// if the user requested a specific date, use it
+		//StartDate can only be changed via an AJAX request
 		Date startDate = (Date) session.getAttribute("startDate", PortletSession.APPLICATION_SCOPE);
-		DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd");
-		String requestedDate = (String) request.getParameter("date");
-		if (requestedDate != null && !requestedDate.equals("")) {
-			try {
-				startDate = df.parse(requestedDate);
-				cal.setTime(startDate);
-				session.setAttribute("startDate", startDate, PortletSession.APPLICATION_SCOPE);
-			} catch (ParseException ex) {
-				log.warn("Failed to parse starting date for event", ex);
-			}
-		}
+		log.debug("startDate from session is: "+startDate);
+		cal.setTime(startDate);
 		model.put("startDate", startDate);
 
 		// find how many days into the future we should display events
 		int days = (Integer) session.getAttribute("days", PortletSession.APPLICATION_SCOPE);
+		//check whether the number of days has been changed in this request
 		String timePeriod = (String) request.getParameter("timePeriod");
 		if (timePeriod != null && !timePeriod.equals("")) {
 			try {
@@ -214,20 +205,17 @@ public class CalendarController extends AbstractController {
 		model.put("tomorrow", cal.getTime());
 
 		/**
-		 * Get all the events for this user, and add them to our event list
+		 * retrieve the calendars defined for this portlet instance
 		 */
-
-		// retrieve the calendars defined for this portlet instance
+		
 		List<CalendarConfiguration> calendars = calendarStore
 				.getCalendarConfigurations(subscribeId);
 		model.put("calendars", calendars);
 
 		ApplicationContext ctx = this.getApplicationContext();
-		TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
 		Map<Long, String> links = new HashMap<Long, String>();
 		int index = 0;
-		List<String> errors = new ArrayList<String>();
 		for (CalendarConfiguration callisting : calendars) {
 
 			// don't bother to fetch hidden calendars
@@ -239,19 +227,15 @@ public class CalendarController extends AbstractController {
 					ICalendarAdapter adapter = (ICalendarAdapter) ctx.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
-					// retrieve a list of events for this calendar for the desired
-					// time period
-					events.addAll(adapter.getEvents(callisting, period, request));
-	
+					//get hyperlink to calendar
 					links.put(callisting.getId(), adapter.getLink(callisting, period, request));
 					
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
 				} catch (CalendarLinkException linkEx) {
 					log.warn(linkEx);
-				} catch (CalendarException ex) {
-					log.warn(ex);
-					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
+				} catch (Exception ex) {
+					log.error(ex);
 				}
 			}
 
@@ -262,11 +246,9 @@ public class CalendarController extends AbstractController {
 		}
 
 		model.put("timezone", session.getAttribute("timezone", PortletSession.APPLICATION_SCOPE));
-		model.put("events", events);
 		model.put("colors", colors);
 		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);
-		model.put("errors", errors);
 		model.put("includeJQuery", includeJQuery);
 
 		return new ModelAndView("/viewCalendar", "model", model);

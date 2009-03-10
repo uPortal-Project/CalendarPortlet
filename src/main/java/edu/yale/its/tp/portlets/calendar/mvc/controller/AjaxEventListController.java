@@ -48,14 +48,18 @@ public class AjaxEventListController extends AbstractController {
 		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
 			.getAttribute("hiddenCalendars");
 
-		// if the user requested a specific date, use it instead
 		Date startDate = (Date) session.getAttribute("startDate");
+		log.debug("startDate from session is: "+startDate);
+
+		// if the user requested a specific date, use it instead
 		DateFormat df = new SimpleDateFormat("MM'/'dd'/'yyyy");
 		String requestedDate = (String) request.getParameter("startDate");
 		if (requestedDate != null && !requestedDate.equals("")) {
 			try {
 				startDate = df.parse(requestedDate);
 				session.setAttribute("startDate", startDate);
+				
+				log.debug("adding new start date to session: "+startDate);
 			} catch (ParseException ex) {
 				log.warn("Failed to parse starting date for event", ex);
 			}
@@ -127,6 +131,9 @@ public class AjaxEventListController extends AbstractController {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
 				} catch (CalendarException ex) {
 					log.warn(ex);
+					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
+				} catch (Exception e) {
+					log.error("Undefined error: "+e.getClass());
 					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
 				}
 
