@@ -21,6 +21,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.web.portlet.mvc.AbstractAjaxController;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
@@ -29,18 +30,17 @@ import edu.yale.its.tp.portlets.calendar.VEventStartComparator;
 import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 import edu.yale.its.tp.portlets.calendar.adapter.ICalendarAdapter;
 import edu.yale.its.tp.portlets.calendar.dao.CalendarStore;
-import edu.yale.its.tp.portlets.calendar.mvc.AbstractAjaxController;
 
 public class AjaxCalendarController extends AbstractAjaxController {
 
 	private static Log log = LogFactory.getLog(AjaxCalendarController.class);
 
 	@Override
-	protected Map<?, ?> handleAjaxRequestInternal(ActionRequest request,
+	protected Map<Object, Object> handleAjaxRequestInternal(ActionRequest request,
 			ActionResponse response) throws Exception {
 		
 		PortletSession session = request.getPortletSession();
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<Object, Object> model = new HashMap<Object, Object>();
 		
 		// get the list of hidden calendars
 		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session

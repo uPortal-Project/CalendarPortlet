@@ -14,7 +14,6 @@
     	cal.jQuery = jQuery.noConflict(${model.includeJQuery});
     	cal.jQuery(function(){
     		var $ = cal.jQuery;
-    		console.log('hi?');
 			$(document).ready(function(){
 				$("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
 				$.post('<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',

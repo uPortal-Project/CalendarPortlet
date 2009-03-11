@@ -68,6 +68,8 @@
 		</property>
 	</bean>
 
+	<bean id="modelPasser" class="org.jasig.web.util.DefaultModelPasser"/>
+		
 	<!-- Abstract Default Exception Handler Bean -->
 	<bean id="defaultExceptionHandlerTemplate"
 		class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver"

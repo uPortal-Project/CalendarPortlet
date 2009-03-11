@@ -19,7 +19,7 @@
         </property>
     </bean>
     
-    <bean id="sessionKeyGenerator" class="edu.yale.its.tp.portlets.calendar.mvc.util.DefaultSessionKeyGenerator">
+    <bean id="sessionKeyGenerator" class="org.jasig.web.util.DefaultSessionKeyGenerator">
         <property name="seed" value="0" />
     </bean>
     
@@ -119,6 +119,7 @@
     <bean id="ajaxCalendarController"
         class="edu.yale.its.tp.portlets.calendar.mvc.controller.AjaxCalendarController">
         <property name="calendarStore" ref="calendarStore"/>
+        <property name="modelPasser" ref="modelPasser"/>
         <property name="sessionKeyGenerator" ref="sessionKeyGenerator"/>
     </bean>
     
@@ -142,7 +143,6 @@
                         <entry key="editUrl" value-ref="editCalendarConfigurationController"/>
                         <entry key="administration" value-ref="adminCalendarController"/>
                         <entry key="editCalendarDefinition" value-ref="editCalendarDefinitionController"/>
-                        <entry key="editStoredCredentialsCalendar" value-ref="editStoredCredentialsController"/>
                     </map>
                 </entry>
             </map>
