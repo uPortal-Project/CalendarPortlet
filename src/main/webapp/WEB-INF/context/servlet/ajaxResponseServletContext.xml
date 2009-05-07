@@ -4,7 +4,7 @@
 >
 
     <bean id="ajaxResponseController" class="org.jasig.web.servlet.mvc.AjaxResponseController">
-        <property name="viewName" value="ajaxFeedList"/>
+        <property name="viewName" value="ajaxEventList"/>
         <property name="modelPasser" ref="modelPasser"/>
     </bean>
     
