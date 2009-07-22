@@ -97,7 +97,7 @@
     -->
     <!-- CAS Proxy service bean -->
     <!--
-    <bean id="casService" class="edu.yale.its.tp.cas.portlet.ProxyTicketService">
+    <bean id="casService" class="edu.yale.its.tp.cas.portlet.CASProxyTicketServiceUserInfoImpl">
         <property name="casValidateUrl" value="https://localhost:8443/cas/proxyValidate"/>
         <property name="serviceUrl" value="https://localhost:8443/CalendarPortlet"/>
         <property name="urlOfProxyCallbackServlet" value="https://localhost:8443/CalendarPortlet/CasProxyCallback"/>
