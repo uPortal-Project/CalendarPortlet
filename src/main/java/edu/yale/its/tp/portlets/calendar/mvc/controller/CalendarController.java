@@ -89,7 +89,7 @@ public class CalendarController extends AbstractController {
 			// determine if this user belongs to the defined calendar
 			// administration group and store the result in the session
 			session.setAttribute("isAdmin", 
-					request.isUserInRole("calendarAdmin"));
+					request.isUserInRole("calendarAdmin"), PortletSession.APPLICATION_SCOPE);
 
 			// update the user's calendar subscriptions to include
 			// any calendars that have been associated with his or 
