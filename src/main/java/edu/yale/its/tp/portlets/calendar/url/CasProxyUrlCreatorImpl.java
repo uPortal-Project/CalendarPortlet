@@ -40,22 +40,24 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.fortuna.ical4j.model.Period;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.fortuna.ical4j.model.Period;
 import edu.yale.its.tp.cas.client.CASReceipt;
-import edu.yale.its.tp.cas.portlet.ProxyTicketService;
+import edu.yale.its.tp.cas.portlet.ICASProxyTicketService;
+import edu.yale.its.tp.cas.portlet.CASProxyTicketServiceUserInfoImpl;
 import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
 import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
 
 /**
  * This {@link IUrlCreator} implementation requires injection
- * of a CAS {@link ProxyTicketService}.
+ * of a CAS {@link CASProxyTicketServiceUserInfoImpl}.
  * It retrieves a url from the {@link CalendarConfiguration}, in a
  * parameter named "url".
  * 
- * The CAS {@link ProxyTicketService} is used to retrieve a proxy ticket for the currently
+ * The CAS {@link CASProxyTicketServiceUserInfoImpl} is used to retrieve a proxy ticket for the currently
  * authenticated user, which is appended to the to the value of the
  * "url" parameter as an attribute named "ticket".
  * 
@@ -66,13 +68,13 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 
 	private Log log = LogFactory.getLog(this.getClass());
 
-	private ProxyTicketService proxyTicketService;
+	private ICASProxyTicketService proxyTicketService;
 
 	/**
 	 * 
 	 * @param proxyTicketService
 	 */
-	public void setProxyTicketService(ProxyTicketService proxyTicketService) {
+	public void setProxyTicketService(ICASProxyTicketService proxyTicketService) {
 		this.proxyTicketService = proxyTicketService;
 	}
 	
@@ -105,7 +107,9 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		finalUrl.append(configuredUrl);
 
 		if (proxyTicket != null) {
-			finalUrl.append("?ticket=");
+			String separator = configuredUrl.contains("?") ? "&" : "?";
+			finalUrl.append(separator);
+			finalUrl.append("ticket=");
 			finalUrl.append(proxyTicket);
 		} else {
 			log.warn("No CAS ticket could be obtained for " + configuredUrl
@@ -142,7 +146,9 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		StringBuilder finalUrl = new StringBuilder();
 		finalUrl.append(configuredUrl);
 		if (proxyTicket != null) {
-			finalUrl.append("?ticket=");
+			String separator = configuredUrl.contains("?") ? "&" : "?";
+			finalUrl.append(separator);
+			finalUrl.append("ticket=");
 			finalUrl.append(proxyTicket);
 		} else {
 			log.warn("No CAS ticket could be obtained for " + configuredUrl

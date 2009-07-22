@@ -8,7 +8,9 @@
 package edu.yale.its.tp.cas.portlet;
 
 import java.io.IOException;
+import java.util.Map;
 
+import javax.portlet.PortletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
@@ -19,17 +21,30 @@ import edu.yale.its.tp.cas.client.CASReceipt;
 import edu.yale.its.tp.cas.client.ProxyTicketValidator;
 import edu.yale.its.tp.cas.proxy.ProxyTicketReceptor;
 
-public class ProxyTicketService {
+public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService {
 	
-	private static Log log = LogFactory.getLog(ProxyTicketService.class);
+	private static Log log = LogFactory.getLog(CASProxyTicketServiceUserInfoImpl.class);
 
 	private String casValidateUrl = "https://secure.its.yale.edu/cas/proxyValidate";
 	private String serviceUrl = "https://portaltest.its.yale.edu/CalendarPortlet";
 	private String urlOfProxyCallbackServlet = "https://portaltest.its.yale.edu/CalendarPortlet/CasProxyCallback";
 
-	
-	public CASReceipt getProxyTicket(String ticket) throws IOException, SAXException, ParserConfigurationException {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.cas.portlet.ICASProxyTicketService#getProxyTicket(javax.portlet.PortletRequest)
+	 */
+	public CASReceipt getProxyTicket(PortletRequest request) {
 
+		// retrieve the CAS ticket from the UserInfo map
+		@SuppressWarnings("unchecked")
+		Map<String,String> userinfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
+		String ticket = (String) userinfo.get("casProxyTicket");
+		
+		if (ticket == null) {
+			log.debug("No CAS ticket found in the UserInfo map");
+			return null;
+		}
+		
 		String errorCode = null;
 		String errorMessage = null;
 		String xmlResponse = null;
@@ -46,7 +61,18 @@ public class ProxyTicketService {
 		pv.setProxyCallbackUrl(this.urlOfProxyCallbackServlet);
 
 		/* contact CAS and validate */
-		pv.validate();
+		try {
+			pv.validate();
+		} catch (IOException e) {
+			log.warn("Failed to validate proxy ticket", e);
+			return null;
+		} catch (SAXException e) {
+			log.warn("Failed to validate proxy ticket", e);
+			return null;
+		} catch (ParserConfigurationException e) {
+			log.warn("Failed to validate proxy ticket", e);
+			return null;
+		}
 
 		/* if we want to look at the raw response, we can use getResponse() */
 		xmlResponse = pv.getResponse();
@@ -73,6 +99,10 @@ public class ProxyTicketService {
 
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.yale.its.tp.cas.portlet.ICASProxyTicketService#getCasServiceToken(edu.yale.its.tp.cas.client.CASReceipt, java.lang.String)
+	 */
 	public String getCasServiceToken(CASReceipt receipt, String target) {
 		String pgtIou = receipt.getPgtIou();
         if (log.isTraceEnabled()) {
