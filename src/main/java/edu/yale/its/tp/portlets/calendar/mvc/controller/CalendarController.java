@@ -240,7 +240,6 @@ public class CalendarController extends AbstractController {
 		model.put("colors", colors);
 		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);
-		model.put("includeJQuery", includeJQuery);
 
 		return new ModelAndView("/viewCalendar", "model", model);
 	}
@@ -260,11 +259,6 @@ public class CalendarController extends AbstractController {
 		this.defaultDays = defaultDays;
 	}
 	
-	private boolean includeJQuery = true;
-	public void setIncludeJQuery(boolean includeJQuery) {
-		this.includeJQuery = includeJQuery;
-	}
-
 	private List<IInitializationService> initializationServices;
 	public void setInitializationServices(List<IInitializationService> services) {
 		this.initializationServices = services;
