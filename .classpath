@@ -6,12 +6,12 @@
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/portlet/portlet-api/1.0/portlet-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jasig/AjaxPortletSupport/1.0.2/AjaxPortletSupport-1.0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jasig/AjaxPortletSupport/1.0.4/AjaxPortletSupport-1.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm/1.5.3/asm-1.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jasig/caldav4j-jasig/0.4-SNAPSHOT/caldav4j-jasig-0.4-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/osaf/caldav4j/0.5/caldav4j-0.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/cas/casclient/2.1.1/casclient-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/cglib/cglib/2.1_3/cglib-2.1_3.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
@@ -25,7 +25,7 @@
   <classpathentry kind="var" path="M2_REPO/commons-validator/commons-validator/1.3.1/commons-validator-1.3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.6.0/ehcache-1.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.6.2/ehcache-1.6.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache-web/1.6.0-beta2/ehcache-web-1.6.0-beta2.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/ezmorph/ezmorph/1.0.4/ezmorph-1.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.3.ga/hibernate-3.2.3.ga.jar"/>
@@ -39,17 +39,18 @@
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.2/junit-4.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
   <classpathentry kind="var" path="M2_REPO/oro/oro/2.0.8/oro-2.0.8.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jasig/resourceserver/resource-server-utils/1.0.1/resource-server-utils-1.0.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jasig/resourceserver/resource-server-utils/1.0.4/resource-server-utils-1.0.4.jar" sourcepath="M2_REPO/org/jasig/resourceserver/resource-server-utils/1.0.4/resource-server-utils-1.0.4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/jdb53/.m2/repository/org/jasig/resourceserver/resource-server-utils/1.0.4/resource-server-utils-1.0.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/rome/rome/0.9/rome-0.9.jar"/>
-  <classpathentry kind="src" path="/SharedCASProxyTickets"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring/2.0.6/spring-2.0.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.0.5/spring-context-2.0.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.5.6/spring-context-2.5.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.0.5/spring-core-2.0.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springmodules/spring-modules-cache/0.8a/spring-modules-cache-0.8a.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springmodules/spring-modules-validation/0.8a/spring-modules-validation-0.8a.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-portlet/2.0.5/spring-portlet-2.0.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.6/spring-core-2.5.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springmodules/spring-modules-cache/0.8/spring-modules-cache-0.8.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springmodules/spring-modules-validation/0.8/spring-modules-validation-0.8.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.5.6/spring-web-2.5.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc-portlet/2.5.6/spring-webmvc-portlet-2.5.6.jar"/>

@@ -1,9 +1,7 @@
 <projectDescription>
   <name>CalendarPortlet</name>
   <comment>Calendar Portlet.</comment>
-  <projects>
-    <project>SharedCASProxyTickets</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.maven.ide.eclipse.maven2Builder</name>

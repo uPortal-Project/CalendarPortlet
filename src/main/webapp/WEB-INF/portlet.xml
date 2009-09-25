@@ -27,6 +27,10 @@
                 <name>timezone</name>
                 <value>America/Chicago</value>
             </preference>
+            <preference>
+                <name>includeJQuery</name>
+                <value>true</value>
+            </preference>
         </portlet-preferences>
         
         <!--

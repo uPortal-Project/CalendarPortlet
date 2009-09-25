@@ -1,23 +1,24 @@
-    <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-    <fmt:setTimeZone value="${ model.timezone }"/>
-    <fmt:formatDate var="today" value="${model.today}" pattern="EEEE MMMM d"/>
-    <fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
+<jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
+<c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
+<fmt:setTimeZone value="${ model.timezone }"/>
+<fmt:formatDate var="today" value="${model.today}" pattern="EEEE MMMM d"/>
+<fmt:formatDate var="tomorrow" value="${model.tomorrow}" pattern="EEEE MMMM d"/>
     
     <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
     
-    <c:if test="${model.includeJQuery}">
+    <c:if test="${includeJQuery}">
 	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.1/jquery-1.3.1.min.js"/>"></script>
 	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.6rc6/jquery-ui-1.6rc6.min.js"/>"></script>
     </c:if>
     <script type="text/javascript">
     	var cal = cal || {};
-    	cal.jQuery = jQuery.noConflict(${model.includeJQuery});
+    	cal.jQuery = jQuery.noConflict(${includeJQuery});
     	cal.jQuery(function(){
     		var $ = cal.jQuery;
 			$(document).ready(function(){
 				$("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
 				$.post('<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',
-						{ startDate: <fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/> },
+						{ startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>' },
 						function(xml){ $("#<portlet:namespace/>events").html(xml) }
 				);
 			    $('#<portlet:namespace/>inlineCalendar').datepicker(
