@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jasig</groupId>
@@ -16,13 +14,13 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.0-M2-SNAPSHOT</version>
+    <version>1.0.0-M2</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/trunk</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/trunk</developerConnection>
-        <url>http://developer.jasig.org/source/browse/jasigsvn/portlets/CalendarPortlet/trunk</url>
+        <connection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/rel-1.0.0-M2</connection>
+        <developerConnection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/rel-1.0.0-M2</developerConnection>
+        <url>http://developer.jasig.org/source/browse/jasigsvn/portlets/CalendarPortlet/tags/rel-1.0.0-M2</url>
     </scm>
 
     <distributionManagement>
