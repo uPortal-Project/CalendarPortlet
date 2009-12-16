@@ -65,16 +65,22 @@
         </security-role-ref>
     </portlet>
     
+    <!-- 
+        Username with which to associate user data.  Must match the value 
+        of "userinfo.userid.key" in configuration.properties. 
+    -->
     <user-attribute>
         <name>user.login.id</name>
     </user-attribute>
 
-    <user-attribute>
-        <name>password</name>
-    </user-attribute>
-    
-    <user-attribute>
+    <!-- Uncomment to use Proxy CAS authentication -->
+    <!--user-attribute>
         <name>casProxyTicket</name>
-    </user-attribute>
-    
+    </user-attribute-->
+
+    <!-- Uncomment to use cached password authentication -->
+    <!--user-attribute>
+        <name>password</name>
+    </user-attribute-->
+        
 </portlet-app>
