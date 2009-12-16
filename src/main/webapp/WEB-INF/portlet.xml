@@ -23,10 +23,22 @@
         </portlet-info>
         
         <portlet-preferences>
+            
+            <!-- Default display timezone -->
             <preference>
                 <name>timezone</name>
                 <value>America/Chicago</value>
             </preference>
+            
+            <!-- 
+                Set includeJQuery to true to explicitly import jQuery and
+                jQuery UI javascript libraries within the portlet.  When true,
+                this setting will also cause the portlet to use jQuery's 
+                noConflict feature in extreme mode.
+                
+                This setting should be set to "true" for uPortal 3.1 and above,
+                and false for earlier uPortal versions or for Liferay.
+            -->
             <preference>
                 <name>includeJQuery</name>
                 <value>true</value>
