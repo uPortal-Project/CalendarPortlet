@@ -50,13 +50,13 @@
                    <td class="color-${ class }">
                     <c:choose>
                         <c:when test="${ not empty event.url }">
-                            <a href="${ event.url.value }" class="color-${ class }" target="_blank">${ event.summary.value }</a>
+                            <a href="${ event.url.value }" class="color-${ class }" target="_blank"><c:out value="${ event.summary.value }"/></a>
                         </c:when>
-                        <c:otherwise>${ event.summary.value }</c:otherwise>
+                        <c:otherwise><c:out value="${ event.summary.value }"/></c:otherwise>
                     </c:choose>
                     </td>
                 <td class="color-${ class }">
-                    ${ event.location.value }
+                    <c:out value="${ event.location.value }"/>
                 </td>
                </tr>
            </c:forEach>

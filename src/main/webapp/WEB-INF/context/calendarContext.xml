@@ -82,7 +82,6 @@
      +-->
     
     <!-- Sample CAS Proxy authenticated adapter for iCal-formatted calendars over https -->
-    <!--
     <bean id="casProxyHttpIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="urlCreator">
@@ -94,15 +93,12 @@
             <bean class="edu.yale.its.tp.portlets.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
         </property>
     </bean>
-    -->
     <!-- CAS Proxy service bean -->
-    <!--
     <bean id="casService" class="edu.yale.its.tp.cas.portlet.CASProxyTicketServiceUserInfoImpl">
-        <property name="casValidateUrl" value="https://localhost:8443/cas/proxyValidate"/>
-        <property name="serviceUrl" value="https://localhost:8443/CalendarPortlet"/>
-        <property name="urlOfProxyCallbackServlet" value="https://localhost:8443/CalendarPortlet/CasProxyCallback"/>
+        <property name="casValidateUrl" value="https://localhost:8080/cas/proxyValidate"/>
+        <property name="serviceUrl" value="https://localhost:8080/CalendarPortlet"/>
+        <property name="urlOfProxyCallbackServlet" value="https://localhost:8080/CalendarPortlet/CasProxyCallback"/>
     </bean>
-    -->
     
     
     <!--

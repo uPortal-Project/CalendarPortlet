@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
     
     <c:if test="${includeJQuery}">
-	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.1/jquery-1.3.1.min.js"/>"></script>
-	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.6rc6/jquery-ui-1.6rc6.min.js"/>"></script>
+	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>
+	    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"/>"></script>
     </c:if>
     <script type="text/javascript">
     	var cal = cal || {};
