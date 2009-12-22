@@ -27,7 +27,7 @@ Installing the adapter
 ----------------------
 
 To use this adapter, first copy the Java file OracleICalAdapter.java 
-into the edu.yale.its.tp.portlets.calendar.adapter package.  You will also need to get the 
+into the org.jasig.portlet.calendar.adapter package.  You will also need to get the 
 Oracle library jars, manually add them to your maven repository, and then reference them from
 the project's pom.xml.  You will also need to add a bean definition for the adapter to
 context/applicationContext.xml.  
@@ -57,13 +57,13 @@ Add the following to pom.xml:
 
 Add the following to applicationContext.xml:
 
-	<bean id="edu.yale.its.tp.portlets.calendar.adapter.OracleICalAdapter" 
-			class="edu.yale.its.tp.portlets.calendar.adapter.OracleICalAdapter">
+	<bean id="org.jasig.portlet.calendar.adapter.OracleICalAdapter" 
+			class="org.jasig.portlet.calendar.adapter.OracleICalAdapter">
 		<property name="cache" ref="calendarCache"/>
 	</bean>
 
 	Uncomment the Cached Credentials initialization service
-	 <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService">
+	 <bean class="org.jasig.portlet.calendar.service.CachedCredentialsInitializationService">
 	 </bean>
 	
 ----------------------

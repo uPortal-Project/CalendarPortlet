@@ -18,35 +18,35 @@
     <alias name="httpIcalAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter"/>
     
     <!-- Simple un-authenticated adapter for iCal-formatted calendars available via http(s) -->
-    <bean id="httpIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
+    <bean id="httpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
     </bean>
     
     <!-- Simple un-authenticated adapter for RSS-formatted calendars available via http(s) -->
-    <bean id="httpRssAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
+    <bean id="httpRssAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="cacheKeyPrefix" value="rss"/>
         <property name="contentProcessor">
-            <bean class="edu.yale.its.tp.portlets.calendar.processor.RssContentProcessorImpl"/>
+            <bean class="org.jasig.portlet.calendar.processor.RssContentProcessorImpl"/>
         </property>
     </bean>
     
     <!-- Simple adapter for iCal files available as files on the server -->	
-    <bean id="fileIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableFileCalendarAdapter">
+    <bean id="fileIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
     </bean>
 
     <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
-    <bean id="calDavAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.CalDavCalendarAdapter">
+    <bean id="calDavAdapter" class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="credentialsExtractor">
-            <bean class="edu.yale.its.tp.portlets.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
+            <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
         </property>
         <property name="cacheKeyGenerator">
-            <bean class="edu.yale.its.tp.portlets.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
         </property>
         <property name="urlCreator">
-            <bean class="edu.yale.its.tp.portlets.calendar.url.StringTemplateUrlCreatorImpl"/>
+            <bean class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
         </property>
     </bean>
     
@@ -61,13 +61,13 @@
     
     <!-- Sample basic authentication HttpClient iCal feed adapter -->
     <!--
-    <bean id="basicAuthHttpIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
+    <bean id="basicAuthHttpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="credentialsExtractor">
-            <bean class="edu.yale.its.tp.portlets.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
+            <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
         </property>
         <property name="cacheKeyGenerator">
-            <bean class="edu.yale.its.tp.portlets.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
         </property>
     </bean>
     -->
@@ -82,19 +82,19 @@
      +-->
     
     <!-- Sample CAS Proxy authenticated adapter for iCal-formatted calendars over https -->
-    <bean id="casProxyHttpIcalAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
+    <bean id="casProxyHttpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="urlCreator">
-            <bean class="edu.yale.its.tp.portlets.calendar.url.CasProxyUrlCreatorImpl">
+            <bean class="org.jasig.portlet.calendar.url.CasProxyUrlCreatorImpl">
                 <property name="proxyTicketService" ref="casService"/>
             </bean>
         </property>
         <property name="cacheKeyGenerator">
-            <bean class="edu.yale.its.tp.portlets.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
         </property>
     </bean>
     <!-- CAS Proxy service bean -->
-    <bean id="casService" class="edu.yale.its.tp.cas.portlet.CASProxyTicketServiceUserInfoImpl">
+    <bean id="casService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl">
         <property name="casValidateUrl" value="https://localhost:8080/cas/proxyValidate"/>
         <property name="serviceUrl" value="https://localhost:8080/CalendarPortlet"/>
         <property name="urlOfProxyCallbackServlet" value="https://localhost:8080/CalendarPortlet/CasProxyCallback"/>
@@ -110,11 +110,11 @@
     
     <!-- Oracle calendar-key adapter -->
     <!--
-    <bean id="calendarKeyAdapter" class="edu.yale.its.tp.portlets.calendar.adapter.ConfigurableHttpCalendarAdapter">
+    <bean id="calendarKeyAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
         <property name="cache" ref="calendarCache"/>
         <property name="cacheKeyPrefix" value="calendarKey"/>
         <property name="urlCreator">
-        <bean class="edu.yale.its.tp.portlets.calendar.url.CalendarkeyUrlCreatorImpl"/>
+        <bean class="org.jasig.portlet.calendar.url.CalendarkeyUrlCreatorImpl"/>
         </property>
     </bean>	
     -->

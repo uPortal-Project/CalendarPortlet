@@ -91,7 +91,7 @@
 	</bean>
 
 	<bean id="calendarStoreTarget"
-		class="edu.yale.its.tp.portlets.calendar.dao.HibernateCalendarStore"
+		class="org.jasig.portlet.calendar.dao.HibernateCalendarStore"
 		parent="abstractHibernateTemplate"> </bean>
 
 	<bean id="abstractStoreTransactionProxy"

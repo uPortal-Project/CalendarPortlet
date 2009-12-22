@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-lazy="false" default-cascade="all-delete-orphan">
     
-    <class name="edu.yale.its.tp.portlets.calendar.CalendarConfiguration" table="CALENDAR_CONFIGURATION">
+    <class name="org.jasig.portlet.calendar.CalendarConfiguration" table="CALENDAR_CONFIGURATION">
         
         <!-- BASE CLASS PROPERTIES -->
         <!-- We don't actually intend to use the base class on its own -->
@@ -32,12 +32,12 @@
         <!-- SUBCLASSES -->
         
         <!-- user-defined calendars and their configurations -->
-        <subclass name="edu.yale.its.tp.portlets.calendar.PredefinedCalendarConfiguration"
+        <subclass name="org.jasig.portlet.calendar.PredefinedCalendarConfiguration"
             discriminator-value="PD">
             
             <many-to-one 
                 name="calendarDefinition" 
-                class="edu.yale.its.tp.portlets.calendar.PredefinedCalendarDefinition" 
+                class="org.jasig.portlet.calendar.PredefinedCalendarDefinition" 
                 column="CALENDAR_ID" 
                 cascade="none" lazy="false"/> 
             
@@ -52,12 +52,12 @@
         
         
         <!-- admin-defined, system-wide calendars -->
-        <subclass name="edu.yale.its.tp.portlets.calendar.UserDefinedCalendarConfiguration"
+        <subclass name="org.jasig.portlet.calendar.UserDefinedCalendarConfiguration"
             discriminator-value="UD">
             
             <many-to-one 
                 name="calendarDefinition" 
-                class="edu.yale.its.tp.portlets.calendar.UserDefinedCalendarDefinition"
+                class="org.jasig.portlet.calendar.UserDefinedCalendarDefinition"
                 column="CALENDAR_ID"
                 cascade="all" lazy="false"/> 
             

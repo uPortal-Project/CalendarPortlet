@@ -28,7 +28,7 @@
 
     <!-- main portlet view -->
     <bean id="viewCalendarController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.CalendarController">
+        class="org.jasig.portlet.calendar.mvc.controller.CalendarController">
         <property name="calendarStore" ref="calendarStore"/>
         <property name="userToken"><value>${userinfo.userid.key}</value></property>
         <property name="initializationServices">
@@ -36,7 +36,7 @@
             	<!--
 					Uncomment the following section if you are using CAS authenticated calendar adapters.
 				-->
-                <bean class="edu.yale.its.tp.portlets.calendar.service.CasProxyInitializationService">
+                <bean class="org.jasig.portlet.calendar.service.CasProxyInitializationService">
                     <property name="proxyTicketService" ref="casService"/>
                 </bean>
                 
@@ -44,7 +44,7 @@
 					Uncomment the following section if you are using cached password authenticated calendar adapters.
 				-->
                 <!--
-                <bean class="edu.yale.its.tp.portlets.calendar.service.CachedCredentialsInitializationService"/>
+                <bean class="org.jasig.portlet.calendar.service.CachedCredentialsInitializationService"/>
                 -->
                 
             </list>
@@ -53,12 +53,12 @@
 
     <!-- view and edit calendar subscriptions -->
     <bean id="editCalendarSubscriptionsController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarSubscriptionsController">
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarSubscriptionsController">
         <property name="predefinedEditActions">
             <map>
                 <!-- Add edit screens for custom calendar adapters -->
                 <!--
-                <entry key="edu.yale.its.tp.portlets.calendar.adapter.SomeOtherCalendarAdapter" value="editSomeOtherCalendar"/>
+                <entry key="org.jasig.portlet.calendar.adapter.SomeOtherCalendarAdapter" value="editSomeOtherCalendar"/>
                 -->
             </map>
         </property>
@@ -67,7 +67,7 @@
 
     <!-- edit calendar preferences -->
     <bean id="editCalendarPreferencesController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarPreferencesController">
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarPreferencesController">
         <property name="formView">
             <value>editCalendarPreferences</value>
         </property>
@@ -75,18 +75,18 @@
             <value>false</value>
         </property>
         <property name="commandName" value="calendarPreferencesCommand"/>
-        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarPreferencesCommand"/>
+        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand"/>
     </bean>
     
     <!-- adminstrate pre-defined calendars -->
     <bean id="adminCalendarController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.AdminCalendarController">
+        class="org.jasig.portlet.calendar.mvc.controller.AdminCalendarController">
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
     
     <!-- add or edit a user-defined calendar -->
     <bean id="editCalendarConfigurationController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditUserHttpICalController">
+        class="org.jasig.portlet.calendar.mvc.controller.EditUserHttpICalController">
         <property name="formView">
             <value>editCalendarUrl</value>
         </property>
@@ -94,14 +94,14 @@
             <value>false</value>
         </property>
         <property name="commandName" value="calendarListingCommand"/>
-        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarListingCommand"/>
+        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarListingCommand"/>
         <property name="validator" ref="beanValidator"/>
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
     
     <!-- add or edit a pre-defined calendar -->
     <bean id="editCalendarDefinitionController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.EditCalendarDefinitionController">
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarDefinitionController">
         <property name="formView">
             <value>editCalendarDefinition</value>
         </property>
@@ -109,12 +109,12 @@
             <value>false</value>
         </property>
         <property name="commandName" value="calendarDefinitionForm"/>
-        <property name="commandClass" value="edu.yale.its.tp.portlets.calendar.mvc.CalendarDefinitionForm"/>
+        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarDefinitionForm"/>
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
     
     <bean id="ajaxCalendarController"
-        class="edu.yale.its.tp.portlets.calendar.mvc.controller.AjaxCalendarController">
+        class="org.jasig.portlet.calendar.mvc.controller.AjaxCalendarController">
         <property name="calendarStore" ref="calendarStore"/>
         <property name="modelPasser" ref="modelPasser"/>
         <property name="sessionKeyGenerator" ref="sessionKeyGenerator"/>

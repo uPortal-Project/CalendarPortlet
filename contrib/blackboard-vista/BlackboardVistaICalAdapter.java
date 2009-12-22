@@ -5,7 +5,7 @@
  * (See licensing and redistribution disclosures at end of this file.)
  * 
  */
-package edu.yale.its.tp.portlets.calendar.adapter;
+package org.jasig.portlet.calendar.adapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,9 +49,9 @@ import com.webct.platform.sdk.context.exceptions.ContextException;
 import com.webct.platform.sdk.context.gen.SessionVO;
 
 import edu.yale.its.tp.cas.client.CASReceipt;
-import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
-import edu.yale.its.tp.portlets.calendar.CalendarEvent;
-import edu.yale.its.tp.portlets.calendar.adapter.CalendarException;
+import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarEvent;
+import org.jasig.portlet.calendar.adapter.CalendarException;
 
 /**
  * BlackboardVistaICalAdapter is a CalendarAdapter for Blackboard Vista Learning System's Calendar.
@@ -112,7 +112,7 @@ public class BlackboardVistaICalAdapter implements ICalendarAdapter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.yale.its.tp.portlets.calendar.CalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarDefinition, net.fortuna.ical4j.model.Period, java.util.Map)
+	 * @see org.jasig.portlet.calendar.CalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarDefinition, net.fortuna.ical4j.model.Period, java.util.Map)
 	 */
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfig, Period period, String username, String password) throws CalendarException {
 		

@@ -5,7 +5,7 @@
  * (See licensing and redistribution disclosures at end of this file.)
  * 
  */
-package edu.yale.its.tp.portlets.calendar.adapter;
+package org.jasig.portlet.calendar.adapter;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -53,8 +53,8 @@ import oracle.calendar.soap.iCal.vEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.yale.its.tp.portlets.calendar.CalendarConfiguration;
-import edu.yale.its.tp.portlets.calendar.CalendarEvent;
+import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarEvent;
 
 /**
  * OracleICalAdapter is a CalendarAdapter for Oracle Calendar.
@@ -116,7 +116,7 @@ public class OracleICalAdapter implements ICalendarAdapter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see edu.yale.its.tp.portlets.calendar.CalendarAdapter#getEvents(edu.yale.its.tp.portlets.calendar.CalendarDefinition, net.fortuna.ical4j.model.Period, java.util.Map)
+	 * @see org.jasig.portlet.calendar.CalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarDefinition, net.fortuna.ical4j.model.Period, java.util.Map)
 	 */
 	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfig, Period period, String username, String password) throws CalendarException {
 		

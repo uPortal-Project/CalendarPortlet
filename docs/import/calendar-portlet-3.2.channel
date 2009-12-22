@@ -3,7 +3,7 @@
   <title>My Calendars</title>
   <name>My Calendars</name>
   <fname>calendar-portlet</fname>
-  <desc>Current weather and upcoming forecasts</desc>
+  <desc>Aggregating calendar reader</desc>
   <type>Portlet</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>

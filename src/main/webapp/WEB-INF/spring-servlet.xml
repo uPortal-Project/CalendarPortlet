@@ -17,7 +17,7 @@
         class="org.springframework.web.servlet.view.BeanNameViewResolver">
     </bean>
 
-    <bean name="/listEvents" class="edu.yale.its.tp.portlets.calendar.mvc.controller.AjaxEventListController">
+    <bean name="/listEvents" class="org.jasig.portlet.calendar.mvc.controller.AjaxEventListController">
         <property name="calendarStore" ref="calendarStore"/>
     </bean>
         
