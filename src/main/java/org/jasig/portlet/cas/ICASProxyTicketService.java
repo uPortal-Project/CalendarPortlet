@@ -2,7 +2,7 @@ package org.jasig.portlet.cas;
 
 import javax.portlet.PortletRequest;
 
-import edu.yale.its.tp.cas.client.CASReceipt;
+import org.jasig.cas.client.validation.Assertion;
 
 /**
  * IProxyTicketService provides an interface for procuring proxy tickets.
@@ -18,7 +18,7 @@ public interface ICASProxyTicketService {
 	 * @param ticket
 	 * @return
 	 */
-	public CASReceipt getProxyTicket(PortletRequest request);
+	public Assertion getProxyTicket(PortletRequest request);
 	
 	
 	/**
@@ -28,6 +28,6 @@ public interface ICASProxyTicketService {
 	 * @param target URL of the service to be proxied
 	 * @return
 	 */
-	public String getCasServiceToken(CASReceipt receipt, String target);
+	public String getCasServiceToken(Assertion assertion, String target);
 
 }

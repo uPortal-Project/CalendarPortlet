@@ -2,6 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
 	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
     http://www.springframework.org/schema/aop
@@ -9,6 +10,10 @@
 	http://www.springmodules.org/schema/ehcache
 	http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
+	<!-- 
+	 | CACHE CONFIGURATION
+	 +-->
+	
 	<!-- EHCache Configuration -->
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
 		<property name="configLocation">
@@ -16,15 +21,91 @@
 		</property>
 	</bean>
 	
-	<bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="cacheManager">
-			<ref local="cacheManager"/>
-		</property>
-		<property name="cacheName">
-			<value>calendarCache</value>
+	<!-- Main calendar cache -->
+	<bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+		p:cacheManager-ref="cacheManager" p:cacheName="calendarCache"/>
+
+
+	<!-- 
+	 | CAS PROXY AUTHENTICATION CONFIGURATION
+	 +-->
+	
+	<!-- Ticket validation filter -->
+	<bean id="ticketValidationFilter" 
+		class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"
+		p:serverName="${portal.server.base.url}" p:redirectAfterValidation="false"
+		p:proxyReceptorUrl="/proxy/receptor" p:ticketValidator-ref="ticketValidator"
+		p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"/>
+	
+	<!-- CAS proxy ticket validator -->
+	<bean id="ticketValidator" 
+		class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
+		p:proxyCallbackUrl="${portal.server.base.url}/${portlet.context}/proxy/receptor" 
+		p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"
+		p:acceptAnyProxy="true">
+		<constructor-arg index="0" value="${cas.server.base.url}" />
+	</bean>
+	
+	<!-- CAS Proxy service bean -->
+	<bean id="casTicketService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl"
+		p:serviceUrl="${portal.server.base.url}/${portlet.context}" 
+		p:ticketValidator-ref="ticketValidator"/>
+	
+	<bean id="proxyGrantingTicketStorage" 
+		class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"/>
+
+
+	<!-- 
+	 | HIBERNATE CONFIGURATION
+	 +-->
+	
+	<bean id="calendarStore" parent="abstractStoreTransactionProxy"
+		p:target-ref="calendarStoreTarget"/>
+	
+	<bean id="calendarStoreTarget"
+		class="org.jasig.portlet.calendar.dao.HibernateCalendarStore"
+		parent="abstractHibernateTemplate"/>
+	
+	<bean id="abstractStoreTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true" p:transactionManager-ref="transactionManager">
+		<property name="transactionAttributes">
+			<props>
+				<prop key="create*">PROPAGATION_REQUIRED</prop>
+				<prop key="store*">PROPAGATION_REQUIRED</prop>
+				<prop key="remove*">PROPAGATION_REQUIRED</prop>
+				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
 		</property>
 	</bean>
+	
+	<bean id="abstractHibernateTemplate" abstract="true" p:sessionFactory-ref="sessionFactory"/>
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager"
+		p:sessionFactory-ref="sessionFactory"/>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
+		p:dataSource-ref="dataSource" p:configLocation="classpath:hibernate.cfg.xml">
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="dataSource" 
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		p:driverClassName="${hibernate.connection.driver_class}"
+		p:url="${hibernate.connection.url}"
+		p:username="${hibernate.connection.username}"
+		p:password="${hibernate.connection.password}"/>
 
+
+	<!-- 
+	 | GENERAL PORTLET CONFIGURATION
+	 +-->
+		
 	<!-- Properties configuration -->
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
@@ -46,18 +127,14 @@
 		</property>
 	</bean>
 
-	<!-- Default View Resolver -->
+	<!-- JSP view resolver -->
 	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="cache" value="false"/>
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-		<property name="prefix" value="/WEB-INF/jsp/"/>
-		<property name="suffix" value=".jsp"/>
-	</bean>
-
-	<bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator">
-		<property name="validatorFactory" ref="validatorFactory"/>
-	</bean>
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:order="10" p:cache="true" p:viewClass="org.springframework.web.servlet.view.JstlView"
+		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+	
+	<bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator"
+		p:validatorFactory-ref="validatorFactory"/>
 	
 	<bean id="validatorFactory" class="org.springmodules.validation.commons.DefaultValidatorFactory">
 		<property name="validationConfigLocations">
@@ -80,67 +157,6 @@
 				<prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
 				<prop key="javax.portlet.UnavailableException">notAvailable</prop>
 			</props>
-		</property>
-	</bean>
-	
-
-	<!-- HIBERNATE CONFIGURATION -->
-
-	<bean id="calendarStore" parent="abstractStoreTransactionProxy">
-		<property name="target" ref="calendarStoreTarget"/>
-	</bean>
-
-	<bean id="calendarStoreTarget"
-		class="org.jasig.portlet.calendar.dao.HibernateCalendarStore"
-		parent="abstractHibernateTemplate"> </bean>
-
-	<bean id="abstractStoreTransactionProxy"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
-		abstract="true">
-		<property name="transactionManager" ref="transactionManager"/>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="create*">PROPAGATION_REQUIRED</prop>
-				<prop key="store*">PROPAGATION_REQUIRED</prop>
-				<prop key="remove*">PROPAGATION_REQUIRED</prop>
-				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="abstractHibernateTemplate" abstract="true">
-		<property name="sessionFactory">
-			<ref local="sessionFactory"/>
-		</property>
-	</bean>
-
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory"/>
-	</bean>
-
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"/>
-		<property name="configLocation" value="classpath:hibernate.cfg.xml"/>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName">
-			<value>${hibernate.connection.driver_class}</value>
-		</property>
-		<property name="url">
-			<value>${hibernate.connection.url}</value>
-		</property>
-		<property name="username">
-			<value>${hibernate.connection.username}</value>
-		</property>
-		<property name="password">
-			<value>${hibernate.connection.password}</value>
 		</property>
 	</bean>
 

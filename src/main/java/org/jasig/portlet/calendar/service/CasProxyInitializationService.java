@@ -11,9 +11,8 @@ import javax.portlet.PortletSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.client.validation.Assertion;
 import org.jasig.portlet.cas.ICASProxyTicketService;
-
-import edu.yale.its.tp.cas.client.CASReceipt;
 
 /**
  * CasProxyInitializationService initializes authentication resources when a 
@@ -60,12 +59,12 @@ public class CasProxyInitializationService implements IInitializationService {
 		PortletSession session = request.getPortletSession();
 		
 		// attempt to retrieve a CAS receipt from the proxy ticket service
-		CASReceipt receipt = proxyTicketService.getProxyTicket(request);
+		Assertion receipt = proxyTicketService.getProxyTicket(request);
 		
 		// save the receipt and username to the session
 		if (receipt != null) {
 			session.setAttribute("CasReceipt", receipt);
-			session.setAttribute("username", receipt.getUserName());
+			session.setAttribute("username", receipt.getPrincipal().getName());
 		} else {
 			log.debug("no CAS ticket received from portal");
 		}

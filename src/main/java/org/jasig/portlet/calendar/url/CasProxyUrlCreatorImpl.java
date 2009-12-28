@@ -44,12 +44,11 @@ import net.fortuna.ical4j.model.Period;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.client.validation.Assertion;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl;
 import org.jasig.portlet.cas.ICASProxyTicketService;
-
-import edu.yale.its.tp.cas.client.CASReceipt;
 
 /**
  * This {@link IUrlCreator} implementation requires injection
@@ -94,7 +93,7 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		}
 
 		// retrieve the CAS receipt for the current user's session
-		CASReceipt receipt = (CASReceipt) session.getAttribute("CasReceipt");
+		Assertion receipt = (Assertion) session.getAttribute("CasReceipt");
 		if (receipt == null) {
 			log.warn("CasifiedICalFeed cannot find a CAS receipt object");
 			throw new CalendarException();
@@ -135,7 +134,7 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		}
 
 		// retrieve the CAS receipt for the current user's session
-		CASReceipt receipt = (CASReceipt) session.getAttribute("CasReceipt");
+		Assertion receipt = (Assertion) session.getAttribute("CasReceipt");
 		if (receipt == null) {
 			log.warn("CasifiedICalFeed cannot find a CAS receipt object");
 			throw new CalendarException();

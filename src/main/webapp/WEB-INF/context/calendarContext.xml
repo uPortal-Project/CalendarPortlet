@@ -2,6 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
     xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
     http://www.springframework.org/schema/aop
@@ -18,27 +19,28 @@
     <alias name="httpIcalAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter"/>
     
     <!-- Simple un-authenticated adapter for iCal-formatted calendars available via http(s) -->
-    <bean id="httpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
-        <property name="cache" ref="calendarCache"/>
-    </bean>
+    <bean id="httpIcalAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+        p:cache-ref="calendarCache"/>
     
     <!-- Simple un-authenticated adapter for RSS-formatted calendars available via http(s) -->
-    <bean id="httpRssAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
-        <property name="cache" ref="calendarCache"/>
-        <property name="cacheKeyPrefix" value="rss"/>
+    <bean id="httpRssAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+        p:cache-ref="calendarCache" p:cacheKeyPrefix="rss">
         <property name="contentProcessor">
             <bean class="org.jasig.portlet.calendar.processor.RssContentProcessorImpl"/>
         </property>
     </bean>
     
     <!-- Simple adapter for iCal files available as files on the server -->	
-    <bean id="fileIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter">
-        <property name="cache" ref="calendarCache"/>
-    </bean>
+    <bean id="fileIcalAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
+        p:cache-ref="calendarCache"/>
 
     <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
-    <bean id="calDavAdapter" class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter">
-        <property name="cache" ref="calendarCache"/>
+    <bean id="calDavAdapter" 
+        class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
+        p:cache-ref="calendarCache">
         <property name="credentialsExtractor">
             <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
         </property>
@@ -82,24 +84,17 @@
      +-->
     
     <!-- Sample CAS Proxy authenticated adapter for iCal-formatted calendars over https -->
-    <bean id="casProxyHttpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
-        <property name="cache" ref="calendarCache"/>
+    <bean id="casProxyHttpIcalAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+        p:cache-ref="calendarCache">
         <property name="urlCreator">
-            <bean class="org.jasig.portlet.calendar.url.CasProxyUrlCreatorImpl">
-                <property name="proxyTicketService" ref="casService"/>
-            </bean>
+            <bean class="org.jasig.portlet.calendar.url.CasProxyUrlCreatorImpl"
+                p:proxyTicketService-ref="casTicketService"/>
         </property>
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
         </property>
-    </bean>
-    <!-- CAS Proxy service bean -->
-    <bean id="casService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl">
-        <property name="casValidateUrl" value="https://localhost:8080/cas/proxyValidate"/>
-        <property name="serviceUrl" value="https://localhost:8080/CalendarPortlet"/>
-        <property name="urlOfProxyCallbackServlet" value="https://localhost:8080/CalendarPortlet/CasProxyCallback"/>
-    </bean>
-    
+    </bean>    
     
     <!--
      | ADDITIONAL CALENDAR ADAPTER CONFIGURATIONS

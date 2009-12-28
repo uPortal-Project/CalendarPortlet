@@ -2,6 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+    xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
     http://www.springframework.org/schema/aop
@@ -19,26 +20,23 @@
         </property>
     </bean>
     
-    <bean id="sessionKeyGenerator" class="org.jasig.web.util.DefaultSessionKeyGenerator">
-        <property name="seed" value="0" />
-    </bean>
+    <bean id="sessionKeyGenerator" class="org.jasig.web.util.DefaultSessionKeyGenerator"
+        p:seed="0"/>
     
     
     <!-- Controllers -->
 
     <!-- main portlet view -->
     <bean id="viewCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.CalendarController">
-        <property name="calendarStore" ref="calendarStore"/>
-        <property name="userToken"><value>${userinfo.userid.key}</value></property>
+        class="org.jasig.portlet.calendar.mvc.controller.CalendarController"
+        p:calendarStore-ref="calendarStore" p:userToken="${userinfo.userid.key}">
         <property name="initializationServices">
             <list>
             	<!--
 					Uncomment the following section if you are using CAS authenticated calendar adapters.
 				-->
-                <bean class="org.jasig.portlet.calendar.service.CasProxyInitializationService">
-                    <property name="proxyTicketService" ref="casService"/>
-                </bean>
+                <!--bean class="org.jasig.portlet.calendar.service.CasProxyInitializationService"
+                    p:proxyTicketService-ref="casTicketService"/-->
                 
                 <!--
 					Uncomment the following section if you are using cached password authenticated calendar adapters.
@@ -53,7 +51,8 @@
 
     <!-- view and edit calendar subscriptions -->
     <bean id="editCalendarSubscriptionsController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarSubscriptionsController">
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarSubscriptionsController"
+        p:calendarStore-ref="calendarStore">
         <property name="predefinedEditActions">
             <map>
                 <!-- Add edit screens for custom calendar adapters -->
@@ -62,69 +61,45 @@
                 -->
             </map>
         </property>
-        <property name="calendarStore" ref="calendarStore"/>
     </bean>
 
     <!-- edit calendar preferences -->
     <bean id="editCalendarPreferencesController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarPreferencesController">
-        <property name="formView">
-            <value>editCalendarPreferences</value>
-        </property>
-        <property name="sessionForm">
-            <value>false</value>
-        </property>
-        <property name="commandName" value="calendarPreferencesCommand"/>
-        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand"/>
-    </bean>
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarPreferencesController"
+        p:formView="editCalendarPreferences" p:sessionForm="false"
+        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand"
+        p:commandName="calendarPreferencesCommand"/>
     
     <!-- adminstrate pre-defined calendars -->
     <bean id="adminCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.AdminCalendarController">
-        <property name="calendarStore" ref="calendarStore"/>
-    </bean>
+        class="org.jasig.portlet.calendar.mvc.controller.AdminCalendarController"
+        p:calendarStore-ref="calendarStore"/>
     
     <!-- add or edit a user-defined calendar -->
     <bean id="editCalendarConfigurationController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditUserHttpICalController">
-        <property name="formView">
-            <value>editCalendarUrl</value>
-        </property>
-        <property name="sessionForm">
-            <value>false</value>
-        </property>
-        <property name="commandName" value="calendarListingCommand"/>
-        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarListingCommand"/>
-        <property name="validator" ref="beanValidator"/>
-        <property name="calendarStore" ref="calendarStore"/>
-    </bean>
+        class="org.jasig.portlet.calendar.mvc.controller.EditUserHttpICalController"
+        p:formView="editCalendarUrl" p:sessionForm="false"
+        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarListingCommand"
+        p:commandName="calendarListingCommand" p:validator-ref="beanValidator"
+        p:calendarStore-ref="calendarStore"/>
     
     <!-- add or edit a pre-defined calendar -->
     <bean id="editCalendarDefinitionController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarDefinitionController">
-        <property name="formView">
-            <value>editCalendarDefinition</value>
-        </property>
-        <property name="sessionForm">
-            <value>false</value>
-        </property>
-        <property name="commandName" value="calendarDefinitionForm"/>
-        <property name="commandClass" value="org.jasig.portlet.calendar.mvc.CalendarDefinitionForm"/>
-        <property name="calendarStore" ref="calendarStore"/>
-    </bean>
+        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarDefinitionController"
+        p:formView="editCalendarDefinition" p:sessionForm="false"
+        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarDefinitionForm"
+        p:commandName="calendarDefinitionForm" p:calendarStore-ref="calendarStore"/>
     
     <bean id="ajaxCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.AjaxCalendarController">
-        <property name="calendarStore" ref="calendarStore"/>
-        <property name="modelPasser" ref="modelPasser"/>
-        <property name="sessionKeyGenerator" ref="sessionKeyGenerator"/>
-    </bean>
+        class="org.jasig.portlet.calendar.mvc.controller.AjaxCalendarController"
+        p:calendarStore-ref="calendarStore" p:modelPasser-ref="modelPasser"
+        p:sessionKeyGenerator-ref="sessionKeyGenerator"/>
     
     <!-- Handler Mapping -->
 
     <bean id="portletModeParameterHandlerMapping"
-        class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
-        <property name="order" value="1"/>
+        class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping"
+        p:order="1">
         <property name="portletModeParameterMap">
             <map>
                 <entry key="view">

@@ -28,7 +28,8 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		
 		// get the UserInfo map from the portlet session
 		PortletSession session = request.getPortletSession();
-		Map userinfo = (Map) request.getAttribute(PortletRequest.USER_INFO);
+		@SuppressWarnings("unchecked")
+		Map<String,String> userinfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
 		
 		// get the credentials for this portlet from the UserInfo map
 		String password = (String) userinfo.get("password");
