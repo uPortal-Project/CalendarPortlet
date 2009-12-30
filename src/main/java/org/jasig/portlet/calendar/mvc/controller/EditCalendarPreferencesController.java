@@ -1,8 +1,8 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -17,6 +17,13 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
 
 
 public class EditCalendarPreferencesController extends SimpleFormController {
+
+    private List<String> timeZones = null;
+    
+    public void setTimeZones(List<String> timeZones) {
+            this.timeZones = timeZones;
+    }
+
 
 	@Override
 	protected void onSubmitAction(ActionRequest request,
@@ -38,6 +45,7 @@ public class EditCalendarPreferencesController extends SimpleFormController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Map referenceData(PortletRequest request, Object command,
 			Errors errors) throws Exception {
@@ -47,7 +55,7 @@ public class EditCalendarPreferencesController extends SimpleFormController {
 			data = new HashMap();
 		}
 
-		data.put("timezones", TimeZone.getAvailableIDs());
+		data.put("timezones", timeZones);
 		return data;
 	}
 
@@ -55,7 +63,7 @@ public class EditCalendarPreferencesController extends SimpleFormController {
 	protected Object formBackingObject(PortletRequest request) throws Exception {
 		CalendarPreferencesCommand form = new CalendarPreferencesCommand();
 		PortletPreferences prefs = request.getPreferences();
-		form.setTimezone(prefs.getValue("timezone", "America/Los_Angeles"));
+		form.setTimezone(prefs.getValue("timezone", "America/New_York"));
 		return form;
 	}
 

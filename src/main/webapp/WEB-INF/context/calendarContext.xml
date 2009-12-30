@@ -1,14 +1,26 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
     xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-    http://www.springmodules.org/schema/ehcache
-    http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+    http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+
+    <!-- User timezone options -->
+    <util:list id="timeZones">
+        <!--<value>America/Halifax</value>-->
+        <value>America/New_York</value>
+        <value>America/Chicago</value>
+        <value>America/Denver</value>
+        <value>America/Phoenix</value>
+        <value>America/Los_Angeles</value>
+        <value>America/Anchorage</value>
+        <value>America/Hawaii</value>        
+    </util:list>
+    
     
     <!--
      | CALENDAR ADAPTER REGISTRATIONS 

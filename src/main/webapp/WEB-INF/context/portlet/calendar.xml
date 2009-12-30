@@ -68,7 +68,7 @@
         class="org.jasig.portlet.calendar.mvc.controller.EditCalendarPreferencesController"
         p:formView="editCalendarPreferences" p:sessionForm="false"
         p:commandClass="org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand"
-        p:commandName="calendarPreferencesCommand"/>
+        p:commandName="calendarPreferencesCommand" p:timeZones-ref="timeZones"/>
     
     <!-- adminstrate pre-defined calendars -->
     <bean id="adminCalendarController"

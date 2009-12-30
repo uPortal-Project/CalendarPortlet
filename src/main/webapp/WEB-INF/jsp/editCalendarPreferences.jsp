@@ -10,7 +10,8 @@
             <label class="portlet-form-field-label">Time Zone:</label>
             <form:select path="timezone">
                 <c:forEach items="${timezones}" var="zone">
-                    <form:option value="${ zone }"/>
+			        <spring:message var="message" code="timezone.${ zone }" text="${ zone }"/>
+			        <form:option label="${message}" value="${ zone }"/>
                 </c:forEach>
             </form:select>
             <form:errors path="timezone" cssClass="portlet-msg-error"/>

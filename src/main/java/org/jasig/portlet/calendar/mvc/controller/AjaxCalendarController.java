@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.portlet.ActionRequest;
@@ -22,6 +23,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.VEventStartComparator;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
@@ -48,19 +50,42 @@ public class AjaxCalendarController extends AbstractAjaxController {
 			.getAttribute("hiddenCalendars");
 
 		// if the user requested a specific date, use it instead
+		Calendar cal = null;
+        String timezone = (String) session.getAttribute("timezone");
 		Date startDate = (Date) session.getAttribute("startDate");
 		DateFormat df = new SimpleDateFormat("MM'/'dd'/'yyyy");
 		String requestedDate = (String) request.getParameter("startDate");
 		if (requestedDate != null && !requestedDate.equals("")) {
 			try {
-				startDate = df.parse(requestedDate);
-				session.setAttribute("startDate", startDate);
+                startDate = df.parse(requestedDate);
+                cal = Calendar.getInstance();
+                cal.setTime(startDate);
+        	    cal.set(Calendar.HOUR_OF_DAY, 0);
+        	    cal.set(Calendar.MINUTE, 0);
+        	    cal.set(Calendar.SECOND, 0);
+        	    cal.set(Calendar.MILLISECOND, 1);
+        	    cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        	    cal.add(Calendar.MILLISECOND, -TimeZone.getTimeZone(timezone).getOffset(cal.getTimeInMillis()));
+                startDate = cal.getTime();
+                session.setAttribute("startDate", cal.getTime());
 			} catch (ParseException ex) {
 				log.warn("Failed to parse starting date for event", ex);
 			}
 		}
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
+
+        if (cal == null) {
+            cal = Calendar.getInstance();
+            cal.setTime((Date) session.getAttribute("startDate"));
+    	    cal.set(Calendar.HOUR_OF_DAY, 0);
+    	    cal.set(Calendar.MINUTE, 0);
+    	    cal.set(Calendar.SECOND, 0);
+    	    cal.set(Calendar.MILLISECOND, 1);
+    	    cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+    	    cal.add(Calendar.MILLISECOND, -TimeZone.getTimeZone(timezone).getOffset(cal.getTimeInMillis()));
+	    }
+	    
+	    startDate = cal.getTime();
+	    log.debug("start date: " + cal);
 
 		// find how many days into the future we should display events
 		int days = (Integer) session.getAttribute("days");
@@ -76,10 +101,7 @@ public class AjaxCalendarController extends AbstractAjaxController {
 
 		// set the end date based on our desired time period
 		cal.add(Calendar.DATE, days);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 		Date endDate = cal.getTime();
 		model.put("endDate", endDate);
 
@@ -107,6 +129,7 @@ public class AjaxCalendarController extends AbstractAjaxController {
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
 		int index = 0;
 		List<String> errors = new ArrayList<String>();
+        TimeZone userTz = TimeZone.getTimeZone(timezone);
 		for (CalendarConfiguration callisting : calendars) {
 
 			// don't bother to fetch hidden calendars
@@ -118,9 +141,32 @@ public class AjaxCalendarController extends AbstractAjaxController {
 					ICalendarAdapter adapter = (ICalendarAdapter) ctx.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
-					// retrieve a list of events for this calendar for the desired
-					// time period
-					events.addAll(adapter.getEvents(callisting, period, request));
+                    for (CalendarEvent event : adapter.getEvents(callisting, period, request)) {
+                    	
+                    	/*
+                    	 * Provide special handling for events with "floating"
+                    	 * timezones.
+                    	 */
+                        if (event.getStartDate().getTimeZone() == null) {
+                        	// first adjust the event to have the correct start
+                        	// and end times for the user's timezone
+                            int offset = userTz.getOffset(event.getStartDate().getDate().getTime());
+                            event.getStartDate().getDate().setTime(event.getStartDate().getDate().getTime()-offset);
+                            event.getEndDate().getDate().setTime(event.getEndDate().getDate().getTime()-offset);
+                            
+                            // if the adjusted event still falls within the 
+                            // indicated period go ahead and add it to our list
+                            if (period.includes(event.getStartDate().getDate(), Period.INCLUSIVE_START) 
+                            		|| period.includes(event.getEndDate().getDate(), Period.INCLUSIVE_END)) {
+                                events.add(event);                            	
+                            }
+                        } 
+                        
+                        // if the event has a regular time zone, just add it
+                        else {
+                            events.add(event);
+                        }
+                    }
 	
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());

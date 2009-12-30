@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -101,9 +102,6 @@ public class CalendarController extends AbstractController {
 			hiddenCalendars = new HashMap<Long, String>();
 			session.setAttribute("hiddenCalendars", hiddenCalendars);
 
-			// set now as the starting date
-			session.setAttribute("startDate", cal.getTime());
-			
 			// set the default number of days to display
 			session.setAttribute("days", defaultDays);
 
@@ -119,6 +117,14 @@ public class CalendarController extends AbstractController {
 			PortletPreferences prefs = request.getPreferences();
 			String timezone = prefs.getValue("timezone", "America/New_York");
 			session.setAttribute("timezone", timezone);
+
+			// set now as the starting date
+		    cal.set(Calendar.HOUR_OF_DAY, 0);
+		    cal.set(Calendar.MINUTE, 0);
+		    cal.set(Calendar.SECOND, 0);
+		    cal.set(Calendar.MILLISECOND, 1);
+		    cal.setTimeZone(TimeZone.getTimeZone(timezone));
+			session.setAttribute("startDate", cal.getTime());
 
 		} else {
 			// get the list of hidden calendars

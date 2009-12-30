@@ -1,5 +1,6 @@
     <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
     <fmt:setTimeZone value="${ timezone }"/>
+    <c:set var="timezone" value="${timezone}" scope="page"/>
     <fmt:formatDate var="today" value="${today}" pattern="EEEE MMMM d"/>
     <fmt:formatDate var="tomorrow" value="${tomorrow}" pattern="EEEE MMMM d"/>
     
@@ -40,7 +41,7 @@
                    <fmt:formatDate var="endTime" value="${event.endDate.date}" pattern="h:mm a"/>
                    <c:set var="class" value="${ colors[event.calendarId] }"/>
                    <c:choose>
-                       <c:when test="${event.allDay}">
+                       <c:when test="<%= ((org.jasig.portlet.calendar.CalendarEvent) pageContext.getAttribute(\"event\")).isAllDay((java.lang.String) pageContext.getAttribute(\"timezone\")) %>">
                            <td class="time color-${ class }">All day</td>
                        </c:when>
                        <c:otherwise>

@@ -21,11 +21,14 @@
 						{ startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>' },
 						function(xml){ $("#<portlet:namespace/>events").html(xml) }
 				);
+				var date = new Date();
+                date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
 			    $('#<portlet:namespace/>inlineCalendar').datepicker(
 			    	{ 
 			    	    inline: true,
 			    		changeMonth: false,
 			    		changeYear: false,
+			    		defaultDate: date,
 					    onSelect: function(date) {
 					        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
 					        $.post(
