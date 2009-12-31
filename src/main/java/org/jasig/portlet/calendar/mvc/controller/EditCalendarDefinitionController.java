@@ -7,6 +7,7 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
@@ -14,8 +15,10 @@ import javax.portlet.PortletRequest;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarDefinitionForm;
-import org.springframework.validation.BindException;
-import org.springframework.web.portlet.mvc.SimpleFormController;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
@@ -24,15 +27,14 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
  *
  * @author Jen Bourey
  */
-public class EditCalendarDefinitionController extends SimpleFormController {
+@Controller
+@RequestMapping("EDIT")
+public class EditCalendarDefinitionController {
 
-	public EditCalendarDefinitionController() { }
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.web.portlet.mvc.AbstractFormController#formBackingObject(javax.portlet.PortletRequest)
-	 */
-	protected Object formBackingObject(PortletRequest request) throws Exception {
+	private static final String FORM_NAME = "calendarDefinitionForm";
+
+	@ModelAttribute(FORM_NAME)
+	public CalendarDefinitionForm formBackingObject(PortletRequest request) {
 		// if we're editing a calendar, retrieve the calendar definition from
 		// the database and add the information to the form
 		String id = request.getParameter("id");
@@ -60,14 +62,15 @@ public class EditCalendarDefinitionController extends SimpleFormController {
 		}
 	}
 	
-	@Override
-	protected void onSubmitAction(ActionRequest request,
-			ActionResponse response, Object command, BindException errors)
-			throws Exception {
+	@RequestMapping(params = "action=editCalendarDefinition")
+	public String getCalendarDefinitionForm(PortletRequest request){
+		return "/editCalendarDefinition";
+	}
+	
+	@RequestMapping(params = "action=editCalendarDefinition")
+	public void updateCalendarDefinition(ActionRequest request, 
+			ActionResponse response, @ModelAttribute CalendarDefinitionForm form) {
 		
-		// get the form data
-		CalendarDefinitionForm form = (CalendarDefinitionForm) command;
-
 		// construct a calendar definition from the form data
 		PredefinedCalendarDefinition definition = null;
 		
@@ -94,6 +97,9 @@ public class EditCalendarDefinitionController extends SimpleFormController {
 	}
 
 	private CalendarStore calendarStore;
+	
+	@Required
+	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}

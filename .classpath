@@ -1,12 +1,14 @@
 <classpath>
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/portlet/portlet-api/1.0/portlet-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jasig/AjaxPortletSupport/1.0.4/AjaxPortletSupport-1.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jasig/AjaxPortletSupport/1.0.6/AjaxPortletSupport-1.0.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/owasp/antisamy/1.3/antisamy-1.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
@@ -30,7 +32,7 @@
   <classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache-web/1.6.0-beta2/ehcache-web-1.6.0-beta2.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/ezmorph/ezmorph/1.0.4/ezmorph-1.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.3.ga/hibernate-3.2.3.ga.jar"/>
-  <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/${hsqldb.version}/hsqldb-${hsqldb.version}.jar"/>
+  <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/ical4j/ical4j/1.0-rc2/ical4j-1.0-rc2.jar"/>
   <classpathentry kind="var" path="M2_REPO/slide/jakarta-slide-webdavlib/2.2pre1-httpclient-3.0/jakarta-slide-webdavlib-2.2pre1-httpclient-3.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar"/>

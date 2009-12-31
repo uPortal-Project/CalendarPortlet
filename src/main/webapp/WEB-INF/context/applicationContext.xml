@@ -127,6 +127,8 @@
 		</property>
 	</bean>
 
+	<bean class="org.jasig.web.service.AjaxPortletSupportService"/>
+		
 	<!-- JSP view resolver -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"

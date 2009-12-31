@@ -1,13 +1,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:util="http://www.springframework.org/schema/util"       
     xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
     xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd  
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+    <context:component-scan base-package="org.jasig.portlet.calendar.mvc.controller"/>
+    <context:annotation-config/>
+    
     <!-- Properties configuration -->
     <bean id="propertyConfigurer"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
@@ -20,16 +25,18 @@
         </property>
     </bean>
     
-    <bean id="sessionKeyGenerator" class="org.jasig.web.util.DefaultSessionKeyGenerator"
-        p:seed="0"/>
+    <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ViewSelectorDefaultImpl"/>
     
+    <util:list id="mobileDeviceRegexes">
+        <value>.*iPhone.*</value>
+    </util:list>
     
     <!-- Controllers -->
 
     <!-- main portlet view -->
     <bean id="viewCalendarController"
         class="org.jasig.portlet.calendar.mvc.controller.CalendarController"
-        p:calendarStore-ref="calendarStore" p:userToken="${userinfo.userid.key}">
+        p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore">
         <property name="initializationServices">
             <list>
             	<!--
@@ -49,87 +56,13 @@
         </property>
     </bean>
 
-    <!-- view and edit calendar subscriptions -->
-    <bean id="editCalendarSubscriptionsController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarSubscriptionsController"
-        p:calendarStore-ref="calendarStore">
-        <property name="predefinedEditActions">
-            <map>
-                <!-- Add edit screens for custom calendar adapters -->
-                <!--
-                <entry key="org.jasig.portlet.calendar.adapter.SomeOtherCalendarAdapter" value="editSomeOtherCalendar"/>
-                -->
-            </map>
-        </property>
-    </bean>
-
-    <!-- edit calendar preferences -->
-    <bean id="editCalendarPreferencesController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarPreferencesController"
-        p:formView="editCalendarPreferences" p:sessionForm="false"
-        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand"
-        p:commandName="calendarPreferencesCommand" p:timeZones-ref="timeZones"/>
+    <util:map id="predefinedEditActions">
+        <!-- Add edit screens for custom calendar adapters -->
+        <!--
+        <entry key="someOtherCalendarAdapter" value="editSomeOtherCalendar"/>
+        -->
+    </util:map>
     
-    <!-- adminstrate pre-defined calendars -->
-    <bean id="adminCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.AdminCalendarController"
-        p:calendarStore-ref="calendarStore"/>
+    <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     
-    <!-- add or edit a user-defined calendar -->
-    <bean id="editCalendarConfigurationController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditUserHttpICalController"
-        p:formView="editCalendarUrl" p:sessionForm="false"
-        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarListingCommand"
-        p:commandName="calendarListingCommand" p:validator-ref="beanValidator"
-        p:calendarStore-ref="calendarStore"/>
-    
-    <!-- add or edit a pre-defined calendar -->
-    <bean id="editCalendarDefinitionController"
-        class="org.jasig.portlet.calendar.mvc.controller.EditCalendarDefinitionController"
-        p:formView="editCalendarDefinition" p:sessionForm="false"
-        p:commandClass="org.jasig.portlet.calendar.mvc.CalendarDefinitionForm"
-        p:commandName="calendarDefinitionForm" p:calendarStore-ref="calendarStore"/>
-    
-    <bean id="ajaxCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.AjaxCalendarController"
-        p:calendarStore-ref="calendarStore" p:modelPasser-ref="modelPasser"
-        p:sessionKeyGenerator-ref="sessionKeyGenerator"/>
-    
-    <!-- Handler Mapping -->
-
-    <bean id="portletModeParameterHandlerMapping"
-        class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping"
-        p:order="1">
-        <property name="portletModeParameterMap">
-            <map>
-                <entry key="view">
-                    <map>
-                        <entry key="list" value-ref="viewCalendarController"/>
-                        <entry key="events" value-ref="ajaxCalendarController"/>
-                    </map>
-                </entry>
-                <entry key="edit">
-                    <map>
-                        <entry key="editSubscriptions" value-ref="editCalendarSubscriptionsController"/>
-                        <entry key="editPreferences" value-ref="editCalendarPreferencesController"/>
-                        <entry key="editUrl" value-ref="editCalendarConfigurationController"/>
-                        <entry key="administration" value-ref="adminCalendarController"/>
-                        <entry key="editCalendarDefinition" value-ref="editCalendarDefinitionController"/>
-                    </map>
-                </entry>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="portletModeHandlerMapping"
-        class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
-        <property name="order" value="2"/>
-        <property name="portletModeMap">
-            <map>
-                <entry key="view" value-ref="viewCalendarController"/>
-                <entry key="edit" value-ref="editCalendarSubscriptionsController"/>
-            </map>
-        </property>
-    </bean>
-
 </beans>

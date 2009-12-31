@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
@@ -25,8 +26,11 @@ import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.mvc.AbstractController;
 
 
 /**
@@ -36,13 +40,20 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * 
  * @author Jen Bourey
  */
-public class EditCalendarSubscriptionsController extends AbstractController {
+@Controller
+@RequestMapping("EDIT")
+public class EditCalendarSubscriptionsController {
 
 	private static Log log = LogFactory.getLog(EditCalendarSubscriptionsController.class);
 
-	@Override
-	public ModelAndView handleRenderRequestInternal(RenderRequest request,
-			RenderResponse response) throws Exception {
+	@RequestMapping()
+	public ModelAndView viewEditOptions(RenderRequest request, RenderResponse response) {
+		return viewSubscriptions(request, response);
+	}
+	
+    @RequestMapping(params = "action=editSubscriptions")
+	public ModelAndView viewSubscriptions(RenderRequest request,
+			RenderResponse response) {
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		PortletSession session = request.getPortletSession();
@@ -77,51 +88,81 @@ public class EditCalendarSubscriptionsController extends AbstractController {
 		// return the edit view
 		return new ModelAndView("/editCalendars", "model", model);
 	}
-	
-	@Override
-	protected void handleActionRequestInternal(ActionRequest request,
-			ActionResponse response) throws Exception {
-		Long id = Long.parseLong(request.getParameter("id"));
-		String actionCode = request.getParameter("actionCode");
+    
+    @RequestMapping(params = "action=deleteUserCalendar")
+    public void removeSubscription(ActionRequest request, 
+    		ActionResponse response, @RequestParam("configurationId") Long id) {
+		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
+		calendarStore.deleteCalendarConfiguration(config);
+		
+		// remove the calendar from the hidden calendars list
+    	PortletSession session = request.getPortletSession();
+		@SuppressWarnings("unchecked")
+		Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+		hidden.remove(config.getId());
+		
+		response.setRenderParameter("action", "editSubscriptions");
+    }
+    
+    @RequestMapping(params = "action=showCalendar")
+    public void showCalendar(ActionRequest request, 
+    		ActionResponse response, @RequestParam("configurationId") Long id) {
+		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
+		config.setDisplayed(true);
+		calendarStore.storeCalendarConfiguration(config);
+		
+		// remove the calendar from the hidden calendars list
+    	PortletSession session = request.getPortletSession();
+		@SuppressWarnings("unchecked")
+		Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+		hidden.remove(config.getId());    	
+		
+		response.setRenderParameter("action", "editSubscriptions");
+    }
+    
+    @RequestMapping(params = "action=hideCalendar")
+    public void hideCalendar(ActionRequest request, 
+    		ActionResponse response, @RequestParam("configurationId") Long id) {
+		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
+		config.setDisplayed(false);
+		calendarStore.storeCalendarConfiguration(config);
+		
+		// remove the calendar from the hidden calendars list
+    	PortletSession session = request.getPortletSession();
+		@SuppressWarnings("unchecked")
+		Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
+		hidden.remove(config.getId());    	
+		
+		response.setRenderParameter("action", "editSubscriptions");
+    }
+    
+    @RequestMapping(params = "action=addSharedCalendar")
+    public void addSharedCalendar(ActionRequest request,  
+    		ActionResponse response, @RequestParam("definitionId") Long id) {
 		PortletSession session = request.getPortletSession();
-		if (actionCode.equals("delete")) {
-			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
-			calendarStore.deleteCalendarConfiguration(config);
-			@SuppressWarnings("unchecked")
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
-			hidden.remove(config.getId());
-		} else if (actionCode.equals("show")) {
-			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
-			config.setDisplayed(true);
-			calendarStore.storeCalendarConfiguration(config);
-			@SuppressWarnings("unchecked")
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
-			hidden.remove(config.getId());
-		} else if (actionCode.equals("hide")) {
-			CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
-			config.setDisplayed(false);
-			calendarStore.storeCalendarConfiguration(config);
-			@SuppressWarnings("unchecked")
-			Map<Long, String> hidden = (Map<Long, String>) session.getAttribute("hiddenCalendars");
-			hidden.remove(config.getId());
-		} else if (actionCode.equals("showNew")) {
-			// get user information
-			String subscribeId = (String) session.getAttribute("subscribeId");
-			PredefinedCalendarDefinition definition = (PredefinedCalendarDefinition) calendarStore.getCalendarDefinition(id);
-			log.debug("definition to save " + definition.toString());
-			PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
-			config.setSubscribeId(subscribeId);
-			config.setCalendarDefinition(definition);
-			calendarStore.storeCalendarConfiguration(config);
-		}
-	}
-
-	private Map predefinedEditActions;
-	public void setPredefinedEditActions(Map predefinedEditActions) {
+		String subscribeId = (String) session.getAttribute("subscribeId");
+		PredefinedCalendarDefinition definition = (PredefinedCalendarDefinition) calendarStore.getCalendarDefinition(id);
+		log.debug("definition to save " + definition.toString());
+		PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
+		config.setSubscribeId(subscribeId);
+		config.setCalendarDefinition(definition);
+		calendarStore.storeCalendarConfiguration(config);
+		
+		response.setRenderParameter("action", "editSubscriptions");
+    }
+	
+	private Map<String, String> predefinedEditActions = new HashMap<String, String>();
+	
+	@Required
+	@Resource(name="predefinedEditActions")
+	public void setPredefinedEditActions(Map<String, String> predefinedEditActions) {
 		this.predefinedEditActions = predefinedEditActions;
 	}
 
 	private CalendarStore calendarStore;
+	
+	@Required
+	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}

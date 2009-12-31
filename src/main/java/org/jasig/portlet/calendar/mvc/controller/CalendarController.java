@@ -7,6 +7,7 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,11 +17,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -31,19 +31,26 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarLinkException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.IInitializationService;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.mvc.AbstractController;
 
-
-public class CalendarController extends AbstractController {
+@Controller
+@RequestMapping("VIEW")
+public class CalendarController implements ApplicationContextAware {
 
 	private static Log log = LogFactory.getLog(CalendarController.class);
 
-	public ModelAndView handleRenderRequestInternal(RenderRequest request,
-			RenderResponse response) throws Exception {
+	@RequestMapping()
+	public ModelAndView getCalendar(PortletRequest request) {
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		PortletSession session = request.getPortletSession(true);
@@ -210,7 +217,6 @@ public class CalendarController extends AbstractController {
 				.getCalendarConfigurations(subscribeId);
 		model.put("calendars", calendars);
 
-		ApplicationContext ctx = this.getApplicationContext();
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
 		Map<Long, String> links = new HashMap<Long, String>();
 		int index = 0;
@@ -222,7 +228,7 @@ public class CalendarController extends AbstractController {
 				try {
 	
 					// get an instance of the adapter for this calendar
-					ICalendarAdapter adapter = (ICalendarAdapter) ctx.getBean(callisting
+					ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
 					//get hyperlink to calendar
@@ -248,10 +254,13 @@ public class CalendarController extends AbstractController {
 		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);
 
-		return new ModelAndView("/viewCalendar", "model", model);
+		return new ModelAndView(viewSelector.getCalendarViewName(request), "model", model);
 	}
 
 	private CalendarStore calendarStore;
+	
+	@Required
+	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
@@ -261,14 +270,27 @@ public class CalendarController extends AbstractController {
 		this.userToken = userToken;
 	}
 	
-	private int defaultDays = 2;
+	private int defaultDays = 7;
 	public void setDefaultDays(int defaultDays) {
 		this.defaultDays = defaultDays;
 	}
 	
-	private List<IInitializationService> initializationServices;
+	private List<IInitializationService> initializationServices = new ArrayList<IInitializationService>();
 	public void setInitializationServices(List<IInitializationService> services) {
 		this.initializationServices = services;
+	}
+	
+	private IViewSelector viewSelector;
+	
+	@Autowired(required=true)
+	public void setViewSelector(IViewSelector viewSelector) {
+		this.viewSelector = viewSelector;
+	}
+	
+	private ApplicationContext applicationContext;
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 }

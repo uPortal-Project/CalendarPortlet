@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
@@ -28,17 +29,25 @@ import org.jasig.portlet.calendar.VEventStartComparator;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.CalendarStore;
-import org.jasig.web.portlet.mvc.AbstractAjaxController;
+import org.jasig.portlet.calendar.mvc.IViewSelector;
+import org.jasig.web.service.AjaxPortletSupportService;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-
-public class AjaxCalendarController extends AbstractAjaxController {
+@Controller
+@RequestMapping("VIEW")
+public class AjaxCalendarController implements ApplicationContextAware {
 
 	private static Log log = LogFactory.getLog(AjaxCalendarController.class);
 
-	@Override
-	protected Map<Object, Object> handleAjaxRequestInternal(ActionRequest request,
+	@RequestMapping(params = "action=events")
+	public void getEventList(ActionRequest request,
 			ActionResponse response) throws Exception {
 		
 		PortletSession session = request.getPortletSession();
@@ -124,7 +133,6 @@ public class AjaxCalendarController extends AbstractAjaxController {
 				.getCalendarConfigurations((String) session.getAttribute("subscribeId"));
 		model.put("calendars", calendars);
 
-		ApplicationContext ctx = this.getApplicationContext();
 		TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
 		int index = 0;
@@ -138,7 +146,7 @@ public class AjaxCalendarController extends AbstractAjaxController {
 				try {
 	
 					// get an instance of the adapter for this calendar
-					ICalendarAdapter adapter = (ICalendarAdapter) ctx.getBean(callisting
+					ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
                     for (CalendarEvent event : adapter.getEvents(callisting, period, request)) {
@@ -189,14 +197,43 @@ public class AjaxCalendarController extends AbstractAjaxController {
 		model.put("colors", colors);
 		model.put("hiddenCalendars", hiddenCalendars);
 		model.put("errors", errors);
-		
-		return model;
+		model.put("viewName", viewSelector.getEventListViewName(request));
+	
+		ajaxPortletSupportService.redirectAjaxResponse("ajax/jspView", model, request, response);
 	}
 	
 	private CalendarStore calendarStore;
+	
+	@Required
+	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
 
+	private IViewSelector viewSelector;
+	
+	@Autowired(required=true)
+	public void setViewSelector(IViewSelector viewSelector) {
+		this.viewSelector = viewSelector;
+	}
+
+	private ApplicationContext applicationContext;
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	private AjaxPortletSupportService ajaxPortletSupportService;
+	
+    /**
+     * Set the service for handling portlet AJAX requests.
+     * 
+     * @param ajaxPortletSupportService
+     */
+    @Autowired(required = true)
+    public void setAjaxPortletSupportService(
+                    AjaxPortletSupportService ajaxPortletSupportService) {
+            this.ajaxPortletSupportService = ajaxPortletSupportService;
+    }
 
 }

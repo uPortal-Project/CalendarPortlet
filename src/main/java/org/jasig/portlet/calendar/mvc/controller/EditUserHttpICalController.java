@@ -7,10 +7,12 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.RenderRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,8 +21,10 @@ import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarListingCommand;
-import org.springframework.validation.BindException;
-import org.springframework.web.portlet.mvc.SimpleFormController;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
@@ -29,21 +33,24 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
  * 
  * @author Jen Bourey
  */
-public class EditUserHttpICalController extends SimpleFormController {
+@Controller
+@RequestMapping("EDIT")
+public class EditUserHttpICalController {
 
-	private static Log log = LogFactory
-			.getLog(EditUserHttpICalController.class);
+    private static final String FORM_NAME = "calendarListingCommand";
+
 	private CalendarStore calendarStore;
 
-	public EditUserHttpICalController() {
+	private static Log log = LogFactory.getLog(EditUserHttpICalController.class);
+
+	@Required
+	@Resource(name="calendarStore")
+	public void setCalendarStore(CalendarStore calendarStore) {
+		this.calendarStore = calendarStore;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.web.portlet.mvc.AbstractFormController#formBackingObject(javax.portlet.PortletRequest)
-	 */
-	protected Object formBackingObject(PortletRequest request) throws Exception {
+	@ModelAttribute(FORM_NAME)
+	public CalendarListingCommand getHttpCalendarForm(PortletRequest request) throws Exception {
 		PortletSession session = request.getPortletSession();
 
 		// if we're editing a calendar, retrieve the calendar definition from
@@ -90,14 +97,17 @@ public class EditUserHttpICalController extends SimpleFormController {
 		}
 	}
 
-	@Override
-	protected void onSubmitAction(ActionRequest request,
-			ActionResponse response, Object command, BindException errors)
+    @RequestMapping(params = "action=editUrl")
+    public String getHttpCalendarFormView(RenderRequest request) {
+    	return "/editCalendarUrl";
+    }
+    
+
+    @RequestMapping(params = "action=editUrl")
+    public void updateHttpCalendar(ActionRequest request, ActionResponse response, 
+    		@ModelAttribute(FORM_NAME) CalendarListingCommand form)
 			throws Exception {
 		
-		// get the form data
-		CalendarListingCommand form = (CalendarListingCommand) command;
-
 		// construct a calendar definition from the form data
 		UserDefinedCalendarConfiguration config = null;
 		UserDefinedCalendarDefinition definition = null;
@@ -130,10 +140,6 @@ public class EditUserHttpICalController extends SimpleFormController {
 		// send the user back to the main edit page
 		response.setRenderParameter("action", "editSubscriptions");
 
-	}
-
-	public void setCalendarStore(CalendarStore calendarStore) {
-		this.calendarStore = calendarStore;
 	}
 
 }
