@@ -25,37 +25,46 @@
         </property>
     </bean>
     
+    <bean id="configurationLoader" class="org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader"/>
+    
+    <bean id="validator" class="org.springmodules.validation.bean.BeanValidator"  
+        p:configurationLoader-ref="configurationLoader"/>   
+    
+    
+    
     <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ViewSelectorDefaultImpl"/>
     
+    <!-- Regexes of mobile device user agents -->
     <util:list id="mobileDeviceRegexes">
         <value>.*iPhone.*</value>
+        <value>.*Android.*</value>
+        <value>.*Safari.*Pre.*</value>
+        <value>.*Nokia.*AppleWebKit.*</value>
+    </util:list>
+
+    <util:list id="initializationServices">
+        
+        <!--
+            Session setup service: this service bean must be first in the list
+        -->
+        <bean class="org.jasig.portlet.calendar.service.SessionSetupInitializationService"
+            p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore"/>
+        
+        <!--
+            Uncomment the following section if you are using CAS authenticated calendar adapters.
+        -->
+        <!--bean class="org.jasig.portlet.calendar.service.CasProxyInitializationService"
+            p:proxyTicketService-ref="casTicketService"/-->
+        
+        <!--
+            Uncomment the following section if you are using cached password authenticated calendar adapters.
+        -->
+        <!--
+            <bean class="org.jasig.portlet.calendar.service.CachedCredentialsInitializationService"/>
+        -->
+        
     </util:list>
     
-    <!-- Controllers -->
-
-    <!-- main portlet view -->
-    <bean id="viewCalendarController"
-        class="org.jasig.portlet.calendar.mvc.controller.CalendarController"
-        p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore">
-        <property name="initializationServices">
-            <list>
-            	<!--
-					Uncomment the following section if you are using CAS authenticated calendar adapters.
-				-->
-                <!--bean class="org.jasig.portlet.calendar.service.CasProxyInitializationService"
-                    p:proxyTicketService-ref="casTicketService"/-->
-                
-                <!--
-					Uncomment the following section if you are using cached password authenticated calendar adapters.
-				-->
-                <!--
-                <bean class="org.jasig.portlet.calendar.service.CachedCredentialsInitializationService"/>
-                -->
-                
-            </list>
-        </property>
-    </bean>
-
     <util:map id="predefinedEditActions">
         <!-- Add edit screens for custom calendar adapters -->
         <!--

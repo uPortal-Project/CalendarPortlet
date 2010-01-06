@@ -28,7 +28,8 @@ import org.jasig.portlet.calendar.adapter.CalendarException;
  * @version $Header: XSLTICalendarContentProcessorImpl.java Exp $
  */
 public class XSLTICalendarContentProcessorImpl extends ICalendarContentProcessorImpl {
-	private Log log = LogFactory.getLog(this.getClass());
+
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	public XSLTICalendarContentProcessorImpl() {
 		super();

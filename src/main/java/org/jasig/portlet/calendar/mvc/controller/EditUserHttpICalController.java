@@ -20,11 +20,17 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
-import org.jasig.portlet.calendar.mvc.CalendarListingCommand;
+import org.jasig.portlet.calendar.mvc.UserHttpIcalCalendarForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 
 /**
@@ -35,13 +41,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("EDIT")
+@SessionAttributes("userHttpIcalCalendarForm")
 public class EditUserHttpICalController {
 
-    private static final String FORM_NAME = "calendarListingCommand";
+    private static final String FORM_NAME = "userHttpIcalCalendarForm";
+
+	protected final Log log = LogFactory.getLog(this.getClass());
+
+    private Validator validator;
+    
+    @Autowired(required = true)
+    public void setValidator(Validator validator) {
+    	this.validator = validator;
+    }
 
 	private CalendarStore calendarStore;
-
-	private static Log log = LogFactory.getLog(EditUserHttpICalController.class);
 
 	@Required
 	@Resource(name="calendarStore")
@@ -49,64 +63,42 @@ public class EditUserHttpICalController {
 		this.calendarStore = calendarStore;
 	}
 
-	@ModelAttribute(FORM_NAME)
-	public CalendarListingCommand getHttpCalendarForm(PortletRequest request) throws Exception {
-		PortletSession session = request.getPortletSession();
-
-		// if we're editing a calendar, retrieve the calendar definition from
-		// the database and add the information to the form
-		String id = request.getParameter("id");
-		if (id != null && !id.equals("")) {
-			Long configurationId = Long.parseLong(id);
-			if (configurationId > -1) {
-				CalendarConfiguration listing = (CalendarConfiguration) calendarStore
-						.getCalendarConfiguration(configurationId);
-				log.debug("retrieved " + listing.toString());
-				CalendarListingCommand command = new CalendarListingCommand();
-				command.setId(listing.getId());
-				command.setName(listing.getCalendarDefinition().getName());
-				command.setUrl(listing.getCalendarDefinition().getParameters().get("url"));
-				command.setSubscribeId(listing.getSubscribeId());
-				command.setDisplayed(listing.isDisplayed());
-			
-				return command;
-			} else {
-				// otherwise, construct a brand new form
-
-				// get user information
-				// get user information
-				String subscribeId = (String) session.getAttribute("subscribeId");
-				
-				// create the form
-				CalendarListingCommand command =  new CalendarListingCommand();
-				command.setSubscribeId(subscribeId);
-				return command;
-			}
-
-		} else {
-			// otherwise, construct a brand new form
-
-			// get user information
-			// get user information
-			String subscribeId = (String) session.getAttribute("subscribeId");
-			
-			// create the form
-			CalendarListingCommand command =  new CalendarListingCommand();
-			command.setSubscribeId(subscribeId);
-			return command;
+	/**
+	 * Show the Calendar editing form
+	 * 
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(params = "action=editUrl")
+	public String showHttpCalendarForm(RenderRequest request, Model model) {
+		if (!model.containsAttribute(FORM_NAME)) {
+			model.addAttribute(FORM_NAME, getHttpCalendarForm(request));
 		}
+		return "/editCalendarUrl";
 	}
 
-    @RequestMapping(params = "action=editUrl")
-    public String getHttpCalendarFormView(RenderRequest request) {
-    	return "/editCalendarUrl";
-    }
-    
-
-    @RequestMapping(params = "action=editUrl")
-    public void updateHttpCalendar(ActionRequest request, ActionResponse response, 
-    		@ModelAttribute(FORM_NAME) CalendarListingCommand form)
+	/**
+	 * Update the calendar in the data store.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param form
+	 * @param result
+	 * @param status
+	 * @throws Exception
+	 */
+	@RequestMapping(params = "action=editUrl")
+	public void updateHttpCalendar(ActionRequest request, ActionResponse response, 
+			@ModelAttribute(FORM_NAME) UserHttpIcalCalendarForm form, 
+			BindingResult result, SessionStatus status)
 			throws Exception {
+		
+		validator.validate(form, result);
+		if (result.hasErrors()) {
+			response.setRenderParameter("action", "editUrl");
+	    	return;
+		}
 		
 		// construct a calendar definition from the form data
 		UserDefinedCalendarConfiguration config = null;
@@ -131,15 +123,69 @@ public class EditUserHttpICalController {
 			config.setCalendarDefinition(definition);
 			config.setSubscribeId(form.getSubscribeId());
 			config.setDisplayed(form.isDisplayed());
-
+	
 		}
-
+	
 		// save the calendar
 		calendarStore.storeCalendarConfiguration(config);
-
+	
 		// send the user back to the main edit page
 		response.setRenderParameter("action", "editSubscriptions");
-
+		status.setComplete();
+	
 	}
 
+	/**
+	 * Generate a new calendar form.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	protected UserHttpIcalCalendarForm getHttpCalendarForm(PortletRequest request) {
+		PortletSession session = request.getPortletSession();
+
+		// if we're editing a calendar, retrieve the calendar definition from
+		// the database and add the information to the form
+		String id = request.getParameter("id");
+		if (id != null && !id.equals("")) {
+			Long configurationId = Long.parseLong(id);
+			if (configurationId > -1) {
+				CalendarConfiguration listing = (CalendarConfiguration) calendarStore
+						.getCalendarConfiguration(configurationId);
+				log.debug("retrieved " + listing.toString());
+				UserHttpIcalCalendarForm command = new UserHttpIcalCalendarForm();
+				command.setId(listing.getId());
+				command.setName(listing.getCalendarDefinition().getName());
+				command.setUrl(listing.getCalendarDefinition().getParameters().get("url"));
+				command.setSubscribeId(listing.getSubscribeId());
+				command.setDisplayed(listing.isDisplayed());
+			
+				return command;
+			} else {
+				// otherwise, construct a brand new form
+
+				// get user information
+				// get user information
+				String subscribeId = (String) session.getAttribute("subscribeId");
+				
+				// create the form
+				UserHttpIcalCalendarForm command =  new UserHttpIcalCalendarForm();
+				command.setSubscribeId(subscribeId);
+				return command;
+			}
+
+		} else {
+			// otherwise, construct a brand new form
+
+			// get user information
+			// get user information
+			String subscribeId = (String) session.getAttribute("subscribeId");
+			
+			// create the form
+			UserHttpIcalCalendarForm command =  new UserHttpIcalCalendarForm();
+			command.setSubscribeId(subscribeId);
+			return command;
+		}
+	}
+    
 }

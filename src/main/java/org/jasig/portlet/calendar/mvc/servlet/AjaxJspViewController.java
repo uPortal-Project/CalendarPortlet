@@ -14,11 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * AjaxJspViewController 
+ * 
+ * @author Jen Bourey
+ * @version $Revision$
+ */
 @Controller
 @RequestMapping("/ajax/jspView")
 public class AjaxJspViewController {
 
-	private Log log = LogFactory.getLog(AjaxJspViewController.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private AjaxPortletSupportService ajaxPortletSupportService;
 

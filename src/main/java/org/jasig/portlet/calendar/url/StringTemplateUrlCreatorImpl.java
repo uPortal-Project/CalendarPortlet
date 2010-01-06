@@ -24,7 +24,7 @@ import org.jasig.portlet.calendar.adapter.CalendarException;
  */
 public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private final String USERNAME_TOKEN = "@USERNAME@";
 	private final String START_DATE_TOKEN = "@STARTDATE@";

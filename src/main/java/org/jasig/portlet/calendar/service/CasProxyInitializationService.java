@@ -25,7 +25,7 @@ import org.jasig.portlet.cas.ICASProxyTicketService;
  */
 public class CasProxyInitializationService implements IInitializationService {
 	
-	private static Log log = LogFactory.getLog(CasProxyInitializationService.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	private int sessionLength = 60*60*2;
 	

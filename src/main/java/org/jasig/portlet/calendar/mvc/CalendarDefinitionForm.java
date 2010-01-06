@@ -15,11 +15,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
+
 public class CalendarDefinitionForm {
 	
 	private Long id = new Long(-1);
+	
+	@NotBlank
 	private String className;
+	
+	@NotBlank
 	private String name;
+	
 	private Set<String> role = new HashSet<String>();
 	private List<String> parameterName = new ArrayList<String>();
 	private List<String> parameterValue = new ArrayList<String>();

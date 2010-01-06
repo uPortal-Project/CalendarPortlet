@@ -8,40 +8,39 @@
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"/>"></script>
 </c:if>
-<script type="text/javascript">
-    var cal = cal || {};
-    cal.jQuery = jQuery.noConflict(${includeJQuery});
-    cal.jQuery(function(){
-        var $ = cal.jQuery;
-        var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
-
-        var updateEvents = function(date) {
-            $("#${n}events").html("<br/><p>Loading . . . </p>");
-            $.post(eventsUrl,
-                { startDate: date }, 
-                function(xml){ $("#${n}events").html(xml) }
-            );
-        };
-        
-        $(document).ready(function(){
-            var startDate = '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>';
-            updateEvents(startDate);
-            var date = new Date();
-            date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
-            $('#${n}inlineCalendar').datepicker(
-                {
-                    inline: true,
-                    changeMonth: false,
-                    changeYear: false,
-                    defaultDate: date,
-                    onSelect: function(date) {
-                        updateEvents(date);
-                    } 
-                }
-            );
-        });
-    });
-</script>
+    <script type="text/javascript">
+    	var cal = cal || {};
+    	cal.jQuery = jQuery.noConflict(${includeJQuery});
+    	cal.jQuery(function(){
+    		var $ = cal.jQuery;
+			$(document).ready(function(){
+				$("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
+				$.post('<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',
+						{ startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>' },
+						function(xml){ $("#<portlet:namespace/>events").html(xml) }
+				);
+				var date = new Date();
+                date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
+			    $('#<portlet:namespace/>inlineCalendar').datepicker(
+			    	{ 
+			    	    inline: true,
+			    		changeMonth: false,
+			    		changeYear: false,
+			    		defaultDate: date,
+					    onSelect: function(date) {
+					        $("#<portlet:namespace/>events").html("<br/><p>Loading . . . </p>");
+					        $.post(
+					        	'<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>',
+					            //'<c:url value="/listEvents"/>', 
+					            { startDate: date }, 
+					            function(xml){ $("#<portlet:namespace/>events").html(xml) }
+					        );
+					    } 
+					}
+				);
+			});
+		});
+    </script>
 
 <div class="upcal-fullview">
 
@@ -50,7 +49,7 @@
 	    <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>">Edit and Download Calendars</a>
         <c:if test="${ sessionScope.isAdmin }">
 		    <span class="upcal-pipe">|</span>
-		    <a href="<portlet:renderURL portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>">Calendar Administration</a>
+		    <a href="<portlet:renderURL><portlet:param name="action" value="administration"/></portlet:renderURL>">Calendar Administration</a>
 	    </c:if>
 	</div>
 </c:if>

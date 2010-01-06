@@ -72,7 +72,7 @@ import org.jasig.portlet.calendar.adapter.CalendarException;
  */
 public class ICalendarContentProcessorImpl implements IContentProcessor {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	/*
 	 * (non-Javadoc)

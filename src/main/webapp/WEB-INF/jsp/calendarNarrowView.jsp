@@ -1,12 +1,9 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+
 <c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
 <fmt:setTimeZone value="${ model.timezone }"/>
 <c:set var="n"><portlet:namespace/></c:set>
-
-<link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
-<style type="text/css">
-    <jsp:directive.include file="/WEB-INF/jsp/dynamicCss.jsp"/>
-</style>
 
 <c:if test="${includeJQuery}">
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>

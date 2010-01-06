@@ -53,7 +53,7 @@ import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
  */
 public class CalDavCalendarAdapter implements ICalendarAdapter {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private Cache cache;
 	private IUrlCreator urlCreator = new DefaultUrlCreatorImpl();

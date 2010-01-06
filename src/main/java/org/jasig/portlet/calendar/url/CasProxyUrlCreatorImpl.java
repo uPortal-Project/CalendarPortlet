@@ -65,7 +65,7 @@ import org.jasig.portlet.cas.ICASProxyTicketService;
  */
 public class CasProxyUrlCreatorImpl implements IUrlCreator {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private ICASProxyTicketService proxyTicketService;
 

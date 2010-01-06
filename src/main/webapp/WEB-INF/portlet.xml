@@ -86,9 +86,9 @@
     </user-attribute>
 
     <!-- Uncomment to use Proxy CAS authentication -->
-    <!--user-attribute>
+    <user-attribute>
         <name>casProxyTicket</name>
-    </user-attribute-->
+    </user-attribute>
 
     <!-- Uncomment to use cached password authentication -->
     <!--user-attribute>

@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("VIEW")
 public class AjaxCalendarController implements ApplicationContextAware {
 
-	private static Log log = LogFactory.getLog(AjaxCalendarController.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	@RequestMapping(params = "action=events")
 	public void getEventList(ActionRequest request,
@@ -178,7 +178,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
-				} catch (CalendarException ex) {
+				} catch (Exception ex) {
 					log.warn(ex);
 					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
 				}

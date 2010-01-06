@@ -30,7 +30,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class HibernateCalendarStore extends HibernateDaoSupport implements
 		CalendarStore {
 
-	private static Log log = LogFactory.getLog(HibernateCalendarStore.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	/*
 	 * (non-Javadoc)

@@ -55,7 +55,7 @@ import org.jasig.portlet.calendar.adapter.CalendarException;
  */
 public class DefaultUrlCreatorImpl implements IUrlCreator {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.servlet.http.HttpServletRequest, net.fortuna.ical4j.model.Period)

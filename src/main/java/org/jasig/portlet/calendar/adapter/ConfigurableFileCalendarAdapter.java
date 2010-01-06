@@ -29,7 +29,7 @@ import org.jasig.portlet.calendar.processor.IContentProcessor;
 
 public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingleEventSupport {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private Cache cache;
 	private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();

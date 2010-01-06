@@ -1,4 +1,6 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+
     <script type="text/javascript">
 		function addRole(id) {
 			var div = document.getElementById(id);
@@ -58,21 +60,26 @@
 		}
     </script>
 
+<div class="">
+    <h2>Edit Calendar</h2>
+
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editCalendarDefinition"/></portlet:actionURL>
-
-	<h3>Edit Calendar</h3>
-
-       <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
+    <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
+    
+        <spring:hasBindErrors name="calendarDefinitionForm">
+            <div class="portlet-msg-error" role="alert">
+                <form:errors path="*" element="div"/>
+            </div> <!-- end: portlet-msg -->
+        </spring:hasBindErrors>
+    
        	<form:hidden path="id"/>
 		<p>
 			<label class="portlet-form-field-label">Calendar Display Name:</label>
 			<form:input path="name" size="50"/>
-			<form:errors path="name" cssClass="portlet-msg-error"/>
 		</p>
-          	<p>
-               <label class="portlet-form-field-label">Context Bean Name:</label>
-               <form:input path="className" size="50"/>
-			<form:errors path="className" cssClass="portlet-msg-error"/>
+        <p>
+            <label class="portlet-form-field-label">Context Bean Name:</label>
+            <form:input path="className" size="50"/>
 		</p>
 		<br/>
 		<p id="<portlet:namespace/>role-list">
@@ -108,12 +115,16 @@
 					add a parameter</a>
 			</div>
 		</p>
-           <p>
+        <p>
             <button type="submit" class="portlet-form-button">Save calendar</button>
-           </p>
-       </form:form>
-       <br />
-       <hr />
-       <p>
-       	<a href="<portlet:renderURL><portlet:param name="action" value="administration"/></portlet:renderURL>"><img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>" style="vertical-align: middle"> Return to main administration page</a>
-       </p>
+        </p>
+    </form:form>
+
+    <div class="upcal-view-links">
+        <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
+        <a class="upcal-view-return" href="${ returnUrl }">
+           Return to administration
+        </a>
+    </div>
+    
+</div>

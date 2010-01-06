@@ -19,7 +19,7 @@ import org.jasig.cas.client.validation.TicketValidator;
 
 public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService {
 	
-	private static Log log = LogFactory.getLog(CASProxyTicketServiceUserInfoImpl.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private String serviceUrl;
 	

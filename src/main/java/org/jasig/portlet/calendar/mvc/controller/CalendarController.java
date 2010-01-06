@@ -7,18 +7,13 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.Resource;
-import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
@@ -47,97 +42,36 @@ import org.springframework.web.portlet.ModelAndView;
 @RequestMapping("VIEW")
 public class CalendarController implements ApplicationContextAware {
 
-	private static Log log = LogFactory.getLog(CalendarController.class);
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	@RequestMapping()
 	public ModelAndView getCalendar(PortletRequest request) {
 
-		Map<String, Object> model = new HashMap<String, Object>();
-		PortletSession session = request.getPortletSession(true);
-		HashMap<Long, String> hiddenCalendars = null;
-		Calendar cal = Calendar.getInstance();
-		String subscribeId = null;
 		
 		/**
 		 * If this is a new session, perform any necessary 
 		 * portlet initialization.
 		 */
 
+		PortletSession session = request.getPortletSession(true);
 		if (session.getAttribute("initialized") == null) {
 			
-			if(userToken == null || userToken.equalsIgnoreCase("")) {
-				subscribeId = request.getRemoteUser();
-	    	}
-	    	else {
-	    		// get the credentials for this portlet from the UserInfo map
-	    		@SuppressWarnings("unchecked")
-	    		Map<String,String> userinfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
-	    		subscribeId = (String) userinfo.get(userToken);    		
-	    	}
-			
-			//default to guest
-			if (subscribeId == null) {
-				subscribeId = "guest";
-			}
-			session.setAttribute("subscribeId", subscribeId);
-
-			// get a set of all role names currently configured for
-			// default calendars
-			List<String> allRoles = calendarStore.getUserRoles();
-			log.debug("all roles: " + allRoles);
-			
-			// determine which of the above roles the user belongs to
-			// and store the resulting list in the session
-			Set<String> userRoles = new HashSet<String>();
-			for (String role : allRoles) {
-				if (request.isUserInRole(role))
-					userRoles.add(role);
-			}
-			session.setAttribute("userRoles", userRoles);
-			
-			// determine if this user belongs to the defined calendar
-			// administration group and store the result in the session
-			session.setAttribute("isAdmin", 
-					request.isUserInRole("calendarAdmin"), PortletSession.APPLICATION_SCOPE);
-
-			// update the user's calendar subscriptions to include
-			// any calendars that have been associated with his or 
-			// her role
-			calendarStore.initCalendar(subscribeId, userRoles);
-
-			// create a list of hidden calendars
-			hiddenCalendars = new HashMap<Long, String>();
-			session.setAttribute("hiddenCalendars", hiddenCalendars);
-
-			// set the default number of days to display
-			session.setAttribute("days", defaultDays);
-
 			// perform any other configured initialization tasks
 			for (IInitializationService service : initializationServices) {
 				service.initialize(request);
 			}
 
-			// mark this session as initialized
-			session.setAttribute("initialized", "true");
-			session.setMaxInactiveInterval(60*60*2);
-			
-			PortletPreferences prefs = request.getPreferences();
-			String timezone = prefs.getValue("timezone", "America/New_York");
-			session.setAttribute("timezone", timezone);
-
-			// set now as the starting date
-		    cal.set(Calendar.HOUR_OF_DAY, 0);
-		    cal.set(Calendar.MINUTE, 0);
-		    cal.set(Calendar.SECOND, 0);
-		    cal.set(Calendar.MILLISECOND, 1);
-		    cal.setTimeZone(TimeZone.getTimeZone(timezone));
-			session.setAttribute("startDate", cal.getTime());
-
 		} else {
-			// get the list of hidden calendars
-			hiddenCalendars = (HashMap<Long, String>) session.getAttribute("hiddenCalendars");
-			subscribeId = (String) session.getAttribute("subscribeId");
 		}
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		Calendar cal = Calendar.getInstance();
+		
+		// get the list of hidden calendars
+		@SuppressWarnings("unchecked")
+		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
+				.getAttribute("hiddenCalendars");
+		String subscribeId = (String) session.getAttribute("subscribeId");
 
 		if ("guest".equalsIgnoreCase(subscribeId)) {
 			model.put("guest", true);
@@ -265,17 +199,10 @@ public class CalendarController implements ApplicationContextAware {
 		this.calendarStore = calendarStore;
 	}
 
-	private String userToken = null;
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
-	}
+	private List<IInitializationService> initializationServices;
 	
-	private int defaultDays = 7;
-	public void setDefaultDays(int defaultDays) {
-		this.defaultDays = defaultDays;
-	}
-	
-	private List<IInitializationService> initializationServices = new ArrayList<IInitializationService>();
+	@Required
+	@Resource(name="initializationServices")
 	public void setInitializationServices(List<IInitializationService> services) {
 		this.initializationServices = services;
 	}
@@ -288,6 +215,11 @@ public class CalendarController implements ApplicationContextAware {
 	}
 	
 	private ApplicationContext applicationContext;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+	 */
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;

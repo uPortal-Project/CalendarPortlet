@@ -1,8 +1,5 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
-<style type="text/css">
-    <jsp:directive.include file="/WEB-INF/jsp/dynamicCss.jsp"/>
-</style>
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
 <div class="upcal-editview">
 
@@ -104,6 +101,29 @@
 	</div>
 	
 </div>
+
+<portlet:actionURL var="postUrl"><portlet:param name="action" value="editPreferences"/></portlet:actionURL>
+
+<h2>Edit Calendar Preferences</h2>
+
+<form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}">
+
+    <p>
+        <label class="portlet-form-field-label">Time Zone:</label>
+        <form:select path="timezone">
+            <c:forEach items="${timezones}" var="zone">
+                <spring:message var="message" code="timezone.${ zone }" text="${ zone }"/>
+                <form:option label="${message}" value="${ zone }"/>
+            </c:forEach>
+        </form:select>
+        <form:errors path="timezone" cssClass="portlet-msg-error"/>
+    </p>
+    <br/>
+    <p>
+       <button type="submit" class="portlet-form-button">Save preferences</button>
+    </p>
+    
+</form:form>
 
 <div class="upcal-view-links">
 	<a class="upcal-view-return" href="<portlet:renderURL portletMode="view"/>">

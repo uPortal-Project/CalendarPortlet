@@ -73,7 +73,7 @@ import com.sun.syndication.io.SyndFeedInput;
  */
 public class RssContentProcessorImpl implements IContentProcessor {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
@@ -87,6 +87,7 @@ public class RssContentProcessorImpl implements IContentProcessor {
 			final InputStreamReader reader = new InputStreamReader(in);
 			final SyndFeed feed = input.build(reader);
 			
+			@SuppressWarnings("unchecked")
 			List<SyndEntry> entries = (List<SyndEntry>) feed.getEntries();
 			for (SyndEntry entry : entries) {
 				PropertyList props = new PropertyList();
