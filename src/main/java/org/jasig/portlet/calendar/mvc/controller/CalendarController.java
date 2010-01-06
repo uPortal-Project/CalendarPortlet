@@ -72,7 +72,6 @@ public class CalendarController implements ApplicationContextAware {
 				service.initialize(request);
 			}
 
-		} else {
 		}
 
 		Map<String, Object> model = new HashMap<String, Object>();

@@ -40,6 +40,10 @@ import javax.portlet.WindowState;
  */
 public class ViewSelectorDefaultImpl implements IViewSelector {
 	
+	private final String CALENDAR_WIDE_VIEW = "calendarWideView";
+	private final String CALENDAR_NARROW_VIEW = "calendarNarrowView";
+	private final String CALENDAR_MOBILE_VIEW = "calendarMobileView";
+	
 	private List<Pattern> mobileDeviceRegexes = null;
 	
 	/**
@@ -66,16 +70,18 @@ public class ViewSelectorDefaultImpl implements IViewSelector {
 		// check to see if this is a mobile device
 		if (this.mobileDeviceRegexes != null && userAgent != null) {
 			for (Pattern regex : this.mobileDeviceRegexes) {
-				regex.matcher(userAgent).matches();
+				if (regex.matcher(userAgent).matches()) {
+					return CALENDAR_MOBILE_VIEW;
+				}
 			}
 		}
 		
 		// otherwise check the portlet window state
 		WindowState state = request.getWindowState();
 		if (WindowState.MAXIMIZED.equals(state)) {
-			return "calendarWideView";
+			return CALENDAR_WIDE_VIEW;
 		} else {
-			return "calendarNarrowView";
+			return CALENDAR_NARROW_VIEW;
 		}
 		
 	}

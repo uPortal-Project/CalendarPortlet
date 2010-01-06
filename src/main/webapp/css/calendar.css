@@ -46,7 +46,7 @@
 
 /* Events List */
 .upcal-events { margin-bottom:1em; }
-.upcal-fullview .upcal-events { min-height:250px; }
+.upcal-fullview .upcal-event-list { min-height:250px; }
 .upcal-events h2 { margin:0.5em 0 0 0; font-size:1em; border-bottom:1px solid #999; }
 .upcal-events h2 .upcal-today-date { padding-left:0.5em; font-size:86%; color:#515151; }
 .upcal-event { padding:0.3em 0; border-bottom:1px dotted #ccc; }

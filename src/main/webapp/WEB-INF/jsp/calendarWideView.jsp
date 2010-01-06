@@ -39,10 +39,29 @@
             $("#${n}events").html("<br/><p>Loading . . . </p>");
             $.post(eventsUrl,
                 { startDate: date }, 
-                function(xml){ $("#${n}events").html(xml) }
+                function(xml) { 
+                    $("#${n}events").html(xml);
+                    updateLinks(); 
+                }
             );
         };
         
+        var updateLinks = function() {
+            $("#${n}events").find(".upcal-event-link").click(function(){
+                    var link = $(this);
+                    $('#${n}calendarRangeSelector').hide();
+                    $('#${n}events .upcal-events').hide();
+                    $('#${n}viewLinks').show();
+                    $('#eventDescription-' + link.attr("eventIndex")).show();
+                });
+            $('#${n}returnToCalendarLink').click(function(){
+                    $('[id^=eventDescription]').hide();
+                    $('#${n}viewLinks').hide();
+                    $('#${n}calendarRangeSelector').show();
+                    $('#${n}events .upcal-events').show();
+                });
+        };
+   
         $(document).ready(function(){
             var startDate = '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>';
             updateEvents(startDate);
@@ -147,7 +166,16 @@
             </span>
 		</div>
 		
-		<div id="${n}events">
+		<div class="upcal-event-list">
+            <div id="${n}events"></div>
+            
+            <!-- View Links -->
+            <div id="${n}viewLinks" class="upcal-view-links" style="display:none">
+                <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;">
+                    Return to event list
+                </a>
+            </div>
+            
 		</div>
 		
 	</div>
