@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>10</version>
+        <version>12</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -611,6 +611,24 @@
                 	</overlays>
                 </configuration>
             </plugin>
+        	<plugin>
+        		<groupId>com.google.code.maven-license-plugin</groupId>
+        		<artifactId>maven-license-plugin</artifactId>
+        		<version>1.4.0</version>
+        		<configuration>
+        			<basedir>${basedir}</basedir>  
+        			<header>${jasig-short-license-url}</header>
+        			<aggregate>true</aggregate>
+        			<excludes>
+        				<exclude>LICENSE</exclude>
+        				<exclude>NOTICE</exclude>
+        				<exclude>**/src/main/webapp/rs/**</exclude>
+        			</excludes>
+        			<mapping>
+        				<tld>XML_STYLE</tld>
+        			</mapping>
+        		</configuration>
+        	</plugin>
         </plugins>
     </build>
 </project>
