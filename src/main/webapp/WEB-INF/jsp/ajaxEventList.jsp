@@ -31,7 +31,7 @@
 </c:if>
 
 <c:if test="${ empty events }">
-    <p>No events.</p>
+    <p><spring:message code="eventlist.noevents"/></p>
 </c:if>
 
 <div class="upcal-events">
@@ -45,9 +45,14 @@
             <h2>
                 <c:choose>
                     <c:when test="${startDate == today}">
-                        <span class="upcal-today-date">Today</span> (${ startDate }) 
+                        <span class="upcal-today-date">
+                            <spring:message code="eventlist.today"/>
+                        </span> 
+                        (${ startDate }) 
                     </c:when>
-                    <c:when test="${startDate == tomorrow}"> Tomorrow </c:when>
+                    <c:when test="${startDate == tomorrow}">
+                        <spring:message code="eventlist.tomorrow"/>
+                    </c:when>
                     <c:otherwise> ${startDate} </c:otherwise>
                 </c:choose>
             </h2>
@@ -63,7 +68,7 @@
 			<span class="upcal-event-time">
                 <c:choose>
                     <c:when test="<%= ((org.jasig.portlet.calendar.CalendarEvent) pageContext.getAttribute(\"event\")).isAllDay((java.lang.String) pageContext.getAttribute(\"timezone\")) %>">
-                        All day
+                        <spring:message code="event.allday"/>
                     </c:when>
                     <c:otherwise>
                         ${startTime} <c:if test="${ not empty event.endDate and event.startDate.date != event.endDate.date}"> - ${ endTime } </c:if>
@@ -72,7 +77,7 @@
 			</span>
 			<h3 class="upcal-event-title">
                 <a class="upcal-event-link" href="javascript:;" eventIndex="${ status.index }">
-                    <c:out value="${ event.summary.value }"/>
+                    <spring:escapeBody htmlEscape="true">${ event.summary.value }</spring:escapeBody>
                 </a>
             </h3>
        </div>
@@ -89,7 +94,7 @@
             <div id="eventDescription-${status.index}" class="upcal-event-detail color-${ class }" style="display:none">
       
             <!-- Event title -->
-            <h2>${ event.summary.value }</h2>
+            <h2><spring:escapeBody htmlEscape="true">${ event.summary.value }</spring:escapeBody></h2>
       
             <!-- Calendar event is from -->
             <div class="upcal-event-detail-cal">
@@ -99,17 +104,23 @@
             <!-- Event time -->
             <fmt:formatDate var="startDate" value="${event.startDate.date}" pattern="EEEE MMMM d"/>
                 <div class="event-detail-date">
-                <h3>Date:</h3>
+                <h3><spring:message code="event.date"/>:</h3>
                 <p>
                 <c:choose>
-                    <c:when test="${startDate == today}"> Today <span class="upcal-event-detail-startdate"> ${ startDate } </span></c:when>
-                    <c:when test="${startDate == tomorrow}"> Tomorrow (${ startDate })</c:when>
+                    <c:when test="${startDate == today}">
+	                    <spring:message code="eventlist.today"/> 
+	                    <span class="upcal-event-detail-startdate"> ${ startDate } </span>
+	                </c:when>
+                    <c:when test="${startDate == tomorrow}">
+                        <spring:message code="eventlist.tomorrow"/> (${ startDate })
+                    </c:when>
                     <c:otherwise> ${startDate} </c:otherwise>
                 </c:choose>
                 <c:if test="<%= !((org.jasig.portlet.calendar.CalendarEvent) pageContext.getAttribute(\"event\")).isAllDay((java.lang.String) pageContext.getAttribute(\"timezone\")) %>">
                     <span class="upcal-event-detail-starttime">
                         <fmt:formatDate value="${event.startDate.date}" pattern="h:mm a"/>
-                        to <fmt:formatDate value="${event.startDate.date}" pattern="h:mm a"/>
+                        <spring:message code="event.daterange.separator"/>
+                        <fmt:formatDate value="${event.startDate.date}" pattern="h:mm a"/>
                     </span>
                 </c:if>
 	       </p>
@@ -118,7 +129,7 @@
         <!-- Event location -->
         <c:if test="${ not empty event.location }">
             <div class="upcal-event-detail-loc">
-                <h3>Location:</h3>
+                <h3><spring:message code="event.location"/>:</h3>
                 <p><spring:escapeBody htmlEscape="true">${ event.location.value }</spring:escapeBody></p>
             </div>
         </c:if>
@@ -126,16 +137,20 @@
         <!-- Event description -->
         <c:if test="${ not empty event.description }">
             <div class="upcal-event-detail-desc">
-                <h3>Description:</h3>
-                <p>${ event.description.value }</p>
+                <h3><spring:message code="event.description"/>:</h3>
+                <p><antisamy:clean value="${ event.description.value }"/></p>
             </div>
         </c:if>
       
         <!-- Event link (to authoring application) -->
         <c:if test="${ not empty event.url }">
             <div class="upcal-event-detail-link">
-                <h3>Link:</h3>
-                <p><a href="${ event.url.value }">${ event.url.value }</a></p>
+                <h3><spring:message code="event.link"/>:</h3>
+                <p>
+                    <a href="${ event.url.value }">
+                        <spring:escapeBody htmlEscape="true">${ event.url.value }</spring:escapeBody>
+                    </a>
+                </p>
             </div>
         </c:if>
       

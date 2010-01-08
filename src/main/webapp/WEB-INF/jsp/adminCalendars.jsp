@@ -25,27 +25,30 @@
 
     <div class="upcal-list">
 
-	    <h2>Pre-configured Calendars</h2>
+	    <h2><spring:message code="view.admininistration.header"/></h2>
 	    
         <ul>
             <c:forEach items="${ calendars }" var="calendar">
                 <li>
-                    <!-- Name/Edit -->
+                    <!-- Edit -->
                     <portlet:renderURL var="editCalendarUrl">
                         <portlet:param name="action" value="editCalendarDefinition"/>
                         <portlet:param name="id" value="${ calendar.id }"/>
                     </portlet:renderURL>
-                    <a class="upcal-edit" href="${ editCalendarUrl }" title="Edit calendar">
-                        Edit
+                    <a class="upcal-edit" href="${ editCalendarUrl }" 
+                            title="<spring:message code="calendar.edit.title"/>">
+                        <span><spring:message code="calendar.edit"/></span>
                     </a>
-                    ${ calendar.name }
+                    <!-- Calendar name -->
+                    <spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody>
                     <!-- Delete -->
                     <portlet:actionURL var="deleteCalendarUrl">
                         <portlet:param name="action" value="deleteSharedCalendar"/>
                         <portlet:param name="calendarId" value="${ calendar.id }"/>
                     </portlet:actionURL>
-                    <a class="upcal-delete" href="${ deleteCalendarUrl }" title="Delete calendar">
-                        Delete
+                    <a class="upcal-delete" href="${ deleteCalendarUrl }" 
+                            title="<spring:message code="calendar.edit.title"/>">
+                        <span><spring:message code="calendar.delete"/></span>
                     </a>
                 </li>
             </c:forEach>
@@ -55,14 +58,18 @@
 	    <portlet:renderURL var="addCalendarUrl">
 	       <portlet:param name="action" value="editCalendarDefinition"/>
 	    </portlet:renderURL>
-	    <a class="upcal-add" href="${ addCalendarUrl }">Add a calendar</a>
+	    <a class="upcal-add" href="${ addCalendarUrl }" 
+	           title="<spring:message code="calendar.add.title"/>">
+	       <spring:message code="calendar.add"/>
+	    </a>
 	    
     </div>
      
     <div class="upcal-view-links">
         <portlet:renderURL var="returnUrl" portletMode="view"/>
-        <a class="upcal-view-return" href="${ returnUrl }">
-           Return to calendar
+        <a class="upcal-view-return" href="${ returnUrl }" 
+                title="<spring:message code="return.to.calendar.link.title"/>">
+           <spring:message code="return.to.calendar.link.text"/>
         </a>
     </div>
     

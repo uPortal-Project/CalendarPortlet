@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.calendar;
+package org.jasig.portlet.calendar.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,6 +27,8 @@ import java.util.TimeZone;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 
+import org.jasig.portlet.calendar.CalendarEvent;
+import org.jasig.portlet.calendar.util.AllDayUtil;
 import org.junit.Test;
 
 public class AllDayUtilTest {

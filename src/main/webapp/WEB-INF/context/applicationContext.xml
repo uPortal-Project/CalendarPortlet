@@ -148,6 +148,10 @@
 		p:basenames="messages"/>
 
 	<bean class="org.jasig.web.service.AjaxPortletSupportService"/>
+	
+	<bean id="stringCleaningUtil" 
+		class="org.jasig.portlet.calendar.util.StringCleaningUtil"
+		p:securityFile="classpath:clean-html.xml"/>
 		
 	<!-- JSP view resolver -->
 	<bean id="viewResolver"

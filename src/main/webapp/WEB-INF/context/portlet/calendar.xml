@@ -50,8 +50,6 @@
     <bean id="validator" class="org.springmodules.validation.bean.BeanValidator"  
         p:configurationLoader-ref="configurationLoader"/>   
     
-    
-    
     <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ViewSelectorDefaultImpl"/>
     
     <!-- Regexes of mobile device user agents -->

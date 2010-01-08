@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.calendar;
+package org.jasig.portlet.calendar.util;
 
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.jasig.portlet.calendar.CalendarEvent;
 
 /**
  * AllDayUtil determines whether a particular event should be classified as

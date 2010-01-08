@@ -37,7 +37,7 @@
    	    var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
 
    	    var updateEvents = function(date) {
-            $("#${n}events").html("<br/><p>Loading . . . </p>");
+            $("#${n}events").html("<br/><p><spring:message code="eventlist.loading"/></p>");
             $.post(eventsUrl,
                 { startDate: date }, 
                 function(xml) {
@@ -92,25 +92,29 @@
 
     <!-- Range Selector -->
     <div id="${n}calendarRangeSelector" class="upcal-range">
-        <h3>View:</h3>
+        <h3><spring:message code="view.main.range.header"/></h3>
         <span class="upcal-range-day">
             <c:choose>
                 <c:when test="${ model.days == 1 }">
-                    Day
-            </c:when>
-            <c:otherwise>
-                <a href="<portlet:renderURL><portlet:param name="timePeriod" value="1"/></portlet:renderURL>">Day</a>
-            </c:otherwise>
-         </c:choose>
+                    <spring:message code="calendar.range.day"/>
+	            </c:when>
+	            <c:otherwise>
+	                <a href="<portlet:renderURL><portlet:param name="timePeriod" value="1"/></portlet:renderURL>">
+                        <spring:message code="calendar.range.day"/>
+	                </a>
+	            </c:otherwise>
+	         </c:choose>
         </span>
         <span class="upcal-pipe">|</span>
         <span class="upcal-range-day">
             <c:choose>
                 <c:when test="${ model.days == 7 }">
-                    Week
+                    <spring:message code="calendar.range.week"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="<portlet:renderURL><portlet:param name="timePeriod" value="7"/></portlet:renderURL>">Week</a>
+                    <a href="<portlet:renderURL><portlet:param name="timePeriod" value="7"/></portlet:renderURL>">
+                        <spring:message code="calendar.range.week"/>
+                    </a>
                 </c:otherwise>
             </c:choose>
         </span>
@@ -118,10 +122,12 @@
         <span class="upcal-range-day">
             <c:choose>
                 <c:when test="${ model.days == 31 }">
-                    Month
+                    <spring:message code="calendar.range.month"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="<portlet:renderURL><portlet:param name="timePeriod" value="31"/></portlet:renderURL>">Month</a>
+                    <a href="<portlet:renderURL><portlet:param name="timePeriod" value="31"/></portlet:renderURL>">
+                        <spring:message code="calendar.range.month"/>
+                    </a>
                 </c:otherwise>
             </c:choose>
         </span>
@@ -135,12 +141,15 @@
 
     <!-- View Links -->
     <div class="upcal-view-links">
-        <a id="${n}viewMoreEventsLink" class="upcal-view-more" href="<portlet:renderURL windowState="maximized"/>">
-            View more events
+        <a id="${n}viewMoreEventsLink" class="upcal-view-more" 
+                href="<portlet:renderURL windowState="maximized"/>"
+                title="<spring:message code="view.more.events.link.title"/>">
+            <spring:message code="view.more.events.link.text"/>
         </a>
         
-        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" style="display:none">
-            Return to calendar
+        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" 
+                style="display:none" title="<spring:message code="return.to.calendar.link.title"/>">
+            <spring:message code="return.to.calendar.link.text"/>
         </a>
     </div>
   

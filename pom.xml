@@ -157,7 +157,12 @@
 	            <artifactId>log4j</artifactId>
 	            <version>1.2.14</version>
 	        </dependency>
-	        <dependency>
+			<dependency>
+				<groupId>org.cyberneko.html</groupId>
+				<artifactId>nekohtml</artifactId>
+				<version>1.9.13</version>            
+			</dependency>
+			<dependency>
 	            <groupId>org.jasig.resourceserver</groupId>
 	            <artifactId>resource-server-content</artifactId>
 	            <version>${resource-server.version}</version>
@@ -182,7 +187,7 @@
 	        <dependency>
 	            <groupId>org.jasig</groupId>
 	            <artifactId>AjaxPortletSupport</artifactId>
-	            <version>1.0.6</version> 
+	            <version>1.0.8</version> 
 	        </dependency>
 			<dependency>
 				<groupId>org.jasig.cas</groupId>
@@ -516,7 +521,12 @@
 
 
         <!-- ===== Runtime Dependencies ================================== -->
-        <dependency>
+    	<dependency>
+    		<groupId>org.cyberneko.html</groupId>
+    		<artifactId>nekohtml</artifactId>
+    		<scope>runtime</scope>
+    	</dependency>
+    	<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <scope>runtime</scope>

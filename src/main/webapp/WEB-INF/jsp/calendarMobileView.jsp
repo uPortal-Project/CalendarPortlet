@@ -38,7 +38,7 @@
    	    var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
 
    	    var updateEvents = function(date) {
-            $("#${n}events").html("<br/><p>Loading . . . </p>");
+            $("#${n}events").html("<br/><p><spring:message code="eventlist.loading"/></p>");
             $.post(eventsUrl,
                 { startDate: date }, 
                 function(xml) {
@@ -99,8 +99,9 @@
 
     <!-- View Links -->
     <div class="upcal-view-links">
-        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" style="display:none">
-            Return to calendar
+        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" 
+                style="display:none" title="<spring:message code="return.to.calendar.link.title"/>">
+            <spring:message code="return.to.calendar.link.text"/>
         </a>
     </div>
   

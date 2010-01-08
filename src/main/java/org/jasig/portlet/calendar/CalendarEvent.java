@@ -20,6 +20,8 @@ package org.jasig.portlet.calendar;
 
 import java.util.TimeZone;
 
+import org.jasig.portlet.calendar.util.AllDayUtil;
+
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Dur;

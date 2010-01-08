@@ -59,7 +59,7 @@ public class AjaxJspViewController {
 		try {
 
 			// get the ModelAndView object associated with this AJAX request
-			Map<Object, Object> model = ajaxPortletSupportService.getAjaxModel(
+			Map<String, ?> model = (Map<String, ?>) ajaxPortletSupportService.getAjaxModel(
 					request, response);
 			String view = (String) model.get("viewName");
 			assert view != null;

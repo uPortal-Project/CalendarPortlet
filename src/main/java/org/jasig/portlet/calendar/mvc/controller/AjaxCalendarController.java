@@ -68,7 +68,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 			ActionResponse response) throws Exception {
 		
 		PortletSession session = request.getPortletSession();
-		Map<Object, Object> model = new HashMap<Object, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
 		
 		// get the list of hidden calendars
 		@SuppressWarnings("unchecked")
