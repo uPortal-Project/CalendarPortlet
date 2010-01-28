@@ -27,44 +27,23 @@
 <c:if test="${includeJQuery}">
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js"/>"></script>
 </c:if>
+<script type="text/javascript" src="<c:url value="/scripts/CalendarView.js"/>"></script>
+
 <script type="text/javascript">
     var cal = cal || {};
     cal.jQuery = jQuery.noConflict(${includeJQuery});
+    <c:if test="${includeJQuery}">delete fluid;</c:if>
     cal.jQuery(function(){
         var $ = cal.jQuery;
         var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
-
-        var updateEvents = function(date) {
-            $("#${n}events").html("<br/><p><spring:message code="eventlist.loading"/></p>");
-            $.post(eventsUrl,
-                { startDate: date }, 
-                function(xml) { 
-                    $("#${n}events").html(xml);
-                    updateLinks(); 
-                }
-            );
-        };
+        var days = ${ model.days };
+        var calView;
         
-        var updateLinks = function() {
-            $("#${n}events").find(".upcal-event-link").click(function(){
-                    var link = $(this);
-                    $('#${n}calendarRangeSelector').hide();
-                    $('#${n}events .upcal-events').hide();
-                    $('#${n}viewLinks').show();
-                    $('#eventDescription-' + link.attr("eventIndex")).show();
-                });
-            $('#${n}returnToCalendarLink').click(function(){
-                    $('[id^=eventDescription]').hide();
-                    $('#${n}viewLinks').hide();
-                    $('#${n}calendarRangeSelector').show();
-                    $('#${n}events .upcal-events').show();
-                });
-        };
-   
         $(document).ready(function(){
             var startDate = '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>';
-            updateEvents(startDate);
+            calView = cal.CalendarView(".upcal-fullview", { eventsUrl: eventsUrl, startDate: startDate })
             var date = new Date();
             date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
             $('#${n}inlineCalendar').datepicker(
@@ -74,7 +53,7 @@
                     changeYear: false,
                     defaultDate: date,
                     onSelect: function(date) {
-                        updateEvents(date);
+                        calView.updateEventList(date, days);
                     } 
                 }
             );
@@ -136,7 +115,7 @@
 	
 	<div class="fl-col-main">
 	
-		<div id="${n}calendarRangeSelector" class="upcal-range">
+		<div id="${n}calendarRangeSelector" class="upcal-range upcal-hide-on-event">
             <h3><spring:message code="view.main.range.header"/></h3>
             <span class="upcal-range-day">
                 <c:choose>
@@ -179,10 +158,12 @@
 		</div>
 		
 		<div class="upcal-event-list">
-            <div id="${n}events"></div>
+    		<p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
+    		
+            <div class="upcal-events"></div>
             
             <!-- View Links -->
-            <div id="${n}viewLinks" class="upcal-view-links" style="display:none">
+            <div id="${n}viewLinks" class="upcal-view-links upcal-hide-on-calendar">
                 <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
 		                title="<spring:message code="return.to.event.list.link.title"/>">
 		           <spring:message code="return.to.event.list.link.text"/>

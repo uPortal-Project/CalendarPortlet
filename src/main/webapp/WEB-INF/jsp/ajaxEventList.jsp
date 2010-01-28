@@ -34,7 +34,7 @@
     <p><spring:message code="eventlist.noevents"/></p>
 </c:if>
 
-<div class="upcal-events">
+<div class="upcal-events upcal-hide-on-event">
     <c:forEach items="${events}" var="event" varStatus="status">
         <fmt:formatDate var="startDate" value="${event.startDate.date}"
            pattern="EEEE MMMM d"/>
@@ -91,7 +91,7 @@
     <c:forEach items="${events}" var="event" varStatus="status">
         <c:set var="class" value="upcal-color-${ colors[event.calendarId] }"/>
     
-            <div id="eventDescription-${status.index}" class="upcal-event-detail color-${ class }" style="display:none">
+            <div id="eventDescription-${status.index}" class="upcal-event-detail color-${ class }">
       
             <!-- Event title -->
             <h2><spring:escapeBody htmlEscape="true">${ event.summary.value }</spring:escapeBody></h2>

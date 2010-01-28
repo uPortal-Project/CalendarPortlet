@@ -72,8 +72,8 @@
 .upcal-event-details h2 { margin:1em 0 0.5em 0; padding-bottom:0.2em; font-size:1.2em; border-bottom:1px solid #999; }
 .upcal-event-details h3 { margin:0; font-size:1em; font-weight:bold; }
 .upcal-event-details p { margin-left:1em; margin-bottom:0.5em; padding-bottom:0.5em; border-bottom:1px dotted #ccc; }
+.upcal-event-detail { display:none }
 .upcal-event-details .upcal-event-detail-starttime {display:block;}
-
 
 /* Calendar Lists */
 .upcal-list { margin-bottom:1em; }
@@ -96,3 +96,5 @@
 .upcal-view-links { padding:0.5em 1em; border-top:1px solid #999; background-color:#eee; }
 .upcal-view-links .upcal-view-more { padding-right:20px; }
 .upcal-view-links .upcal-view-return { padding-left:20px; }
+
+.upcal-hide-on-calendar { display:none; }
