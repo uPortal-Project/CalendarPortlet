@@ -40,7 +40,7 @@
         
         <!-- portlet subscription id --> 
         <property name="subscribeId" type="string">
-            <column name="SUBSCRIBE_ID" length="50"/>
+            <column name="SUBSCRIBE_ID" length="50" index="SUBSCRIPTION_IDX"/>
         </property>
         
         <!-- flag to determine whether this calendar should be displayed by default -->
