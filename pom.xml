@@ -655,6 +655,7 @@
         			</excludes>
         			<mapping>
         				<tld>XML_STYLE</tld>
+        				<tag>DYNASCRIPT_STYLE</tag>        				
         			</mapping>
         		</configuration>
         	</plugin>
