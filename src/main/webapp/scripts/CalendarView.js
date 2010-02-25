@@ -46,7 +46,6 @@ var cal = cal || {};
     var showEvent = function(id, that) {
         that.locate("hideOnEvent").hide();
         that.locate("hideOnCalendar").show();
-        console.log($('#eventDescription-' + id));
         $('#eventDescription-' + id).show();
     };
 
