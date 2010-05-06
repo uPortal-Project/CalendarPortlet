@@ -34,7 +34,7 @@
 <script type="text/javascript">
     var cal = cal || {};
     cal.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">delete fluid;</c:if>
+    <c:if test="${includeJQuery}">delete fluid; delete fluid_1_1;</c:if>
     cal.jQuery(function(){
         var $ = cal.jQuery;
         var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
