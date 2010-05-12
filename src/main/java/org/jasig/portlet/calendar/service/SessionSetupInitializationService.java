@@ -56,6 +56,8 @@ import org.springframework.beans.factory.annotation.Required;
 public class SessionSetupInitializationService implements IInitializationService {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
+	
+	public static final String USERNAME_KEY = "username";
 
 	/*
 	 * (non-Javadoc)
@@ -84,7 +86,7 @@ public class SessionSetupInitializationService implements IInitializationService
 		if (subscribeId == null) {
 			subscribeId = "guest";
 		}
-		session.setAttribute("subscribeId", subscribeId);
+		session.setAttribute(USERNAME_KEY, subscribeId);
 
 		
 		/**

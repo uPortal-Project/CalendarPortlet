@@ -77,13 +77,13 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getCalendarConfigurations(java.lang.String)
 	 */
-	public List<CalendarConfiguration> getCalendarConfigurations(
+	public List<UserDefinedCalendarConfiguration> getCalendarConfigurations(
 			String subscribeId) {
 		try {
 
 			log.debug("fetching calendar configurations for " + subscribeId);
 			@SuppressWarnings("unchecked")
-			List<CalendarConfiguration> configurations = (List<CalendarConfiguration>) getHibernateTemplate().find(
+			List<UserDefinedCalendarConfiguration> configurations = (List<UserDefinedCalendarConfiguration>) getHibernateTemplate().find(
 					"from CalendarConfiguration config where "
 							+ "subscribeId = ? and displayed = true "
 							+ "order by calendarDefinition.name", subscribeId);
@@ -227,7 +227,7 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 				config.setSubscribeId(subscribeId);
 				storeCalendarConfiguration(config);
 			}
-
+			
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
 		}
@@ -269,6 +269,26 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 
 	}
+
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portlet.calendar.dao.CalendarStore#getCalendarDefinition(java.lang.Long)
+     */
+    public CalendarDefinition getCalendarDefinition(String fname) {
+
+        try {
+
+            @SuppressWarnings("unchecked")
+            List<PredefinedCalendarDefinition> configurations = (List<PredefinedCalendarDefinition>) getHibernateTemplate().find(
+                    "from PredefinedCalendarDefinition def where "
+                            + "def.fname=?", fname);
+            return configurations.get(0);
+            
+        } catch (HibernateException ex) {
+            throw convertHibernateAccessException(ex);
+        }
+
+    }
 
 	/*
 	 * (non-Javadoc)

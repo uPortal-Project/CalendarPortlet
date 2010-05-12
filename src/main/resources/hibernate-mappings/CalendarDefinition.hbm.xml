@@ -61,7 +61,7 @@
         <!-- user-defined calendars and their configurations -->
         <subclass name="org.jasig.portlet.calendar.UserDefinedCalendarDefinition"
             discriminator-value="UD">
-            
+
             <!-- configuration for this user-defined calendar -->
             <one-to-one name="userConfiguration" class="org.jasig.portlet.calendar.UserDefinedCalendarConfiguration"
                 property-ref="calendarDefinition">
@@ -74,6 +74,10 @@
         <subclass name="org.jasig.portlet.calendar.PredefinedCalendarDefinition"
             discriminator-value="PD">
         
+            <property name="fname" type="string">
+                <column name="CALENDAR_FNAME" length="100"/>
+            </property>
+            
             <!-- user configurations and preferences for pre-defined calendars 
                 these allow users to hide default system calendars and potentially 
                 set user-specific parameters -->

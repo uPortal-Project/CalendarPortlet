@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
@@ -43,15 +43,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarEvent;
+import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.VEventStartComparator;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
-import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.web.service.AjaxPortletSupportService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
@@ -146,8 +146,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		 */
 
 		// retrieve the calendars defined for this portlet instance
-		List<CalendarConfiguration> calendars = calendarStore
-				.getCalendarConfigurations((String) session.getAttribute("subscribeId"));
+		CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
+		Collection<? extends CalendarConfiguration> calendars = set.getConfigurations();
 		model.put("calendars", calendars);
 
 		TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
@@ -219,12 +219,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		ajaxPortletSupportService.redirectAjaxResponse("ajax/jspView", model, request, response);
 	}
 	
-	private CalendarStore calendarStore;
+	private ICalendarSetDao calendarSetDao;
 	
-	@Required
-	@Resource(name="calendarStore")
-	public void setCalendarStore(CalendarStore calendarStore) {
-		this.calendarStore = calendarStore;
+	@Autowired(required = true)
+	public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
+	    this.calendarSetDao = calendarSetDao;
 	}
 
 	private IViewSelector viewSelector;

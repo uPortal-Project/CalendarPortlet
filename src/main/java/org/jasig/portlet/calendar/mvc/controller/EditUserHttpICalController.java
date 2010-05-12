@@ -32,6 +32,7 @@ import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.UserHttpIcalCalendarForm;
+import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
@@ -177,7 +178,7 @@ public class EditUserHttpICalController {
 
 				// get user information
 				// get user information
-				String subscribeId = (String) session.getAttribute("subscribeId");
+				String subscribeId = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 				
 				// create the form
 				UserHttpIcalCalendarForm command =  new UserHttpIcalCalendarForm();
@@ -190,7 +191,7 @@ public class EditUserHttpICalController {
 
 			// get user information
 			// get user information
-			String subscribeId = (String) session.getAttribute("subscribeId");
+			String subscribeId = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 			
 			// create the form
 			UserHttpIcalCalendarForm command =  new UserHttpIcalCalendarForm();

@@ -40,6 +40,7 @@ import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
+import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -76,7 +77,7 @@ public class EditCalendarSubscriptionsController {
 		PortletSession session = request.getPortletSession();
 
 		// get user information
-		String subscribeId = (String) session.getAttribute("subscribeId");
+		String subscribeId = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 		if ("guest".equalsIgnoreCase(subscribeId)) {
 			model.put("guest", true);
 		} else {
@@ -157,7 +158,7 @@ public class EditCalendarSubscriptionsController {
     public void addSharedCalendar(ActionRequest request,  
     		ActionResponse response, @RequestParam("definitionId") Long id) {
 		PortletSession session = request.getPortletSession();
-		String subscribeId = (String) session.getAttribute("subscribeId");
+		String subscribeId = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 		PredefinedCalendarDefinition definition = (PredefinedCalendarDefinition) calendarStore.getCalendarDefinition(id);
 		log.debug("definition to save " + definition.toString());
 		PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();

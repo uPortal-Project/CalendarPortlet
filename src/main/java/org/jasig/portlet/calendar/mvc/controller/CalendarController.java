@@ -19,6 +19,7 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +35,13 @@ import net.fortuna.ical4j.model.Period;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.CalendarLinkException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
-import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.IInitializationService;
+import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,9 +84,9 @@ public class CalendarController implements ApplicationContextAware {
 		@SuppressWarnings("unchecked")
 		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
 				.getAttribute("hiddenCalendars");
-		String subscribeId = (String) session.getAttribute("subscribeId");
+		String username = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 
-		if ("guest".equalsIgnoreCase(subscribeId)) {
+		if ("guest".equalsIgnoreCase(username)) {
 			model.put("guest", true);
 		} else {
 			model.put("guest", false);
@@ -157,8 +160,8 @@ public class CalendarController implements ApplicationContextAware {
 		 * retrieve the calendars defined for this portlet instance
 		 */
 		
-		List<CalendarConfiguration> calendars = calendarStore
-				.getCalendarConfigurations(subscribeId);
+        CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
+        Collection<? extends CalendarConfiguration> calendars = set.getConfigurations();
 		model.put("calendars", calendars);
 
 		Map<Long, Integer> colors = new HashMap<Long, Integer>();
@@ -201,13 +204,12 @@ public class CalendarController implements ApplicationContextAware {
 		return new ModelAndView(viewSelector.getCalendarViewName(request), "model", model);
 	}
 
-	private CalendarStore calendarStore;
-	
-	@Required
-	@Resource(name="calendarStore")
-	public void setCalendarStore(CalendarStore calendarStore) {
-		this.calendarStore = calendarStore;
-	}
+    private ICalendarSetDao calendarSetDao;
+    
+    @Autowired(required = true)
+    public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
+        this.calendarSetDao = calendarSetDao;
+    }
 
 	private List<IInitializationService> initializationServices;
 	

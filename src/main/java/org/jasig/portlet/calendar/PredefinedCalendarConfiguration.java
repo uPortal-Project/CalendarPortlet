@@ -31,7 +31,6 @@ import java.util.Map;
  */
 public class PredefinedCalendarConfiguration extends CalendarConfiguration {
 
-	private PredefinedCalendarDefinition calendarDefinition;
 	private Map<String, String> preferences = new HashMap<String, String>();
 	
 	/**
@@ -39,7 +38,7 @@ public class PredefinedCalendarConfiguration extends CalendarConfiguration {
 	 */
 	public PredefinedCalendarConfiguration() {
 		super();
-		this.calendarDefinition = new PredefinedCalendarDefinition();
+		setCalendarDefinition(new PredefinedCalendarDefinition());
 	}
 	
 	/**
@@ -72,18 +71,14 @@ public class PredefinedCalendarConfiguration extends CalendarConfiguration {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.CalendarConfiguration#getCalendarDefinition()
-	 */
-	public PredefinedCalendarDefinition getCalendarDefinition() {
-		return calendarDefinition;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.CalendarConfiguration#setCalendarDefinition(org.jasig.portlet.calendar.CalendarDefinition)
 	 */
-	public void setCalendarDefinition(PredefinedCalendarDefinition definition) {
-		this.calendarDefinition = definition;
+	@Override
+	public void setCalendarDefinition(CalendarDefinition definition) {
+	    if (!(definition instanceof PredefinedCalendarDefinition)) {
+	        throw new IllegalArgumentException("Predefined calendar configurations may only point to a predefined calendar definition");
+	    }
+		super.setCalendarDefinition(definition);
 	}
 	
 }

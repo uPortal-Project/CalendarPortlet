@@ -49,6 +49,8 @@ public interface CalendarStore {
 	 * @return
 	 */
 	public CalendarDefinition getCalendarDefinition(Long id);
+	
+	public CalendarDefinition getCalendarDefinition(String fname);
 
 	/**
 	 * Retrieve a pre-defined calendar definition
@@ -79,7 +81,7 @@ public interface CalendarStore {
 	 * @param subscribeId unique ID for this portlet subscription
 	 * @return
 	 */
-	public List<CalendarConfiguration> getCalendarConfigurations(
+	public List<UserDefinedCalendarConfiguration> getCalendarConfigurations(
 			String subscribeId);
 
 	/**

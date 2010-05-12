@@ -31,6 +31,7 @@ import java.util.Set;
  */
 public class PredefinedCalendarDefinition extends CalendarDefinition {
 	
+    private String fname;
 	private Set<PredefinedCalendarConfiguration> userConfigurations = new HashSet<PredefinedCalendarConfiguration>();
 	private Set<String> defaultRoles;
 	
@@ -106,5 +107,13 @@ public class PredefinedCalendarDefinition extends CalendarDefinition {
 	public void addDefaultRole(String role) {
 		this.defaultRoles.add(role);
 	}
-	
+
+    public String getFname() {
+        return fname;
+    }
+
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
 }
