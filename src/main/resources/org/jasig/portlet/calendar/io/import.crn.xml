@@ -1,0 +1,39 @@
+<!-- 
+ | Arguments:
+ |   $1 = Directory (absolute or relative) from which to import;  sub-directories are scanned
+ |   $2 = Regex expression used to match paths from within $1 [NOT IMPLEMENTED]
+ +-->
+
+ <with>
+    <attribute key="importDir">${$1}</attribute>
+    <attribute key="importPattern">.*</attribute>
+    <!-- 
+     | IMPORT_FILE_EXTENSIONS:  The file types we support, in the order they should be imported
+     +-->
+    <attribute key="IMPORT_FILE_EXTENSIONS">${groovy(['.pcd.xml'])}</attribute>
+    <attribute key="IMPORT_LOG_PREFIX">[IMPORT] </attribute>
+    <subtasks>
+        <for-each items="${IMPORT_FILE_EXTENSIONS}" attribute-name="extension">
+            <file-iterator dir="${importDir}">
+                <if test="${groovy(Attributes.LOCATION.endsWith(extension))}">
+                    <with-attribute key="Attributes.NODE" value="${parseXml()}">
+                        <with-attribute key="scriptUrl" value="${valueOf(@script)}">
+                            <with-attribute key="task" value="${groovy(importTasks[scriptUrl])}">
+                                <choose>
+                                    <when test="${groovy(task != null)}">
+                                        <crn task="${task}"/>
+                                    </when>
+                                    <otherwise>
+                                        <echo-ln>${IMPORT_LOG_PREFIX}ERROR:  The specified script is not defined in importExportContext.xml...</echo-ln>
+                                        <echo-ln>${IMPORT_LOG_PREFIX}    - ${scriptUrl}</echo-ln>
+                                    </otherwise>
+                                </choose>
+                            </with-attribute>
+                        </with-attribute>
+                    </with-attribute>
+                </if>
+            </file-iterator>
+        </for-each>
+    </subtasks>
+ </with>
+ 

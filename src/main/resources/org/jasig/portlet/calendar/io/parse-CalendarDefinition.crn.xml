@@ -1,0 +1,27 @@
+<choose>
+    <when test="${groovy(!ScriptAttributes.REQUEST.hasAttribute('calendarDefinition'))}">
+        <with-attribute key="msg" value="You must pass a 'calendarDefinition' request attribute to parse-CalendarDefinition.crn.xml">
+            <echo-ln>${IMPORT_LOG_PREFIX}ERROR:  ${msg}</echo-ln>
+            <throw exception="${groovy(new RuntimeException(msg))}"/>
+        </with-attribute>
+    </when>
+    <when test="${groovy(!ScriptAttributes.REQUEST.hasAttribute('Attributes.NODE'))}">
+        <with-attribute key="msg" value="You must pass a 'Attributes.NODE' request attribute to parse-CalendarDefinition.crn.xml">
+            <echo-ln>${IMPORT_LOG_PREFIX}ERROR:  ${msg}</echo-ln>
+            <throw exception="${groovy(new RuntimeException(msg))}"/>
+        </with-attribute>
+    </when>
+    <otherwise>
+        <groovy>
+            <script>
+                calendarDefinition.setName(Attributes.NODE.valueOf('name'));
+                calendarDefinition.setClassName(Attributes.NODE.valueOf('className'));
+                def params = [:];
+                Attributes.NODE.selectNodes('parameters/parameter').each {
+                    params[it.valueOf('@name')] = it.valueOf('.'); 
+                }
+                calendarDefinition.setParameters(params);
+            </script>
+        </groovy>
+    </otherwise>
+</choose>

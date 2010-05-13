@@ -1,0 +1,13 @@
+<with-attribute key="calendarDefinition" value="${groovy(new org.jasig.portlet.calendar.PredefinedCalendarDefinition())}">
+    <crn task="${parse-CalendarDefinition}"/>
+    <groovy>
+        <script>
+            calendarDefinition.setFname(Attributes.NODE.valueOf('fname'));
+            def roles = [];
+            Attributes.NODE.selectNodes('predefinedRoles/role').each {
+                roles.add(it.valueOf('.')); 
+            }
+            calendarStore.storeCalendarDefinition(calendarDefinition);
+        </script>
+    </groovy>
+</with-attribute>
