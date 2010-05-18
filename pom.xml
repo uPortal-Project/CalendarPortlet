@@ -64,6 +64,33 @@
 
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>com.googlecode.cernunnos</groupId>
+                <artifactId>cernunnos</artifactId>
+                <version>1.2.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-tx</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.sf.retrotranslator</groupId>
+                        <artifactId>retrotranslator-runtime</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 	        <dependency>
 	            <groupId>com.thoughtworks.xstream</groupId>
 	            <artifactId>xstream</artifactId>
@@ -406,6 +433,10 @@
 
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
+            <groupId>com.googlecode.cernunnos</groupId>
+            <artifactId>cernunnos</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
@@ -660,6 +691,28 @@
         			</mapping>
         		</configuration>
         	</plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <tasks>
+                    
+                        <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                        <!-- Provided jars don't seem to be added to the runtime
+                           classpath, so we manually add in servlet.jar here  -->
+                        <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}"/>
+                        
+                        <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
+                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <classpath>
+                                 <pathelement path="${runtime_classpath}"/>
+                                 <pathelement location="${servlet.jar}"/>
+                            </classpath>
+                            <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
+                            <arg value="${dir}"/>
+                        </java>
+                    </tasks>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

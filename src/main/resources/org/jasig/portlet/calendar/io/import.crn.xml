@@ -1,10 +1,31 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
 <!-- 
  | Arguments:
  |   $1 = Directory (absolute or relative) from which to import;  sub-directories are scanned
  |   $2 = Regex expression used to match paths from within $1 [NOT IMPLEMENTED]
  +-->
 
- <with>
+<with>
+    <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext())}</attribute>
     <attribute key="importDir">${$1}</attribute>
     <attribute key="importPattern">.*</attribute>
     <!-- 
@@ -18,16 +39,18 @@
                 <if test="${groovy(Attributes.LOCATION.endsWith(extension))}">
                     <with-attribute key="Attributes.NODE" value="${parseXml()}">
                         <with-attribute key="scriptUrl" value="${valueOf(@script)}">
-                            <with-attribute key="task" value="${groovy(importTasks[scriptUrl])}">
-                                <choose>
-                                    <when test="${groovy(task != null)}">
-                                        <crn task="${task}"/>
-                                    </when>
-                                    <otherwise>
-                                        <echo-ln>${IMPORT_LOG_PREFIX}ERROR:  The specified script is not defined in importExportContext.xml...</echo-ln>
-                                        <echo-ln>${IMPORT_LOG_PREFIX}    - ${scriptUrl}</echo-ln>
-                                    </otherwise>
-                                </choose>
+                            <with-attribute key="importTasks" value="${groovy(PORTAL_CONTEXT.getBean('importTasks'))}">
+                                <with-attribute key="task" value="${groovy(importTasks[scriptUrl])}">
+                                    <choose>
+                                        <when test="${groovy(task != null)}">
+                                            <crn task="${task}"/>
+                                        </when>
+                                        <otherwise>
+                                            <echo-ln>${IMPORT_LOG_PREFIX}ERROR:  The specified script is not defined in importExportContext.xml...</echo-ln>
+                                            <echo-ln>${IMPORT_LOG_PREFIX}    - ${scriptUrl}</echo-ln>
+                                        </otherwise>
+                                    </choose>
+                                </with-attribute>
                             </with-attribute>
                         </with-attribute>
                     </with-attribute>
@@ -35,5 +58,4 @@
             </file-iterator>
         </for-each>
     </subtasks>
- </with>
- 
+</with>

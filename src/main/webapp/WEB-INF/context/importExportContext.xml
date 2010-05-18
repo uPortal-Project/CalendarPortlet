@@ -24,6 +24,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
+    <import resource="applicationContext.xml"/>
+    <import resource="calendarContext.xml"/>
+
     <bean id="crn-import" class="org.danann.cernunnos.runtime.PojoTask">
        <property name="location" value="classpath:/org/jasig/portlet/calendar/io/import.crn.xml"/>
         <property name="requestAttributes">
