@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -181,7 +182,9 @@ public class PortletApplicationContextLocator implements ServletContextListener 
             
             File file = new File(".");
             try {
-                reader.loadBeanDefinitions("file://" + file.getCanonicalPath() + "/src/main/webapp/WEB-INF/context/importExportContext.xml");
+                URL context = file.toURI().toURL();
+                URL location = new URL(context, "src/main/webapp/WEB-INF/context/importExportContext.xml");
+                reader.loadBeanDefinitions(location.toExternalForm());
             } catch (Exception e) {
                 LOGGER.error("Failed to load bean definitions", e);
             }
