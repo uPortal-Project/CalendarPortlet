@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
@@ -55,6 +56,9 @@ import org.springframework.web.portlet.ModelAndView;
 @Controller
 @RequestMapping("VIEW")
 public class CalendarController implements ApplicationContextAware {
+    
+    public static final String PREFERENCE_DISABLE_PREFERENCES = "disablePreferences";
+    public static final String PREFERENCE_DISABLE_ADMINISTRATION = "disableAdministration";
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
@@ -200,6 +204,16 @@ public class CalendarController implements ApplicationContextAware {
 		model.put("colors", colors);
 		model.put("links", links);
 		model.put("hiddenCalendars", hiddenCalendars);
+		
+		/*
+		 * Check if we need to disable either the preferences and/or administration links
+		 */
+		
+        PortletPreferences prefs = request.getPreferences();
+        Boolean disablePrefs = Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_PREFERENCES, "false"));
+        model.put(PREFERENCE_DISABLE_PREFERENCES, disablePrefs);
+        Boolean disableAdmin = Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_ADMINISTRATION, "false"));
+        model.put(PREFERENCE_DISABLE_ADMINISTRATION, disableAdmin);
 
 		return new ModelAndView(viewSelector.getCalendarViewName(request), "model", model);
 	}

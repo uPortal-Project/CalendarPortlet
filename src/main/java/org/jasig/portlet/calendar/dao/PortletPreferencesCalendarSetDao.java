@@ -60,10 +60,23 @@ public class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
      * @see org.jasig.portlet.calendar.dao.ICalendarSetDao#getCalendarSet(javax.portlet.PortletRequest)
      */
     public CalendarSet<PredefinedCalendarConfiguration> getCalendarSet(PortletRequest request) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Evaluating CalendarSet for user:  " + request.getRemoteUser());
+        }
 
         // get the calendar fname array from the portlet preferences
         PortletPreferences preferences = request.getPreferences();
         String[] calendarFnames = preferences.getValues(CALENDAR_FNAME_KEY, new String[]{});
+        
+        if (log.isDebugEnabled()) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Found the following calendarFnames in PortletPreferences:  ");
+            for (String fName : calendarFnames) {
+                msg.append(fName + " ");
+            }
+            log.debug(msg.toString());
+        }
         
         // for each configured fname, attempt to find the relevant predefined
         // calendar definition and create a default configuration for it

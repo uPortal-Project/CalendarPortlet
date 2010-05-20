@@ -63,13 +63,15 @@
 
 <div class="upcal-fullview">
 
-<c:if test="${ !model.guest }">
+<c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
 	<div class="upcal-edit-links">
-	    <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-	    <a href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
-	        <spring:message code="preferences.link.text"/>
-	    </a>
-	    <c:if test="${ sessionScope.isAdmin }">
+        <c:if test="${ !model.disablePreferences }">
+            <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
+            <a href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
+                <spring:message code="preferences.link.text"/>
+            </a>
+        </c:if>
+	    <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
 	        <span class="upcal-pipe">|</span>
 	        <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
 	        <a href="${ adminUrl }" title="<spring:message code="administration.link.title"/>">
