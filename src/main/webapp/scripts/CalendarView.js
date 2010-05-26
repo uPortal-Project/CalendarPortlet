@@ -73,7 +73,7 @@ var cal = cal || {};
             that.locate("eventList").html("");
             that.locate("loadingMessage").show();
             $.post(that.options.eventsUrl,
-                { startDate: startDate }, 
+                { startDate: startDate, timePeriod: days }, 
                 function(xml) {
                     that.locate("loadingMessage").hide();
                     that.locate("eventList").html(xml);

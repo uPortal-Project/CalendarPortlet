@@ -43,6 +43,7 @@
 /* Range Selector */
 .upcal-range { margin-bottom:1em; font-size:86%; }
 .upcal-range h3 { display:inline; margin:0; padding-right:0.3em; font-size:1em; font-weight:bold; }
+.upcal-range a.selected-range { color: #999 !important; text-decoration:none; }
 
 /* Events List */
 .upcal-events { margin-bottom:1em; }
