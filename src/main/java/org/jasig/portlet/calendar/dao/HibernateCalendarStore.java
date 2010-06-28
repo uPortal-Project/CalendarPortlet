@@ -98,6 +98,27 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getUserDefinedCalendarConfigurations(java.lang.String, boolean)
 	 */
+	public List<UserDefinedCalendarConfiguration> getUserDefinedCalendarConfigurations() {
+		try {
+
+			String query = "from CalendarConfiguration config where "
+					+ "config.class = UserDefinedCalendarConfiguration "
+					+ "order by calendarDefinition.name";
+
+			@SuppressWarnings("unchecked")
+			List<UserDefinedCalendarConfiguration> configurations = (List<UserDefinedCalendarConfiguration>) getHibernateTemplate()
+					.find(query);
+			return configurations;
+
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getUserDefinedCalendarConfigurations(java.lang.String, boolean)
+	 */
 	public List<UserDefinedCalendarConfiguration> getUserDefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly) {
 		try {
@@ -150,9 +171,8 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations() {
 		try {
 
-			String query = "from CalendarDefinition def "
-					+ "where def.class = PredefinedCalendarDefinition "
-					+ "order by def.name";
+			String query = "from CalendarConfiguration conf "
+				+ "where conf.class = PredefinedCalendarConfiguration ";			
 			@SuppressWarnings("unchecked")
 			List<PredefinedCalendarConfiguration> configurations = (List<PredefinedCalendarConfiguration>) getHibernateTemplate()
 					.find(query);
@@ -233,6 +253,47 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarDefinitions()
+	 */
+	public List<PredefinedCalendarDefinition> getPredefinedCalendarDefinitions() {
+		try {
+
+			String query = "from CalendarDefinition def "
+					+ "where def.class = PredefinedCalendarDefinition "
+					+ "order by def.name";			
+			@SuppressWarnings("unchecked")
+			List<PredefinedCalendarDefinition> definitions = (List<PredefinedCalendarDefinition>) getHibernateTemplate()
+					.find(query);
+			return definitions;
+
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarDefinition(java.lang.Long)
+	 */
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(String fname) {
+
+		try {
+
+			String query = "from PredefinedCalendarDefinition def "
+				+ "left join fetch def.defaultRoles role where " 
+				+ "def.fname = :fname";
+			Query q = this.getSession().createQuery(query);
+			q.setString("fname", fname);
+			return (PredefinedCalendarDefinition) q.uniqueResult();
+			
+		} catch (HibernateException ex) {
+			throw convertHibernateAccessException(ex);
+		}
+
+	}	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarDefinition(java.lang.Long)

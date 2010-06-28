@@ -74,7 +74,7 @@
         <subclass name="org.jasig.portlet.calendar.PredefinedCalendarDefinition"
             discriminator-value="PD">
         
-            <property name="fname" type="string">
+            <property name="fname" type="string" unique="true">
                 <column name="CALENDAR_FNAME" length="100"/>
             </property>
             
@@ -87,7 +87,7 @@
                     class="org.jasig.portlet.calendar.PredefinedCalendarConfiguration"/>
             </set>
             
-            <set name="defaultRoles" lazy="true" table="CALENDAR_ROLE" cascade="all-delete-orphan"> 
+            <set name="defaultRoles" lazy="false" table="CALENDAR_ROLE" cascade="all-delete-orphan"> 
                 <key column="CALENDAR_ID"/> 
                 <element type="string" column="ROLE_NAME" not-null="true"/> 
             </set> 

@@ -53,6 +53,21 @@ public interface CalendarStore {
 	public CalendarDefinition getCalendarDefinition(String fname);
 
 	/**
+	 * Retrieves all pre-defined calendar definition
+	 * 
+	 * @return
+	 */
+	public List<PredefinedCalendarDefinition> getPredefinedCalendarDefinitions();
+	
+	/**
+	 * Retrieve a pre-defined calendar definition
+	 * 
+	 * @param fname fname of the calendar definition to be retrieved
+	 * @return
+	 */
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(String fname);
+	
+	/**
 	 * Retrieve a pre-defined calendar definition
 	 * 
 	 * @param id ID of the calendar definition to be retrieved
@@ -84,6 +99,13 @@ public interface CalendarStore {
 	public List<UserDefinedCalendarConfiguration> getCalendarConfigurations(
 			String subscribeId);
 
+	/**
+	 * Retrieve a list of all user-defined calendar configurations.
+	 *
+	 * @return
+	 */
+	public List<UserDefinedCalendarConfiguration> getUserDefinedCalendarConfigurations();
+	
 	/**
 	 * Retrieve a list of user-defined calendar configurations for 
 	 * the specified portlet.

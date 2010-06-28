@@ -27,6 +27,7 @@
             Attributes.NODE.selectNodes('predefinedRoles/role').each {
                 roles.add(it.valueOf('.')); 
             }
+            calendarDefinition.setDefaultRoles(new HashSet&lt;String&gt;(roles));
             calendarStore.storeCalendarDefinition(calendarDefinition);
         </script>
     </groovy>

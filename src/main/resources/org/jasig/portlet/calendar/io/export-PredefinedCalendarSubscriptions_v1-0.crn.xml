@@ -1,0 +1,57 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<with-attribute key="calendarConfigurations"
+	value="${groovy(calendarStore.getPredefinedCalendarConfigurations())}">
+	<for-each items="${groovy(calendarConfigurations)}"
+		attribute-name="calendarConfiguration">
+		<with-attribute key="Attributes.NODE" value="${newDoc(predefined-calendar-sub)}">
+			<append-node
+				node="${attributeNode(script=classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarSubscription_v1-0.crn.xml)}" />
+			<with-attribute key="calendarDefinition"
+				value="${groovy(calendarConfiguration.calendarDefinition)}">
+				<append-node>
+					<subscribeId>${groovy(calendarConfiguration.getSubscribeId())}</subscribeId>
+					<fname>${groovy(calendarDefinition.getFname())}</fname>
+					<displayed>${groovy(calendarConfiguration.isDisplayed())}</displayed>
+				</append-node>
+				<with-attribute key="preferences"
+					value="${groovy(calendarConfiguration.getPreferences())}">
+					<if test="${groovy(preferences != null)}">
+                        <append-node><preferences/></append-node>
+						<for-each items="${groovy(preferences.keySet())}"
+							attribute-name="preference">
+							<append-node parent="${singleNode(preferences)}">
+								<parameter name="${preference}">${groovy((preferences.get(preference)))}</parameter>
+							</append-node>
+						</for-each>
+					</if>
+				</with-attribute>
+				<with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+					<with-attribute key="SAFE_CALENDAR_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+				    	<write-document
+					   		file="${exportDir}/predefined-calendar-sub-${SAFE_USER_NAME}-${groovy(calendarConfiguration.getId())}.pcs.xml" />
+			    	</with-attribute>
+			    </with-attribute>
+			</with-attribute>
+		</with-attribute>
+	</for-each>
+</with-attribute>

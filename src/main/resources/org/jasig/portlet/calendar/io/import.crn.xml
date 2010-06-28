@@ -28,11 +28,14 @@
     <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext())}</attribute>
     <attribute key="importDir">${$1}</attribute>
     <attribute key="importPattern">.*</attribute>
-    <!-- 
-     | IMPORT_FILE_EXTENSIONS:  The file types we support, in the order they should be imported
-     +-->
-    <attribute key="IMPORT_FILE_EXTENSIONS">${groovy(['.pcd.xml'])}</attribute>
-    <attribute key="IMPORT_LOG_PREFIX">[IMPORT] </attribute>
+      <!-- 
+       | IMPORT_FILE_EXTENSIONS:  The file types we support, in the order they should be imported.
+       |  * .pcd.xml:  predefined calendar definition.  Describes predefined calendars.
+       |  * .pcs.xml:  predefined calendar subscription.  Adds pcd's to users' profiles.
+       |  * .ucd.xml:  user-defined calendars
+       +-->
+    <attribute key="IMPORT_FILE_EXTENSIONS">${groovy(['.pcd.xml','.pcs.xml','.ucd.xml'])}</attribute>
+    <attribute key="IMPORT_LOG_PREFIX">[CAL-IMPORT] </attribute>
     <subtasks>
         <for-each items="${IMPORT_FILE_EXTENSIONS}" attribute-name="extension">
             <file-iterator dir="${importDir}">
