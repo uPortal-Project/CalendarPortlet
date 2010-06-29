@@ -38,7 +38,9 @@ public class CalendarDefinitionForm {
 	@NotBlank
 	private String name;
 	
-	private Set<String> role = new HashSet<String>();
+    private String fname;
+
+    private Set<String> role = new HashSet<String>();
 	private List<String> parameterName = new ArrayList<String>();
 	private List<String> parameterValue = new ArrayList<String>();
 
@@ -66,7 +68,15 @@ public class CalendarDefinitionForm {
 		this.name = name;
 	}
 
-	public Set<String> getRole() {
+    public String getFname() {
+        return fname;
+    }
+    
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
+    public Set<String> getRole() {
 		return role;
 	}
 

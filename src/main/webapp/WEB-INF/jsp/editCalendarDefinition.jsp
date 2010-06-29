@@ -101,6 +101,12 @@
 		</p>
         <p>
             <label class="portlet-form-field-label">
+                <spring:message code="form.calendar.fname"/> <img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/information.png"/>" title="<spring:message code="form.calendar.fname.information"/>" />:
+            </label>
+            <form:input path="fname" size="50"/>
+        </p>
+        <p>
+            <label class="portlet-form-field-label">
                 <spring:message code="form.calendar.beanname"/>:
             </label>
             <form:input path="className" size="50"/>

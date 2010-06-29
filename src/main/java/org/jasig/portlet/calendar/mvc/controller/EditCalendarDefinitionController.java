@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.SessionStatus;
 
-
 /**
  * EditCalendarDefinitionController provides a GUI for adding and editing 
  * predefined calendars.
@@ -95,10 +94,11 @@ public class EditCalendarDefinitionController {
 	
 		// set the calendar definition properties based on the 
 		// submitted form
-		definition.setClassName(form.getClassName());
-		definition.setDefaultRoles(form.getRole());
-		definition.setName(form.getName());
-		definition.setParameters(form.getParameters());
+        definition.setClassName(form.getClassName());
+        definition.setDefaultRoles(form.getRole());
+        definition.setName(form.getName());
+        definition.setFname(form.getFname());
+        definition.setParameters(form.getParameters());
 	
 		// save the calendar definition
 		calendarStore.storeCalendarDefinition(definition);
@@ -118,7 +118,8 @@ public class EditCalendarDefinitionController {
 				PredefinedCalendarDefinition definition = calendarStore.getPredefinedCalendarDefinition(definitionId);
 				CalendarDefinitionForm command = new CalendarDefinitionForm();
 				command.setId(definition.getId());
-				command.setName(definition.getName());
+                command.setName(definition.getName());
+                command.setFname(definition.getFname());
 				command.setClassName(definition.getClassName());
 				command.setRole(definition.getDefaultRoles());
 				command.addParameters(definition.getParameters());
