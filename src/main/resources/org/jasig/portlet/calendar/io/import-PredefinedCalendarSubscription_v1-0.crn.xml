@@ -44,7 +44,7 @@
                 <subtasks>
                     <choose>
                         <when test="${groovy(calendarDefinition == null)}">
-                            <echo-ln>${IMPORT_LOG_PREFIX}ERROR: no calendar definition found for calendar, ${calendarFName}</echo-ln>
+                            <echo-ln>${IMPORT_LOG_PREFIX}ERROR: no calendar definition found for calendar '${valueOf(predefined-calendar)}';  this record will be skipped</echo-ln>
                         </when>
                         <otherwise>
                             <groovy>
