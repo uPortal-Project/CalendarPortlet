@@ -1,62 +1,61 @@
 
-	<!--
-		Licensed to Jasig under one or more contributor license agreements.
-		See the NOTICE file distributed with this work for additional
-		information regarding copyright ownership. Jasig licenses this file to
-		you under the Apache License, Version 2.0 (the "License"); you may not
-		use this file except in compliance with the License. You may obtain a
-		copy of the License at: http://www.apache.org/licenses/LICENSE-2.0
-		Unless required by applicable law or agreed to in writing, software
-		distributed under the License is distributed on an "AS IS" BASIS,
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-		implied. See the License for the specific language governing
-		permissions and limitations under the License.
-	-->
+    <!--
+        Licensed to Jasig under one or more contributor license agreements.
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership. Jasig licenses this file to
+        you under the Apache License, Version 2.0 (the "License"); you may not
+        use this file except in compliance with the License. You may obtain a
+        copy of the License at: http://www.apache.org/licenses/LICENSE-2.0
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+        implied. See the License for the specific language governing
+        permissions and limitations under the License.
+    -->
 <with-attribute key="calendarDefinitions"
-	value="${groovy(calendarStore.getPredefinedCalendarDefinitions())}">
-	<for-each items="${groovy(calendarDefinitions)}"
-		attribute-name="calendarDefinition">
-		<with-attribute key="Attributes.NODE" value="${newDoc(predefined-calendar)}">
-			<append-node
-				node="${attributeNode(script=classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml)}" />
-			<append-node>
-				<id>${groovy(calendarDefinition.getId())}</id>
-				<fname>${groovy(calendarDefinition.getFname())}</fname>
-				<className>${groovy(calendarDefinition.getClassName())}</className>
-				<name>${groovy(calendarDefinition.getName())}</name>
-			</append-node>
-			<with-attribute key="parameters"
-				value="${groovy(calendarDefinition.getParameters())}">
-				<if test="${groovy(parameters.size() > 0)}">
-					<append-node>
-						<parameters />
-					</append-node>
-					<for-each items="${groovy(parameters.keySet())}"
-						attribute-name="parameter">
-						<append-node parent="${singleNode(parameters)}">
-							<parameter name="${parameter}">${groovy((parameters.get(parameter)))}</parameter>
-						</append-node>
-					</for-each>
-				</if>
-			</with-attribute>
-			<with-attribute key="roles"
-				value="${groovy(calendarDefinition.getDefaultRoles())}">
-				<if test="${groovy(roles.size() > 0)}">
-					<append-node>
-						<predefinedRoles />
-					</append-node>
-					<for-each items="${roles}" attribute-name="role">
-						<append-node parent="${singleNode(predefinedRoles)}">
-							<role>${role}</role>
-						</append-node>
-					</for-each>
-				</if>
-			</with-attribute>
-			<with-attribute key="SAFE_CALENDAR_FNAME"
-				value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarDefinition.getFname())})}">
-				<write-document
-					file="${exportDir}/predefined-calendar-${SAFE_CALENDAR_FNAME}-${groovy(calendarDefinition.getId())}.pcd.xml" />
-			</with-attribute>
-		</with-attribute>
-	</for-each>
+    value="${groovy(calendarStore.getPredefinedCalendarDefinitions())}">
+    <for-each items="${groovy(calendarDefinitions)}"
+        attribute-name="calendarDefinition">
+        <with-attribute key="Attributes.NODE" value="${newDoc(predefined-calendar)}">
+            <append-node
+                node="${attributeNode(script=classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml)}" />
+            <append-node>
+                <fname>${groovy(calendarDefinition.getFname() != null ? calendarDefinition.getFname() : '')}</fname>
+                <className>${groovy(calendarDefinition.getClassName())}</className>
+                <name>${groovy(calendarDefinition.getName())}</name>
+            </append-node>
+            <with-attribute key="parameters"
+                value="${groovy(calendarDefinition.getParameters())}">
+                <if test="${groovy(parameters.size() > 0)}">
+                    <append-node>
+                        <parameters />
+                    </append-node>
+                    <for-each items="${groovy(parameters.keySet())}"
+                        attribute-name="parameter">
+                        <append-node parent="${singleNode(parameters)}">
+                            <parameter name="${parameter}">${groovy((parameters.get(parameter)))}</parameter>
+                        </append-node>
+                    </for-each>
+                </if>
+            </with-attribute>
+            <with-attribute key="roles"
+                value="${groovy(calendarDefinition.getDefaultRoles())}">
+                <if test="${groovy(roles.size() > 0)}">
+                    <append-node>
+                        <predefinedRoles />
+                    </append-node>
+                    <for-each items="${roles}" attribute-name="role">
+                        <append-node parent="${singleNode(predefinedRoles)}">
+                            <role>${role}</role>
+                        </append-node>
+                    </for-each>
+                </if>
+            </with-attribute>
+            <with-attribute key="SAFE_CALENDAR_FNAME"
+                value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarDefinition.getName())})}">
+                <write-document
+                    file="${exportDir}/predefined-calendar-${SAFE_CALENDAR_FNAME}-${groovy(calendarDefinition.getId())}.pcd.xml" />
+            </with-attribute>
+        </with-attribute>
+    </for-each>
 </with-attribute>

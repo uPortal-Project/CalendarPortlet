@@ -60,12 +60,12 @@ public interface CalendarStore {
 	public List<PredefinedCalendarDefinition> getPredefinedCalendarDefinitions();
 	
 	/**
-	 * Retrieve a pre-defined calendar definition
+	 * Retrieve a pre-defined calendar definition based on the name field.
 	 * 
-	 * @param fname fname of the calendar definition to be retrieved
+	 * @param name Name of the calendar definition to be retrieved
 	 * @return
 	 */
-	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(String fname);
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinitionByName(String name);
 	
 	/**
 	 * Retrieve a pre-defined calendar definition
@@ -99,6 +99,16 @@ public interface CalendarStore {
 	public List<UserDefinedCalendarConfiguration> getCalendarConfigurations(
 			String subscribeId);
 
+    /**
+     * Retrieve a list of all user-defined calendar configurations.
+     *
+     * @param subscribeId Unique ID for this portlet subscription
+     * @param name Name of the desired calendar
+     * @return
+     */
+    public UserDefinedCalendarConfiguration getUserDefinedCalendarConfiguration(
+            String subscribeId, String name);
+
 	/**
 	 * Retrieve a list of all user-defined calendar configurations.
 	 *
@@ -130,7 +140,18 @@ public interface CalendarStore {
 	public List<PredefinedCalendarConfiguration> getPredefinedCalendarConfigurations(
 			String subscribeId, boolean visibleOnly);
 
-	/**
+    /**
+     * Retrieve a <code>PredefinedCalendarConfiguration</code> for the specified 
+     * subscribeId and name.
+     * 
+     * @param subscribeId unique ID for this portlet subscription
+     * @param name Name of the corresponding <code>PredefinedCalendarDefinition</code>
+     * @return
+     */
+    public PredefinedCalendarConfiguration getPredefinedCalendarConfiguration(
+            String subscribeId, String name);
+
+    /**
 	 * Retrieve a list of all pre-defined calendar configurations.
 	 * 
 	 * @return

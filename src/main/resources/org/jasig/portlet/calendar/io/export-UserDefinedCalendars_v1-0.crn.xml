@@ -28,7 +28,6 @@
 			<with-attribute key="calendarDefinition"
 				value="${groovy(calendarConfiguration.calendarDefinition)}">
 				<append-node>
-					<id>${groovy(calendarConfiguration.getId())}</id>
 					<subscribeId>${groovy(calendarConfiguration.getSubscribeId())}</subscribeId>
 					<className>${groovy(calendarDefinition.getClassName())}</className>
 					<name>${groovy(calendarDefinition.getName())}</name>

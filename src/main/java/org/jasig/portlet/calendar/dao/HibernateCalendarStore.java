@@ -94,7 +94,27 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
-	/*
+    public UserDefinedCalendarConfiguration getUserDefinedCalendarConfiguration(String subscribeId, String name) {
+
+        try {
+
+            String query = "from CalendarConfiguration config where "
+                + "subscribeId = :subscribeId and " 
+                + "calendarDefinition.name = :name and "
+                + "config.class = UserDefinedCalendarConfiguration";
+
+            Query q = this.getSession().createQuery(query);
+            q.setString("subscribeId", subscribeId);
+            q.setString("name", name);
+            return (UserDefinedCalendarConfiguration) q.uniqueResult();
+            
+        } catch (HibernateException ex) {
+            throw convertHibernateAccessException(ex);
+        }
+
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getUserDefinedCalendarConfigurations(java.lang.String, boolean)
 	 */
@@ -140,7 +160,27 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 
-	/*
+    public PredefinedCalendarConfiguration getPredefinedCalendarConfiguration(
+            String subscribeId, String name) {
+
+        try {
+            String query = "from CalendarConfiguration config "
+                    + "where subscribeId = :subscribeId "
+                    + "and calendarDefinition.name = :name and "
+                    + "config.class = PredefinedCalendarConfiguration";
+
+            Query q = this.getSession().createQuery(query);
+            q.setString("subscribeId", subscribeId);
+            q.setString("name", name);
+            return (PredefinedCalendarConfiguration) q.uniqueResult();
+
+        } catch (HibernateException ex) {
+            throw convertHibernateAccessException(ex);
+        }
+
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarConfigurations(java.lang.String, boolean)
 	 */
@@ -163,8 +203,8 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 			throw convertHibernateAccessException(ex);
 		}
 	}
-	
-	/*
+
+    /*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarConfigurations()
 	 */
@@ -277,15 +317,15 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#getPredefinedCalendarDefinition(java.lang.Long)
 	 */
-	public PredefinedCalendarDefinition getPredefinedCalendarDefinition(String fname) {
+	public PredefinedCalendarDefinition getPredefinedCalendarDefinitionByName(String name) {
 
 		try {
 
 			String query = "from PredefinedCalendarDefinition def "
 				+ "left join fetch def.defaultRoles role where " 
-				+ "def.fname = :fname";
+				+ "def.name = :name";
 			Query q = this.getSession().createQuery(query);
-			q.setString("fname", fname);
+			q.setString("name", name);
 			return (PredefinedCalendarDefinition) q.uniqueResult();
 			
 		} catch (HibernateException ex) {
@@ -413,5 +453,6 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 			throw convertHibernateAccessException(ex);
 		}
 	}
+
 
 }

@@ -37,7 +37,7 @@
 
     <util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
         <entry
-            key="classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn">
+            key="classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml">
             <ref bean="import-PredefinedCalendarDefinition_v1-0" />
         </entry>
         <entry

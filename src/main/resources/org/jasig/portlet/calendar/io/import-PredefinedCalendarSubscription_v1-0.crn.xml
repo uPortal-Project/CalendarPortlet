@@ -19,35 +19,51 @@
 
 -->
 
-<with-attribute key="calendarFName" value="${valueOf(fname)}">
-	<with>
-		<attribute key="calendarDefinition">${groovy(calendarStore.getPredefinedCalendarDefinition(calendarFName))}</attribute>
-		<attribute key="subscribeId">${valueOf(subscribeId)}</attribute>
-		<attribute key="displayed">${valueOf(displayed)}</attribute>
-		<subtasks>
-			<choose>
-				<when test="${groovy(calendarDefinition == null)}">
-					<echo-ln>${IMPORT_LOG_PREFIX}ERROR: no calendar definition found for calendar, ${calendarFName}</echo-ln>
-				</when>
-				<otherwise>
-					<with-attribute key="calendarConfiguration"
-						value="${groovy(new org.jasig.portlet.calendar.PredefinedCalendarConfiguration())}">
-						<groovy>
-							<script> 
-							    calendarConfiguration.setSubscribeId(subscribeId);
-								calendarConfiguration.setDisplayed(Boolean.parseBoolean(displayed));
-								def prefs = [:];
-								Attributes.NODE.selectNodes('preferences/preference').each {
-								    params[it.valueOf('@name')] = it.valueOf('.');
-								}
-								calendarConfiguration.setPreferences(prefs);
-								calendarConfiguration.setCalendarDefinition(calendarDefinition);
-								calendarStore.storeCalendarConfiguration(calendarConfiguration);
-							</script>
-						</groovy>
-					</with-attribute>
-				</otherwise>
-			</choose>
-		</subtasks>
-	</with>
+<!-- 
+ | Check first for an existing record based on subscribeId + name
+ +-->
+<with-attribute key="existingCalendarConfig" 
+    value="${groovy(calendarStore.getPredefinedCalendarConfiguration(Attributes.NODE.valueOf('subscribeId'), Attributes.NODE.valueOf('predefined-calendar')))}">
+    <choose>
+        <when test="${groovy(existingCalendarConfig != null)}">
+            <!-- This is easy... set the 'hidden' flag... -->
+            <groovy>
+                <script>
+                    existingCalendarConfig.setDisplayed(Boolean.parseBoolean(Attributes.NODE.valueOf('displayed')));
+                    calendarStore.storeCalendarConfiguration(existingCalendarConfig);
+                </script>
+            </groovy>
+        </when>
+        <otherwise>
+            <!-- New record... create from scratch... -->
+            <with>
+                <attribute key="calendarDefinition">${groovy(calendarStore.getPredefinedCalendarDefinitionByName(Attributes.NODE.valueOf('predefined-calendar')))}</attribute>
+                <attribute key="calendarConfiguration">${groovy(new org.jasig.portlet.calendar.PredefinedCalendarConfiguration())}</attribute>
+                <attribute key="subscribeId">${valueOf(subscribeId)}</attribute>
+                <attribute key="displayed">${valueOf(displayed)}</attribute>
+                <subtasks>
+                    <choose>
+                        <when test="${groovy(calendarDefinition == null)}">
+                            <echo-ln>${IMPORT_LOG_PREFIX}ERROR: no calendar definition found for calendar, ${calendarFName}</echo-ln>
+                        </when>
+                        <otherwise>
+                            <groovy>
+                                <script> 
+                                    calendarConfiguration.setSubscribeId(subscribeId);
+                                    calendarConfiguration.setDisplayed(Boolean.parseBoolean(displayed));
+                                    def prefs = [:];
+                                    Attributes.NODE.selectNodes('preferences/preference').each {
+                                        params[it.valueOf('@name')] = it.valueOf('.');
+                                    }
+                                    calendarConfiguration.setPreferences(prefs);
+                                    calendarConfiguration.setCalendarDefinition(calendarDefinition);
+                                    calendarStore.storeCalendarConfiguration(calendarConfiguration);
+                                </script>
+                            </groovy>
+                        </otherwise>
+                    </choose>
+                </subtasks>
+            </with>
+        </otherwise>
+    </choose>
 </with-attribute>

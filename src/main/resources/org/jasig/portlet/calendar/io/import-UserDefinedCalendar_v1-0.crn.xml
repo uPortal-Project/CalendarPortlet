@@ -19,19 +19,28 @@
 
 -->
 
-<with-attribute key="calendarDefinition"
-		value="${groovy(new org.jasig.portlet.calendar.UserDefinedCalendarDefinition())}">
-	<with-attribute key="calendarConfiguration"
-		value="${groovy(new org.jasig.portlet.calendar.UserDefinedCalendarConfiguration())}">
+<!-- 
+ | Check first for an existing record based on subscribeId + name
+ +-->
+<with-attribute key="existingCalendarConfig" 
+    value="${groovy(calendarStore.getUserDefinedCalendarConfiguration(Attributes.NODE.valueOf('subscribeId'), Attributes.NODE.valueOf('name')))}">
+    <with-attribute key="calendarDefinition"
+        value="${groovy(existingCalendarConfig != null ? existingCalendarConfig.getCalendarDefinition() : new org.jasig.portlet.calendar.UserDefinedCalendarDefinition())}">
         <crn task="${parse-CalendarDefinition}" />
         <groovy>
             <script>
-                calendarConfiguration.setSubscribeId(Attributes.NODE.valueOf('subscribeId'));
-                calendarConfiguration.setDisplayed(new Boolean(Attributes.NODE.valueOf('displayed')));
-                calendarConfiguration.setCalendarDefinition(calendarDefinition);
+                def calendarConfig = null;
+                if (existingCalendarConfig != null) {
+                    calendarConfig = existingCalendarConfig;
+                } else {
+                    calendarConfig = new org.jasig.portlet.calendar.UserDefinedCalendarConfiguration();
+                    calendarConfig.setSubscribeId(Attributes.NODE.valueOf('subscribeId'));
+                    calendarConfig.setCalendarDefinition(calendarDefinition);
+                } 
+                calendarConfig.setDisplayed(new Boolean(Attributes.NODE.valueOf('displayed')));
                 calendarStore.storeCalendarDefinition(calendarDefinition);
-                calendarStore.storeCalendarConfiguration(calendarConfiguration);
+                calendarStore.storeCalendarConfiguration(calendarConfig);
             </script>
         </groovy>
-	</with-attribute>
+    </with-attribute>
 </with-attribute>

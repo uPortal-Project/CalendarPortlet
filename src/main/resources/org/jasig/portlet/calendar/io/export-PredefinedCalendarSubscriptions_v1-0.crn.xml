@@ -20,38 +20,38 @@
 -->
 
 <with-attribute key="calendarConfigurations"
-	value="${groovy(calendarStore.getPredefinedCalendarConfigurations())}">
-	<for-each items="${groovy(calendarConfigurations)}"
-		attribute-name="calendarConfiguration">
-		<with-attribute key="Attributes.NODE" value="${newDoc(predefined-calendar-sub)}">
-			<append-node
-				node="${attributeNode(script=classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarSubscription_v1-0.crn.xml)}" />
-			<with-attribute key="calendarDefinition"
-				value="${groovy(calendarConfiguration.calendarDefinition)}">
-				<append-node>
-					<subscribeId>${groovy(calendarConfiguration.getSubscribeId())}</subscribeId>
-					<fname>${groovy(calendarDefinition.getFname())}</fname>
-					<displayed>${groovy(calendarConfiguration.isDisplayed())}</displayed>
-				</append-node>
-				<with-attribute key="preferences"
-					value="${groovy(calendarConfiguration.getPreferences())}">
-					<if test="${groovy(preferences != null)}">
+    value="${groovy(calendarStore.getPredefinedCalendarConfigurations())}">
+    <for-each items="${groovy(calendarConfigurations)}"
+        attribute-name="calendarConfiguration">
+        <with-attribute key="Attributes.NODE" value="${newDoc(predefined-calendar-sub)}">
+            <append-node
+                node="${attributeNode(script=classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarSubscription_v1-0.crn.xml)}" />
+            <with-attribute key="calendarDefinition"
+                value="${groovy(calendarConfiguration.calendarDefinition)}">
+                <append-node>
+                    <subscribeId>${groovy(calendarConfiguration.getSubscribeId())}</subscribeId>
+                    <predefined-calendar>${groovy(calendarDefinition.getName())}</predefined-calendar>
+                    <displayed>${groovy(calendarConfiguration.isDisplayed())}</displayed>
+                </append-node>
+                <with-attribute key="preferences"
+                    value="${groovy(calendarConfiguration.getPreferences())}">
+                    <if test="${groovy(preferences != null)}">
                         <append-node><preferences/></append-node>
-						<for-each items="${groovy(preferences.keySet())}"
-							attribute-name="preference">
-							<append-node parent="${singleNode(preferences)}">
-								<parameter name="${preference}">${groovy((preferences.get(preference)))}</parameter>
-							</append-node>
-						</for-each>
-					</if>
-				</with-attribute>
-				<with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
-					<with-attribute key="SAFE_CALENDAR_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
-				    	<write-document
-					   		file="${exportDir}/predefined-calendar-sub-${SAFE_USER_NAME}-${groovy(calendarConfiguration.getId())}.pcs.xml" />
-			    	</with-attribute>
-			    </with-attribute>
-			</with-attribute>
-		</with-attribute>
-	</for-each>
+                        <for-each items="${groovy(preferences.keySet())}"
+                            attribute-name="preference">
+                            <append-node parent="${singleNode(preferences)}">
+                                <parameter name="${preference}">${groovy((preferences.get(preference)))}</parameter>
+                            </append-node>
+                        </for-each>
+                    </if>
+                </with-attribute>
+                <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+                    <with-attribute key="SAFE_CALENDAR_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+                        <write-document
+                            file="${exportDir}/predefined-calendar-sub-${SAFE_USER_NAME}-${groovy(calendarConfiguration.getId())}.pcs.xml" />
+                    </with-attribute>
+                </with-attribute>
+            </with-attribute>
+        </with-attribute>
+    </for-each>
 </with-attribute>
