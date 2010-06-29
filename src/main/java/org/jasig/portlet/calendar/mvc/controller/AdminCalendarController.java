@@ -25,7 +25,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
 
-import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.springframework.beans.factory.annotation.Required;
@@ -90,8 +89,8 @@ public class AdminCalendarController {
 	 * @return list of calendars
 	 */
 	@ModelAttribute("calendars")
-	public List<PredefinedCalendarConfiguration> getPredefinedCalendars() {
-		return calendarStore.getPredefinedCalendarConfigurations();
+	public List<PredefinedCalendarDefinition> getPredefinedCalendars() {
+		return calendarStore.getPredefinedCalendarDefinitions();
 	}
 	
 }
