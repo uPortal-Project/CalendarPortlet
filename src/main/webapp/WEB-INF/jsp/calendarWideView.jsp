@@ -29,46 +29,53 @@
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js"/>"></script>
 </c:if>
-<script type="text/javascript" src="<c:url value="/scripts/CalendarView.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
 <script type="text/javascript">
-    var cal = cal || {};
-    cal.jQuery = jQuery.noConflict(${includeJQuery});
+    var ${n} = ${n} || {};
+    ${n}.jQuery = jQuery.noConflict(${includeJQuery});
     <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
-    cal.jQuery(function(){
-        var $ = cal.jQuery;
-        var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
-        var days = ${ model.days };
-        var calView;
-        
-        $(document).ready(function(){
-            var startDate = '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>';
-            calView = cal.CalendarView(".upcal-fullview", { eventsUrl: eventsUrl, startDate: startDate, days: days })
-            var date = new Date();
-            date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
-            $('#${n}inlineCalendar').datepicker(
-                {
-                    inline: true,
-                    changeMonth: false,
-                    changeYear: false,
-                    defaultDate: date,
-                    onSelect: function(date) {
-                        calView.updateEventList(date, days);
-                    } 
-                }
-            );
+    ${n}.cal = cal;
+    cal = null;
+    ${n}.jQuery(function() {
+        var $ = ${n}.jQuery;
+        var cal = ${n}.cal;
 
-            $(".upcal-range-day a").click(function(){
-                days = $(this).attr("days");
-                calView.updateEventList(date, days);
-                $(".upcal-range-day a").removeClass("selected-range");
-                $(this).addClass("selected-range");
-            });
+        // The 'days' variable is used in functions beyond the CalendarView
+        var days = ${model.days};
+
+        var options = {
+            eventsUrl: '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>', 
+            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>', 
+            days: days
+        };
+        var calView = cal.CalendarView("#${n}container", options);
+
+        var date = new Date();
+        date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
+        $('#${n}inlineCalendar').datepicker(
+            {
+                inline: true,
+                changeMonth: false,
+                changeYear: false,
+                defaultDate: date,
+                onSelect: function(date) {
+                    calView.updateEventList(date, days);
+                } 
+            }
+        );
+
+        $("#${n}container .upcal-range-day a").click(function(){
+            days = $(this).attr("days");
+            calView.updateEventList(date, days);
+            $(".upcal-range-day a").removeClass("selected-range");
+            $(this).addClass("selected-range");
         });
+
     });
 </script>
 
-<div class="upcal-fullview">
+<div id="${n}container" class="upcal-fullview">
 
 <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
 	<div class="upcal-edit-links">
