@@ -30,12 +30,12 @@
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js"/>"></script>
 </c:if>
-<script type="text/javascript" src="<c:url value="/scripts/CalendarView.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
 <script type="text/javascript">
    	var cal = cal || {};
    	cal.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">delete fluid; delete fluid_1_1;</c:if>
+    <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
    	cal.jQuery(function(){
    	    var $ = cal.jQuery;
    	    var eventsUrl = '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>';
