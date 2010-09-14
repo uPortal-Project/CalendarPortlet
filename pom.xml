@@ -52,7 +52,7 @@
     	<!-- Dependency versions -->
     	<cas.version>3.1.8</cas.version>
     	<hsqldb.version>1.8.0.7</hsqldb.version>
-    	<resource-server.version>1.0.5</resource-server.version>
+    	<resource-server.version>1.0.10</resource-server.version>
         <spring.version>2.5.6</spring.version>
     	
     	<!-- The JDBC Driver used by the calendar portlet -->
@@ -200,10 +200,14 @@
 				<artifactId>resource-server-utils</artifactId>
 				<version>${resource-server.version}</version>            
 				<exclusions>
-					<exclusion>
-						<groupId>net.sf.ehcache</groupId>
-						<artifactId>ehcache</artifactId>
-					</exclusion>
+                    <exclusion>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
