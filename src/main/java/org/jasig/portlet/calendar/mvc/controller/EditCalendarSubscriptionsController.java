@@ -84,6 +84,11 @@ public class EditCalendarSubscriptionsController {
 			model.put("guest", false);
 		}
 
+        // See if the timezone is a read-only preference, or not. If so, we
+        // do not want them to be able to try and edit that value.
+        PortletPreferences prefs = request.getPreferences();
+        model.put( "timezoneReadOnly", prefs.isReadOnly( "timezone" ) );
+
 		// add the user-defined calendars to the model
 		List<UserDefinedCalendarConfiguration> mycalendars = calendarStore.getUserDefinedCalendarConfigurations(subscribeId, false);
 		model.put("mycalendars", mycalendars);
@@ -183,11 +188,16 @@ public class EditCalendarSubscriptionsController {
 			throws Exception {
 		
 		PortletPreferences prefs = request.getPreferences();
-		prefs.setValue("timezone", form.getTimezone());
-		prefs.store();
 
-		PortletSession session = request.getPortletSession();
-		session.setAttribute("timezone", form.getTimezone());
+        // If the timezone preference is read only don't try to change it.
+        // Pluto will throw an exception if you do.
+        if ( prefs.isReadOnly( "timezone" ) == false ) {
+            prefs.setValue("timezone", form.getTimezone());
+            prefs.store();
+
+            PortletSession session = request.getPortletSession();
+            session.setAttribute("timezone", form.getTimezone());
+        }
 
 		// send the user back to the main edit page
 		response.setRenderParameter("action", "editSubscriptions");

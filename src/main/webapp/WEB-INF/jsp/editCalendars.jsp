@@ -140,33 +140,35 @@
 	
 </div>
 
-<h2><spring:message code="view.useredit.preferences.header"/></h2>
+<c:if test="${model.timezoneReadOnly == false}">
+    <h2><spring:message code="view.useredit.preferences.header"/></h2>
 
-<portlet:actionURL var="postUrl">
-    <portlet:param name="action" value="editPreferences"/>
-</portlet:actionURL>
-<form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}">
+    <portlet:actionURL var="postUrl">
+        <portlet:param name="action" value="editPreferences"/>
+    </portlet:actionURL>
+    <form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}">
 
-    <p>
-        <label class="portlet-form-field-label">
-            <spring:message code="preferences.timezone"/>
-        </label>
-        <form:select path="timezone">
-            <c:forEach items="${timezones}" var="zone">
-                <spring:message var="message" code="timezone.${ zone }" text="${ zone }"/>
-                <form:option label="${message}" value="${ zone }"/>
-            </c:forEach>
-        </form:select>
-        <form:errors path="timezone" cssClass="portlet-msg-error"/>
-    </p>
-    <br/>
-    <p>
-        <button type="submit" class="portlet-form-button">
-            <spring:message code="preferences.save"/>
-        </button>
-    </p>
+        <p>
+            <label class="portlet-form-field-label">
+                <spring:message code="preferences.timezone"/>
+            </label>
+            <form:select path="timezone">
+                <c:forEach items="${timezones}" var="zone">
+                    <spring:message var="message" code="timezone.${ zone }" text="${ zone }"/>
+                    <form:option label="${message}" value="${ zone }"/>
+                </c:forEach>
+            </form:select>
+            <form:errors path="timezone" cssClass="portlet-msg-error"/>
+        </p>
+        <br/>
+        <p>
+            <button type="submit" class="portlet-form-button">
+                <spring:message code="preferences.save"/>
+            </button>
+        </p>
     
-</form:form>
+    </form:form>
+</c:if>
 
 <div class="upcal-view-links">
 	<a class="upcal-view-return" href="<portlet:renderURL portletMode="view"/>"
