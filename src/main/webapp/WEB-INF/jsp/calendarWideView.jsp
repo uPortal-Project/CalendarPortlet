@@ -25,9 +25,9 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <c:if test="${includeJQuery}">
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2-v2.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.2.1/js/fluid-all-1.2.1.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
@@ -78,29 +78,29 @@
 <div id="${n}container" class="upcal-fullview">
 
 <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
-	<div class="upcal-edit-links">
+    <div class="upcal-edit-links">
         <c:if test="${ !model.disablePreferences }">
             <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
             <a href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
                 <spring:message code="preferences.link.text"/>
             </a>
         </c:if>
-	    <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
-	        <span class="upcal-pipe">|</span>
-	        <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
-	        <a href="${ adminUrl }" title="<spring:message code="administration.link.title"/>">
-	            <spring:message code="administration.link.text"/>
-	        </a>
-	    </c:if>
-	</div>
+        <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
+            <span class="upcal-pipe">|</span>
+            <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
+            <a href="${ adminUrl }" title="<spring:message code="administration.link.title"/>">
+                <spring:message code="administration.link.text"/>
+            </a>
+        </c:if>
+    </div>
 </c:if>
 
 <div id="calendarPortletHeader" class="fl-col-mixed3">
 
-	<div class="fl-col-side fl-force-right">
-		<div class="upcal-showcals upcal-list">
-    		<h3><spring:message code="view.main.calendarlist.header"/></h3>
-    		<ul>
+    <div class="fl-col-side fl-force-right">
+        <div class="upcal-showcals upcal-list">
+            <h3><spring:message code="view.main.calendarlist.header"/></h3>
+            <ul>
                 <c:forEach items="${ model.calendars }" var="calendar">
                     <li class="color-${ model.colors[calendar.id] }">
                         <c:choose>
@@ -120,18 +120,18 @@
                         <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
                     </li>
                 </c:forEach>
-   		</ul>
-		</div>
-	</div>
-	
-	<div class="fl-col-side fl-force-left">
+        </ul>
+        </div>
+    </div>
+    
+    <div class="fl-col-side fl-force-left">
         <div id="<portlet:namespace/>inlineCalendar" class="jqueryui"></div>
         <div style="clear: both;"></div>
-	</div>
-	
-	<div class="fl-col-main">
-	
-		<div id="${n}calendarRangeSelector" class="upcal-range upcal-hide-on-event">
+    </div>
+    
+    <div class="fl-col-main">
+    
+        <div id="${n}calendarRangeSelector" class="upcal-range upcal-hide-on-event">
             <h3><spring:message code="view.main.range.header"/></h3>
                 <span class="upcal-range-day" days="1">
                     <a days="1" href="javascript:;" class="${ model.days == 1 ? "selected-range" : "" }">
@@ -150,24 +150,24 @@
                         <spring:message code="calendar.range.month"/>
                     </a>
                 </span>
-		</div>
-		
-		<div class="upcal-event-list">
-    		<p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
-    		
+        </div>
+        
+        <div class="upcal-event-list">
+            <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
+            
             <div class="upcal-events"></div>
             
             <!-- View Links -->
             <div id="${n}viewLinks" class="upcal-view-links upcal-hide-on-calendar">
                 <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
-		                title="<spring:message code="return.to.event.list.link.title"/>">
-		           <spring:message code="return.to.event.list.link.text"/>
+                        title="<spring:message code="return.to.event.list.link.title"/>">
+                   <spring:message code="return.to.event.list.link.text"/>
                 </a>
             </div>
             
-		</div>
-		
-	</div>
+        </div>
+        
+    </div>
 </div>
 
 </div>

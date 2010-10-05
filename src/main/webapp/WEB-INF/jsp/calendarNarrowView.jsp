@@ -26,24 +26,24 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <c:if test="${includeJQuery}">
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.3.2/jquery-1.3.2.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.7.2/jquery-ui-1.7.2-v2.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.2.1/js/fluid-all-1.2.1.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
 <script type="text/javascript">
     var ${n} = ${n} || {};
-   	${n}.jQuery = jQuery.noConflict(${includeJQuery});
+    ${n}.jQuery = jQuery.noConflict(${includeJQuery});
     <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
     ${n}.cal = cal;
     cal = null;
-   	${n}.jQuery(function() {
-   	    var $ = ${n}.jQuery;
-   	    var cal = ${n}.cal;
-   	    
-   	    // The 'days' variable is used in functions beyond the CalendarView
-   	    var days = ${model.days};
+    ${n}.jQuery(function() {
+        var $ = ${n}.jQuery;
+        var cal = ${n}.cal;
+        
+        // The 'days' variable is used in functions beyond the CalendarView
+        var days = ${model.days};
 
         var options = {
             eventsUrl: '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>', 
@@ -52,19 +52,19 @@
         };
         var calView = cal.CalendarView("#${n}container", options);
 
-		var date = new Date();
+        var date = new Date();
         date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
-	    $('#${n}inlineCalendar').datepicker(
-	    	{
-	    	    inline: true,
-	    		changeMonth: false,
-	    		changeYear: false,
-	    		defaultDate: date,
-			    onSelect: function(date) {
+        $('#${n}inlineCalendar').datepicker(
+            {
+                inline: true,
+                changeMonth: false,
+                changeYear: false,
+                defaultDate: date,
+                onSelect: function(date) {
                     calView.updateEventList(date, days);
-			    } 
-			}
-		);
+                } 
+            }
+        );
 
         $("#${n}container .upcal-range-day a").click(function(){
             days = $(this).attr("days");
@@ -73,7 +73,7 @@
             $(this).addClass("selected-range");
         });
 
-	});
+    });
 </script>
 
 <div id="${n}container" class="${n}upcal-miniview">
@@ -98,12 +98,12 @@
                 <spring:message code="calendar.range.month"/>
             </a>
         </span>
-	</div>
-	
-	<!-- Mini-Calendar (jQuery) -->
+    </div>
+    
+    <!-- Mini-Calendar (jQuery) -->
     <div id="${n}inlineCalendar" class="jqueryui"></div>
-	
-	<!-- Calendar Events List -->
+    
+    <!-- Calendar Events List -->
     <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
     <div class="upcal-events"></div>
 
