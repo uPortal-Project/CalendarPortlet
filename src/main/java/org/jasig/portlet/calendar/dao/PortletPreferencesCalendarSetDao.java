@@ -24,9 +24,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarDefinition;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
@@ -41,13 +43,13 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
+public final class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
     
-    protected final String CALENDAR_FNAME_KEY = "calendarFnames";
-    
-    protected final Log log = LogFactory.getLog(getClass());
+    private static final String CALENDAR_FNAME_KEY = "calendarFnames";
+    private static final String CALENDAR_SET_KEY = "PortletPreferencesCalendarSetDao.CALENDAR_SET_KEY";
     
     private CalendarStore calendarStore;
+    private final Log log = LogFactory.getLog(getClass());
     
     @Resource(name="calendarStore")
     @Required
@@ -59,7 +61,27 @@ public class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
      * (non-Javadoc)
      * @see org.jasig.portlet.calendar.dao.ICalendarSetDao#getCalendarSet(javax.portlet.PortletRequest)
      */
-    public CalendarSet<PredefinedCalendarConfiguration> getCalendarSet(PortletRequest request) {
+    @SuppressWarnings("unchecked")
+    public CalendarSet<CalendarConfiguration> getCalendarSet(PortletRequest request) {
+        
+        // Check the PortletSession, create if we don't have one;
+        // This strategy prevents the configuration ids from being 
+        // reordered between requests.
+        PortletSession session = request.getPortletSession();
+        CalendarSet<CalendarConfiguration> rslt = (CalendarSet<CalendarConfiguration>) session.getAttribute(CALENDAR_SET_KEY);
+        if (rslt == null) {
+            rslt = createCalendarSet(request);
+            session.setAttribute(CALENDAR_SET_KEY, rslt);
+        }
+        return rslt;
+        
+    }
+    
+    /*
+     * Implementation
+     */
+    
+    private CalendarSet<CalendarConfiguration> createCalendarSet(PortletRequest request) {
         
         if (log.isDebugEnabled()) {
             log.debug("Evaluating CalendarSet for user:  " + request.getRemoteUser());
@@ -73,14 +95,15 @@ public class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
             StringBuilder msg = new StringBuilder();
             msg.append("Found the following calendarFnames in PortletPreferences:  ");
             for (String fName : calendarFnames) {
-                msg.append(fName + " ");
+                msg.append(fName).append(" ");
             }
             log.debug(msg.toString());
         }
         
         // for each configured fname, attempt to find the relevant predefined
         // calendar definition and create a default configuration for it
-        Set<PredefinedCalendarConfiguration> calendars = new HashSet<PredefinedCalendarConfiguration>();
+        Set<CalendarConfiguration> calendars = new HashSet<CalendarConfiguration>();
+        long nextId = 0;
         for (String fname : calendarFnames) {
             
             // attempt to locate the calendar definition associated with
@@ -95,15 +118,17 @@ public class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
             // if we found a definition, add a configuration to the list
             if (definition != null) {
                 PredefinedCalendarConfiguration config = new PredefinedCalendarConfiguration();
+                config.setId(++nextId);
                 config.setCalendarDefinition(definition);
                 calendars.add(config);
             }
         }
         
         // create a new calendar set from these configurations
-        CalendarSet<PredefinedCalendarConfiguration> set = new CalendarSet<PredefinedCalendarConfiguration>();
+        CalendarSet<CalendarConfiguration> set = new CalendarSet<CalendarConfiguration>();
         set.setConfigurations(calendars);
         return set;
+
     }
 
 }
