@@ -18,6 +18,7 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,10 @@ import java.util.TreeSet;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
+import javax.portlet.ReadOnlyException;
+import javax.portlet.ValidatorException;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -70,6 +74,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		PortletSession session = request.getPortletSession();
 		Map<String, Object> model = new HashMap<String, Object>();
 		
+		PortletPreferences prefs = request.getPreferences();
+
 		// get the list of hidden calendars
 		@SuppressWarnings("unchecked")
 		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
@@ -120,9 +126,20 @@ public class AjaxCalendarController implements ApplicationContextAware {
 			try {
 				days = Integer.parseInt(timePeriod);
 				session.setAttribute("days", days);
-			} catch (NumberFormatException ex) {
-				log.warn("Failed to parse desired time period", ex);
-			}
+
+                if ( prefs.isReadOnly( "days" ) == false ) {
+                    prefs.setValue( "days", Integer.toString( days ) );
+                    prefs.store();
+                }
+            } catch (NumberFormatException ex) {
+                log.warn("Failed to parse desired time period", ex);
+            } catch (ReadOnlyException ex) {
+                log.error("Failed to set 'days' preference because it is read only", ex);
+            } catch (IOException ex) {
+                log.warn("Failed to store the 'days' preference", ex);
+            } catch (ValidatorException ex) {
+                log.warn("Failed to store the 'days' preference", ex);
+            }
 		}
 
 		// set the end date based on our desired time period

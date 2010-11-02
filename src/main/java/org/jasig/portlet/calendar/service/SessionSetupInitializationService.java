@@ -150,8 +150,10 @@ public class SessionSetupInitializationService implements IInitializationService
 		session.setAttribute("startDate", cal.getTime());
 
 		// set the default number of days to display
-		session.setAttribute("days", defaultDays);
-
+		// get days from preferences, or use the default if not found
+		String prefDays = prefs.getValue( "days", String.valueOf( defaultDays ) );
+		int tempDays = Integer.parseInt( prefDays );
+		session.setAttribute("days", tempDays);
 		
 		// mark this session as initialized
 		session.setAttribute("initialized", "true");

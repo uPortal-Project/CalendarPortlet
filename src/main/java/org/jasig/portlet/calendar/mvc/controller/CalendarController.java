@@ -18,6 +18,8 @@
  */
 package org.jasig.portlet.calendar.mvc.controller;
 
+import java.io.IOException;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -29,6 +31,8 @@ import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.ReadOnlyException;
+import javax.portlet.ValidatorException;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -78,8 +82,9 @@ public class CalendarController implements ApplicationContextAware {
 			for (IInitializationService service : initializationServices) {
 				service.initialize(request);
 			}
-
 		}
+
+        PortletPreferences prefs = request.getPreferences();
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		Calendar cal = Calendar.getInstance();
@@ -135,8 +140,19 @@ public class CalendarController implements ApplicationContextAware {
 			try {
 				days = Integer.parseInt(timePeriod);
 				session.setAttribute("days", days);
+
+				if ( prefs.isReadOnly( "days" ) == false ) {
+					prefs.setValue( "days", Integer.toString( days ) );
+					prefs.store();
+				}
 			} catch (NumberFormatException ex) {
 				log.warn("Failed to parse desired time period", ex);
+			} catch (ReadOnlyException ex) {
+				log.error("Failed to set 'days' preference because it is read only", ex);
+			} catch (IOException ex) {
+				log.warn("Failed to store the 'days' preference", ex);
+			} catch (ValidatorException ex) {
+				log.warn("Failed to store the 'days' preference", ex);
 			}
 		}
 		model.put("days", days);
@@ -209,7 +225,6 @@ public class CalendarController implements ApplicationContextAware {
 		 * Check if we need to disable either the preferences and/or administration links
 		 */
 		
-        PortletPreferences prefs = request.getPreferences();
         Boolean disablePrefs = Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_PREFERENCES, "false"));
         model.put(PREFERENCE_DISABLE_PREFERENCES, disablePrefs);
         Boolean disableAdmin = Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_ADMINISTRATION, "false"));

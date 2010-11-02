@@ -49,6 +49,12 @@
                 <name>timezone</name>
                 <value>America/Chicago</value>
             </preference>
+
+            <!-- Default number of days worth of events to show -->
+            <preference>
+                <name>days</name>
+                <value>7</value>
+            </preference>
             
             <!-- 
                 Set includeJQuery to true to explicitly import jQuery and
