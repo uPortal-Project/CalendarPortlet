@@ -52,7 +52,7 @@
                 </if>
             </with-attribute>
             <with-attribute key="SAFE_CALENDAR_FNAME"
-                value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarDefinition.getName())})}">
+                value="${org.jasig.portlet.calendar.io.SafeFileNamePhrase(${groovy(calendarDefinition.getName())})}">
                 <write-document
                     file="${exportDir}/predefined-calendar-${SAFE_CALENDAR_FNAME}-${groovy(calendarDefinition.getId())}.pcd.xml" />
             </with-attribute>

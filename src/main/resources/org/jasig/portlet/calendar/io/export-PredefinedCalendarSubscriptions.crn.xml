@@ -45,8 +45,8 @@
                         </for-each>
                     </if>
                 </with-attribute>
-                <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
-                    <with-attribute key="SAFE_CALENDAR_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+                <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portlet.calendar.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
+                    <with-attribute key="SAFE_CALENDAR_NAME" value="${org.jasig.portlet.calendar.io.SafeFileNamePhrase(${groovy(calendarConfiguration.getSubscribeId())})}">
                         <write-document
                             file="${exportDir}/predefined-calendar-sub-${SAFE_USER_NAME}-${groovy(calendarConfiguration.getId())}.pcs.xml" />
                     </with-attribute>
