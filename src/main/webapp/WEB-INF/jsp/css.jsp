@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
 

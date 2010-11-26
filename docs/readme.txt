@@ -16,4 +16,5 @@
     specific language governing permissions and limitations
     under the License.
 ====
+
 Documentation currently resides at http://www.ja-sig.org/wiki/display/PLT/CalendarPortlet.

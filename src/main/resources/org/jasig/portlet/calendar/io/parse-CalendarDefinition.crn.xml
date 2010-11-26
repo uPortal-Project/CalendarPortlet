@@ -18,6 +18,7 @@
     under the License.
 
 -->
+
 <choose>
     <when test="${groovy(!ScriptAttributes.REQUEST.hasAttribute('calendarDefinition'))}">
         <with-attribute key="msg" value="You must pass a 'calendarDefinition' request attribute to parse-CalendarDefinition.crn.xml">

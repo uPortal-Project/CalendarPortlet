@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <fmt:setTimeZone value="${ timezone }"/>
 <c:set var="timezone" value="${timezone}" scope="page"/>

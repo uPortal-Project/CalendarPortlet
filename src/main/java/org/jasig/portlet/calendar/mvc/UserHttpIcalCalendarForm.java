@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portlet.calendar.mvc;
 
 import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
