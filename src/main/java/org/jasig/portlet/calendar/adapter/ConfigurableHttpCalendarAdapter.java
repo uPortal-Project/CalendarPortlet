@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portlet.calendar.adapter;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +27,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Period;
 import net.sf.ehcache.Cache;
@@ -168,66 +168,6 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, 
 		}
 		
 		return events;
-	}
-
-	/**
-	 * Workflow for this implementation:
-	 * 
-	 * <ol>
-	 * <li>consult the configured {@link IUrlCreator} for the url to request</li>
-	 * <li>consult the cache to see if the fetch via HTTP is necessary (if not return the cached events)</li>
-	 * <li>if the fetch is necessary, consult the {@link ICredentialsExtractor} for necessary {@link Credentials}</li>
-	 * <li>Invoke retrieveCalendarHttp</li>
-	 * <li>Pass the returned {@link InputStream} into the configured {@link IContentProcessor}</li>
-	 * <li>Return the {@link CalendarEvent}s</li>
-	 * </ol>
-	 * 
-	 *  (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.servlet.http.HttpServletRequest)
-	 */
-	@SuppressWarnings("unchecked")
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
-			Period period, HttpServletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = Collections.emptySet();
-		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
-		
-		log.debug("generated url: " + url);
-		
-		// try to get the cached calendar
-		Credentials credentials = credentialsExtractor.getCredentials(request);
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
-		Element cachedElement = this.cache.get(key);
-		if (cachedElement == null) {
-			// read in the data
-			InputStream stream = retrieveCalendarHttp(url, credentials);
-			// run the stream through the processor
-			events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
-			log.debug("contentProcessor found " + events.size() + " events");
-			// save the CalendarEvents to the cache
-			cachedElement = new Element(key, events);
-			this.cache.put(cachedElement);
-		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
-		}
-		
-		return events;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ISingleEventSupport#getEvent(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, java.lang.String, java.lang.String, javax.servlet.http.HttpServletRequest)
-	 */
-	public CalendarEvent getEvent(CalendarConfiguration calendar,
-			Period period, String uid, String recurrenceId, HttpServletRequest request)
-			throws CalendarException {
-		Set<CalendarEvent> events = getEvents(calendar, period, request);
-		for(CalendarEvent event : events) {
-			if (event.getUid().toString().equals(uid) && (null == recurrenceId || event.getRecurrenceId().toString().equals(recurrenceId))) {
-				return event;
-			}
-		}
-		log.debug("event not found with uid " + uid + " and recurrence id " + recurrenceId);
-		return null;
 	}
 
 	/*

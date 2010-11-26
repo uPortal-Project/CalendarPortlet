@@ -16,15 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portlet.calendar.adapter;
 
+import java.util.Set;
+
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
+
+import net.fortuna.ical4j.model.Period;
 
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarEvent;
-
-import net.fortuna.ical4j.model.Period;
 
 /**
  * Similar to {@link ICalendarAdapter}, interface defining methods for 
@@ -35,19 +37,6 @@ import net.fortuna.ical4j.model.Period;
  */
 public interface ISingleEventSupport {
 
-	/**
-	 * 
-	 * @param calendar
-	 * @param period
-	 * @param uid
-	 * @param recurrenceId
-	 * @param request
-	 * @return
-	 * @throws CalendarException
-	 */
-	CalendarEvent getEvent(CalendarConfiguration calendar, Period period, 
-			String uid, String recurrenceId, HttpServletRequest request) throws CalendarException;
-	
 	/**
 	 * 
 	 * @param calendar

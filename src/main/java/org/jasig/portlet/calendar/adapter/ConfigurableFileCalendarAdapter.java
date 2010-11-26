@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portlet.calendar.adapter;
 
 import java.io.ByteArrayInputStream;
@@ -79,48 +80,6 @@ public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingl
 		}
 		
 		return events;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
-			Period period, HttpServletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = Collections.emptySet();
-		String fileName = calendarConfiguration.getCalendarDefinition().getParameters().get("file");
-		
-		// try to get the cached calendar
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(fileName));
-		Element cachedElement = this.cache.get(key);
-		if (cachedElement == null) {
-			// read in the data
-			InputStream stream = retrieveCalendar(fileName);
-			// run the stream through the processor
-			events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
-			log.debug("contentProcessor found " + events.size() + " events");
-			// save the CalendarEvents to the cache
-			cachedElement = new Element(key, events);
-			this.cache.put(cachedElement);
-		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
-		}
-		
-		return events;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ISingleEventSupport#getEvent(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, java.lang.String, java.lang.String, javax.servlet.http.HttpServletRequest)
-	 */
-	public CalendarEvent getEvent(CalendarConfiguration calendar,
-			Period period, String uid, String recurrenceId, HttpServletRequest request)
-			throws CalendarException {
-		Set<CalendarEvent> events = getEvents(calendar, period, request);
-		for(CalendarEvent event : events) {
-			if (event.getUid().toString().equals(uid) && (null == recurrenceId || event.getRecurrenceId().toString().equals(recurrenceId))) {
-				return event;
-			}
-		}
-		log.debug("event not found with uid " + uid + " and recurrence id " + recurrenceId);
-		return null;
 	}
 
 	/*
