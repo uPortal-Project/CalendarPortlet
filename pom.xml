@@ -14,13 +14,13 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.0-M4-SNAPSHOT</version>
+    <version>1.0.0-M4</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/trunk</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/trunk</developerConnection>
-        <url>http://developer.jasig.org/source/browse/jasigsvn/portlets/CalendarPortlet/trunk</url>
+        <connection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</connection>
+        <developerConnection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</developerConnection>
+        <url>http://developer.jasig.org/source/browse/jasigsvn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</url>
     </scm>
 
     <distributionManagement>
@@ -711,24 +711,24 @@
                         <configuration>
                             <tasks>
                                 <fail unless="dir">
-                                    You must set the &quot;dir&quot; parameter.  (-Ddir={something})
+                                    You must set the "dir" parameter.  (-Ddir={something})
                                 </fail>
                     
-                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
                                 <!-- Provided jars don't seem to be added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}"/>
+                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
 
                                 <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
-                                        <pathelement path="${runtime_classpath}"/>
-                                        <pathelement location="${servlet.jar}"/>
+                                        <pathelement path="${runtime_classpath}" />
+                                        <pathelement location="${servlet.jar}" />
                                     </classpath>
 
                             
                                     <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
-                                    <arg value="${dir}"/>
+                                    <arg value="${dir}" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -751,23 +751,23 @@
                             <tasks>
                     
                                 <fail unless="dir">
-                                    You must set the &quot;dir&quot; parameter.  (-Ddir={something})
+                                    You must set the "dir" parameter.  (-Ddir={something})
                                 </fail>
                     
-                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
                                 <!-- Provided jars don't seem to be added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}"/>
+                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
                         
                                 <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
-                                        <pathelement path="${runtime_classpath}"/>
-                                        <pathelement location="${servlet.jar}"/>
+                                        <pathelement path="${runtime_classpath}" />
+                                        <pathelement location="${servlet.jar}" />
                                     </classpath>
                             
                                     <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
-                                    <arg value="${dir}"/>
+                                    <arg value="${dir}" />
                                 </java>
                             </tasks>
                         </configuration>
