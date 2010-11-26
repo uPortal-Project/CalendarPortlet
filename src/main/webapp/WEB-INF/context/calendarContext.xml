@@ -18,15 +18,16 @@
     under the License.
 
 -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
-    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
     http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
     <!-- User timezone options -->
@@ -68,6 +69,38 @@
     <bean id="fileIcalAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
         p:cache-ref="calendarCache"/>
+
+    <!--
+     | EXCHANGE INTEGRATION SUPPORT
+     |
+     | Uncomment the following section to enable Exchange integration.  You will
+     | also need to modify the Exchange server URL in 
+     | src/main/resources/com/microsoft/exchange/Service.wsdl and uncomment the
+     | reference to the ExchangeInitializationService bean in calendar.xml. 
+     +-->
+    <!--bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPaths">
+            <list>
+                <value>com.microsoft.exchange.messages</value>
+                <value>com.microsoft.exchange.types</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="destinationProvider" class="org.springframework.ws.client.support.destination.Wsdl11DestinationProvider"
+        p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
+    <bean id="webServiceMessageSender" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeHttpWebServiceMessageSender"/>
+    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <qualifier value="exchange" />
+        
+        <property name="marshaller" ref="marshaller" />
+        <property name="unmarshaller" ref="marshaller" />
+        <property name="destinationProvider" ref="destinationProvider" />
+        <property name="messageSender" ref="webServiceMessageSender" />
+    </bean>            
+    <bean id="exchangeAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
+        p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate">
+    </bean-->
 
     <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
     <bean id="calDavAdapter" 

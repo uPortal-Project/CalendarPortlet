@@ -52,8 +52,10 @@
         <!-- Dependency versions -->
         <cas.version>3.1.8</cas.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
+        <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <resource-server.version>1.0.12</resource-server.version>
-        <spring.version>2.5.6</spring.version>
+        <spring.version>2.5.6.SEC02</spring.version>
+        <mockito.version>1.8.4</mockito.version>
         
         <!-- The JDBC Driver used by the calendar portlet -->
         <jdbc.groupId>postgresql</jdbc.groupId>
@@ -177,7 +179,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.2</version>
+                <version>4.4</version>
             </dependency>           
             <dependency>
                 <groupId>log4j</groupId>
@@ -226,9 +228,19 @@
                 <version>${cas.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-basics-runtime</artifactId>
+                <version>${jaxb2basicsVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.osaf</groupId>
                 <artifactId>caldav4j</artifactId>
-                <version>0.5</version>
+                <version>0.6.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>ical4j</groupId>
@@ -263,6 +275,11 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring.version}</version>
             </dependency>
@@ -270,6 +287,52 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc-portlet</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-core</artifactId>
+                <version>1.5.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-core-tiger</artifactId>
+                <version>1.5.9</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-security</artifactId>
+                <version>1.5.9</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.wss</groupId>
+                        <artifactId>xws-security</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.xml.crypto</groupId>
+                        <artifactId>xmldsig</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>1.5.9</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springmodules</groupId>
@@ -506,6 +569,14 @@
             <artifactId>hibernate</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osaf</groupId>
             <artifactId>caldav4j</artifactId>
         </dependency>
@@ -523,11 +594,31 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc-portlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core-tiger</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-oxm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springmodules</groupId>
@@ -601,7 +692,19 @@
     
     <build>
         <plugins>
-            <plugin>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                      <systemproperties>
+                          <property>
+                              <name>java.util.logging.config.file</name>
+                              <value>src/test/resources/log4j.properties</value>
+                          </property>
+                      </systemproperties>
+                  </configuration>
+              </plugin>
+              <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -648,7 +751,46 @@
                     <jswarn>false</jswarn>
                 </configuration>
             </plugin>
-            <plugin>
+                <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <version>0.7.4</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- <generateDirectory>src/main/java</generateDirectory> -->
+                        <bindingDirectory>src/main/binding</bindingDirectory>
+                        <schemaDirectory>src/main/xsd</schemaDirectory>
+                        <episode>false</episode>
+                        <extension>true</extension>
+                        <args>
+                            <arg>-XtoString</arg>
+                            <arg>-Xequals</arg>
+                            <arg>-XhashCode</arg>
+                        </args>
+                        <plugins>
+                            <plugin>
+                                <groupId>org.jvnet.jaxb2_commons</groupId>
+                                <artifactId>jaxb2-basics</artifactId>
+                                <version>${jaxb2basicsVersion}</version>
+                            </plugin>
+                        </plugins>
+                    </configuration>
+                    <!--  -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.sun.xml.bind</groupId>
+                            <artifactId>jaxb-xjc</artifactId>
+                            <version>2.2.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -689,7 +831,7 @@
                         <exclude>**/src/main/webapp/rs/**</exclude>
                     </excludes>
                     <mapping>
-                        <tld>XML_STYLE</tld>
+                        <channel>XML_STYLE</channel>
                         <tag>DYNASCRIPT_STYLE</tag>
                     </mapping>
                 </configuration>

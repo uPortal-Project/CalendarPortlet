@@ -120,5 +120,10 @@
     <!--user-attribute>
         <name>password</name>
     </user-attribute-->
-        
+
+    <!-- Uncomment to use Exchange -->
+    <!--user-attribute>
+        <name>mail</name>
+    </user-attribute-->
+                
 </portlet-app>

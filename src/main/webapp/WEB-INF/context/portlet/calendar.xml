@@ -18,6 +18,7 @@
     under the License.
 
 -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
@@ -69,6 +70,8 @@
         -->
         <bean class="org.jasig.portlet.calendar.service.SessionSetupInitializationService"
             p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore"/>
+
+        <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"/-->
         
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.

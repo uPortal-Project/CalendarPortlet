@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portlet.calendar.adapter;
 
 import java.net.MalformedURLException;
@@ -30,6 +31,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
@@ -44,7 +46,6 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
@@ -60,6 +61,7 @@ import org.jasig.portlet.calendar.url.IUrlCreator;
 import org.osaf.caldav4j.CalDAV4JException;
 import org.osaf.caldav4j.CalDAVCalendarCollection;
 import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
+import org.osaf.caldav4j.methods.HttpClient;
 
 
 /**
@@ -114,14 +116,12 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		if (cachedElement == null) {
 			// read in the data
 			// retrieve calendars for the current user
-			List<net.fortuna.ical4j.model.Calendar> calendars = retrieveCalendars(
+			net.fortuna.ical4j.model.Calendar calendar = retrieveCalendar(
 					url, period, credentialsExtractor.getCredentials(request));
 
 			// extract events from the calendars
-			for (net.fortuna.ical4j.model.Calendar calendar : calendars) {
 				events.addAll(convertCalendarToEvents(
 						calendarConfiguration.getId(), calendar, period));
-			}
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
 			cachedElement = new Element(key, events);
@@ -147,14 +147,12 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		if (cachedElement == null) {
 			// read in the data
 			// retrieve calendars for the current user
-			List<net.fortuna.ical4j.model.Calendar> calendars = retrieveCalendars(
+			net.fortuna.ical4j.model.Calendar calendar = retrieveCalendar(
 					url, period, credentialsExtractor.getCredentials(request));
 
 			// extract events from the calendars
-			for (net.fortuna.ical4j.model.Calendar calendar : calendars) {
 				events.addAll(convertCalendarToEvents(
 						calendarConfiguration.getId(), calendar, period));
-			}
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
 			cachedElement = new Element(key, events);
@@ -173,7 +171,7 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		throw new CalendarLinkException("This calendar has no link");
 	}
 	
-	protected final List<net.fortuna.ical4j.model.Calendar> retrieveCalendars(
+	protected final net.fortuna.ical4j.model.Calendar retrieveCalendar(
 			String url, Period period, Credentials credentials) {
 
 		try {
@@ -203,17 +201,17 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 
 			// retrieve a list of calendars from the collection for the 
 			// requested Period
-			List<net.fortuna.ical4j.model.Calendar> calendars = collection
-					.getEventResourcesByTimestamp(client, period.getStart(),
-							period.getEnd());
+			net.fortuna.ical4j.model.Calendar cal = collection.getCalendarByPath(client, hostUrl.getPath());
 
-			return calendars;
+			return cal;
 
 		} catch (CalDAV4JException e) {
 			log.error("CalDAV exception: ", e);
 			throw new CalendarException(e);
 		} catch (MalformedURLException e) {
 			throw new CalendarException(e);
+		} catch (Exception e) {
+		    throw new CalendarException("Unknown exception while retrieving calendar", e);
 		}
 
 	}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+    jaxb:version="2.1"
+>
+    <jaxb:globalBindings typesafeEnumMaxMembers="500">
+        <!--
+         | Extension needed to deal with PeopleSoft generated schemas which use a complexType to define
+         | the root element instead of just defining it in the element itself. Without this extension root
+         | elements defined this way are missing the @XmlRootElement annotation. 
+         +-->
+        <xjc:simple />
+    </jaxb:globalBindings>
+
+    <jaxb:bindings schemaLocation="../xsd/messages.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="com.microsoft.exchange.messages" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    
+    <jaxb:bindings schemaLocation="../xsd/types.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="com.microsoft.exchange.types" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>
