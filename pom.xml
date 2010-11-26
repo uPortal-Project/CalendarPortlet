@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig</groupId>
+        <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>12</version>
+        <version>21</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -14,13 +14,12 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.0-M4</version>
+    <version>1.0.0-M4-SNAPSHOT</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</developerConnection>
-        <url>http://developer.jasig.org/source/browse/jasigsvn/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M4</url>
+        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</developerConnection>
     </scm>
 
     <distributionManagement>
