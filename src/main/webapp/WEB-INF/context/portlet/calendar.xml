@@ -71,7 +71,8 @@
         <bean class="org.jasig.portlet.calendar.service.SessionSetupInitializationService"
             p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore"/>
 
-        <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"/-->
+        <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
+            p:userToken="${userinfo.userid.key}" p:password="password"/-->
         
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.
