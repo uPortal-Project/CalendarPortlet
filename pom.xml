@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>21</version>
+        <version>30</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -36,11 +36,6 @@
     </issueManagement>
     
     <repositories>
-        <repository>
-            <id>jasig-repository</id>
-            <name>JA-SIG Maven2 Repository</name>
-            <url>http://developer.ja-sig.org/maven2</url>
-        </repository>
         <repository>
             <id>caldav4j.repo</id>
             <name>CalDav4J Repository</name>
@@ -835,6 +830,21 @@
                         <tag>DYNASCRIPT_STYLE</tag>
                     </mapping>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.1</version>
             </plugin>
         </plugins>
     </build>
