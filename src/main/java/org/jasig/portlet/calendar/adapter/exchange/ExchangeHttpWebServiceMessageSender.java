@@ -24,7 +24,6 @@ import java.net.URI;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -102,7 +101,7 @@ public class ExchangeHttpWebServiceMessageSender extends
         }
     }
     
-    private HttpConnectionManager connectionManager;
+    private MultiThreadedHttpConnectionManager connectionManager;
 
     /* (non-Javadoc)
      * @see org.springframework.ws.transport.WebServiceMessageSender#createConnection(java.net.URI)
@@ -181,10 +180,8 @@ public class ExchangeHttpWebServiceMessageSender extends
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     public void destroy() throws Exception {
-        // if the connection manager still exists, shut it down
-        if (connectionManager != null && connectionManager instanceof MultiThreadedHttpConnectionManager) {
-            ((MultiThreadedHttpConnectionManager) connectionManager).shutdown();
-        }
+        // shut down the connection manager
+        connectionManager.shutdown();
     }
 
 }
