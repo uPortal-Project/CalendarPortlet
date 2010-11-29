@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.springframework.mock.web.portlet.MockPortletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 public class ExchangeCredentialsInitializationServiceTest {
 
@@ -41,12 +42,14 @@ public class ExchangeCredentialsInitializationServiceTest {
     @Before
     public void setUp() {
         Map<String,String> userInfo = new HashMap<String,String>();
-        userInfo.put("user.login.id", "user");
-        userInfo.put("password", "pass");
+        userInfo.put("username", "user");
+        userInfo.put("pass", "pass");
 
         request = new MockPortletRequest();
         request.setAttribute(PortletRequest.USER_INFO, userInfo);
         service = new ExchangeCredentialsInitializationService();
+        service.setPasswordAttribute("pass");
+        service.setUsernameAttribute("username");
     }
     
     @Test
@@ -57,6 +60,22 @@ public class ExchangeCredentialsInitializationServiceTest {
         final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) requestAttributes.getAttribute(ExchangeHttpWebServiceMessageSender.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
         assertEquals("user", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
+    }
+
+    
+    @Test
+    public void testWithExistingRequestInitialize() {
+        final RequestAttributes requestAttributes = new PortletRequestAttributes(request);
+        requestAttributes.setAttribute("testAttr", "testVal", RequestAttributes.SCOPE_SESSION);
+        RequestContextHolder.setRequestAttributes(requestAttributes);
+        
+        service.initialize(request);
+        
+        final RequestAttributes newRequestAttributes = RequestContextHolder.getRequestAttributes();
+        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) newRequestAttributes.getAttribute(ExchangeHttpWebServiceMessageSender.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        assertEquals("user", credentials.getUserName());
+        assertEquals("pass", credentials.getPassword());
+        assertEquals("testVal", newRequestAttributes.getAttribute("testAttr", RequestAttributes.SCOPE_SESSION));
     }
 
 }
