@@ -89,17 +89,15 @@
     <bean id="destinationProvider" class="org.springframework.ws.client.support.destination.Wsdl11DestinationProvider"
         p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
     <bean id="webServiceMessageSender" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeHttpWebServiceMessageSender"/>
-    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"
+        p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
+        p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller">
         <qualifier value="exchange" />
-        
-        <property name="marshaller" ref="marshaller" />
-        <property name="unmarshaller" ref="marshaller" />
-        <property name="destinationProvider" ref="destinationProvider" />
-        <property name="messageSender" ref="webServiceMessageSender" />
     </bean>            
     <bean id="exchangeAdapter" 
         class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
-        p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate">
+        p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
+        p:emailAttribute="mail">
     </bean-->
 
     <!-- CalDAV adapter for calendars available via the CalDAV protocol -->

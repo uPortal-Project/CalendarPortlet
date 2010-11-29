@@ -99,6 +99,12 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
     public void setCacheKeyPrefix(String cacheKeyPrefix) {
         this.cacheKeyPrefix = cacheKeyPrefix;
     }
+    
+    private String emailAttribute = "mail";
+    
+    public void setEmailAttribute(String emailAttribute) {
+        this.emailAttribute = emailAttribute;
+    }
 
     /*
      * (non-Javadoc)
@@ -112,7 +118,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         
         @SuppressWarnings("unchecked")
         Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
-        String email = userInfo.get("mail");
+        String email = userInfo.get(this.emailAttribute);
 
         String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(email));
         Element cachedElement = this.cache.get(key);
