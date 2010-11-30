@@ -143,11 +143,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
             }
 		}
 
-		// set the end date based on our desired time period
-		cal.add(Calendar.DATE, days);
-        cal.set(Calendar.MILLISECOND, 0);
-		Date endDate = cal.getTime();
-		model.put("endDate", endDate);
+        // set the end date based on our desired time period
+        cal.add(Calendar.DATE, days);
+        cal.set(Calendar.MILLISECOND, 1);
+        Date endDate = cal.getTime();
+        model.put("endDate", endDate);
 
 		Period period = new Period(new DateTime(startDate), new DateTime(
 				endDate));
