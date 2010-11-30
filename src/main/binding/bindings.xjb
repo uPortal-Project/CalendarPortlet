@@ -4,7 +4,7 @@
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
     xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
     xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
-    jaxb:version="2.1"
+    version="2.1"
 >
     <jaxb:globalBindings typesafeEnumMaxMembers="500">
         <!--
