@@ -214,7 +214,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
 				} catch (Exception ex) {
-					log.warn(ex);
+					log.warn("Unknown Error", ex);
 					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
 				}
 
