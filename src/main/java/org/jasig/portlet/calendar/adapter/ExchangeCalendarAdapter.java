@@ -124,7 +124,9 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         Element cachedElement = this.cache.get(key);
         if (cachedElement == null) {
             log.debug("Retreiving exchange events for account " + email);
-            events = retrieveExchangeEvents(calendarConfiguration, period, email);
+            String timezone = (String) request.getPortletSession().getAttribute("timezone");
+            java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(timezone);
+            events = retrieveExchangeEvents(calendarConfiguration, period, email, tZone);
             log.debug("Exchange adapter found " + events.size() + " events");
             // save the CalendarEvents to the cache
             cachedElement = new Element(key, events);
@@ -147,7 +149,15 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * @throws CalendarException
      */
     public Set<CalendarEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
-            Period period, String emailAddress) throws CalendarException {
+            Period period, String emailAddress, java.util.TimeZone tZone) throws CalendarException {
+        
+        if (log.isDebugEnabled()) {
+            StringBuilder buff = new StringBuilder();
+            buff.append("Period details:  start=").append(period.getStart())
+                            .append(", end=").append(period.getEnd())
+                            .append(", timeZone=").append(tZone);
+            log.debug(buff.toString());
+        }
 
         Set<CalendarEvent> events = new HashSet<CalendarEvent>();
         
@@ -186,7 +196,8 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
             // set the bias to the start time's timezone offset (in minutes 
             // rather than milliseconds)
             TimeZone tz = new TimeZone();
-            tz.setBias(period.getStart().getTimeZone().getRawOffset() / 1000 / 60 );
+//            tz.setBias(period.getStart().getTimeZone().getRawOffset() / 1000 / 60 );
+            tz.setBias(tZone.getRawOffset() / 1000 / 60 );
             
             // TODO: time zone standard vs. daylight info is temporarily hard-coded
             SerializableTimeZoneTime standard = new SerializableTimeZoneTime();
