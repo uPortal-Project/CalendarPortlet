@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarConfigurationByNameComparator;
 import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.VEventStartComparator;
@@ -165,7 +167,9 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		// retrieve the calendars defined for this portlet instance
 		CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
-		Collection<? extends CalendarConfiguration> calendars = set.getConfigurations();
+        List<CalendarConfiguration> calendars = new ArrayList<CalendarConfiguration>();
+        calendars.addAll(set.getConfigurations());
+        Collections.sort(calendars, new CalendarConfigurationByNameComparator());
 		model.put("calendars", calendars);
 
 		TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
