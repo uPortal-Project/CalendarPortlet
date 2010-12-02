@@ -208,7 +208,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
             standard.setMonth((short)11);
             standard.setTime("02:00:00");
             SerializableTimeZoneTime daylight = new SerializableTimeZoneTime();
-            daylight.setBias(-60);
+            daylight.setBias(0);
             daylight.setDayOfWeek(DayOfWeekType.SUNDAY);
             daylight.setDayOrder((short)1);
             daylight.setMonth((short)3);
