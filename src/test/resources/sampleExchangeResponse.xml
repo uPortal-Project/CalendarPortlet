@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetUserAvailabilityResponse
+    xmlns="http://schemas.microsoft.com/exchange/services/2006/messages">
+    <FreeBusyResponseArray>
+        <FreeBusyResponse>
+            <ResponseMessage ResponseClass="Success">
+                <ResponseCode>NoError</ResponseCode>
+            </ResponseMessage>
+            <FreeBusyView>
+                <FreeBusyViewType
+                    xmlns="http://schemas.microsoft.com/exchange/services/2006/types">DetailedMerged</FreeBusyViewType>
+                <MergedFreeBusy
+                    xmlns="http://schemas.microsoft.com/exchange/services/2006/types">000002220220000000000000</MergedFreeBusy>
+                <CalendarEventArray
+                    xmlns="http://schemas.microsoft.com/exchange/services/2006/types">
+                    <CalendarEvent>
+                        <StartTime>2010-11-16T12:00:00</StartTime>
+                        <EndTime>2010-11-16T13:00:00</EndTime>
+                        <BusyType>Busy</BusyType>
+                        <CalendarEventDetails>
+                            <ID>14B6414B0</ID>
+                            <Subject>Eat Lunch</Subject>
+                            <Location>Somewhere Tasty</Location>
+                            <IsMeeting>false</IsMeeting>
+                            <IsRecurring>false</IsRecurring>
+                            <IsException>false</IsException>
+                            <IsReminderSet>false</IsReminderSet>
+                            <IsPrivate>false</IsPrivate>
+                        </CalendarEventDetails>
+                    </CalendarEvent>
+                    <CalendarEvent>
+                        <StartTime>2010-11-18T07:00:00</StartTime>
+                        <EndTime>2010-11-18T07:00:00</EndTime>
+                        <BusyType>Busy</BusyType>
+                        <CalendarEventDetails>
+                            <ID>E14B6414B0B</ID>
+                            <Subject>Wake Up</Subject>
+                            <Location />
+                            <IsMeeting>false</IsMeeting>
+                            <IsRecurring>false</IsRecurring>
+                            <IsException>false</IsException>
+                            <IsReminderSet>false</IsReminderSet>
+                            <IsPrivate>false</IsPrivate>
+                        </CalendarEventDetails>
+                    </CalendarEvent>
+                </CalendarEventArray>
+            </FreeBusyView>
+        </FreeBusyResponse>
+    </FreeBusyResponseArray>
+</GetUserAvailabilityResponse>

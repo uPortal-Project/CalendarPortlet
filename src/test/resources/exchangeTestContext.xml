@@ -26,13 +26,18 @@
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-    http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <!--bean id="faultContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
-        <constructor-arg value="edu.wisc.hrs.ci.dm.fault" />
-    </bean-->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation">
+            <value>classpath:ehcache-test.xml</value>
+        </property>
+    </bean>
+    
+    <!-- Main calendar cache -->
+    <bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+        p:cacheManager-ref="cacheManager" p:cacheName="calendarCache"/>
+
     <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
             <list>
@@ -41,16 +46,5 @@
             </list>
         </property>
     </bean>
-    <bean id="destinationProvider" class="org.springframework.ws.client.support.destination.Wsdl11DestinationProvider"
-        p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
-    <bean id="webServiceMessageSender" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeHttpWebServiceMessageSender"/>
-    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
-        <qualifier value="exchange" />
-        
-        <property name="marshaller" ref="marshaller" />
-        <property name="unmarshaller" ref="marshaller" />
-        <property name="destinationProvider" ref="destinationProvider" />
-        <property name="messageSender" ref="webServiceMessageSender" />
-    </bean>    
     
 </beans>

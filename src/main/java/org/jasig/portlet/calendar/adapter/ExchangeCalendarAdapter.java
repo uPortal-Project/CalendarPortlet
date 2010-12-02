@@ -43,6 +43,7 @@ import net.fortuna.ical4j.model.property.Summary;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -165,58 +166,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         try {
             
             // construct the SOAP request object to use
-            GetUserAvailabilityRequest soapRequest = new GetUserAvailabilityRequest();
-
-            // create an array of mailbox data representing the current user
-            ArrayOfMailboxData mailboxes = new ArrayOfMailboxData();
-            MailboxData mailbox = new MailboxData();
-            Mailbox address = new Mailbox();
-            address.setAddress(emailAddress);
-            address.setName("");
-            mailbox.setAttendeeType(MeetingAttendeeType.REQUIRED);
-            mailbox.setExcludeConflicts(false);
-            mailbox.setEmail(address);            
-            mailboxes.getMailboxDatas().add(mailbox);
-            soapRequest.setMailboxDataArray(mailboxes);
-
-            // create a FreeBusyViewOptions representing the specified period
-            FreeBusyViewOptions view = new FreeBusyViewOptions();
-            view.setMergedFreeBusyIntervalInMinutes(60);
-            view.getRequestedView().add("DetailedMerged");
-            
-            Duration dur = new Duration();
-            
-            XMLGregorianCalendar start = getXmlDate(period.getStart()); 
-            XMLGregorianCalendar end = getXmlDate(period.getEnd()); 
-            dur.setEndTime(end);
-            dur.setStartTime(start);
-            
-            view.setTimeWindow(dur);
-            soapRequest.setFreeBusyViewOptions(view);
-            
-            // set the bias to the start time's timezone offset (in minutes 
-            // rather than milliseconds)
-            TimeZone tz = new TimeZone();
-            java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(UTC);
-            tz.setBias(tZone.getRawOffset() / 1000 / 60 );
-            
-            // TODO: time zone standard vs. daylight info is temporarily hard-coded
-            SerializableTimeZoneTime standard = new SerializableTimeZoneTime();
-            standard.setBias(0);            
-            standard.setDayOfWeek(DayOfWeekType.SUNDAY);
-            standard.setDayOrder((short)1);
-            standard.setMonth((short)11);
-            standard.setTime("02:00:00");
-            SerializableTimeZoneTime daylight = new SerializableTimeZoneTime();
-            daylight.setBias(0);
-            daylight.setDayOfWeek(DayOfWeekType.SUNDAY);
-            daylight.setDayOrder((short)1);
-            daylight.setMonth((short)3);
-            daylight.setTime("02:00:00");
-            tz.setStandardTime(standard);
-            tz.setDaylightTime(daylight);
-            
-            soapRequest.setTimeZone(tz);
+            GetUserAvailabilityRequest soapRequest = getAvailabilityRequest(period, emailAddress);
             
             // use the request to retrieve data from the Exchange server
             GetUserAvailabilityResponse response = (GetUserAvailabilityResponse) webServiceOperations
@@ -251,6 +201,65 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         return "";
     }
     
+    protected GetUserAvailabilityRequest getAvailabilityRequest(Period period, String emailAddress) throws DatatypeConfigurationException {
+
+        // construct the SOAP request object to use
+        GetUserAvailabilityRequest soapRequest = new GetUserAvailabilityRequest();
+
+        // create an array of mailbox data representing the current user
+        ArrayOfMailboxData mailboxes = new ArrayOfMailboxData();
+        MailboxData mailbox = new MailboxData();
+        Mailbox address = new Mailbox();
+        address.setAddress(emailAddress);
+        address.setName("");
+        mailbox.setAttendeeType(MeetingAttendeeType.REQUIRED);
+        mailbox.setExcludeConflicts(false);
+        mailbox.setEmail(address);            
+        mailboxes.getMailboxDatas().add(mailbox);
+        soapRequest.setMailboxDataArray(mailboxes);
+
+        // create a FreeBusyViewOptions representing the specified period
+        FreeBusyViewOptions view = new FreeBusyViewOptions();
+        view.setMergedFreeBusyIntervalInMinutes(60);
+        view.getRequestedView().add("DetailedMerged");
+        
+        Duration dur = new Duration();
+        
+        XMLGregorianCalendar start = getXmlDate(period.getStart()); 
+        XMLGregorianCalendar end = getXmlDate(period.getEnd()); 
+        dur.setEndTime(end);
+        dur.setStartTime(start);
+        
+        view.setTimeWindow(dur);
+        soapRequest.setFreeBusyViewOptions(view);
+        
+        // set the bias to the start time's timezone offset (in minutes 
+        // rather than milliseconds)
+        TimeZone tz = new TimeZone();
+        java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(UTC);
+        tz.setBias(tZone.getRawOffset() / 1000 / 60 );
+        
+        // TODO: time zone standard vs. daylight info is temporarily hard-coded
+        SerializableTimeZoneTime standard = new SerializableTimeZoneTime();
+        standard.setBias(0);            
+        standard.setDayOfWeek(DayOfWeekType.SUNDAY);
+        standard.setDayOrder((short)1);
+        standard.setMonth((short)11);
+        standard.setTime("02:00:00");
+        SerializableTimeZoneTime daylight = new SerializableTimeZoneTime();
+        daylight.setBias(0);
+        daylight.setDayOfWeek(DayOfWeekType.SUNDAY);
+        daylight.setDayOrder((short)1);
+        daylight.setMonth((short)3);
+        daylight.setTime("02:00:00");
+        tz.setStandardTime(standard);
+        tz.setDaylightTime(daylight);
+        
+        soapRequest.setTimeZone(tz);
+        
+        return soapRequest;
+    }
+    
     /**
      * Return an internal API CalendarEvent for an Microsoft CalendarEvent object.
      * 
@@ -283,7 +292,9 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         newprops.add(new DtStart(eventStart));
         newprops.add(new DtEnd(eventEnd));
         newprops.add(new Summary(msEvent.getCalendarEventDetails().getSubject()));
-        newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
+        if (StringUtils.isNotBlank(msEvent.getCalendarEventDetails().getLocation())) {
+            newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
+        }
         
         CalendarEvent event = new CalendarEvent(calendarId, newprops);
         return event;
@@ -299,7 +310,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      */
     protected XMLGregorianCalendar getXmlDate(Date date) throws DatatypeConfigurationException {
         // construct a new calendar object from the specified date
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(date.getTime());
         
         // construct an XMLGregorianCalendar
