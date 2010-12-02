@@ -20,6 +20,8 @@
 package org.jasig.portlet.calendar.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 
@@ -27,7 +29,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateTime;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,30 +57,52 @@ public class ExchangeCalendarAdapterTest {
     public void testGetInternalEvent() throws DatatypeConfigurationException {
         com.microsoft.exchange.types.CalendarEvent msEvent = new com.microsoft.exchange.types.CalendarEvent();
 
+        // set the test event start time to 4AM on November 1, 2010
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
         XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(); 
         start.setYear(2010);
         start.setMonth(11);
         start.setDay(1);
-        start.setTime(0, 0, 0, 0);
+        start.setTime(4, 0, 0, 0);
         msEvent.setStartTime(start);
         
+        // set the test event end time to 5AM on November 1, 2010
         XMLGregorianCalendar end = datatypeFactory.newXMLGregorianCalendar();
         end.setYear(2010);
         end.setMonth(12);
         end.setDay(1);
-        end.setTime(0, 0, 0, 0);
+        end.setTime(5, 0, 0, 0);
         msEvent.setEndTime(end);
 
+        // set the event tname and location
         CalendarEventDetails details = new CalendarEventDetails();
         details.setSubject("Naptime");
         details.setLocation("My house");
         msEvent.setCalendarEventDetails(details);
         
+        // transform the Microsoft calendar event into a calendar portlet event
         CalendarEvent event = adapter.getInternalEvent(3, msEvent);
+
+        // ensure the calendar id, summary, and location are all set correctly
         assertEquals(3, event.getCalendarId().intValue(), 3);
         assertEquals("Naptime", event.getSummary().getValue());
         assertEquals("My house", event.getLocation().getValue());
+        
+        // check the start time
+        Calendar cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(event.getStartDate().getDate().getTime());
+        assertEquals(4, cal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(java.util.TimeZone.getTimeZone("UTC"), cal.getTimeZone());
+        assertTrue(event.getStartDate().isUtc());
+        assertNull(event.getStartDate().getTimeZone());
+
+        // check the end time
+        cal.setTimeInMillis(event.getEndDate().getDate().getTime());
+        assertEquals(5, cal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(java.util.TimeZone.getTimeZone("UTC"), cal.getTimeZone());
+        assertTrue(event.getEndDate().isUtc());
+        assertNull(event.getEndDate().getTimeZone());
+        
     }
     
     @Test
@@ -92,16 +116,18 @@ public class ExchangeCalendarAdapterTest {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.DATE, 3);
-        Date date = new Date(cal.getTimeInMillis());
+        DateTime date = new DateTime();
+        date.setUtc(true);
+        date.setTime(cal.getTimeInMillis());
         
         XMLGregorianCalendar xmlCal = adapter.getXmlDate(date);
-//        assertEquals(2010, xmlCal.getYear());
-//        assertEquals(6, xmlCal.getMonth());
-//        assertEquals(3, xmlCal.getDay());
-//        assertEquals(16, xmlCal.getHour());
-//        assertEquals(30, xmlCal.getMinute());
-//        assertEquals(0, xmlCal.getSecond());
-//        assertEquals(0, xmlCal.getFractionalSecond());
+        assertEquals(2010, xmlCal.getYear());
+        assertEquals(6, xmlCal.getMonth());
+        assertEquals(3, xmlCal.getDay());
+        assertEquals(16, xmlCal.getHour());
+        assertEquals(30, xmlCal.getMinute());
+        assertEquals(0, xmlCal.getSecond());
+        assertEquals(0, xmlCal.getFractionalSecond().intValue());
     }
     
 }

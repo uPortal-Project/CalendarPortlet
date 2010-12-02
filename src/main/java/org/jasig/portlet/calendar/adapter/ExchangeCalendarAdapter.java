@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.property.DtEnd;
@@ -73,6 +75,8 @@ import com.microsoft.exchange.types.TimeZone;
 public class ExchangeCalendarAdapter implements ICalendarAdapter {
 
     protected final static String AVAILABILITY_SOAP_ACTION = "http://schemas.microsoft.com/exchange/services/2006/messages/GetUserAvailability";
+    
+    protected final static String UTC = "UTC";
     
     protected final Log log = LogFactory.getLog(getClass());
     
@@ -124,9 +128,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
         Element cachedElement = this.cache.get(key);
         if (cachedElement == null) {
             log.debug("Retreiving exchange events for account " + email);
-            String timezone = (String) request.getPortletSession().getAttribute("timezone");
-            java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(timezone);
-            events = retrieveExchangeEvents(calendarConfiguration, period, email, tZone);
+            events = retrieveExchangeEvents(calendarConfiguration, period, email);
             log.debug("Exchange adapter found " + events.size() + " events");
             // save the CalendarEvents to the cache
             cachedElement = new Element(key, events);
@@ -149,13 +151,12 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * @throws CalendarException
      */
     public Set<CalendarEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
-            Period period, String emailAddress, java.util.TimeZone tZone) throws CalendarException {
-        
+            Period period, String emailAddress) throws CalendarException {
+
         if (log.isDebugEnabled()) {
             StringBuilder buff = new StringBuilder();
             buff.append("Period details:  start=").append(period.getStart())
-                            .append(", end=").append(period.getEnd())
-                            .append(", timeZone=").append(tZone);
+                            .append(", end=").append(period.getEnd());
             log.debug(buff.toString());
         }
 
@@ -196,7 +197,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
             // set the bias to the start time's timezone offset (in minutes 
             // rather than milliseconds)
             TimeZone tz = new TimeZone();
-//            tz.setBias(period.getStart().getTimeZone().getRawOffset() / 1000 / 60 );
+            java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(UTC);
             tz.setBias(tZone.getRawOffset() / 1000 / 60 );
             
             // TODO: time zone standard vs. daylight info is temporarily hard-coded
@@ -256,13 +257,28 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * @param calendarId
      * @param msEvent
      * @return
+     * @throws DatatypeConfigurationException 
      */
-    protected CalendarEvent getInternalEvent(long calendarId, com.microsoft.exchange.types.CalendarEvent msEvent) {
-        Date eventStart = new Date(msEvent.getStartTime()
-                .toGregorianCalendar().getTimeInMillis());
-        Date eventEnd = new Date(msEvent.getStartTime()
-                .toGregorianCalendar().getTimeInMillis());
-        
+    protected CalendarEvent getInternalEvent(long calendarId, com.microsoft.exchange.types.CalendarEvent msEvent) throws DatatypeConfigurationException {
+        DatatypeFactory factory = DatatypeFactory.newInstance();
+
+        // create a new UTC-based DateTime to represent the event start time
+        DateTime eventStart = new DateTime();
+        eventStart.setUtc(true);
+        Calendar startCal = msEvent.getStartTime().toGregorianCalendar(
+                java.util.TimeZone.getTimeZone(UTC), Locale.getDefault(),
+                factory.newXMLGregorianCalendar());
+        eventStart.setTime(startCal.getTimeInMillis());
+
+        // create a new UTC-based DateTime to represent the event ent time
+        DateTime eventEnd = new DateTime();
+        eventEnd.setUtc(true);
+        Calendar endCal = msEvent.getEndTime().toGregorianCalendar(
+                java.util.TimeZone.getTimeZone(UTC), Locale.getDefault(),
+                factory.newXMLGregorianCalendar());
+        eventEnd.setTime(endCal.getTimeInMillis());
+
+        // create a property list representing the new event
         PropertyList newprops = new PropertyList();
         newprops.add(new DtStart(eventStart));
         newprops.add(new DtEnd(eventEnd));
