@@ -16,26 +16,28 @@ specific language governing permissions and limitations
 under the License.
 
 This project includes:
-  Fluid Infusion under the New BSD license
+  Fluid Infusion and Skinning System under the New BSD license
   jQuery, jQueryUI, and the jQuery Form Plugin under the MIT license
-  The famfamfam Silk Icons under the Creative Commons Attribution 3.0 License http://www.famfamfam.com/lab/icons/silk/  
-  
+  The famfamfam Silk Icons under the Creative Commons Attribution 3.0 License
+    http://www.famfamfam.com/lab/icons/silk/
+
   AJAX Portlet Support under The BSD License
   AntLR under BSD License
   AOP alliance under Public Domain
   asm under Apache License, Version 2.0
   asm-attrs under Apache License, Version 2.0
-  Calendar Portlet under The BSD License
+  CalDav4j under Apache License, Version 2.0
+  Calendar Portlet under Apache License Version 2.0
   Cernunnos - Core under Apache License, Version 2.0
   cglib under Apache License, Version 2.0
   Codec under Apache License, Version 2.0
-  Collections under Apache License, Version 2.0
+  Collections under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
-  Digester under Apache License, Version 2.0
+  Digester under The Apache Software License, Version 2.0
   dom4j under BSD License
   Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
   ehcache under The Apache Software License, Version 2.0
@@ -43,12 +45,14 @@ This project includes:
   Ehcache Web Filters under The Apache Software License, Version 2.0
   ezmorph under The Apache Software License, Version 2.0
   Groovy under Apache License, Version 2.0
+  Hamcrest Core under BSD style
   Hibernate under GNU LESSER GENERAL PUBLIC LICENSE
   HttpClient under Apache License
+  iCal4j under iCal4j - License
   JA-SIG CAS Client for Java - Core under JA-SIG License for Use
-  Java Transaction API under Commons Development and Distribution License, Version 1.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
+  JAXB2 Basics - Runtime under BSD-Style License
   jaxen under Apache style license
   JLine under BSD
   json-lib under The Apache Software License, Version 2.0
@@ -58,30 +62,40 @@ This project includes:
   Lang under The Apache Software License, Version 2.0
   Log4j under The Apache Software License, Version 2.0
   Logging under The Apache Software License, Version 2.0
+  Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
-  Neko HTML under Apache License, Version 2.0
+  Neko HTML under The Apache Software License, Version 2.0
+  Objenesis under MIT License
   org.apache.tools.ant under Apache License, Version 2.0
   Portlet API under Commons Development and Distribution License, Version 1.0
   PostgreSQL JDBC Driver under BSD License
   Resource Server Content under Apache License Version 2.0
   Resource Server Utilities under Apache License Version 2.0
-  Rhino under Mozilla Public License, Version 1.1
+  Rhino under Mozilla Public License version 1.1
   ROME, RSS and atOM utilitiEs for Java under The Apache Software License, Version 2.0
   SLF4J API Module under MIT License
-  Spring Framework: AOP under Apache License, Version 2.0
-  Spring Framework: Beans under Apache License, Version 2.0
-  Spring Framework: Context under Apache License, Version 2.0
-  Spring Framework: Context Support under Apache License, Version 2.0
-  Spring Framework: Core under Apache License, Version 2.0
-  Spring Framework: JDBC under Apache License, Version 2.0
-  Spring Framework: ORM under Apache License, Version 2.0
-  Spring Framework: Transaction under Apache License, Version 2.0
-  Spring Framework: Web under Apache License, Version 2.0
-  Spring Framework: Web MVC under Apache License, Version 2.0
-  Spring Framework: Web MVC Portlet under Apache License, Version 2.0
+  Spring Framework: AOP under The Apache Software License, Version 2.0
+  Spring Framework: Beans under The Apache Software License, Version 2.0
+  Spring Framework: Context under The Apache Software License, Version 2.0
+  Spring Framework: Context Support under The Apache Software License, Version 2.0
+  Spring Framework: Core under The Apache Software License, Version 2.0
+  Spring Framework: JDBC under The Apache Software License, Version 2.0
+  Spring Framework: ORM under The Apache Software License, Version 2.0
+  Spring Framework: Test under The Apache Software License, Version 2.0
+  Spring Framework: Transaction under The Apache Software License, Version 2.0
+  Spring Framework: Web under The Apache Software License, Version 2.0
+  Spring Framework: Web MVC under The Apache Software License, Version 2.0
+  Spring Framework: Web MVC Portlet under The Apache Software License, Version 2.0
   Spring LDAP Core under The Apache Software License, Version 2.0
+  Spring O/X Mapping under Apache License, Version 2.0
+  Spring O/X Mapping - Java 5 under Apache License, Version 2.0
+  Spring WS Core under Apache License, Version 2.0
+  Spring WS Core - Java 5 under Apache License, Version 2.0
+  Spring WS Security under Apache License, Version 2.0
+  Spring XML under Apache License, Version 2.0
   spring-modules-cache under Apache License, Version 2.0
   spring-modules-validation under Apache License, Version 2.0
+  Unnamed - castor:castor:jar:0.9.9.1 under Apache License, Version 2.0
   Unnamed - com.ibm.icu:icu4j:jar:2.6.1 under MIT License
   Unnamed - commons-beanutils:commons-beanutils:jar:1.7.0 under Apache License, Version 2.0
   Unnamed - ical4j:ical4j:jar:1.0-rc2 under BSD License
@@ -90,21 +104,29 @@ This project includes:
   Unnamed - javax.script:script-api:jar:1.0 under Commons Development and Distribution License, Version 1.0
   Unnamed - javax.servlet:jstl:jar:1.1.2 under Commons Development and Distribution License, Version 1.0
   Unnamed - javax.servlet:servlet-api:jar:2.4 under Commons Development and Distribution License, Version 1.0
+  Unnamed - javax.transaction:jta:jar:1.0.1B under Commons Development and Distribution License, Version 1.0
   Unnamed - jdom:jdom:jar:1.0 under Apache style license
   Unnamed - org.apache.ant:ant-launcher:jar:1.7.0 under Apache License, Version 2.0
   Unnamed - org.cyberneko.html:nekohtml:jar:1.9.13 under Apache License, Version 2.0
   Unnamed - org.netbeans.lib:cvsclient:jar:20060125 under Sun Public License
-  Unnamed - org.osaf:caldav4j:jar:0.5 under Apache License, Version 2.0
   Unnamed - org.owasp:antisamy:jar:1.3 under BSD License
   Unnamed - oro:oro:jar:2.0.8 under Apache License, Version 2.0
   Unnamed - slide:jakarta-slide-webdavlib:jar:2.2pre1-httpclient-3.0 under Apache License, Version 2.0
   Unnamed - taglibs:standard:jar:1.1.2 under Apache License, Version 2.0
-  Unnamed - xalan:xalan:jar:2.6.0 under Apache License, Version 2.0
+  Unnamed - xalan:serializer:jar:2.7.0 under Apache License, Version 2.0
+  Unnamed - xalan:xalan:jar:2.7.0 under Apache License, Version 2.0
   Unnamed - xerces:xmlParserAPIs:jar:2.6.2 under Apache License, Version 2.0
   Validator under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under Apache License, Version 2.0
+  WSDL4J under CPL
+  WSS4J under The Apache Software License, Version 2.0
+  Xerces2 Java Parser under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Im-/Exporter under BSD License
+  XML Security under The Apache Software License, Version 2.0
   xom under LGPL
   XStream Core under BSD style
 
+ 
+This project also includes code under copywrite of the following institutions:
+  University of Wisconsin
+  Yale University 

@@ -822,6 +822,14 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <configuration>
+                    <noticeTemplate>NOTICE.template</noticeTemplate>
+                    <generateChildNotices>false</generateChildNotices>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>surefire-report-maven-plugin</artifactId>
                 <version>2.0-beta-1</version>
