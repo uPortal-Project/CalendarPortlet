@@ -31,6 +31,7 @@ import net.fortuna.ical4j.data.CalendarParserImpl;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
@@ -115,14 +116,21 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 				// add each recurrence instance to the event list
 				for (Iterator<Period> iter = periods.iterator(); iter.hasNext();) {
 					Period eventper = iter.next();
+					log.debug("Found time period staring at " + eventper.getStart().isUtc() + ", " + eventper.getStart().getTimeZone() + ", " + event.getStartDate().getTimeZone() + ", " + event.getStartDate().isUtc());
 
 					PropertyList props = event.getProperties();
 
 					// create a new property list, setting the date
 					// information to this event period
 					PropertyList newprops = new PropertyList();
-					newprops.add(new DtStart(eventper.getStart()));
-					newprops.add(new DtEnd(eventper.getEnd()));
+					DateTime start = new DateTime(eventper.getStart());
+					start.setTimeZone(event.getStartDate().getTimeZone());
+					start.setUtc(event.getStartDate().isUtc());
+					newprops.add(new DtStart(start));
+                    DateTime end = new DateTime(eventper.getEnd());
+                    end.setTimeZone(event.getEndDate().getTimeZone());
+                    end.setUtc(event.getEndDate().isUtc());
+					newprops.add(new DtEnd(end));
 					for (Iterator<Property> iter2 = props.iterator(); iter2
 							.hasNext();) {
 						Property prop = iter2.next();

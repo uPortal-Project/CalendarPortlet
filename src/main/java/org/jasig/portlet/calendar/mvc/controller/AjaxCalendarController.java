@@ -190,7 +190,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
                     	 * Provide special handling for events with "floating"
                     	 * timezones.
                     	 */
-                        if (event.getStartDate().getTimeZone() == null) {
+                        if (event.getStartDate().getTimeZone() == null && !event.getStartDate().isUtc()) {
                         	// first adjust the event to have the correct start
                         	// and end times for the user's timezone
                             int offset = userTz.getOffset(event.getStartDate().getDate().getTime());

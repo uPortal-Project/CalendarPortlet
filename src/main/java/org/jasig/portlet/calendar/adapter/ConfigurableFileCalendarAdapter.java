@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Period;
 import net.sf.ehcache.Cache;
