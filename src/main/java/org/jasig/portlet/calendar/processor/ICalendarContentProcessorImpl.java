@@ -108,7 +108,7 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 			Component component = i.next();
 			if (component.getName().equals("VEVENT")) {
 				VEvent event = (VEvent) component;
-				log.trace("processing event " + event.getSummary().getValue());
+				log.trace("processing event " + event.getSummary());
 				// calculate the recurrence set for this event
 				// for the specified time period
 				PeriodList periods = event.calculateRecurrenceSet(period);
