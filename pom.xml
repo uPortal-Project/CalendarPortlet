@@ -20,8 +20,8 @@
     <scm>
         <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</connection>
         <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</developerConnection>
-      <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/jasig-parent-21/CalendarPortlet</url>
-  </scm>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/jasig-parent-21/CalendarPortlet</url>
+    </scm>
 
     <distributionManagement>
         <site>
@@ -36,6 +36,17 @@
     </issueManagement>
     
     <repositories>
+        <repository>
+            <id>modularity-releases</id>
+            <name>Modularity Releases Repository</name>
+            <url>http://m2.modularity.net.au/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>caldav4j.repo</id>
             <name>CalDav4J Repository</name>
@@ -64,7 +75,7 @@
             <dependency>
                 <groupId>com.googlecode.cernunnos</groupId>
                 <artifactId>cernunnos</artifactId>
-                <version>1.2.0</version>
+                <version>1.2.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -147,9 +158,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>ical4j</groupId>
+                <groupId>net.fortuna.ical4j</groupId>
                 <artifactId>ical4j</artifactId>
-                <version>1.0-rc2</version>
+                <version>1.0-rc3</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -182,9 +193,9 @@
                 <version>1.2.14</version>
             </dependency>
             <dependency>
-                <groupId>org.cyberneko.html</groupId>
+                <groupId>net.sourceforge.nekohtml</groupId>
                 <artifactId>nekohtml</artifactId>
-                <version>1.9.13</version>            
+                <version>1.9.14</version>            
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -246,7 +257,7 @@
             <dependency>
                 <groupId>org.owasp</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -525,7 +536,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>ical4j</groupId>
+            <groupId>net.fortuna.ical4j</groupId>
             <artifactId>ical4j</artifactId>
         </dependency>
         <dependency>
@@ -638,7 +649,7 @@
 
         <!-- ===== Runtime Dependencies ================================== -->
         <dependency>
-            <groupId>org.cyberneko.html</groupId>
+            <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
             <scope>runtime</scope>
         </dependency>
