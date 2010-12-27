@@ -22,6 +22,8 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
+<c:set var="n"><portlet:namespace/></c:set>
+
 <div class="upcal-editview">
 
 <div class="upcal-edit-links">
@@ -144,12 +146,21 @@
 <c:if test="${model.timezoneReadOnly == false}">
     <h2><spring:message code="view.useredit.preferences.header"/></h2>
 
+    <div id="${n}calendar-submission-success" class="portlet-msg-success fl-container-flex40" style="display: none;">
+        <p>
+            <spring:message code="view.useredit.savesuccess"/>
+            <a href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar.link.title"/>">
+                <spring:message code="return.to.calendar.link.text"/>
+            </a>
+        </p>
+    </div>
+
     <portlet:actionURL var="postUrl">
         <portlet:param name="action" value="editPreferences"/>
     </portlet:actionURL>
     <form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}">
 
-        <p>
+        <p style="margin-top: 10px">
             <label class="portlet-form-field-label">
                 <spring:message code="preferences.timezone"/>
             </label>
@@ -177,5 +188,22 @@
        <spring:message code="return.to.calendar.link.text"/>
 	</a>
 </div>
+
+<c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
+    <c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
+    <c:if test="${includeJQuery}">
+        <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.min.js"/>"></script>
+    </c:if>
+
+    <script type="text/javascript">
+        var ${n} = ${n} || {};
+        ${n}.jQuery = jQuery.noConflict(${includeJQuery});
+
+        ${n}.jQuery(function() {
+            var $ = ${n}.jQuery;
+            $("#${n}calendar-submission-success").slideDown("slow");
+        });
+    </script>
+</c:if>
 
 </div>

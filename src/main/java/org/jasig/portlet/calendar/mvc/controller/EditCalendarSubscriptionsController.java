@@ -202,6 +202,9 @@ public class EditCalendarSubscriptionsController {
 
 		// send the user back to the main edit page
 		response.setRenderParameter("action", "editSubscriptions");
+		
+		// provide feedback indicating the preferences were saved successfully
+        response.setRenderParameter("preferencesSaved", "true");
 
 	}
 
