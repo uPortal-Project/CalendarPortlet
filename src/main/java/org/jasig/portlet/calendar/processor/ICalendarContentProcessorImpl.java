@@ -40,6 +40,9 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Duration;
+import net.fortuna.ical4j.model.property.ExDate;
+import net.fortuna.ical4j.model.property.ExRule;
+import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 
 import org.apache.commons.logging.Log;
@@ -123,24 +126,30 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 					// create a new property list, setting the date
 					// information to this event period
 					PropertyList newprops = new PropertyList();
-					DateTime start = new DateTime(eventper.getStart());
+					DtStart start = new DtStart();
+					start.setDate(eventper.getStart());
 					start.setTimeZone(event.getStartDate().getTimeZone());
 					start.setUtc(event.getStartDate().isUtc());
-					newprops.add(new DtStart(start));
-                    DateTime end = new DateTime(eventper.getEnd());
+					newprops.add(start);
+                    DtEnd end = new DtEnd();
                     end.setTimeZone(event.getEndDate().getTimeZone());
+                    end.setDate(eventper.getEnd());
                     end.setUtc(event.getEndDate().isUtc());
-					newprops.add(new DtEnd(end));
+					newprops.add(end);
 					for (Iterator<Property> iter2 = props.iterator(); iter2
 							.hasNext();) {
 						Property prop = iter2.next();
 
 						// only add non-date-related properties
 						if (!(prop instanceof DtStart)
-								&& !(prop instanceof DtEnd)
-								&& !(prop instanceof Duration)
-								&& !(prop instanceof RRule))
-							newprops.add(prop);
+						        && !(prop instanceof DtEnd)
+						        && !(prop instanceof Duration)
+						        && !(prop instanceof RRule)
+						        && !(prop instanceof RDate)
+						        && !(prop instanceof ExRule)
+						        && !(prop instanceof ExDate)) {
+						    newprops.add(prop);
+						}
 					}
 
 					// create the new event from our property list

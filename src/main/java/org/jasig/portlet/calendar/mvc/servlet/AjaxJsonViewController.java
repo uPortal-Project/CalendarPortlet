@@ -40,8 +40,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Revision$
  */
 @Controller
-@RequestMapping("/ajax/jspView")
-public class AjaxJspViewController {
+@RequestMapping("/ajax/jsonView")
+public class AjaxJsonViewController {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 

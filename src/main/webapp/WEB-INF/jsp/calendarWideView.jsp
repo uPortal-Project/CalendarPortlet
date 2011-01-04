@@ -37,7 +37,6 @@
     ${n}.jQuery = jQuery.noConflict(${includeJQuery});
     <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
     ${n}.cal = cal;
-    cal = null;
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;
         var cal = ${n}.cal;
@@ -153,21 +152,72 @@
                 </span>
         </div>
         
-        <div class="upcal-event-list">
-            <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
-            
-            <div class="upcal-events"></div>
-            
-            <!-- View Links -->
-            <div id="${n}viewLinks" class="upcal-view-links upcal-hide-on-calendar">
-                <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
-                        title="<spring:message code="return.to.event.list.link.title"/>">
-                   <spring:message code="return.to.event.list.link.text"/>
-                </a>
+        <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
+        <div class="upcal-events">
+            <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
+                <div class="day">
+                    <h2 class="dayName">Today</h2>
+                        <div class="upcal-event">
+                            <div class="upcal-event-cal">
+                                <span></span>
+                            </div>
+                            <span class="upcal-event-time">All Day</span>
+                            <h3 class="upcal-event-title">
+                                <a class="upcal-event-link" href="javascript:;">Event Summary</a>
+                            </h3>
+                        </div>
+                </div>
             </div>
             
+            <div class="upcal-event-details upcal-hide-on-calendar">
+                <div class="upcal-event-detail">
+          
+                    <!-- Event title -->
+                    <h2 class="upcal-event-detail-summary">Event Summary</h2>
+              
+                    <!-- Calendar event is from -->
+                    <div class="upcal-event-detail-cal">
+                        <span> <!-- Calendar name to go here. --> </span>
+                    </div>
+              
+                    <!-- Event time -->
+                    <div class="event-detail-date">
+                        <h3><spring:message code="event.date"/>:</h3>
+                        <p>
+                            <span class="upcal-event-detail-day">Today</span>
+                            <span class="upcal-event-detail-starttime">2:00 PM - 3:00 PM</span>
+                       </p>
+                   </div>
+    
+                   <div class="upcal-event-detail-loc">
+                       <h3><spring:message code="event.location"/>:</h3>
+                       <p></p>
+                   </div>          
+              
+                    <div class="upcal-event-detail-desc">
+                        <h3><spring:message code="event.description"/>:</h3>
+                        <p>Event description</p>
+                    </div>
+              
+                    <div class="upcal-event-detail-link">
+                        <h3><spring:message code="event.link"/>:</h3>
+                        <p>
+                            <a href="http://www.event.com" target="_blank">http://www.event.com</a>
+                        </p>
+                    </div>
+    
+            </div>
+        
         </div>
         
+        <!-- View Links -->
+        <div id="${n}viewLinks" class="upcal-view-links upcal-hide-on-calendar">
+            <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
+                    title="<spring:message code="return.to.event.list.link.title"/>">
+               <spring:message code="return.to.event.list.link.text"/>
+            </a>
+        </div>
+                
     </div>
 </div>
 

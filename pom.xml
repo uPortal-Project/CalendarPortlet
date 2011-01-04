@@ -824,11 +824,15 @@
                     <excludes>
                         <exclude>LICENSE</exclude>
                         <exclude>NOTICE</exclude>
+                        <exclude>NOTICE.template</exclude>
+                        <exclude>src/main/resources/com/microsoft/exchange/Services.wsdl</exclude>
                         <exclude>**/src/main/webapp/rs/**</exclude>
                     </excludes>
                     <mapping>
                         <channel>XML_STYLE</channel>
+                        <portlet>XML_STYLE</portlet>
                         <tag>DYNASCRIPT_STYLE</tag>
+                        <xjb>XML_STYLE</xjb>
                     </mapping>
                 </configuration>
             </plugin>
