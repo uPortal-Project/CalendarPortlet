@@ -1,0 +1,49 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>My Calendars</title>
+  <name>My Calendars</name>
+  <fname>calendar-portlet</fname>
+  <desc>Aggregating calendar reader</desc>
+  <type>Portlet</type>
+  <applicationId>/CalendarPortlet</applicationId>
+  <portletName>calendar</portletName>
+  <isFramework>false</isFramework>
+  <timeout>60000</timeout>
+  <hasedit>Y</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Information</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <portletPreferences>
+    <portletPreference> 
+      <name>includeJQuery</name>
+      <values><value>true</value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>
