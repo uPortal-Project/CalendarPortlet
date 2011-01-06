@@ -49,7 +49,10 @@
         var options = {
             eventsUrl: '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>', 
             startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>', 
-            days: days
+            days: days,
+            messages: {
+                allDay: '<spring:message code="event.allday"/>'
+            }
         };
         var calView = cal.CalendarView("#${n}container", options);
         
@@ -79,6 +82,9 @@
     <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
     <div class="upcal-events">
         <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
+            <div class="portlet-msg-error upcal-errors">
+                <div class="upcal-error"></div>
+            </div>
             <div class="day">
                 <h2 class="dayName">Today</h2>
                     <div class="upcal-event">

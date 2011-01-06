@@ -46,7 +46,7 @@ var cal = cal || {};
                 date += " - " + event.endDate;
                 time = event.startTime + " - " + event.endTime + " " + event.endDate;
             } else if (event.allDay) {
-                time = "All Day";
+                time = overallThat.options.messages.allDay;
             } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) {
                 time = event.startTime + " - " + event.endTime;
             } else {
@@ -120,6 +120,8 @@ var cal = cal || {};
 		that.state = {};
 
     	var cutpoints = [
+            { id: "errors:", selector: that.options.selectors.errors },
+    	    { id: "error:", selector: that.options.selectors.error },
     		{ id: "day:", selector: that.options.selectors.day },
     		{ id: "dayName", selector: that.options.selectors.dayName },
     		{ id: "event:", selector: that.options.selectors.event },
@@ -127,8 +129,19 @@ var cal = cal || {};
     		{ id: "eventLink", selector: that.options.selectors.eventLink }
     	];
     	
-    	that.showEventList = function (dateMap) {
+    	that.showEventList = function (dateMap, errors) {
 	        var tree = { children: [] };
+
+	        if ($(errors).size() > 0) {
+	            var errorTree = { ID: "errors:", children: [] };
+	            $(errors).each(function (idx, error){
+	                errorTree.children.push(
+	                    { ID: "error:", value: error }
+	                );
+	            });
+	            tree.children.push(errorTree);
+	        }
+	        
 	        for (date in dateMap) {
 	        	var events = dateMap[date];
 	    		var day = {
@@ -141,7 +154,7 @@ var cal = cal || {};
 	    		    var time;
 	    		    
 	    		    if (event.allDay) {
-	    		        time = "All Day";
+	    		        time = overallThat.options.messages.allDay;
 	    		    } else if (event.dateEndTime && (event.dateEndTime != event.dateStartTime || event.startDate  != event.endDate ) ) {
 	    		        time = event.dateStartTime + " - " + event.dateEndTime;
 	    		    } else {
@@ -188,6 +201,8 @@ var cal = cal || {};
     fluid.defaults("cal.EventListView", {
     	dateMap: null,
         selectors: {
+            errors: ".upcal-errors",
+            error: ".upcal-error",
         	day: ".day",
         	dayName: ".dayName",
         	event: ".upcal-event",
@@ -204,7 +219,6 @@ var cal = cal || {};
      * see http://wiki.fluidproject.org/display/fluid/The+creator+function
      */
     cal.CalendarView = function(container, options) {
-        console.log(cal);
         var that = fluid.initView("cal.CalendarView", container, options);
         that.eventListView = fluid.initSubcomponent(that, "eventListView", [that.locate("eventList"), that, fluid.COMPONENT_OPTIONS]);
         that.eventDetailView = fluid.initSubcomponent(that, "eventDetailView", [that.locate("eventDetail"), that, fluid.COMPONENT_OPTIONS]);
@@ -226,7 +240,7 @@ var cal = cal || {};
                     that.locate("loadingMessage").hide();
                     that.locate("eventList").show();
                     that.eventListView.options.dateMap = json.dateMap;
-                    that.eventListView.showEventList(json.dateMap);
+                    that.eventListView.showEventList(json.dateMap, json.errors);
                 }, "json"
             );        
         };
@@ -262,6 +276,9 @@ var cal = cal || {};
             calendarEventLink: '.upcal-event-link',
             returnToCalendarLink: '.upcal-view-return',
             loadingMessage: '.upcal-loading-message'
+        },
+        messages: {
+            allDay: "All Day"
         }
     });
 
