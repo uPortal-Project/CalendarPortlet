@@ -55,6 +55,7 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
+import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
 import org.jasig.web.service.AjaxPortletSupportService;
@@ -158,15 +159,19 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
                         }
                     }
-                    
-                    
 	
-				} catch (NoSuchBeanDefinitionException ex) {
-					log.error("Calendar class instance could not be found: " + ex.getMessage());
-				} catch (Exception ex) {
-					log.warn("Unknown Error", ex);
-					errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
-				}
+                } catch (NoSuchBeanDefinitionException ex) {
+                    log.error("Calendar class instance could not be found: " + ex.getMessage());
+                } catch (UserFeedbackCalendarException sce) {
+                    // This CalendarException subclass carries a payload fot the UI...
+                    StringBuilder msg = new StringBuilder();
+                    msg.append(callisting.getCalendarDefinition().getName())
+                                .append(":  ").append(sce.getUserFeedback());                    
+                    errors.add(msg.toString());
+                } catch (Exception ex) {
+                    log.warn("Unknown Error", ex);
+                    errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
+                }
 
 			}
 
