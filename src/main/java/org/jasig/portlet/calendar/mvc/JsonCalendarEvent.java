@@ -159,8 +159,17 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 	}
 
 	public int compareTo(JsonCalendarEvent event) {		
-		return (new CompareToBuilder()).append(this.dayStart, event.dayStart)
-				.append(this.dayEnd, event.dayEnd).toComparison();
+		// Order events by start date, then end date, then summary.
+		// If all properties are equal, use the calendar and event ids to 
+		// ensure similar events from different calendars are not misinterpreted
+		// as identical.
+		return (new CompareToBuilder())
+				.append(this.dayStart, event.dayStart)
+				.append(this.dayEnd, event.dayEnd)
+				.append(this.getSummary(), event.getSummary())
+				.append(this.getCalendarId(), event.getCalendarId())
+				.append(this.event.getUid(), event.event.getUid())
+				.toComparison();
 	}
 
 	public boolean equals(Object o) {
@@ -168,8 +177,13 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 			return false;
 		}
 		JsonCalendarEvent event = (JsonCalendarEvent) o;
-		return (new EqualsBuilder()).append(this.dayStart, event.dayStart)
-				.append(this.dayEnd, event.dayEnd).isEquals();
+		return (new EqualsBuilder())
+				.append(this.dayStart, event.dayStart)
+				.append(this.dayEnd, event.dayEnd)
+				.append(this.getSummary(), event.getSummary())
+				.append(this.getCalendarId(), event.getCalendarId())
+				.append(this.event.getUid(), event.event.getUid())
+				.isEquals();
 	}
 
 }
