@@ -52,6 +52,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.CalendarConfigurationByNameComparator;
 import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
@@ -105,19 +106,16 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		// retrieve the calendars defined for this portlet instance
 		CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
-        List<String> calendars = new ArrayList<String>();
-        for (CalendarConfiguration configuration : set.getConfigurations()) {
-        	calendars.add(configuration.getCalendarDefinition().getName());
-        }
-        Collections.sort(calendars);
+        List<CalendarConfiguration> calendars = new ArrayList<CalendarConfiguration>();
+        calendars.addAll(set.getConfigurations());
+        Collections.sort(calendars, new CalendarConfigurationByNameComparator());
 
-		Map<String, Integer> colors = new HashMap<String, Integer>();
 		int index = 0;
 		List<String> errors = new ArrayList<String>();
         TreeMap<Date, Set<JsonCalendarEvent>> dateMap = new TreeMap<Date, Set<JsonCalendarEvent>>();
         DateFormat df = new SimpleDateFormat("EEEE MMMM d");
         df.setTimeZone(tz);
-		for (CalendarConfiguration callisting : set.getConfigurations()) {
+		for (CalendarConfiguration callisting : calendars) {
 
 			// don't bother to fetch hidden calendars
 			if (hiddenCalendars.get(callisting.getId()) == null) {
@@ -175,8 +173,6 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 			}
 
-			// add this calendar's id to the color map
-			colors.put(String.valueOf(callisting.getId()), index);
 			index++;
 
 		}
@@ -187,7 +183,6 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		}
 
 		model.put("dateMap", events);
-		model.put("colors", colors);
 		model.put("viewName", "jsonView");
 		model.put("errors", errors);
 	
