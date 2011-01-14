@@ -129,7 +129,7 @@ var cal = cal || {};
     		{ id: "eventLink", selector: that.options.selectors.eventLink }
     	];
     	
-    	that.showEventList = function (dateMap, errors) {
+    	that.showEventList = function (dateMap, dateNames, errors) {
 	        var tree = { children: [] };
 
 	        if ($(errors).size() > 0) {
@@ -147,7 +147,7 @@ var cal = cal || {};
 	    		var day = {
 	    			ID: "day:",
 	    			children: [
-	    			    { ID: "dayName", value: date }
+	    			    { ID: "dayName", value: dateNames[date] }
 	    		    ]
 	    		};
 	    		$(events).each(function (idx, event){
@@ -240,7 +240,7 @@ var cal = cal || {};
                     that.locate("loadingMessage").hide();
                     that.locate("eventList").show();
                     that.eventListView.options.dateMap = json.dateMap;
-                    that.eventListView.showEventList(json.dateMap, json.errors);
+                    that.eventListView.showEventList(json.dateMap, json.dateNames, json.errors);
                 }, "json"
             );        
         };

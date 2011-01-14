@@ -158,6 +158,14 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		return this.colorIndex;
 	}
 
+	public Date getDayStart() {
+		return dayStart;
+	}
+
+	public Date getDayEnd() {
+		return dayEnd;
+	}
+
 	public int compareTo(JsonCalendarEvent event) {		
 		// Order events by start date, then end date, then summary.
 		// If all properties are equal, use the calendar and event ids to 

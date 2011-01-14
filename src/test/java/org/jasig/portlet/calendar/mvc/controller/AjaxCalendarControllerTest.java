@@ -22,21 +22,23 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeMap;
 
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
 
 import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
 import org.junit.Before;
 import org.junit.Test;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
@@ -53,7 +55,6 @@ public class AjaxCalendarControllerTest {
 	
 	@Test
 	public void testAddLongEventToDateMap() {
-		Map<Date, Set<JsonCalendarEvent>> dateMap = new TreeMap<Date, Set<JsonCalendarEvent>>();
 		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
         DateFormat df = new SimpleDateFormat("EEEE MMMM d");
 		df.setTimeZone(tz);
@@ -68,23 +69,27 @@ public class AjaxCalendarControllerTest {
 		cal.set(Calendar.MILLISECOND, 0);
 		Date start = cal.getTime();
 		
-		cal.add(Calendar.DATE, 2);
+		cal.add(Calendar.DATE, 1);
+		Date periodStart = cal.getTime();
+		
+		cal.add(Calendar.DATE, 1);
 		Date end = cal.getTime();
 		
-		CalendarEvent event = new CalendarEvent(new DateTime(start), new DateTime(end), "Test Event");
-		controller.addEventToDateMap(dateMap, event, tz, 1);
-		assertEquals(3, dateMap.keySet().size());
+		Period period = new Period(new DateTime(periodStart), new DateTime(end));
 		
-		Iterator<Date> dateIter = dateMap.keySet().iterator();
-		assertEquals("Monday January 3", df.format(dateIter.next()));
-		assertEquals("Tuesday January 4", df.format(dateIter.next()));
-		assertEquals("Wednesday January 5", df.format(dateIter.next()));
+		CalendarEvent event = new CalendarEvent(new DateTime(start), new DateTime(end), "Test Event");
+		List<JsonCalendarEvent> events = new ArrayList<JsonCalendarEvent>();
+		events.addAll(controller.getJsonEvents(event, period, tz, 1));
+		Collections.sort(events);
+		assertEquals(2, events.size());
+		
+		assertEquals("Tuesday January 4", df.format(events.get(0).getDayStart()));
+		assertEquals("Wednesday January 5", df.format(events.get(1).getDayStart()));
 		
 	}
 
 	@Test
 	public void testAddShortEventToDateMap() {
-		Map<Date, Set<JsonCalendarEvent>> dateMap = new HashMap<Date, Set<JsonCalendarEvent>>();
 		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
         DateFormat df = new SimpleDateFormat("EEEE MMMM d");
 		df.setTimeZone(tz);
@@ -101,13 +106,15 @@ public class AjaxCalendarControllerTest {
 		
 		cal.add(Calendar.HOUR, 12);
 		Date end = cal.getTime();
-		
-		CalendarEvent event = new CalendarEvent(new DateTime(start), new DateTime(end), "Test Event");
-		controller.addEventToDateMap(dateMap, event, tz, 1);
-		assertEquals(1, dateMap.keySet().size());
 
-		Iterator<Date> dateIter = dateMap.keySet().iterator();
-		assertEquals("Monday January 3", df.format(dateIter.next()));
+		Period period = new Period(new DateTime(start), new DateTime(end));
+	
+		CalendarEvent event = new CalendarEvent(new DateTime(start), new DateTime(end), "Test Event");
+		Set<JsonCalendarEvent> events = controller.getJsonEvents(event, period, tz, 1);
+		assertEquals(1, events.size());
+
+		Iterator<JsonCalendarEvent> dateIter = events.iterator();
+		assertEquals("Monday January 3", df.format(dateIter.next().getDayStart()));
 		
 	}
 
