@@ -126,26 +126,4 @@ public class CalendarEvent extends VEvent {
 		this.calendarId = calendarId;
 	}
 
-	/**
-	 * Determines whether this event is an "all-day" event or not.
-	 * All-day events are defined as starting at 12:00 AM and lasting
-	 * for 24 hours or more.
-	 * 
-	 * @return
-	 */
-	public boolean isAllDay(String tz) {
-		return AllDayUtil.isAllDayEvent(this, TimeZone.getTimeZone(tz));
-	}
-	
-	/**
-	 * Determines whether this event is an "all-day" event or not.
-	 * All-day events are defined as starting at 12:00 AM and lasting
-	 * for 24 hours or more.
-	 * 
-	 * @return
-	 */
-	public boolean isAllDay(TimeZone tz) {
-		return AllDayUtil.isAllDayEvent(this, tz);
-	}
-	
 }

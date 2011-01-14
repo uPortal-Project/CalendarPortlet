@@ -80,7 +80,7 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		tf = new SimpleDateFormat("h:mm a");
 		tf.setTimeZone(tz);
 		
-		this.isAllDay = AllDayUtil.isAllDayEvent(event, tz);
+		this.isAllDay = AllDayUtil.isAllDayEvent(dayStart, dayEnd, tz);
 		
 	}
 	

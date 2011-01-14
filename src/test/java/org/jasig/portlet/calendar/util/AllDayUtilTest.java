@@ -23,13 +23,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-
-import org.jasig.portlet.calendar.CalendarEvent;
-import org.jasig.portlet.calendar.util.AllDayUtil;
 import org.junit.Test;
 
 public class AllDayUtilTest {
@@ -56,14 +52,12 @@ public class AllDayUtilTest {
 	    cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 	    cal.add(Calendar.MILLISECOND, -timezone.getOffset(cal.getTimeInMillis()));
 
-	    Date start = new DateTime(cal.getTime());
+	    Date start = cal.getTime();
 	    
 	    cal.add(Calendar.DATE, 1);
-	    Date end = new DateTime(cal.getTime());
+	    Date end = cal.getTime();
 	    
-	    CalendarEvent event = new CalendarEvent(start, end, "test");
-		
-	    boolean isAllDay = AllDayUtil.isAllDayEvent(event, timezone);
+	    boolean isAllDay = AllDayUtil.isAllDayEvent(start, end, timezone);
 	    assert isAllDay;
 	}
 

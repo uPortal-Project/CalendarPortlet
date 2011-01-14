@@ -19,11 +19,11 @@
 
 package org.jasig.portlet.calendar.util;
 
+import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.time.FastDateFormat;
-import org.jasig.portlet.calendar.CalendarEvent;
 
 /**
  * AllDayUtil determines whether a particular event should be classified as
@@ -57,7 +57,7 @@ public class AllDayUtil {
 	 * @param timezone
 	 * @return <code>true</code> for all-day events, <code>false</code> otherwise
 	 */
-	public static boolean isAllDayEvent(CalendarEvent event, TimeZone timezone) {
+	public static boolean isAllDayEvent(Date startDate, Date endDate, TimeZone timezone) {
 		
 		/**
 		 * Get a DateFormat instance for the current user's time zone from the
@@ -79,7 +79,7 @@ public class AllDayUtil {
 		 * that to the expected string.
 		 */
 		
-		String start = df.format(event.getStartDate().getDate());
+		String start = df.format(startDate);
 		if (!EXPECTED_TIME.equals(start)) {
 			return false;
 		}
@@ -94,19 +94,19 @@ public class AllDayUtil {
 		 * complications like daylight savings time changes and leap seconds.
 		 */
 		
-		if (event.getEndDate() == null) {
+		if (endDate == null) {
 			return false;
 		}
 
 		// check the end time of the event
-		String end = df.format(event.getEndDate().getDate());
+		String end = df.format(endDate);
 		if (!EXPECTED_TIME.equals(end)) {
 			return false;
 		}
 		
 		// get the duration of this event in milliseconds
-		long duration = event.getEndDate().getDate().getTime()
-							- event.getStartDate().getDate().getTime();
+		long duration = endDate.getTime()
+							- startDate.getTime();
 		
 		// check the duration against our max and min fields
 		if (duration < MIN_DAY || duration > MAX_DAY) {
