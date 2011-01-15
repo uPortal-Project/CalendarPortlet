@@ -100,8 +100,8 @@
         </div>
         
         <div class="upcal-event-details upcal-hide-on-calendar">
+
             <div class="upcal-event-detail">
-      
                 <!-- Event title -->
                 <h2 class="upcal-event-detail-summary">Event Summary</h2>
           
@@ -116,25 +116,26 @@
                     <p>
                         <span class="upcal-event-detail-day">Today</span>
                         <span class="upcal-event-detail-starttime">2:00 PM - 3:00 PM</span>
-                   </p>
-               </div>
+                    </p>
+                </div>
 
-               <div class="upcal-event-detail-loc">
-                   <h3><spring:message code="event.location"/>:</h3>
-                   <p></p>
-               </div>          
+                <div class="upcal-event-detail-loc">
+                    <h3><spring:message code="event.location"/>:</h3>
+                    <p></p>
+                </div>          
           
                 <div class="upcal-event-detail-desc">
                     <h3><spring:message code="event.description"/>:</h3>
                     <p>Event description</p>
                 </div>
-          
+
                 <div class="upcal-event-detail-link">
                     <h3><spring:message code="event.link"/>:</h3>
                     <p>
                         <a href="http://www.event.com" target="_blank">http://www.event.com</a>
                     </p>
                 </div>
+            </div>
 
         </div>
     </div>
