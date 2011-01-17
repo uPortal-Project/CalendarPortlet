@@ -24,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +39,6 @@ import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
