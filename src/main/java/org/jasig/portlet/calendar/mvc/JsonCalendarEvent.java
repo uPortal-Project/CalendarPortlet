@@ -176,7 +176,9 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 				.append(this.dayEnd, event.dayEnd)
 				.append(this.getSummary(), event.getSummary())
 				.append(this.getCalendarId(), event.getCalendarId())
-				.append(this.event.getUid(), event.event.getUid())
+				// The UID class doesn't implement comparable and will give
+				// rise to a ClassCastException if it's actually tested. 
+				// .append(this.event.getUid(), event.event.getUid())
 				.toComparison();
 	}
 
@@ -190,7 +192,9 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 				.append(this.dayEnd, event.dayEnd)
 				.append(this.getSummary(), event.getSummary())
 				.append(this.getCalendarId(), event.getCalendarId())
-				.append(this.event.getUid(), event.event.getUid())
+                // The UID class doesn't implement comparable and will give
+                // rise to a ClassCastException if it's actually tested. 
+				// .append(this.event.getUid(), event.event.getUid())
 				.isEquals();
 	}
 
