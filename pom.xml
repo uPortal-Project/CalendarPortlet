@@ -14,13 +14,13 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.0-M5-SNAPSHOT</version>
+    <version>1.0.0-M5</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/jasig-parent-21/CalendarPortlet</url>
+        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M5</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M5</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/CalendarPortlet-1.0.0-M5</url>
     </scm>
 
     <distributionManagement>
@@ -826,6 +826,7 @@
                         <exclude>NOTICE</exclude>
                         <exclude>NOTICE.template</exclude>
                         <exclude>src/main/resources/com/microsoft/exchange/Services.wsdl</exclude>
+                        <exclude>src/test/resources/sampleEvents.ics</exclude>
                         <exclude>**/src/main/webapp/rs/**</exclude>
                     </excludes>
                     <mapping>
