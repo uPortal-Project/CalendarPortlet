@@ -34,7 +34,7 @@
 <script type="text/javascript">
     var ${n} = ${n} || {};
     ${n}.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
+    <c:if test="${includeJQuery}">fluid = null; fluid_1_2 = null;</c:if>
     ${n}.cal = cal;
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;

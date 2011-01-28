@@ -28,14 +28,14 @@
 <c:if test="${includeJQuery}">
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
 <script type="text/javascript">
     var ${n} = ${n} || {};
     ${n}.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">fluid = null; fluid_1_1 = null;</c:if>
+    <c:if test="${includeJQuery}">fluid = null; fluid_1_2 = null;</c:if>
     ${n}.cal = cal;
 //    cal = null;
     ${n}.jQuery(function() {
