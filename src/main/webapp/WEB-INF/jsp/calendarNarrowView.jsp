@@ -76,6 +76,22 @@
             $(this).addClass("selected-range");
         });
 
+        var datepickerShowHide = function( showFlag ) {
+            if ( showFlag == "true" ) {
+                $('#${n}inlineCalendar').show();
+            } else {
+                $('#${n}inlineCalendar').hide();
+            }
+        }
+
+        datepickerShowHide( "${model.showDatePicker}" );
+
+        $("#${n}container .upcal-range-datepicker a").click(function(){
+            datepickerShowHide( $(this).attr("show") );
+            $(".upcal-range-datepicker a").removeClass("selected-range");
+            $(this).addClass("selected-range");
+        });
+
     });
 </script>
 
@@ -99,6 +115,19 @@
         <span class="upcal-range-day" days="31">
             <a days="31" href="javascript:;" class="${ model.days == 31 ? "selected-range" : "" }">
                 <spring:message code="calendar.range.month"/>
+            </a>
+        </span>
+        <span class="upcal-pipe">&nbsp;&nbsp;&nbsp;</span>
+        <h3><spring:message code="view.main.range.datepicker.header"/></h3>
+        <span class="upcal-range-datepicker" show="true">
+            <a show="true" href="javascript:;" class="${ model.showDatePicker == true ? "selected-range" : "" }">
+                <spring:message code="view.main.range.datepicker.show"/>
+            </a>
+        </span>
+        <span class="upcal-pipe">|</span>
+        <span class="upcal-range-datepicker" show="false">
+            <a show="false" href="javascript:;" class="${ model.showDatePicker == false ? "selected-range" : "" }">
+                <spring:message code="view.main.range.datepicker.hide"/>
             </a>
         </span>
     </div>

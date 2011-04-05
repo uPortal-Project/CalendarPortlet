@@ -125,6 +125,12 @@ public class CalendarController implements ApplicationContextAware {
 			session.setAttribute("hiddenCalendars", hiddenCalendars);
 		}
 
+        // See if we're configured to show or hide the jQueryUI DatePicker.
+        // By default, we assume we are to show the DatePicker because that's
+        // the classic behavior.
+        String showDatePicker = prefs.getValue( "showDatePicker", "true" );
+        model.put( "showDatePicker", showDatePicker );
+
 		/**
 		 * Find our desired starting and ending dates.
 		 */
