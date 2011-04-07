@@ -50,7 +50,7 @@
         <repository>
             <id>caldav4j.repo</id>
             <name>CalDav4J Repository</name>
-            <url>http://caldav4j.googlecode.com/svn/trunk/maven/</url>
+            <url>http://caldav4j.googlecode.com/svn/maven/</url>
         </repository>
     </repositories>
     
