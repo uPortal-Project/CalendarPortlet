@@ -19,10 +19,14 @@
 
 package org.jasig.portlet.calendar;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.TimeZone;
 
 import org.jasig.portlet.calendar.util.AllDayUtil;
 
+import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Dur;
@@ -125,5 +129,13 @@ public class CalendarEvent extends VEvent {
 	public void setCalendarId(Long calendarId) {
 		this.calendarId = calendarId;
 	}
+
+    @Override
+    public Component copy() throws ParseException, IOException,
+            URISyntaxException {
+        return new CalendarEvent(this.calendarId, super.copy().getProperties());
+    }
+	
+	
 
 }

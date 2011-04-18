@@ -71,10 +71,10 @@
     });
 </script>
 
-<div id="${n}container" class="upcal-miniview">
+<div id="${n}container" class="upcal-miniview" style="background-color:#fff; padding: 5px;">
 
     <!-- Mini-Calendar (jQuery) -->
-    <div id="${n}inlineCalendar" class="jqueryui"></div>
+    <div id="${n}inlineCalendar" class="upcal-inline-calendar upcal-hide-on-event"></div>
     
     <!-- Calendar Events List -->
     <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>

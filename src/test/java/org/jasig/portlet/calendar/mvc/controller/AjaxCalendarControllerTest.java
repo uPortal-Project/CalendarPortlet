@@ -20,7 +20,10 @@ package org.jasig.portlet.calendar.mvc.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +57,7 @@ public class AjaxCalendarControllerTest {
 	}
 	
 	@Test
-	public void testAddLongEventToDateMap() {
+	public void testAddLongEventToDateMap() throws IOException, URISyntaxException, ParseException {
 		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
         DateFormat df = new SimpleDateFormat("EEEE MMMM d");
 		df.setTimeZone(tz);
@@ -89,7 +92,7 @@ public class AjaxCalendarControllerTest {
 	}
 
 	@Test
-	public void testAddShortEventToDateMap() {
+	public void testAddShortEventToDateMap() throws IOException, URISyntaxException, ParseException {
 		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
         DateFormat df = new SimpleDateFormat("EEEE MMMM d");
 		df.setTimeZone(tz);

@@ -20,6 +20,7 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,8 @@ import net.fortuna.ical4j.model.DefaultTimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,6 +116,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		// get the user's configured time zone
         String timezone = (String) session.getAttribute("timezone");
         TimeZone tz = TimeZone.getTimeZone(timezone);
+        TimeZoneRegistryFactory tzFactory = new DefaultTimeZoneRegistryFactory();
+        TimeZoneRegistry tzRegistry = tzFactory.createRegistry();
 		
 		int index = 0;
 		List<String> errors = new ArrayList<String>();
@@ -128,7 +133,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 					ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
-                    for (CalendarEvent event : adapter.getEvents(callisting, period, request)) {
+                    for (CalendarEvent e : adapter.getEvents(callisting, period, request)) {
+                        CalendarEvent event = (CalendarEvent) e.copy();
 
                     	/*
                     	 * Provide special handling for events with "floating"
@@ -152,10 +158,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
                         	if (log.isDebugEnabled()) {
                         		log.debug("Setting time zone to UTC for  event " + event.getSummary());
                         	}
-                        	TimeZoneRegistryFactory tzFactory = new DefaultTimeZoneRegistryFactory();
-                        	TimeZoneRegistry tzRegistry = tzFactory.createRegistry();
+                            event.getStartDate().setTimeZone(tzRegistry.getTimeZone("UTC"));
                         	if (event.getEndDate() != null) {
-	                        	event.getStartDate().setTimeZone(tzRegistry.getTimeZone("UTC"));
 	                        	event.getEndDate().setTimeZone(tzRegistry.getTimeZone("UTC"));
                         	}
                         }
@@ -258,8 +262,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	 * @param tz
 	 * @param index
 	 * @return
+	 * @throws ParseException 
+	 * @throws URISyntaxException 
+	 * @throws IOException 
 	 */
-	protected Set<JsonCalendarEvent> getJsonEvents(CalendarEvent event, Period period, TimeZone tz, int index) {
+	protected Set<JsonCalendarEvent> getJsonEvents(CalendarEvent event, Period period, TimeZone tz, int index) throws IOException, URISyntaxException, ParseException {
 
 		Calendar dayStart = Calendar.getInstance(tz);
         dayStart.setTime(event.getStartDate().getDate());
