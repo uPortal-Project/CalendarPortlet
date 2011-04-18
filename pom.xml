@@ -37,6 +37,13 @@
     
     <repositories>
         <repository>
+            <id>jasig-3rd-party</id>
+            <name>Jasig 3rd Party Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/3rd-party</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
             <id>modularity-releases</id>
             <name>Modularity Releases Repository</name>
             <url>http://m2.modularity.net.au/releases</url>
@@ -490,6 +497,11 @@
                 <version>1.1.2</version>
             </dependency>
             <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>serializer</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.8.1</version>
@@ -636,6 +648,10 @@
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>serializer</artifactId>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
@@ -828,6 +844,7 @@
                         <exclude>src/main/resources/com/microsoft/exchange/Services.wsdl</exclude>
                         <exclude>src/test/resources/sampleEvents.ics</exclude>
                         <exclude>**/src/main/webapp/rs/**</exclude>
+                        <exclude>bin/**</exclude>
                     </excludes>
                     <mapping>
                         <channel>XML_STYLE</channel>
