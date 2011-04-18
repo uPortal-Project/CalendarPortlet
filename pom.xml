@@ -64,9 +64,9 @@
         <mockito.version>1.8.4</mockito.version>
         
         <!-- The JDBC Driver used by the calendar portlet -->
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>8.3-603.jdbc3</jdbc.version>
+        <jdbc.groupId>hsqldb</jdbc.groupId>
+        <jdbc.artifactId>hsqldb</jdbc.artifactId>
+        <jdbc.version>1.8.0.7</jdbc.version>
         
     </properties>
 
