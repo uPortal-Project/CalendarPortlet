@@ -116,13 +116,7 @@
 		p:sessionFactory-ref="sessionFactory"/>
 	
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
-		p:dataSource-ref="dataSource" p:configLocation="classpath:hibernate.cfg.xml">
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-			</props>
-		</property>
-	</bean>
+		p:dataSource-ref="dataSource" p:configLocation="classpath:hibernate.cfg.xml"/>
 	
 	<bean id="dataSource" 
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
