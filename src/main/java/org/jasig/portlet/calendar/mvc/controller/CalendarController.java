@@ -22,7 +22,6 @@ package org.jasig.portlet.calendar.mvc.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +48,6 @@ import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.IInitializationService;
-import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,13 +94,9 @@ public class CalendarController implements ApplicationContextAware {
 		@SuppressWarnings("unchecked")
 		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
 				.getAttribute("hiddenCalendars");
-		String username = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
 
-		if ("guest".equalsIgnoreCase(username)) {
-			model.put("guest", true);
-		} else {
-			model.put("guest", false);
-		}
+		// indicate if the current user is a guest (unauthenticated) user
+		model.put("guest", request.getRemoteUser() == null);
 		
 		/**
 		 * Add and remove calendars from the hidden list.  Hidden calendars
