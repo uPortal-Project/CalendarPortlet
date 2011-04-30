@@ -137,16 +137,25 @@
 	                    </p>
 	                </div>
 	            </div>
+	            
+	            <div class="utilities upcal-view-links">
+			        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" 
+			                title="<spring:message code="return.to.calendar.link.title"/>" data-role="button">
+			            <spring:message code="return.to.calendar.link.text"/>
+			        </a>
+			    </div>
+	            
+	            <!-- View Links
+			    <div class="utilities upcal-view-links">
+			        <a id="${n}returnToCalendarLink" class="upcal-view-return upcal-hide-on-calendar" href="javascript:;" 
+			                style="display:none" title="<spring:message code="return.to.calendar.link.title"/>" data-role="button">
+			            <spring:message code="return.to.calendar.link.text"/>
+			        </a>
+			    </div>
+			    
+		   		  -->
 	
 	        </div>
-	    </div>
-	    
-	    <!-- View Links -->
-	    <div class="utilities upcal-view-links">
-	        <a id="${n}returnToCalendarLink" class="upcal-view-return upcal-hide-on-calendar" href="javascript:;" 
-	                style="display:none" title="<spring:message code="return.to.calendar.link.title"/>" data-role="button">
-	            <spring:message code="return.to.calendar.link.text"/>
-	        </a>
 	    </div>
   
     </div>
