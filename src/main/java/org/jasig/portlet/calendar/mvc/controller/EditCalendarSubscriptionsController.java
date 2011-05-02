@@ -65,11 +65,16 @@ public class EditCalendarSubscriptionsController {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	@RequestMapping()
+	@RequestMapping
 	public ModelAndView viewEditOptions(RenderRequest request, RenderResponse response) {
 		return viewSubscriptions(request, response);
 	}
 	
+    @RequestMapping
+    public void defaultAction(ActionRequest request) {
+        // default action mapping
+    }
+    
     @RequestMapping(params = "action=editSubscriptions")
 	public ModelAndView viewSubscriptions(RenderRequest request,
 			RenderResponse response) {

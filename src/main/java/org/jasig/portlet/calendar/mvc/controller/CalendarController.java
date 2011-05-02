@@ -29,10 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.ReadOnlyException;
+import javax.portlet.RenderRequest;
 import javax.portlet.ValidatorException;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -67,9 +68,13 @@ public class CalendarController implements ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	@RequestMapping()
-	public ModelAndView getCalendar(PortletRequest request) {
-
+	@RequestMapping
+	public void defaultAction(ActionRequest request) { 
+	    // default action mapping
+	}
+	
+	@RequestMapping
+	public ModelAndView getCalendar(RenderRequest request) {
 		
 		/**
 		 * If this is a new session, perform any necessary 
