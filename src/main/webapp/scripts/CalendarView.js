@@ -247,9 +247,11 @@ var cal = cal || {};
         
         that.updateEventList(that.options.startDate, that.options.days);
         that.locate("returnToCalendarLink").click(function(){ 
+            console.log(that.locate("returnToCalendarLink"));
             that.locate("hideOnEvent").show();
             that.locate("hideOnCalendar").hide();
         });
+        console.log(that.locate("returnToCalendarLink"));
         return that;
     };
 
