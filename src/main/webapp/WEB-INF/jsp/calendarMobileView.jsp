@@ -78,12 +78,17 @@
 	    <div id="${n}inlineCalendar" class="upcal-inline-calendar upcal-hide-on-event"></div>
 	    
 	    <!-- Calendar Events List -->
-	    <p class="upcal-loading-message"><spring:message code="eventlist.loading"/></p>
+	    <div class="upcal-loading-message portlet-msg-info portlet-msg info">
+            <p><spring:message code="eventlist.loading"/></p>
+        </div>
 	    <div class="upcal-events">
 	        <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
 	            <div class="portlet-msg-error upcal-errors">
 	                <div class="upcal-error"></div>
 	            </div>
+                <div class="portlet-msg-info upcal-noevents" style="display:none">
+                    <p>No events</p>
+                </div>
 	            <div class="day">
 	                <h2 class="dayName">Today</h2>
 	                    <div class="upcal-event">

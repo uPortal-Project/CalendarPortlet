@@ -193,6 +193,12 @@ var cal = cal || {};
 	        } else {
 	            that.state.templates = fluid.selfRender($(container), tree, { cutpoints: cutpoints });
 	        }
+	        
+	        if (that.locate("event").size() == 0) {
+	            that.locate("noEventsMessage").show();
+	        } else {
+                that.locate("noEventsMessage").hide();
+	        }
     	}
 
     	return that;
@@ -207,7 +213,8 @@ var cal = cal || {};
         	dayName: ".dayName",
         	event: ".upcal-event",
         	eventTime: ".upcal-event-time",
-        	eventLink: ".upcal-event-link"
+        	eventLink: ".upcal-event-link",
+            noEventsMessage: '.upcal-noevents'
         }
     });
 
@@ -247,11 +254,9 @@ var cal = cal || {};
         
         that.updateEventList(that.options.startDate, that.options.days);
         that.locate("returnToCalendarLink").click(function(){ 
-            console.log(that.locate("returnToCalendarLink"));
             that.locate("hideOnEvent").show();
             that.locate("hideOnCalendar").hide();
         });
-        console.log(that.locate("returnToCalendarLink"));
         return that;
     };
 
