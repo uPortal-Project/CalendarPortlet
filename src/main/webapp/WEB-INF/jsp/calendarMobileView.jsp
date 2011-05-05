@@ -50,6 +50,12 @@
             days: days,
             messages: {
                 allDay: '<spring:message code="event.allday"/>'
+            },
+            eventListView: {
+                type: "cal.EventListView",
+                options: {
+                    showEndTime: false
+                }
             }
         };
         var calView = cal.CalendarView("#${n}container", options);

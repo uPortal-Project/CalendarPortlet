@@ -155,7 +155,7 @@ var cal = cal || {};
 	    		    
 	    		    if (event.allDay) {
 	    		        time = overallThat.options.messages.allDay;
-	    		    } else if (event.dateEndTime && (event.dateEndTime != event.dateStartTime || event.startDate  != event.endDate ) ) {
+	    		    } else if (that.options.showEndTime && event.dateEndTime && (event.dateEndTime != event.dateStartTime || event.startDate  != event.endDate ) ) {
 	    		        time = event.dateStartTime + " - " + event.dateEndTime;
 	    		    } else {
 	    		        time = event.dateStartTime;
@@ -206,6 +206,7 @@ var cal = cal || {};
 
     fluid.defaults("cal.EventListView", {
     	dateMap: null,
+    	showEndTime: true,
         selectors: {
             errors: ".upcal-errors",
             error: ".upcal-error",
