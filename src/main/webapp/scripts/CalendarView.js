@@ -240,6 +240,7 @@ var cal = cal || {};
             that.options.startDate = startDate;
             that.options.days = days;
             
+            that.locate("eventList").hide();
             that.locate("loadingMessage").show();
             $.post(that.options.eventsUrl,
                 { startDate: startDate, timePeriod: days }, 
