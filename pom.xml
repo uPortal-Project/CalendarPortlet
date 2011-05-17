@@ -14,13 +14,13 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.0-M5-SNAPSHOT</version>
+    <version>1.0.0-GA</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M5-SNAPSHOT</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-M5-SNAPSHOT</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/CalendarPortlet-1.0.0-M5-SNAPSHOT</url>
+        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-GA</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/tags/CalendarPortlet-1.0.0-GA</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/tags/CalendarPortlet-1.0.0-GA</url>
     </scm>
 
     <distributionManagement>
