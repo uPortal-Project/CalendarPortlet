@@ -838,6 +838,9 @@
                     <header>${jasig-short-license-url}</header>
                     <aggregate>true</aggregate>
                     <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>pom.xml.*</exclude>
+                        <exclude>release.properties</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>NOTICE</exclude>
                         <exclude>NOTICE.template</exclude>
