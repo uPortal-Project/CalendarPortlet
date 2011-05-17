@@ -31,7 +31,7 @@
     <cache name="calendarCache"
         maxElementsInMemory="100"
         eternal="false"
-        timeToLiveSeconds="1"
+        timeToLiveSeconds="900"
         overflowToDisk="false"
         memoryStoreEvictionPolicy="LRU"/>
 
