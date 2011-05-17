@@ -37,11 +37,11 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.ReadOnlyException;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.portlet.ValidatorException;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -60,7 +60,6 @@ import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
-import org.jasig.web.service.AjaxPortletSupportService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +67,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 @Controller
 @RequestMapping("VIEW")
@@ -75,9 +76,9 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	@RequestMapping(params = "action=events")
-	public void getEventList(ActionRequest request,
-			ActionResponse response) throws Exception {
+	@ResourceMapping
+	public ModelAndView getEventList(ResourceRequest request,
+			ResourceResponse response) throws Exception {
 		
 		PortletSession session = request.getPortletSession();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -181,7 +182,6 @@ public class AjaxCalendarController implements ApplicationContextAware {
 			}
 
 			index++;
-
 		}
 
 		
@@ -247,8 +247,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		model.put("dateNames", dateDisplayNames);
 		model.put("viewName", "jsonView");
 		model.put("errors", errors);
-	
-		ajaxPortletSupportService.redirectAjaxResponse("ajax/jsonView", model, request, response);
+
+        return new ModelAndView("json", model);
 	}
 	
 	/**
@@ -300,7 +300,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
     	return events;
 	}
 	
-	protected Period getPeriod(ActionRequest request) {
+	protected Period getPeriod(ResourceRequest request) {
 		
 		PortletSession session = request.getPortletSession();
 		PortletPreferences prefs = request.getPreferences();
@@ -386,18 +386,5 @@ public class AjaxCalendarController implements ApplicationContextAware {
 			throws BeansException {
 		this.applicationContext = applicationContext;
 	}
-
-	private AjaxPortletSupportService ajaxPortletSupportService;
-	
-    /**
-     * Set the service for handling portlet AJAX requests.
-     * 
-     * @param ajaxPortletSupportService
-     */
-    @Autowired(required = true)
-    public void setAjaxPortletSupportService(
-                    AjaxPortletSupportService ajaxPortletSupportService) {
-            this.ajaxPortletSupportService = ajaxPortletSupportService;
-    }
 
 }

@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
 
 /**
@@ -70,7 +71,7 @@ public class EditCalendarSubscriptionsController {
 		return viewSubscriptions(request, response);
 	}
 	
-    @RequestMapping
+    @ActionMapping
     public void defaultAction(ActionRequest request) {
         // default action mapping
     }
@@ -118,7 +119,7 @@ public class EditCalendarSubscriptionsController {
 		return new ModelAndView("/editCalendars", "model", model);
 	}
     
-    @RequestMapping(params = "action=deleteUserCalendar")
+    @ActionMapping(params = "action=deleteUserCalendar")
     public void removeSubscription(ActionRequest request, 
     		ActionResponse response, @RequestParam("configurationId") Long id) {
 		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
@@ -133,7 +134,7 @@ public class EditCalendarSubscriptionsController {
 		response.setRenderParameter("action", "editSubscriptions");
     }
     
-    @RequestMapping(params = "action=showCalendar")
+    @ActionMapping(params = "action=showCalendar")
     public void showCalendar(ActionRequest request, 
     		ActionResponse response, @RequestParam("configurationId") Long id) {
 		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
@@ -149,7 +150,7 @@ public class EditCalendarSubscriptionsController {
 		response.setRenderParameter("action", "editSubscriptions");
     }
     
-    @RequestMapping(params = "action=hideCalendar")
+    @ActionMapping(params = "action=hideCalendar")
     public void hideCalendar(ActionRequest request, 
     		ActionResponse response, @RequestParam("configurationId") Long id) {
 		CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
@@ -165,7 +166,7 @@ public class EditCalendarSubscriptionsController {
 		response.setRenderParameter("action", "editSubscriptions");
     }
     
-    @RequestMapping(params = "action=addSharedCalendar")
+    @ActionMapping(params = "action=addSharedCalendar")
     public void addSharedCalendar(ActionRequest request,  
     		ActionResponse response, @RequestParam("definitionId") Long id) {
 		PortletSession session = request.getPortletSession();
@@ -188,7 +189,7 @@ public class EditCalendarSubscriptionsController {
      * @param form
      * @throws Exception
      */
-    @RequestMapping(params = "action=editPreferences")
+    @ActionMapping(params = "action=editPreferences")
 	public void updatePreferences(ActionRequest request,
 			ActionResponse response, @ModelAttribute(FORM_NAME) CalendarPreferencesCommand form)
 			throws Exception {

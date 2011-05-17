@@ -14,7 +14,7 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>1.0.1-GA-SNAPSHOT</version>
+    <version>2.0.0-RC1-SNAPSHOT</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
@@ -67,7 +67,7 @@
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <resource-server.version>1.0.13</resource-server.version>
-        <spring.version>2.5.6.SEC02</spring.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
         <mockito.version>1.8.4</mockito.version>
         
         <!-- The JDBC Driver used by the calendar portlet -->
@@ -182,7 +182,7 @@
             <dependency>
                 <groupId>javax.portlet</groupId>
                 <artifactId>portlet-api</artifactId>
-                <version>1.0</version>
+                <version>2.0</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -192,7 +192,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.4</version>
+                <version>4.8.2</version>
             </dependency>           
             <dependency>
                 <groupId>log4j</groupId>
@@ -203,6 +203,16 @@
                 <groupId>net.sourceforge.nekohtml</groupId>
                 <artifactId>nekohtml</artifactId>
                 <version>1.9.14</version>            
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.6.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -229,11 +239,6 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate</artifactId>
                 <version>3.2.3.ga</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig</groupId>
-                <artifactId>AjaxPortletSupport</artifactId>
-                <version>1.0.8</version> 
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas</groupId>
@@ -565,6 +570,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-client-core</artifactId>
         </dependency>
@@ -656,10 +669,6 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jasig</groupId>
-            <artifactId>AjaxPortletSupport</artifactId>
         </dependency>
 
 

@@ -88,7 +88,7 @@
     
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
-        <url-pattern>/ajax/jsonView</url-pattern>
+        <url-pattern>/ajax/*</url-pattern>
     </servlet-mapping>
     
 </web-app>

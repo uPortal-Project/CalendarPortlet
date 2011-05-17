@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
 
 /**
@@ -101,7 +102,7 @@ public class EditUserHttpICalController {
 	 * @param status
 	 * @throws Exception
 	 */
-	@RequestMapping(params = "action=editUrl")
+	@ActionMapping(params = "action=editUrl")
 	public void updateHttpCalendar(ActionRequest request, ActionResponse response, 
 			@ModelAttribute(FORM_NAME) UserHttpIcalCalendarForm form, 
 			BindingResult result, SessionStatus status)

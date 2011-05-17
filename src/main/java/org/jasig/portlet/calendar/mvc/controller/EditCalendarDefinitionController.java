@@ -36,6 +36,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
 /**
  * EditCalendarDefinitionController provides a GUI for adding and editing 
@@ -72,7 +73,7 @@ public class EditCalendarDefinitionController {
 		return "/editCalendarDefinition";
 	}
 
-	@RequestMapping(params = "action=editCalendarDefinition")
+	@ActionMapping(params = "action=editCalendarDefinition")
 	public void updateCalendarDefinition(ActionRequest request, 
 			ActionResponse response, @ModelAttribute(FORM_NAME) CalendarDefinitionForm form,
 			BindingResult result, SessionStatus status) {

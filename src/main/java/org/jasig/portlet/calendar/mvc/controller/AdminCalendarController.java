@@ -33,6 +33,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
 
 /**
@@ -72,7 +73,7 @@ public class AdminCalendarController {
 	 * @param response
 	 * @param id		ID of the calendar to be deleted
 	 */
-	@RequestMapping(params = "action=deleteSharedCalendar")
+	@ActionMapping(params = "action=deleteSharedCalendar")
 	public void deleteSharedCalendar(ActionRequest request,
 			ActionResponse response, @RequestParam("calendarId") Long id) {
 		

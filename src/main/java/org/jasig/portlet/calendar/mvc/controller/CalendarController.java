@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.ReadOnlyException;
@@ -58,6 +57,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
 @Controller
 @RequestMapping("VIEW")
@@ -68,8 +68,8 @@ public class CalendarController implements ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	@RequestMapping
-	public void defaultAction(ActionRequest request) { 
+	@ActionMapping
+	public void defaultAction() { 
 	    // default action mapping
 	}
 	

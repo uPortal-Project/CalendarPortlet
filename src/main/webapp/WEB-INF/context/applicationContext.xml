@@ -148,8 +148,6 @@
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
 		p:basenames="messages"/>
 
-	<bean class="org.jasig.web.service.AjaxPortletSupportService"/>
-	
 	<bean id="stringCleaningUtil" 
 		class="org.jasig.portlet.calendar.util.StringCleaningUtil"
 		p:securityFile="classpath:clean-html.xml"/>
@@ -174,8 +172,6 @@
 		p:order="10" p:cache="true" p:viewClass="org.springframework.web.servlet.view.JstlView"
 		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
 	
-	<bean id="modelPasser" class="org.jasig.web.util.DefaultModelPasser"/>
-		
 	<!-- Abstract Default Exception Handler Bean -->
 	<bean id="defaultExceptionHandlerTemplate"
 		class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver"

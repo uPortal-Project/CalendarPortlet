@@ -45,7 +45,7 @@
         var days = ${model.days};
         
         var options = {
-            eventsUrl: '<portlet:actionURL><portlet:param name="action" value="events"/></portlet:actionURL>', 
+            eventsUrl: '<portlet:resourceURL/>', 
             startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>', 
             days: days,
             messages: {
