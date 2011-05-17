@@ -830,12 +830,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.google.code.maven-license-plugin</groupId>
+                <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-                <version>1.4.0</version>
                 <configuration>
-                    <basedir>${basedir}</basedir>
-                    <header>${jasig-short-license-url}</header>
                     <aggregate>true</aggregate>
                     <excludes>
                         <exclude>target/**</exclude>
