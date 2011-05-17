@@ -152,14 +152,6 @@
 		class="org.jasig.portlet.calendar.util.StringCleaningUtil"
 		p:securityFile="classpath:clean-html.xml"/>
 
-    <!-- Regexes of mobile device user agents -->
-    <util:list id="mobileDeviceRegexes">
-        <value>.*iPhone.*</value>
-        <value>.*Android.*</value>
-        <value>.*Safari.*Pre.*</value>
-        <value>.*Nokia.*AppleWebKit.*</value>
-    </util:list>
-		
     <!-- 
      | View resolvers, look for a named view bean before going to JSP resolution
      +-->

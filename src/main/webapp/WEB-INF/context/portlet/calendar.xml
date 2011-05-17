@@ -53,16 +53,8 @@
     <bean id="validator" class="org.springmodules.validation.bean.BeanValidator"  
         p:configurationLoader-ref="configurationLoader"/>   
     
-    <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ViewSelectorDefaultImpl"/>
+    <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ThemeNameViewSelectorImpl"/>
     
-    <!-- Regexes of mobile device user agents -->
-    <util:list id="mobileDeviceRegexes">
-        <value>.*iPhone.*</value>
-        <value>.*Android.*</value>
-        <value>.*Safari.*Pre.*</value>
-        <value>.*Nokia.*AppleWebKit.*</value>
-    </util:list>
-
     <util:list id="initializationServices">
         
         <!--
