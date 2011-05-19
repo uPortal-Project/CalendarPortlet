@@ -48,11 +48,6 @@
     
     <bean id="calendarSetDao" class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
     
-    <bean id="configurationLoader" class="org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader"/>
-    
-    <bean id="validator" class="org.springmodules.validation.bean.BeanValidator"  
-        p:configurationLoader-ref="configurationLoader"/>   
-    
     <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ThemeNameViewSelectorImpl"/>
     
     <util:list id="initializationServices">
