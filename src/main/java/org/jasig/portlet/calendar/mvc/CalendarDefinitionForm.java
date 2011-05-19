@@ -24,19 +24,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
+import java.util.Set;
 
 public class CalendarDefinitionForm {
 	
 	private Long id = new Long(-1);
 	
-	@NotBlank
+//	@NotBlank
 	private String className;
 	
-	@NotBlank
+//	@NotBlank
 	private String name;
 	
     private String fname;

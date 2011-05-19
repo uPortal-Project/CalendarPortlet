@@ -27,12 +27,10 @@ import javax.portlet.PortletRequest;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarDefinitionForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.SessionStatus;
@@ -49,13 +47,6 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 public class EditCalendarDefinitionController {
 
 	private static final String FORM_NAME = "calendarDefinitionForm";
-
-    private Validator validator;
-    
-    @Autowired(required = true)
-    public void setValidator(Validator validator) {
-    	this.validator = validator;
-    }
 
     private CalendarStore calendarStore;
 
@@ -77,12 +68,6 @@ public class EditCalendarDefinitionController {
 	public void updateCalendarDefinition(ActionRequest request, 
 			ActionResponse response, @ModelAttribute(FORM_NAME) CalendarDefinitionForm form,
 			BindingResult result, SessionStatus status) {
-		
-		validator.validate(form, result);
-		if (result.hasErrors()) {
-			response.setRenderParameter("action", "editCalendarDefinition");
-	    	return;
-		}
 		
 		// construct a calendar definition from the form data
 		PredefinedCalendarDefinition definition = null;

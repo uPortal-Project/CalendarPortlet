@@ -19,8 +19,6 @@
 
 package org.jasig.portlet.calendar.mvc;
 
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.RegExp;
 
 /**
  * Form bean for adding new user-defined http-based iCalendar feeds.
@@ -34,12 +32,12 @@ public class UserHttpIcalCalendarForm {
 	
 	private String subscribeId;
 	
-	@NotBlank
+//	@NotBlank
 	private String name;
 	
 	// RegEx copied from commons validation library
-	@NotBlank
-	@RegExp("^http[s]?:(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?")
+//	@NotBlank
+//	@RegExp("^http[s]?:(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?")
 	private String url;
 	
 	private boolean displayed;
