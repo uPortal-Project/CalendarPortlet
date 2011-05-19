@@ -192,10 +192,10 @@
 <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
     <c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
     <c:if test="${includeJQuery}">
-        <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.min.js"/>"></script>
+        <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
     </c:if>
 
-    <script type="text/javascript">
+    <script type="text/javascript"><rs:compressJs>
         var ${n} = ${n} || {};
         ${n}.jQuery = jQuery.noConflict(${includeJQuery});
 
@@ -203,7 +203,7 @@
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");
         });
-    </script>
+    </rs:compressJs></script>
 </c:if>
 
 </div>

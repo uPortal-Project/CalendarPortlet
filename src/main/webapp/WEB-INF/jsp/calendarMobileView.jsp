@@ -26,16 +26,16 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <c:if test="${includeJQuery}">
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.4.2/jquery-1.4.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
-<script type="text/javascript">
+<script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
     ${n}.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">fluid = null; fluid_1_2 = null;</c:if>
+    <c:if test="${includeJQuery}">fluid = null; fluid_1_4 = null;</c:if>
     ${n}.cal = cal;
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;
@@ -75,7 +75,7 @@
         );
 
     });
-</script>
+</rs:compressJs></script>
 
 <div id="${n}container" class="portlet ptl-calendar view-mobile">
 	<div data-role="content" class="portlet-content">

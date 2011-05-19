@@ -22,7 +22,7 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-    <script type="text/javascript">
+    <script type="text/javascript"><rs:compressJs>
 		function addRole(id) {
 			var div = document.getElementById(id);
 			var container = document.createElement('div');
@@ -79,7 +79,7 @@
 			var div = link.parentNode;
 			div.parentNode.removeChild(div);
 		}
-    </script>
+    </rs:compressJs></script>
 
 <div class="">
     <h2><spring:message code="view.calendaredit.header"/></h2>

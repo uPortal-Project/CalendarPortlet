@@ -20,7 +20,7 @@
 --%>
 
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<link rel="stylesheet" href="<c:url value="/css/calendar.css"/>" type="text/css"></link>
+<link rel="stylesheet" href="<c:url value="/css/calendar.min.css"/>" type="text/css"></link>
 
 <style type="text/css">
 	.upcal-active { background:transparent url(<rs:resourceURL value="/rs/famfamfam/silk/1.3/tick.png"/>) 0 0.2em no-repeat; } 
