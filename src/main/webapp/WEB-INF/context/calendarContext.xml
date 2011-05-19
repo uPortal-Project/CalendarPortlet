@@ -55,6 +55,11 @@
     <bean id="httpIcalAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
         p:cache-ref="calendarCache"/>
+
+    <bean id="templateUrlCreator" class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/> 
+    <bean id="urlTemplateHttpIcalAdapter"
+        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+        p:cache-ref="calendarCache" p:urlCreator-ref="templateUrlCreator"/>
     
     <!-- Simple un-authenticated adapter for RSS-formatted calendars available via http(s) -->
     <bean id="httpRssAdapter" 
