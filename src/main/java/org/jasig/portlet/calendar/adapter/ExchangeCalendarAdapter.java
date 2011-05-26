@@ -20,7 +20,6 @@
 package org.jasig.portlet.calendar.adapter;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +35,7 @@ import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
@@ -47,7 +47,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.springframework.ws.client.core.WebServiceOperations;
@@ -115,9 +114,8 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * (non-Javadoc)
      * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
      */
-    public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
+    public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
             Period period, PortletRequest request) throws CalendarException {
-        Set<CalendarEvent> events = Collections.emptySet();
         
         // try to get the cached calendar
         
@@ -127,18 +125,21 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
 
         String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(email));
         Element cachedElement = this.cache.get(key);
+        CalendarEventSet eventSet;
         if (cachedElement == null) {
             log.debug("Retreiving exchange events for account " + email);
-            events = retrieveExchangeEvents(calendarConfiguration, period, email);
+            Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, period, email);
             log.debug("Exchange adapter found " + events.size() + " events");
             // save the CalendarEvents to the cache
-            cachedElement = new Element(key, events);
+            eventSet = new CalendarEventSet(key, events);
+            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
+            cachedElement = new Element(timeAwareKey, eventSet);
             this.cache.put(cachedElement);
         } else {
-            events = (Set<CalendarEvent>) cachedElement.getValue();
+            eventSet = (CalendarEventSet) cachedElement.getValue();
         }
         
-        return events;
+        return eventSet;
     }
 
     /**
@@ -151,7 +152,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * @return
      * @throws CalendarException
      */
-    public Set<CalendarEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
+    public Set<VEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
             Period period, String emailAddress) throws CalendarException {
 
         if (log.isDebugEnabled()) {
@@ -161,7 +162,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
             log.debug(buff.toString());
         }
 
-        Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+        Set<VEvent> events = new HashSet<VEvent>();
         
         try {
             
@@ -182,7 +183,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
                     List<com.microsoft.exchange.types.CalendarEvent> msEvents = eventArray.getCalendarEvents();
                     for (com.microsoft.exchange.types.CalendarEvent msEvent : msEvents) {
                         // add the new event to the list
-                        CalendarEvent event = getInternalEvent(calendar.getId(), msEvent);
+                        VEvent event = getInternalEvent(calendar.getId(), msEvent);
                         events.add(event);
                     }
                 }
@@ -268,7 +269,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
      * @return
      * @throws DatatypeConfigurationException 
      */
-    protected CalendarEvent getInternalEvent(long calendarId, com.microsoft.exchange.types.CalendarEvent msEvent) throws DatatypeConfigurationException {
+    protected VEvent getInternalEvent(long calendarId, com.microsoft.exchange.types.CalendarEvent msEvent) throws DatatypeConfigurationException {
         DatatypeFactory factory = DatatypeFactory.newInstance();
 
         // create a new UTC-based DateTime to represent the event start time
@@ -296,7 +297,7 @@ public class ExchangeCalendarAdapter implements ICalendarAdapter {
             newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
         }
         
-        CalendarEvent event = new CalendarEvent(calendarId, newprops);
+        VEvent event = new VEvent(newprops);
         return event;
         
     }

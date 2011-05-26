@@ -24,14 +24,12 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
@@ -51,7 +49,6 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.jasig.portlet.calendar.credentials.DefaultCredentialsExtractorImpl;
@@ -62,6 +59,8 @@ import org.osaf.caldav4j.CalDAV4JException;
 import org.osaf.caldav4j.CalDAVCalendarCollection;
 import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
 import org.osaf.caldav4j.methods.HttpClient;
+
+import com.microsoft.exchange.types.CalendarEvent;
 
 
 /**
@@ -101,10 +100,10 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		this.cacheKeyPrefix = cacheKeyPrefix;
 	}
 
-	public Set<CalendarEvent> getEvents(
+	public CalendarEventSet getEvents(
 			CalendarConfiguration calendarConfiguration, Period period,
 			PortletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+		Set<VEvent> events = new HashSet<VEvent>();
 
 		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
 		
@@ -113,6 +112,7 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		// try to get the cached calendar
 		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
 		Element cachedElement = this.cache.get(key);
+        CalendarEventSet eventSet;
 		if (cachedElement == null) {
 			// read in the data
 			// retrieve calendars for the current user
@@ -124,18 +124,20 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 						calendarConfiguration.getId(), calendar, period));
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
-			cachedElement = new Element(key, events);
-			this.cache.put(cachedElement);
-		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
+            eventSet = new CalendarEventSet(key, events);
+            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
+            cachedElement = new Element(timeAwareKey, eventSet);
+            this.cache.put(cachedElement);
+        } else {
+            eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
-		return events;
+		return eventSet;
 	}
 
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
+	public Set<VEvent> getEvents(CalendarConfiguration calendarConfiguration,
 			Period period, HttpServletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+		Set<VEvent> events = new HashSet<VEvent>();
 
 		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
 		
@@ -154,11 +156,11 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 				events.addAll(convertCalendarToEvents(
 						calendarConfiguration.getId(), calendar, period));
 			log.debug("contentProcessor found " + events.size() + " events");
-			// save the CalendarEvents to the cache
+			// save the VEvents to the cache
 			cachedElement = new Element(key, events);
 			this.cache.put(cachedElement);
 		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
+			events = (Set<VEvent>) cachedElement.getValue();
 		}
 		
 		return events;
@@ -216,11 +218,11 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 
 	}
 
-	protected final Set<CalendarEvent> convertCalendarToEvents(Long calendarId,
+	protected final Set<VEvent> convertCalendarToEvents(Long calendarId,
 			net.fortuna.ical4j.model.Calendar calendar, Period period)
 			throws CalendarException {
 
-		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+		Set<VEvent> events = new HashSet<VEvent>();
 
 		// if the calendar is null, return empty set
 		if (calendar == null) {
@@ -264,8 +266,7 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 					}
 
 					// create the new event from our property list
-					CalendarEvent newevent = new CalendarEvent(calendarId,
-							newprops);
+					VEvent newevent = new VEvent(newprops);
 					events.add(newevent);
 					log.trace("added event " + newevent);
 				}

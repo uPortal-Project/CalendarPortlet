@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.component.VEvent;
 
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.junit.Test;
 
 /**
@@ -53,24 +53,24 @@ public class JsonCalendarEventTest {
 		cal.add(Calendar.DATE, 2);
 		Date end = cal.getTime();
 		
-		CalendarEvent event = new CalendarEvent(new DateTime(start), new DateTime(end), "Test Event");
+		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
 
 		cal.set(Calendar.DATE, 3);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		Date date = cal.getTime();		
-		JsonCalendarEvent json = new JsonCalendarEvent(event, date, tz, 1);
+		JsonCalendarEvent json = new JsonCalendarEvent(event, date, tz);
 		assertEquals("4:00 AM", json.getDateStartTime());
 		assertEquals("12:00 AM", json.getDateEndTime());
 		
 		cal.set(Calendar.DATE, 4);
 		date = cal.getTime();		
-		json = new JsonCalendarEvent(event, date, tz, 1);
+		json = new JsonCalendarEvent(event, date, tz);
 		assertEquals("12:00 AM", json.getDateStartTime());
 		assertEquals("12:00 AM", json.getDateEndTime());
 		
 		cal.set(Calendar.DATE, 5);
 		date = cal.getTime();		
-		json = new JsonCalendarEvent(event, date, tz, 1);
+		json = new JsonCalendarEvent(event, date, tz);
 		assertEquals("12:00 AM", json.getDateStartTime());
 		assertEquals("4:00 AM", json.getDateEndTime());
 		

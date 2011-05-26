@@ -52,6 +52,10 @@
 	<bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
 		p:cacheManager-ref="cacheManager" p:cacheName="calendarCache"/>
 
+    <bean id="calendarEventsDao" 
+        class="org.jasig.portlet.calendar.adapter.CalendarEventsDao"
+        p:cache-ref="calendarCache"/>
+
     <bean id="elementsProvider" class="org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl"/>
 
     <bean id="pageCachingFilter" class="org.jasig.portlet.calendar.mvc.AggregationAwareFilterBean">

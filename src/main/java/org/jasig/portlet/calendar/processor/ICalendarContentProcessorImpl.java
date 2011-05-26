@@ -31,7 +31,6 @@ import net.fortuna.ical4j.data.CalendarParserImpl;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
@@ -47,7 +46,6 @@ import net.fortuna.ical4j.model.property.RRule;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 
 
@@ -66,7 +64,7 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<CalendarEvent> getEvents(Long calendarId, Period period, InputStream in) {
+	public Set<VEvent> getEvents(Long calendarId, Period period, InputStream in) {
 		try {
 			log.debug("begin getEvents");
 			CalendarBuilder builder = new CalendarBuilder(new CalendarParserImpl());
@@ -92,11 +90,11 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 	 * @throws CalendarException
 	 */
 	@SuppressWarnings("unchecked")
-	protected final Set<CalendarEvent> convertCalendarToEvents(Long calendarId,
+	protected final Set<VEvent> convertCalendarToEvents(Long calendarId,
 			net.fortuna.ical4j.model.Calendar calendar, Period period)
 			throws CalendarException {
 
-		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+		Set<VEvent> events = new HashSet<VEvent>();
 
 		// if the calendar is null, return empty set
 		if (calendar == null) {
@@ -131,11 +129,13 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 					start.setTimeZone(event.getStartDate().getTimeZone());
 					start.setUtc(event.getStartDate().isUtc());
 					newprops.add(start);
-                    DtEnd end = new DtEnd();
-                    end.setTimeZone(event.getEndDate().getTimeZone());
-                    end.setDate(eventper.getEnd());
-                    end.setUtc(event.getEndDate().isUtc());
-					newprops.add(end);
+					if (event.getEndDate() != null) {
+                        DtEnd end = new DtEnd();
+                        end.setTimeZone(event.getEndDate().getTimeZone());
+                        end.setDate(eventper.getEnd());
+                        end.setUtc(event.getEndDate().isUtc());
+    					newprops.add(end);
+					}
 					for (Iterator<Property> iter2 = props.iterator(); iter2
 							.hasNext();) {
 						Property prop = iter2.next();
@@ -153,8 +153,7 @@ public class ICalendarContentProcessorImpl implements IContentProcessor {
 					}
 
 					// create the new event from our property list
-					CalendarEvent newevent = new CalendarEvent(calendarId,
-							newprops);
+					VEvent newevent = new VEvent(newprops);
 					events.add(newevent);
 					log.trace("added event " + newevent);
 				}

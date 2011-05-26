@@ -32,11 +32,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.adapter.CalendarException;
+
+import com.microsoft.exchange.types.CalendarEvent;
 
 
 /**
@@ -66,7 +68,7 @@ public class XSLTICalendarContentProcessorImpl extends ICalendarContentProcessor
 	 * org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(
 	 * java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<CalendarEvent> getEvents(Long calendarId, Period period, InputStream in) {
+	public Set<VEvent> getEvents(Long calendarId, Period period, InputStream in) {
 		// do xslt
 		InputStream ical = transformToICal(in);
 	        

@@ -31,6 +31,7 @@ import java.util.Set;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Summary;
@@ -39,7 +40,6 @@ import net.fortuna.ical4j.model.property.Url;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portlet.calendar.CalendarEvent;
 
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -62,9 +62,9 @@ public class RssContentProcessorImpl implements IContentProcessor {
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<CalendarEvent> getEvents(Long calendarId, Period period,
+	public Set<VEvent> getEvents(Long calendarId, Period period,
 			InputStream in) {
-		Set<CalendarEvent> events = new HashSet<CalendarEvent>();
+		Set<VEvent> events = new HashSet<VEvent>();
 		
 		try {
 			final SyndFeedInput input = new SyndFeedInput();
@@ -106,7 +106,7 @@ public class RssContentProcessorImpl implements IContentProcessor {
 					}
 					
 					// construct and add the new calendar event
-					CalendarEvent event = new CalendarEvent(calendarId, props);
+					VEvent event = new VEvent(props);
 					events.add(event);
 				}
 				

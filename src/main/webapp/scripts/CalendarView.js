@@ -143,14 +143,15 @@ var cal = cal || {};
 	        }
 	        
 	        for (date in dateMap) {
-	        	var events = dateMap[date];
+	        	var wrappers = dateMap[date];
 	    		var day = {
 	    			ID: "day:",
 	    			children: [
 	    			    { ID: "dayName", value: dateNames[date] }
 	    		    ]
 	    		};
-	    		$(events).each(function (idx, event){
+	    		$(wrappers).each(function (idx, wrapper){
+	    		    var event = wrapper.event;
 	    		    var time;
 	    		    
 	    		    if (event.allDay) {
@@ -164,7 +165,7 @@ var cal = cal || {};
 	    			day.children.push({
 	    				ID: "event:",
 	    				decorators: [
-	    				    { type: "addClass", classes: "upcal-color-" + event.colorIndex }
+	    				    { type: "addClass", classes: "upcal-color-" + wrapper.colorIndex }
 	    				],
 	    				children: [
 	    				    { ID: "eventTime", value: time },

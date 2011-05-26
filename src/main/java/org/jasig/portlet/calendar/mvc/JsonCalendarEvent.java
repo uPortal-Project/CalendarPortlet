@@ -25,9 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import net.fortuna.ical4j.model.component.VEvent;
+
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.util.AllDayUtil;
 
 /**
@@ -36,19 +37,17 @@ import org.jasig.portlet.calendar.util.AllDayUtil;
  */
 public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 
-	private final CalendarEvent event;
+	private final VEvent event;
 	private final Date dayStart;
 	private final Date dayEnd;
 	private final DateFormat tf;
 	private final DateFormat df;
 	private final boolean isAllDay;
 	private final boolean isMultiDay;
-	private final int colorIndex;
 	
-	public JsonCalendarEvent(CalendarEvent event, Date date, TimeZone tz, int colorIndex) {
+	public JsonCalendarEvent(VEvent event, Date date, TimeZone tz) {
 		
 		this.event = event;
-		this.colorIndex = colorIndex;
 		
 		Calendar cal = Calendar.getInstance(tz);
 		cal.setTime(date);
@@ -67,7 +66,9 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		
 		cal.add(Calendar.DATE, 1);
 		
-		if (event.getEndDate().getDate().after(cal.getTime())) {
+		if (event.getEndDate() == null) {
+		    dayEnd = event.getStartDate().getDate();
+		} else if (event.getEndDate().getDate().after(cal.getTime())) {
 			dayEnd = cal.getTime();
 			multi = true;
 		} else {
@@ -105,10 +106,6 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		} else {
 			return null;
 		}
-	}
-	
-	public Long getCalendarId() {
-		return this.event.getCalendarId();
 	}
 	
 	public String getDateStartTime() {
@@ -155,9 +152,9 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		return this.isMultiDay;
 	}
 	
-	public int getColorIndex() {
-		return this.colorIndex;
-	}
+//	public int getColorIndex() {
+//		return this.colorIndex;
+//	}
 
 	public Date getDayStart() {
 		return dayStart;
@@ -176,7 +173,6 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 				.append(this.dayStart, event.dayStart)
 				.append(this.dayEnd, event.dayEnd)
 				.append(this.getSummary(), event.getSummary())
-				.append(this.getCalendarId(), event.getCalendarId())
 				// The UID class doesn't implement comparable and will give
 				// rise to a ClassCastException if it's actually tested. 
 				// .append(this.event.getUid(), event.event.getUid())
@@ -192,7 +188,6 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 				.append(this.dayStart, event.dayStart)
 				.append(this.dayEnd, event.dayEnd)
 				.append(this.getSummary(), event.getSummary())
-				.append(this.getCalendarId(), event.getCalendarId())
                 // The UID class doesn't implement comparable and will give
                 // rise to a ClassCastException if it's actually tested. 
 				// .append(this.event.getUid(), event.event.getUid())

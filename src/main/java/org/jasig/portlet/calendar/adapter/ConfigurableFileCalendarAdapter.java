@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -38,14 +39,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 
 
-public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingleEventSupport {
+public class ConfigurableFileCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
@@ -55,16 +55,16 @@ public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingl
 	private String cacheKeyPrefix = "default";
 
 	
-	@SuppressWarnings("unchecked")
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
+	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
 			Period period, PortletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = Collections.emptySet();
+		Set<VEvent> events = Collections.emptySet();
 		
 		String fileName = calendarConfiguration.getCalendarDefinition().getParameters().get("file");
 		
 		// try to get the cached calendar
 		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(fileName));
 		Element cachedElement = this.cache.get(key);
+        CalendarEventSet eventSet;
 		if (cachedElement == null) {
 			// read in the data
 			InputStream stream = retrieveCalendar(fileName);
@@ -72,30 +72,15 @@ public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingl
 			events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
-			cachedElement = new Element(key, events);
-			this.cache.put(cachedElement);
-		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
+            eventSet = new CalendarEventSet(key, events);
+            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
+            cachedElement = new Element(timeAwareKey, eventSet);
+            this.cache.put(cachedElement);
+        } else {
+            eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
-		return events;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ISingleEventSupport#getEvent(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, java.lang.String, java.lang.String, javax.portlet.PortletRequest)
-	 */
-	public CalendarEvent getEvent(CalendarConfiguration calendar,
-			Period period, String uid, String recurrenceId, PortletRequest request)
-			throws CalendarException {
-		Set<CalendarEvent> events = getEvents(calendar, period, request);
-		for(CalendarEvent event : events) {
-			if (event.getUid().toString().equals(uid) && (null == recurrenceId || event.getRecurrenceId().toString().equals(recurrenceId))) {
-				return event;
-			}
-		}
-		log.debug("event not found with uid " + uid + " and recurrence id " + recurrenceId);
-		return null;
+		return eventSet;
 	}
 
 	protected InputStream retrieveCalendar(String fileName)

@@ -19,14 +19,11 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.util.Set;
-
 import javax.portlet.PortletRequest;
 
 import net.fortuna.ical4j.model.Period;
 
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarEvent;
 
 /**
  * ICalendarAdapter defines an interface for retrieving calendar event data.
@@ -50,7 +47,7 @@ public interface ICalendarAdapter {
 	 * @return Set of events for this calendar and time period
 	 * @throws CalendarException
 	 */
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendar,
+	public CalendarEventSet getEvents(CalendarConfiguration calendar,
 			Period period, PortletRequest request) throws CalendarException;
 
 	/**

@@ -23,12 +23,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -42,7 +42,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.jasig.portlet.calendar.credentials.DefaultCredentialsExtractorImpl;
@@ -52,6 +51,8 @@ import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.jasig.portlet.calendar.url.DefaultUrlCreatorImpl;
 import org.jasig.portlet.calendar.url.IUrlCreator;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.microsoft.exchange.types.CalendarEvent;
 
 
 /**
@@ -75,7 +76,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RefactoredHttpICalendarAdapter.java Exp $
  */
-public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, ISingleEventSupport {
+public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
@@ -141,10 +142,9 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, 
 	 *  (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
-	@SuppressWarnings("unchecked")
-	public Set<CalendarEvent> getEvents(CalendarConfiguration calendarConfiguration,
+	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
 			Period period, PortletRequest request) throws CalendarException {
-		Set<CalendarEvent> events = Collections.emptySet();
+		CalendarEventSet eventSet;
 		
 		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
 		
@@ -158,33 +158,19 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, 
 			// read in the data
 			InputStream stream = retrieveCalendarHttp(url, credentials);
 			// run the stream through the processor
-			events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
+			Set<VEvent> events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
 			log.debug("contentProcessor found " + events.size() + " events");
-			// save the CalendarEvents to the cache
-			cachedElement = new Element(key, events);
+			
+			// save the VEvents to the cache
+			eventSet = new CalendarEventSet(key, events);
+			String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
+			cachedElement = new Element(timeAwareKey, eventSet);
 			this.cache.put(cachedElement);
 		} else {
-			events = (Set<CalendarEvent>) cachedElement.getValue();
+			eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
-		return events;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ISingleEventSupport#getEvent(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, java.lang.String, java.lang.String, javax.portlet.PortletRequest)
-	 */
-	public CalendarEvent getEvent(CalendarConfiguration calendar,
-			Period period, String uid, String recurrenceId, PortletRequest request)
-			throws CalendarException {
-		Set<CalendarEvent> events = getEvents(calendar, period, request);
-		for(CalendarEvent event : events) {
-			if (event.getUid().toString().equals(uid) && (null == recurrenceId || event.getRecurrenceId().toString().equals(recurrenceId))) {
-				return event;
-			}
-		}
-		log.debug("event not found with uid " + uid + " and recurrence id " + recurrenceId);
-		return null;
+		return eventSet;
 	}
 
 	/* (non-Javadoc)

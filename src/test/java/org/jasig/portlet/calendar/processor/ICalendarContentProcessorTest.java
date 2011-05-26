@@ -20,10 +20,9 @@
 package org.jasig.portlet.calendar.processor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,9 +35,9 @@ import java.util.TreeSet;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.jasig.portlet.calendar.CalendarEvent;
 import org.jasig.portlet.calendar.VEventStartComparator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,21 +82,19 @@ public class ICalendarContentProcessorTest {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copyLarge(in, buffer);
         
-        TreeSet<CalendarEvent> events = new TreeSet<CalendarEvent>(new VEventStartComparator());
+        TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
         events.addAll(processor.getEvents(Long.valueOf((long) 3), period, new ByteArrayInputStream(buffer.toByteArray())));
         
         assertEquals(3, events.size());
         
-        Iterator<CalendarEvent> iterator = events.iterator();
-        CalendarEvent event = iterator.next();
+        Iterator<VEvent> iterator = events.iterator();
+        VEvent event = iterator.next();
         assertEquals("Independence Day", event.getSummary().getValue());
-        assertEquals(Long.valueOf((long) 3), event.getCalendarId());
         assertNull(event.getStartDate().getTimeZone());
         assertFalse(event.getStartDate().isUtc());
         
         event = iterator.next();
         assertEquals("Vikings @ Saints  [NBC]", event.getSummary().getValue());
-        assertEquals(Long.valueOf((long) 3), event.getCalendarId());
         cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(event.getStartDate().getDate().getTime());
         assertEquals(0, cal.get(Calendar.HOUR_OF_DAY));
@@ -106,7 +103,6 @@ public class ICalendarContentProcessorTest {
         
         event = iterator.next();
         assertEquals("Independence Day", event.getSummary().getValue());
-        assertEquals(Long.valueOf((long) 3), event.getCalendarId());
         assertNull(event.getStartDate().getTimeZone());
         assertFalse(event.getStartDate().isUtc());
         

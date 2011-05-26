@@ -22,9 +22,10 @@ package org.jasig.portlet.calendar.processor;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jasig.portlet.calendar.CalendarEvent;
-
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VEvent;
+
+import com.microsoft.exchange.types.CalendarEvent;
 
 /**
  * This interface defines a mechanism for converting an
@@ -44,6 +45,6 @@ public interface IContentProcessor {
 	 * @param in
 	 * @return
 	 */
-	Set<CalendarEvent> getEvents(Long calendarId, Period period, InputStream in);
+	Set<VEvent> getEvents(Long calendarId, Period period, InputStream in);
 	
 }
