@@ -56,7 +56,7 @@
 
         var options = {
             eventsUrl: '<portlet:resourceURL/>', 
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy"/>', 
+            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${model.timezone}"/>', 
             days: days,
             messages: {
                 allDay: '<spring:message code="event.allday"/>'
@@ -65,7 +65,7 @@
         var calView = cal.CalendarView("#${n}container", options);
 
         var date = new Date();
-        date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d"/>);
+        date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy" timeZone="${model.timezone}"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M" timeZone="${model.timezone}"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d" timeZone="${model.timezone}"/>);
         $('#${n}inlineCalendar').datepicker(
             {
                 inline: true,
