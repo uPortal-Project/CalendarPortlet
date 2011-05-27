@@ -66,8 +66,12 @@
                 and false for earlier uPortal versions or for Liferay.
             -->
             <preference>
-                <name>includeJQuery</name>
+                <name>usePortalJsLibs</name>
                 <value>true</value>
+            </preference>
+            <preference>
+                <name>portalJsLibNamespace</name>
+                <value>up</value>
             </preference>
         </portlet-preferences>
         

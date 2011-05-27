@@ -190,15 +190,20 @@
 </div>
 
 <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
-    <c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
-    <c:if test="${includeJQuery}">
+    <c:if test="${ !usePortalJsLibs }">
         <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
     </c:if>
 
     <script type="text/javascript"><rs:compressJs>
         var ${n} = ${n} || {};
-        ${n}.jQuery = jQuery.noConflict(${includeJQuery});
-
+        <c:choose>
+            <c:when test="${!usePortalJsLibs}">
+                ${n}.jQuery = jQuery.noConflict(true);
+            </c:when>
+            <c:otherwise>
+                ${n}.jQuery = ${portalJsNamespace ? portalJsNamespace + '.' : ''}jQuery;
+            </c:otherwise>
+        </c:choose>
         ${n}.jQuery(function() {
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");

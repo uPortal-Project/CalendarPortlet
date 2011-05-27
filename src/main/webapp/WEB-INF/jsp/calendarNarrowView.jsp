@@ -22,22 +22,31 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<c:set var="includeJQuery" value="${renderRequest.preferences.map['includeJQuery'][0]}"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<c:if test="${includeJQuery}">
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.js"/>"></script>
+<c:if test="${ !usePortalJsLibs }">
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.min.js"/>"></script>
 </c:if>
-<script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/CalendarView.js"/>"></script>
 
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
-    ${n}.jQuery = jQuery.noConflict(${includeJQuery});
-    <c:if test="${includeJQuery}">fluid = null; fluid_1_4 = null;</c:if>
+    <c:choose>
+        <c:when test="${!usePortalJsLibs}">
+            ${n}.jQuery = jQuery.noConflict(true);
+            ${n}.fluid = fluid;
+            fluid = null; 
+            fluid_1_4 = null;
+        </c:when>
+        <c:otherwise>
+            ${n}.jQuery = ${portalJsNamespace ? portalJsNamespace + '.' : ''}jQuery;
+            ${n}.fluid = ${portalJsNamespace ? portalJsNamespace + '.' : ''}fluid;
+        </c:otherwise>
+    </c:choose>
+    if (!cal.initialized) cal.init(${n}.jQuery, ${n}.fluid);
     ${n}.cal = cal;
-//    cal = null;
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;
         var cal = ${n}.cal;
