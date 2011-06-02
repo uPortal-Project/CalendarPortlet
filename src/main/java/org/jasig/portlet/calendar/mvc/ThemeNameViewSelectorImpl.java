@@ -34,7 +34,7 @@ public class ThemeNameViewSelectorImpl implements IViewSelector {
         
         // otherwise check the portlet window state
         WindowState state = request.getWindowState();
-        if (WindowState.MAXIMIZED.equals(state)) {
+        if (WindowState.MAXIMIZED.equals(state) || "DETACHED".equalsIgnoreCase(state.toString())) {
             return CALENDAR_WIDE_VIEW;
         } else {
             return CALENDAR_NARROW_VIEW;
