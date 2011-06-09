@@ -763,7 +763,7 @@
                     <jswarn>false</jswarn>
                 </configuration>
             </plugin>
-                <plugin>
+            <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
                     <version>0.7.4</version>
