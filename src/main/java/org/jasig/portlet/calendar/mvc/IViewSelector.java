@@ -38,6 +38,8 @@ public interface IViewSelector {
 	 * @return
 	 */
 	public String getCalendarViewName(PortletRequest request);
+	
+	public String getEditViewName(PortletRequest request);
 
 	/**
 	 * Return the JSP view name of the AJAX event list for this request.

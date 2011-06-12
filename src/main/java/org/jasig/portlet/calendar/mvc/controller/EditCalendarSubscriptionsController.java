@@ -41,7 +41,9 @@ import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
+import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -116,7 +118,8 @@ public class EditCalendarSubscriptionsController {
 		model.put("predefinedEditActions", predefinedEditActions);
 		
 		// return the edit view
-		return new ModelAndView("/editCalendars", "model", model);
+		String view = viewSelector.getEditViewName(request);
+		return new ModelAndView(view, "model", model);
 	}
     
     @ActionMapping(params = "action=deleteUserCalendar")
@@ -268,5 +271,12 @@ public class EditCalendarSubscriptionsController {
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
+
+    private IViewSelector viewSelector;
+
+    @Autowired(required = true)
+    public void setViewSelector(IViewSelector viewSelector) {
+        this.viewSelector = viewSelector;
+    }
 
 }

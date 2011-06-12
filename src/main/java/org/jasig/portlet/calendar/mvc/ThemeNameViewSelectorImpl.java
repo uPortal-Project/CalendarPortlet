@@ -41,6 +41,14 @@ public class ThemeNameViewSelectorImpl implements IViewSelector {
         }
         
     }
+    
+    public String getEditViewName(PortletRequest request) {
+        if (isMobile(request)) {
+            return "editCalendars-jQM";
+        } else {
+            return "editCalendars";
+        }
+    }
 
     /*
      * (non-Javadoc)

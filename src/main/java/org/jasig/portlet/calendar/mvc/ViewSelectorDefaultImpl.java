@@ -66,16 +66,9 @@ public class ViewSelectorDefaultImpl implements IViewSelector {
 	 * @see org.jasig.portlet.calendar.mvc.IViewSelector#getCalendarViewName(javax.portlet.PortletRequest)
 	 */
 	public String getCalendarViewName(PortletRequest request) {
-		String userAgent = request.getProperty("user-agent");
-		
-		// check to see if this is a mobile device
-		if (this.mobileDeviceRegexes != null && userAgent != null) {
-			for (Pattern regex : this.mobileDeviceRegexes) {
-				if (regex.matcher(userAgent).matches()) {
-					return CALENDAR_MOBILE_VIEW;
-				}
-			}
-		}
+	    if (isMobile(request)) {
+	        return CALENDAR_MOBILE_VIEW;
+	    }
 		
 		// otherwise check the portlet window state
 		WindowState state = request.getWindowState();
@@ -87,12 +80,35 @@ public class ViewSelectorDefaultImpl implements IViewSelector {
 		
 	}
 
+    public String getEditViewName(PortletRequest request) {
+        if (isMobile(request)) {
+            return "editCalendars-jQM";
+        } else {
+            return "editCalendars";
+        }
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.mvc.IViewSelector#getEventListViewName(javax.portlet.PortletRequest)
 	 */
 	public String getEventListViewName(PortletRequest request) {
 		return "ajaxEventList";
+	}
+	
+	protected boolean isMobile(PortletRequest request) {
+        String userAgent = request.getProperty("user-agent");
+        
+        // check to see if this is a mobile device
+        if (this.mobileDeviceRegexes != null && userAgent != null) {
+            for (Pattern regex : this.mobileDeviceRegexes) {
+                if (regex.matcher(userAgent).matches()) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;	    
 	}
 
 }
