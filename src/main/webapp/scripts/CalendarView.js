@@ -105,12 +105,12 @@ if (!cal.init) {
             	eventSummary: ".upcal-event-detail-summary",
             	eventDay: ".upcal-event-detail-day",
             	eventTime: ".upcal-event-detail-starttime",
-            	eventLocationDiv: ".upcal-event-detail-loc",
-            	eventLocation: ".upcal-event-detail-loc p",
-            	eventDescriptionDiv: ".upcal-event-detail-desc",
-            	eventDescription: ".upcal-event-detail-desc p",
-            	eventLinkDiv: ".upcal-event-detail-link",
-            	eventLink: ".upcal-event-detail-link p a"
+            	eventLocationDiv: ".upcal-event-detail-loc-div",
+            	eventLocation: ".upcal-event-detail-loc",
+            	eventDescriptionDiv: ".upcal-event-detail-desc-div",
+            	eventDescription: ".upcal-event-detail-desc",
+            	eventLinkDiv: ".upcal-event-detail-link-div",
+            	eventLink: ".upcal-event-detail-link"
             }
         });
     

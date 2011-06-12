@@ -185,20 +185,20 @@
                    </p>
                 </div>
 
-                <div class="upcal-event-detail-loc">
+                <div class="upcal-event-detail-loc-div">
                     <h3><spring:message code="event.location"/>:</h3>
-                    <p></p>
+                    <p class="upcal-event-detail-loc"></p>
                 </div>          
           
-                <div class="upcal-event-detail-desc">
+                <div class="upcal-event-detail-desc-div">
                     <h3><spring:message code="event.description"/>:</h3>
-                    <p>Event description</p>
+                    <p class="upcal-event-detail-desc">Event description</p>
                 </div>
           
-                <div class="upcal-event-detail-link">
+                <div class="upcal-event-detail-link-div">
                     <h3><spring:message code="event.link"/>:</h3>
                     <p>
-                        <a href="http://www.event.com" target="_blank">http://www.event.com</a>
+                        <a class="upcal-event-detail-link" href="http://www.event.com" target="_blank">http://www.event.com</a>
                     </p>
                 </div>
             </div>
