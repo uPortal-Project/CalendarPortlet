@@ -147,8 +147,8 @@
 	          
 	                <div class="upcal-event-detail-desc-div">
 	                    <h3><spring:message code="event.description"/>:</h3>
-	                    <p>Event description</p>
-	                </div class="upcal-event-detail-desc">
+	                    <p class="upcal-event-detail-desc">Event description</p>
+	                </div>
 	
 	                <div class="upcal-event-detail-link-div">
 	                    <h3><spring:message code="event.link"/>:</h3>
@@ -169,7 +169,7 @@
         </div>
 
         <c:if test="${ !model.disablePreferences }">
-            <div class="utilities upcal-view-links upcal-show-on-calendar">
+            <div class="utilities upcal-view-links upcal-hide-on-event">
                 <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
                 <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
                     Preferences
