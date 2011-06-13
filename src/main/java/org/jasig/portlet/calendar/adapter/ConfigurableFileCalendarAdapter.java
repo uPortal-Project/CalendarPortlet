@@ -127,7 +127,11 @@ public class ConfigurableFileCalendarAdapter implements ICalendarAdapter, ISingl
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
 	 */
 	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
-		throw new CalendarLinkException("This calendar has no link");
+        if(log.isDebugEnabled()) {
+            throw new CalendarLinkException("This calendar has no link");
+        }
+
+        return null;    // Not implemented.
 	}
 	
 	public void setCache(Cache cache) {

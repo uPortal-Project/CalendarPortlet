@@ -209,7 +209,11 @@ public class CalendarController implements ApplicationContextAware {
 							.getCalendarDefinition().getClassName());
 	
 					//get hyperlink to calendar
-					links.put(callisting.getId(), adapter.getLink(callisting, period, request));
+                    String currLink = adapter.getLink(callisting, period, request);
+
+                    if ( currLink != null ) {
+                        links.put(callisting.getId(), currLink);
+                    }
 					
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());

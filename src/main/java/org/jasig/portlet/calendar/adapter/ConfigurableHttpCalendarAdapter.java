@@ -191,7 +191,11 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter, 
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
 	 */
 	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
-		throw new CalendarLinkException("This calendar has no link");
+        if(log.isDebugEnabled()) {
+            throw new CalendarLinkException("This calendar has no link");
+        }
+
+        return null;    // not implemented
 	}
 	
 	/**

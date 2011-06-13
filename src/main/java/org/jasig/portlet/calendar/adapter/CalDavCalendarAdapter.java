@@ -168,7 +168,11 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
 	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarLinkException {
-		throw new CalendarLinkException("This calendar has no link");
+        if(log.isDebugEnabled()) {
+            throw new CalendarLinkException("This calendar has no link");
+        }
+
+        return null;    // Not implemented
 	}
 	
 	protected final net.fortuna.ical4j.model.Calendar retrieveCalendar(
