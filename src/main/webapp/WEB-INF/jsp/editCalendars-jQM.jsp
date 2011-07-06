@@ -30,6 +30,12 @@
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
 
 <div class="portlet">
+
+    <div data-role="header" class="titlebar portlet-titlebar">
+        <a href="<portlet:renderURL portletMode="view"/>" data-role="button" data-icon="back" data-inline="true">Back</a>
+        <h2>Preferences</h2>
+    </div>
+
     <div id="${n}" class="portlet-content" data-role="content">
         <div data-role="fieldcontain">
             <fieldset data-role="controlgroup">
@@ -40,11 +46,8 @@
                 </c:forEach>
             </fieldset>
         </div>
-        
-        <div class="utilities">
-            <a data-role="button" href="<portlet:renderURL portletMode="view"/>">Done</a>
-        </div>
     </div>
+
 </div>
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
