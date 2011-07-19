@@ -20,15 +20,8 @@
     <scm>
         <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</connection>
         <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/jasig-parent/trunk</url>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/CalendarPortlet/trunk</url>
     </scm>
-
-    <distributionManagement>
-        <site>
-            <id>developer.jasig</id>
-            <url>${jasig-site-dist-base}/CalendarPortlet/${project.version}</url>
-        </site>
-    </distributionManagement>
     
     <issueManagement>
         <url>${jasig-issues-base}/CAP</url>
@@ -834,5 +827,14 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+	        <id>site</id>
+	        <distributionManagement>
+		        <site>
+		            <id>developer.jasig</id>
+		            <url>${jasig-site-dist-base}/CalendarPortlet/${project.version}</url>
+		        </site>
+		    </distributionManagement>
+	    </profile>
     </profiles>
 </project>
