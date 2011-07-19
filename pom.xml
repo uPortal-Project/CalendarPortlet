@@ -64,16 +64,16 @@
     <properties>
         <!-- Dependency versions -->
         <cas.version>3.1.8</cas.version>
-        <hsqldb.version>1.8.0.7</hsqldb.version>
+        <hsqldb.version>2.2.4</hsqldb.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <resource-server.version>1.0.16</resource-server.version>
         <spring.version>3.0.5.RELEASE</spring.version>
         <mockito.version>1.8.4</mockito.version>
         
         <!-- The JDBC Driver used by the calendar portlet -->
-        <jdbc.groupId>hsqldb</jdbc.groupId>
+        <jdbc.groupId>org.hsqldb</jdbc.groupId>
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
-        <jdbc.version>1.8.0.7</jdbc.version>
+        <jdbc.version>${hsqldb.version}</jdbc.version>
         
     </properties>
 
