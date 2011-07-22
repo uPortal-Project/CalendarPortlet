@@ -124,7 +124,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
      * 
      * @return The {@link ApplicationContext} for the portal. 
      */
-    public static ApplicationContext getApplicationContext() {
+    public static ApplicationContext getApplicationContext(String importExportContextFile) {
         final ServletContext context = servletContext;
 
         if (context != null) {
@@ -145,7 +145,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
             return webApplicationContext;
         }
         
-        return applicationContextCreator.get();
+        return applicationContextCreator.get(importExportContextFile);
     }
     
     /**
@@ -184,7 +184,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
             File file = new File(".");
             try {
                 URL context = file.toURI().toURL();
-                URL location = new URL(context, "src/main/webapp/WEB-INF/context/importExportContext.xml");
+                URL location = new URL(context, (String) args[0]);
                 reader.loadBeanDefinitions(location.toExternalForm());
             } catch (Exception e) {
                 LOGGER.error("Failed to load bean definitions", e);
