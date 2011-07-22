@@ -781,6 +781,7 @@
                             
                                     <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
                                     <arg value="${dir}" />
+                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml"/>
                                 </java>
                             </tasks>
                         </configuration>
