@@ -53,7 +53,7 @@
         <map name="parameters" lazy="false" table="CALENDAR_PARAMETER" cascade="all-delete-orphan">
             <key column="CALENDAR_ID"/>
             <index column="CALENDAR_PARAMETER_NAME" type="string"/>
-            <element type="string" column="CALENDAR_PARAMETER_VALUE" not-null="true"/>
+            <element type="text" column="CALENDAR_PARAMETER_VALUE" not-null="true"/>
         </map>
 
         
