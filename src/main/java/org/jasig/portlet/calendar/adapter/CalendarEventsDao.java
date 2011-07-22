@@ -149,8 +149,6 @@ public class CalendarEventsDao {
         Calendar eventEnd = Calendar.getInstance(tz);
         if (event.getEndDate() != null) {
             eventEnd.setTime(event.getEndDate().getDate());
-        } else {
-            eventEnd.setTime(event.getStartDate().getDate());
         }
 
         Set<JsonCalendarEvent> events = new HashSet<JsonCalendarEvent>();

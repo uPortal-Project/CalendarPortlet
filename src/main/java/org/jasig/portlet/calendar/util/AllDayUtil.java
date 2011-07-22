@@ -95,13 +95,13 @@ public class AllDayUtil {
 		 */
 		
 		if (endDate == null) {
-			return false;
+			return true;
 		}
 
 		// check the end time of the event
 		String end = df.format(endDate);
 		if (!EXPECTED_TIME.equals(end)) {
-			return false;
+			return true;
 		}
 		
 		// get the duration of this event in milliseconds

@@ -67,7 +67,7 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		cal.add(Calendar.DATE, 1);
 		
 		if (event.getEndDate() == null) {
-		    dayEnd = event.getStartDate().getDate();
+		    dayEnd = null;
 		} else if (event.getEndDate().getDate().after(cal.getTime())) {
 			dayEnd = cal.getTime();
 			multi = true;
