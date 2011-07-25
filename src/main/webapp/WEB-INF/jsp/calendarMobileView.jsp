@@ -168,7 +168,7 @@
             </a>
         </div>
 
-        <c:if test="${ !model.disablePreferences }">
+        <c:if test="${ !model.disablePreferences && !guest }">
             <div class="utilities upcal-view-links upcal-hide-on-event">
                 <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
                 <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
