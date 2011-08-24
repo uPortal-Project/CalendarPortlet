@@ -34,13 +34,6 @@ import org.apache.commons.httpclient.Credentials;
 public class DefaultCredentialsExtractorImpl implements ICredentialsExtractor {
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.servlet.http.HttpServletRequest)
-	 */
-	public Credentials getCredentials(HttpServletRequest request) {
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.portlet.PortletRequest)
 	 */
 	public Credentials getCredentials(PortletRequest request) {

@@ -49,13 +49,6 @@ public class SharedSecretCredentialsExtractorImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.servlet.http.HttpServletRequest)
-	 */
-	public Credentials getCredentials(HttpServletRequest request) {
-		return new UsernamePasswordCredentials(username, password);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.portlet.PortletRequest)
 	 */
 	public Credentials getCredentials(PortletRequest request) {

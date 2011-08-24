@@ -135,37 +135,6 @@ public class CalDavCalendarAdapter implements ICalendarAdapter {
 		return eventSet;
 	}
 
-	public Set<VEvent> getEvents(CalendarConfiguration calendarConfiguration,
-			Period period, HttpServletRequest request) throws CalendarException {
-		Set<VEvent> events = new HashSet<VEvent>();
-
-		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
-		
-		log.debug("generated url: " + url);
-		
-		// try to get the cached calendar
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
-		Element cachedElement = this.cache.get(key);
-		if (cachedElement == null) {
-			// read in the data
-			// retrieve calendars for the current user
-			net.fortuna.ical4j.model.Calendar calendar = retrieveCalendar(
-					url, period, credentialsExtractor.getCredentials(request));
-
-			// extract events from the calendars
-				events.addAll(convertCalendarToEvents(
-						calendarConfiguration.getId(), calendar, period));
-			log.debug("contentProcessor found " + events.size() + " events");
-			// save the VEvents to the cache
-			cachedElement = new Element(key, events);
-			this.cache.put(cachedElement);
-		} else {
-			events = (Set<VEvent>) cachedElement.getValue();
-		}
-		
-		return events;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */

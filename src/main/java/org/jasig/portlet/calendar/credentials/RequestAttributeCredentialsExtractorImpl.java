@@ -19,9 +19,10 @@
 
 package org.jasig.portlet.calendar.credentials;
 
+import java.util.Map;
+
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.Credentials;
@@ -59,50 +60,12 @@ public class RequestAttributeCredentialsExtractorImpl implements ICredentialsExt
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.servlet.http.HttpServletRequest)
-	 */
-	public Credentials getCredentials(HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			log.error("null session");
-			throw new CalendarException();
-		}
-		
-		String username = (String) session.getAttribute(usernameAttribute);
-		if (username == null) {
-			log.error("username attribute (" + usernameAttribute + ") does not exist in session");
-			throw new CalendarException();
-		}
-		String password = (String) session.getAttribute(passwordAttribute);
-		if (password == null) {
-			log.error("password attribute (" + passwordAttribute + ") does not exist in session");
-			throw new CalendarException();
-		}
-		return new UsernamePasswordCredentials(username, password);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.CredentialsExtractor#getCredentials(javax.portlet.PortletRequest)
 	 */
 	public Credentials getCredentials(PortletRequest request) {
-		// get the session
-		PortletSession session = request.getPortletSession(false);
-		if (session == null) {
-			log.error("null session");
-			throw new CalendarException();
-		}
-
-		// retrieve the user's credentials
-		String username = (String) session.getAttribute(usernameAttribute);
-		if (username == null) {
-			log.error("username attribute (" + usernameAttribute + ") does not exist in session");
-			throw new CalendarException();
-		}
-		String password = (String) session.getAttribute(passwordAttribute);
-		if (password == null) {
-			log.error("password attribute (" + passwordAttribute + ") does not exist in session");
-			throw new CalendarException();
-		}
+	    Map<String,String> userInfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
+	    String username = userInfo.get(usernameAttribute);
+	    String password = userInfo.get(passwordAttribute);
 		return new UsernamePasswordCredentials(username, password);
 	}
 
@@ -115,6 +78,5 @@ public class RequestAttributeCredentialsExtractorImpl implements ICredentialsExt
 	public void setPasswordAttribute(String passwordAttribute) {
 		this.passwordAttribute = passwordAttribute;
 	}
-
 	
 }

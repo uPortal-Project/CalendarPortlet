@@ -20,7 +20,6 @@
 package org.jasig.portlet.calendar.credentials;
 
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.httpclient.Credentials;
 
@@ -39,13 +38,5 @@ public interface ICredentialsExtractor {
 	 * @param request
 	 * @return the corresponding {@link Credentials}, or null
 	 */
-	Credentials getCredentials(HttpServletRequest request);
-	
-	/**
-	 * Implementations may return null.
-	 * 
-	 * @param request
-	 * @return the corresponding {@link Credentials}, or null
-	 */
-	Credentials getCredentials(PortletRequest request);
+	public Credentials getCredentials(PortletRequest request);
 }
