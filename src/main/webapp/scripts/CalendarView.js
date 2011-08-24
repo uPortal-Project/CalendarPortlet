@@ -244,7 +244,7 @@ if (!cal.init) {
                 
                 that.locate("eventList").hide();
                 that.locate("loadingMessage").show();
-                $.post(that.options.eventsUrl,
+                $.get(that.options.eventsUrl,
                     { startDate: startDate, timePeriod: days }, 
                     function(json) {
                         that.locate("loadingMessage").hide();

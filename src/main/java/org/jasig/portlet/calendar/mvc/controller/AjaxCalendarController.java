@@ -213,6 +213,17 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		model.put("viewName", "jsonView");
 		model.put("errors", errors);
 
+		String etag = String.valueOf(model.hashCode());
+        if (request.getETag() != null && etag.equals(request.getETag())) {
+            response.getCacheControl().setExpirationTime(300);
+            response.getCacheControl().setUseCachedContent(true);
+            return null;
+        }
+        
+        // create new content with new validation tag
+        response.getCacheControl().setETag(etag);
+        response.getCacheControl().setExpirationTime(300);
+
         return new ModelAndView("json", model);
 	}
 	
