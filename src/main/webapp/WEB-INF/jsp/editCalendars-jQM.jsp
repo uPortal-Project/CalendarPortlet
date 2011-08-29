@@ -22,10 +22,12 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <portlet:defineObjects/>
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="hideUrl"><portlet:param name="action" value="hideCalendar"/>
+<portlet:actionURL var="hideUrl" escapeXml="false"><portlet:param name="action" value="hideCalendar"/>
     <portlet:param name="configurationId" value="ID"/></portlet:actionURL>
-<portlet:actionURL var="showUrl"><portlet:param name="action" value="showCalendar"/>
+<portlet:actionURL var="showUrl" escapeXml="false"><portlet:param name="action" value="showCalendar"/>
     <portlet:param name="configurationId" value="ID"/></portlet:actionURL>
+<portlet:actionURL var="newUrl" escapeXml="false"><portlet:param name="action" value="addSharedCalendar"/>
+    <portlet:param name="id" value="ID"/></portlet:actionURL>
 
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
 
@@ -40,9 +42,16 @@
         <div data-role="fieldcontain">
             <fieldset data-role="controlgroup">
                 <legend>Which calendars should be displayed?</legend>
-                <c:forEach items="${ model.calendars }" var="calendar">
-                    <input type="checkbox" name="${ calendar.id }" id="${n}${ calendar.id }" ${ calendar.displayed ? 'checked' : '' } />
-                    <label calendarId="${ calendar.id }" included="${ calendar.displayed }" for="${n}${ calendar.id }">${ calendar.calendarDefinition.name }</label>
+                <c:set var="count" value="0"/>
+                <c:forEach items="${ model.calendars }" var="calendar" varStatus="status">
+                    <input type="checkbox" name="${ calendar.id }" id="${n}${ count }" ${ calendar.displayed ? 'checked' : '' } />
+                    <label calendarId="${ calendar.id }" included="${ calendar.displayed }" for="${n}${ count }">${ calendar.calendarDefinition.name }</label>
+                    <c:set var="count" value="${ count+1 }"/>
+                </c:forEach>
+                <c:forEach items="${ model.hiddenCalendars }" var="calendar">
+                    <input type="checkbox" name="${ calendar.id }" id="${n}${ count }" />
+                    <label calendarId="${ feed.id }" included="new" for="${n}${ count }">${ calendar.name }</label>
+                    <c:set var="count" value="${ count+1 }"/>
                 </c:forEach>
             </fieldset>
         </div>
@@ -54,14 +63,22 @@
     ${n}.jQuery = jQuery.noConflict(true);
     ${n}.jQuery(function(){
         var $ = ${n}.jQuery;
+        var newUrl = '${ newUrl }';
         var showUrl = '${ showUrl }';
         var hideUrl = '${ hideUrl }';
 
         var updateCalendarItem = function () {
-            var link, url;
+            var link, url, included;
             link = $(this);
-            url = (link.attr("included") == 'true') ? hideUrl : showUrl;
-            window.location = url.replace('ID', link.attr("calendarId")).replace('&amp;', '&');
+            included = link.attr("included");
+            if (included == 'new') {
+                url = newUrl;
+            } else if (included == 'true') {
+                url = hideUrl;
+            } else {
+                url = showUrl;
+            }
+            window.location = url.replace('ID', link.attr("calendarId"));
         };
         
         $(document).ready(function () {
