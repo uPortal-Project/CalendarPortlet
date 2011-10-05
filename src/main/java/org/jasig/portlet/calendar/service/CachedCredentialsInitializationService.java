@@ -32,6 +32,8 @@ import javax.portlet.PortletSession;
  */
 public class CachedCredentialsInitializationService implements IInitializationService {
 	
+	public static final String PASSWORD_KEY = "password";
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.service.IInitializationService#initialize(javax.portlet.PortletRequest)
@@ -45,6 +47,6 @@ public class CachedCredentialsInitializationService implements IInitializationSe
 		
 		// get the credentials for this portlet from the UserInfo map
 		String password = (String) userinfo.get("password");
-		session.setAttribute("password", password);
+		session.setAttribute(PASSWORD_KEY, password);
 	}	
 }
