@@ -64,21 +64,33 @@ public class CalendarEventsDao {
     public Set<JsonCalendarEvent> getEvents(ICalendarAdapter adapter, CalendarConfiguration calendar,
             Period period, PortletRequest request, TimeZone tz) {
 
-        CalendarEventSet eventSet = adapter.getEvents(calendar, period, request);
+        // get the set of pre-timezone-corrected events for the requested period
+        final CalendarEventSet eventSet = adapter.getEvents(calendar, period, request);
 
-        TimeZoneRegistryFactory tzFactory = new DefaultTimeZoneRegistryFactory();
-        TimeZoneRegistry tzRegistry = tzFactory.createRegistry();
+        // append the requested time zone id to the retrieve event set's cache
+        // key to generate a timezone-aware cache key
+        final TimeZoneRegistryFactory tzFactory = new DefaultTimeZoneRegistryFactory();
+        final TimeZoneRegistry tzRegistry = tzFactory.createRegistry();
+        final String tzKey = eventSet.getKey().concat(tz.getID());
 
-        String tzKey = eventSet.getKey().concat(tz.getID());
-        Element cachedElement = this.cache.get(eventSet.getKey());
-        Set<JsonCalendarEvent> jsonEvents;
-        if (cachedElement == null) {
+        // attempt to retrieve the timezone-aware event set from cache
+        Element cachedElement = this.cache.get(tzKey);
+        if (cachedElement != null) {
+            @SuppressWarnings("unchecked")
+            final Set<JsonCalendarEvent> jsonEvents = (Set<JsonCalendarEvent>) cachedElement.getValue();
+            return jsonEvents;
+        }
+        
+        // if the timezone-corrected event set is not availble in the cache
+        // generate a new set and cache it
+        else {
 
-            jsonEvents = new HashSet<JsonCalendarEvent>();
-            Set<VEvent> events = eventSet.getEvents();
-            for (VEvent event : events) {
+            // for each event in the event set, generate a set of timezone-corrected
+            // event occurrences and add it to the new set
+            final Set<JsonCalendarEvent> jsonEvents = new HashSet<JsonCalendarEvent>();
+            for (VEvent event : eventSet.getEvents()) {
                 try {
-                    jsonEvents.addAll(getStuff(event, tz, tzRegistry, period));
+                    jsonEvents.addAll(getTimeZoneAwareEvents(event, tz, tzRegistry, period));
                 } catch (ParseException e) {
                     log.error("Exception parsing event", e);
                 } catch (IOException e) {
@@ -88,18 +100,17 @@ public class CalendarEventsDao {
                 }
             }
             
-            cachedElement = new Element(tzKey, eventSet);
+            // cache and return the resulting event list
+            cachedElement = new Element(tzKey, jsonEvents);
             this.cache.put(cachedElement);
-        } else {
-            jsonEvents = (Set<JsonCalendarEvent>) cachedElement.getValue();
-        }
+            return jsonEvents;
+        } 
         
-        return jsonEvents;
     }
     
-    protected Set<JsonCalendarEvent> getStuff(VEvent e, TimeZone tz, TimeZoneRegistry tzRegistry, Period period) throws ParseException, IOException, URISyntaxException {
+    protected Set<JsonCalendarEvent> getTimeZoneAwareEvents(final VEvent e, final TimeZone tz, final TimeZoneRegistry tzRegistry, final Period period) throws ParseException, IOException, URISyntaxException {
         
-        VEvent event = (VEvent) e.copy();
+        final VEvent event = (VEvent) e.copy();
 
         /*
          * Provide special handling for events with "floating"
@@ -129,32 +140,44 @@ public class CalendarEventsDao {
             }
         }
 
-        Set<JsonCalendarEvent> events = getJsonEvents(event, period, tz);
+        final Set<JsonCalendarEvent> events = getJsonEvents(event, period, tz);
         return events;
 
     }
     
+    /**
+     * Get a JSON-appropriate representation of each recurrence of an event
+     * within the specified time period.
+     * 
+     * @param event
+     * @param period
+     * @param tz
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws ParseException
+     */
     protected Set<JsonCalendarEvent> getJsonEvents(VEvent event, Period period, TimeZone tz) throws IOException, URISyntaxException, ParseException {
 
-        Calendar dayStart = Calendar.getInstance(tz);
+        final Calendar dayStart = Calendar.getInstance(tz);
         dayStart.setTime(event.getStartDate().getDate());
         dayStart.set(Calendar.HOUR, 0);
         dayStart.set(Calendar.MINUTE, 0);
         dayStart.set(Calendar.SECOND, 0);
         dayStart.set(Calendar.MILLISECOND, 1);
         
-        Calendar dayEnd = (Calendar) dayStart.clone();
+        final Calendar dayEnd = (Calendar) dayStart.clone();
         dayEnd.add(Calendar.DATE, 1);
 
-        Calendar eventEnd = Calendar.getInstance(tz);
+        final Calendar eventEnd = Calendar.getInstance(tz);
         if (event.getEndDate() != null) {
             eventEnd.setTime(event.getEndDate().getDate());
         }
 
-        Set<JsonCalendarEvent> events = new HashSet<JsonCalendarEvent>();
+        final Set<JsonCalendarEvent> events = new HashSet<JsonCalendarEvent>();
         
         do {
-            JsonCalendarEvent json = new JsonCalendarEvent(event, dayStart.getTime(), tz);
+            final JsonCalendarEvent json = new JsonCalendarEvent(event, dayStart.getTime(), tz);
 
             // if the adjusted event still falls within the 
             // indicated period go ahead and add it to our list

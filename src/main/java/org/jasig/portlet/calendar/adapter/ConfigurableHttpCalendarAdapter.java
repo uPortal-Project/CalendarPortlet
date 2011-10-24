@@ -163,8 +163,7 @@ public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter {
 			
 			// save the VEvents to the cache
 			eventSet = new CalendarEventSet(key, events);
-			String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
-			cachedElement = new Element(timeAwareKey, eventSet);
+            cachedElement = new Element(key, eventSet);
 			this.cache.put(cachedElement);
 		} else {
 			eventSet = (CalendarEventSet) cachedElement.getValue();

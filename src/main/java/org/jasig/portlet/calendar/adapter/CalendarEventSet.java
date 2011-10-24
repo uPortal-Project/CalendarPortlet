@@ -19,6 +19,7 @@
 
 package org.jasig.portlet.calendar.adapter;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.component.VEvent;
@@ -29,7 +30,7 @@ import net.fortuna.ical4j.model.component.VEvent;
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class CalendarEventSet {
+public class CalendarEventSet implements Serializable {
 
     private final String key;
     private final Set<VEvent> events;
