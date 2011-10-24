@@ -113,7 +113,7 @@
             <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
         </property>
         <property name="cacheKeyGenerator">
-            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl" p:includePeriod="true"/>
         </property>
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
