@@ -25,8 +25,8 @@
 
 <c:if test="${ !usePortalJsLibs }">
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8/jquery-ui-1.8.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
 
@@ -168,7 +168,7 @@
             </a>
         </div>
 
-        <c:if test="${ !model.disablePreferences && !guest }">
+        <c:if test="${ !model.disablePreferences && !model.guest }">
             <div class="utilities upcal-view-links upcal-hide-on-event">
                 <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
                 <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
