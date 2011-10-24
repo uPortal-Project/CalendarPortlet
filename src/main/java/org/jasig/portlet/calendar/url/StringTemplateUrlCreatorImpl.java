@@ -24,8 +24,6 @@ import java.net.URLEncoder;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import net.fortuna.ical4j.model.Period;
 
@@ -63,26 +61,6 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 
 		// get the current username from the session
 		PortletSession session = request.getPortletSession();
-		if (session == null) {
-			throw new CalendarException();
-		}
-		String username = (String) session.getAttribute("username");
-
-		return constructUrlInternal(configuration, period, username);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jasig.portlet.calendar.url.IUrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration,
-	 *      net.fortuna.ical4j.model.Period,
-	 *      javax.servlet.http.HttpServletRequest)
-	 */
-	public String constructUrl(CalendarConfiguration configuration,
-			Period period, HttpServletRequest request) {
-
-		// get the current username from the session
-		HttpSession session = request.getSession();
 		if (session == null) {
 			throw new CalendarException();
 		}

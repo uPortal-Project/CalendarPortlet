@@ -21,8 +21,6 @@ package org.jasig.portlet.calendar.url;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import net.fortuna.ical4j.model.Period;
 
@@ -61,47 +59,6 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 		this.proxyTicketService = proxyTicketService;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.servlet.http.HttpServletRequest, net.fortuna.ical4j.model.Period)
-	 */
-	public String constructUrl(CalendarConfiguration calendarListing,
-			Period period, HttpServletRequest request) {
-		String configuredUrl = calendarListing.getCalendarDefinition()
-		.getParameters().get("url");
-
-		// get the session
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			log.warn("CasifiedICalFeed requested with a null session");
-			throw new CalendarException();
-		}
-
-		// retrieve the CAS receipt for the current user's session
-		Assertion receipt = (Assertion) session.getAttribute("CasReceipt");
-		if (receipt == null) {
-			log.warn("CasifiedICalFeed cannot find a CAS receipt object");
-			throw new CalendarException();
-		}
-
-		String proxyTicket = proxyTicketService.getCasServiceToken(receipt,
-				configuredUrl);
-
-		StringBuilder finalUrl = new StringBuilder();
-		finalUrl.append(configuredUrl);
-
-		if (proxyTicket != null) {
-			String separator = configuredUrl.contains("?") ? "&" : "?";
-			finalUrl.append(separator);
-			finalUrl.append("ticket=");
-			finalUrl.append(proxyTicket);
-		} else {
-			log.warn("No CAS ticket could be obtained for " + configuredUrl
-					+ ".  Returning empty event list.");
-			throw new CalendarException();
-		}
-		return finalUrl.toString();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.portlet.PortletRequest, net.fortuna.ical4j.model.Period)
 	 */

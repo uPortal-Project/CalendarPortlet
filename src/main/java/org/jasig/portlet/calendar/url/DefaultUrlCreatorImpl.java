@@ -20,7 +20,6 @@
 package org.jasig.portlet.calendar.url;
 
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Period;
 
@@ -41,14 +40,6 @@ public class DefaultUrlCreatorImpl implements IUrlCreator {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.servlet.http.HttpServletRequest, net.fortuna.ical4j.model.Period)
-	 */
-	public String constructUrl(CalendarConfiguration calendarListing,
-			Period period, HttpServletRequest request) {
-		return constructUrlInternal(calendarListing);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.portlet.PortletRequest, net.fortuna.ical4j.model.Period)
 	 */
