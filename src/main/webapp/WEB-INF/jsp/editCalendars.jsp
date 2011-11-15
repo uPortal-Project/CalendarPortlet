@@ -28,24 +28,24 @@
 
 <div class="upcal-edit-links">
     <portlet:renderURL var="preferencesUrl"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-    <a href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
-        <spring:message code="preferences.link.text"/>
+    <a href="${ preferencesUrl }" title="<spring:message code="preferences"/>">
+        <spring:message code="preferences"/>
     </a>
     <c:if test="${ sessionScope.isAdmin }">
         <span class="upcal-pipe">|</span>
         <portlet:renderURL var="adminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
-        <a href="${ adminUrl }" title="<spring:message code="administration.link.title"/>">
-            <spring:message code="administration.link.text"/>
+        <a href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+            <spring:message code="calendar.administration"/>
         </a>
     </c:if>
 </div>
 
-<h2><spring:message code="view.useredit.header"/></h2>
+<h2><spring:message code="edit.calendars"/></h2>
 
 <div class="fl-col-flex2">
 
     <div class="fl-col upcal-mycalendars upcal-list">
-		<h3><spring:message code="view.useredit.usercalendars.header"/></h3>
+		<h3><spring:message code="my.calendars"/></h3>
 		<ul>
             <c:forEach items="${ model.mycalendars }" var="calendar">
                 <li>
@@ -54,8 +54,8 @@
                         <portlet:param name="id" value="${ calendar.id }"/>
                     </portlet:renderURL>
 		            <a href="${ editCalendarUrl }" class="upcal-edit"
-                            title="<spring:message code="calendar.edit.title"/>">
-                        <span><spring:message code="calendar.edit"/></span>
+                            title="<spring:message code="edit.calendar"/>">
+                        <span><spring:message code="edit"/></span>
 		            </a>
                     <span>
                         <spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody>
@@ -65,8 +65,8 @@
                         <portlet:param name="configurationId" value="${ calendar.id }"/>
                     </portlet:actionURL>
 		            <a href="${ deleteCalendarUrl }" class="upcal-delete"
-                            title="<spring:message code="calendar.delete.title"/>">
-                        <span><spring:message code="calendar.delete"/></span>
+                            title="<spring:message code="delete.calendar"/>">
+                        <span><spring:message code="delete"/></span>
 		            </a>
                 </li>
             </c:forEach>
@@ -75,13 +75,13 @@
             <portlet:param name="action" value="editUrl"/>
         </portlet:renderURL>
 		<a class="upcal-add" href="${ addCalendar }"
-               title="<spring:message code="calendar.add.title"/>">
-           <spring:message code="calendar.add"/>
+               title="<spring:message code="add.a.calendar"/>">
+           <spring:message code="add.a.calendar"/>
 		</a>
 	</div>
 	
 	<div class="fl-col upcal-builtin upcal-list">
-		<h3><spring:message code="view.useredit.preconfigured.header"/></h3>
+		<h3><spring:message code="preconfigured.calendars"/></h3>
 		<ul>
 		    <c:forEach items="${ model.calendars }" var="calendar">
                 <li>
@@ -92,8 +92,8 @@
 		                        <portlet:param name="configurationId" value="${ calendar.id }"/>
 		                    </portlet:actionURL>
 				            <a class="upcal-active" href="${ displayURL }"
-                                    title="<spring:message code="calendar.active.title"/>">
-                                <span><spring:message code="calendar.active"/></span>
+                                    title="<spring:message code="hide.calendar"/>">
+                                <span><spring:message code="hide"/></span>
 				            </a>
 		                </c:when>
 		                <c:otherwise>
@@ -102,8 +102,8 @@
                                 <portlet:param name="configurationId" value="${ calendar.id }"/>
                             </portlet:actionURL>
 				            <a class="upcal-inactive" href="${ displayURL }"
-				                    title="<spring:message code="calendar.inactive.title"/>">
-                                <span><spring:message code="calendar.inactive"/></span>
+				                    title="<spring:message code="show.calendar"/>">
+                                <span><spring:message code="show"/></span>
 				            </a>
                 		</c:otherwise>
 		            </c:choose>
@@ -115,8 +115,8 @@
 	                            <portlet:param name="configurationId" value="${ calendar.id }"/>
 	                        </portlet:renderURL>
 	                        <a class="upcal-edit" href="${ editCalendarUrl }"
-		                            title="<spring:message code="calendar.edit.title"/>">
-		                        <span><spring:message code="calendar.edit"/></span>
+		                            title="<spring:message code="edit.calendar"/>">
+		                        <span><spring:message code="edit"/></span>
 	                        </a>
 		                </c:when>
 		                <c:otherwise>&nbsp;</c:otherwise>
@@ -132,8 +132,8 @@
                         <portlet:param name="action" value="addSharedCalendar"/>
                         <portlet:param name="definitionId" value="${ calendar.id }"/>
                     </portlet:actionURL>
-                    <a class="upcal-inactive" href="${ displayURL }" title="Show calendar">
-                        <span>Show</span>
+                    <a class="upcal-inactive" href="${ displayURL }" title="<spring:message code="show.calendar"/>">
+                        <span><spring:message code="show"/></span>
                     </a>
                     <spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody>
                 </li>
@@ -144,13 +144,13 @@
 </div>
 
 <c:if test="${model.timezoneReadOnly == false}">
-    <h2><spring:message code="view.useredit.preferences.header"/></h2>
+    <h2><spring:message code="preferences"/></h2>
 
     <div id="${n}calendar-submission-success" class="portlet-msg-success fl-container-flex40" style="display: none;">
         <p>
-            <spring:message code="view.useredit.savesuccess"/>
-            <a href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar.link.title"/>">
-                <spring:message code="return.to.calendar.link.text"/>
+            <spring:message code="your.preferences.have.been.saved.successfully"/>
+            <a href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar"/>">
+                <spring:message code="return.to.calendar"/>
             </a>
         </p>
     </div>
@@ -162,7 +162,7 @@
 
         <p style="margin-top: 10px">
             <label class="portlet-form-field-label">
-                <spring:message code="preferences.timezone"/>
+                <spring:message code="time.zone"/>
             </label>
             <form:select path="timezone">
                 <c:forEach items="${timezones}" var="zone">
@@ -175,7 +175,7 @@
         <br/>
         <p>
             <button type="submit" class="portlet-form-button">
-                <spring:message code="preferences.save"/>
+                <spring:message code="save"/>
             </button>
         </p>
     
@@ -184,8 +184,8 @@
 
 <div class="upcal-view-links">
 	<a class="upcal-view-return" href="<portlet:renderURL portletMode="view"/>"
-            title="<spring:message code="return.to.calendar.link.title"/>">
-       <spring:message code="return.to.calendar.link.text"/>
+            title="<spring:message code="return.to.calendar"/>">
+       <spring:message code="return.to.calendar"/>
 	</a>
 </div>
 

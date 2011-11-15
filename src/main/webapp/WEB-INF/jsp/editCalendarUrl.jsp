@@ -24,7 +24,7 @@
 
 <div class="upcal-edit-urlview">
 
-	<h2><spring:message code="view.calendaredit.header"/></h2>
+	<h2><spring:message code="edit.calendar"/></h2>
 
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
     <form:form name="calendar" commandName="userHttpIcalCalendarForm" action="${postUrl}">
@@ -39,19 +39,19 @@
 
         <p>
 			<label class="portlet-form-field-label">
-			    <spring:message code="form.calendar.name"/>:
+			    <spring:message code="calendar.name"/>:
 			</label>
             <form:input path="name" size="50"/>
         </p>
         <p>
             <label class="portlet-form-field-label">
-                <spring:message code="form.calendar.url"/>:
+                <spring:message code="calendar.url"/>:
             </label>
             <form:input path="url" size="50"/>
     	</p>
         <p>
             <button type="submit" class="portlet-form-button">
-                <spring:message code="form.calendar.save"/>
+                <spring:message code="save.calendar"/>
             </button>
         </p>
         
@@ -60,8 +60,8 @@
 	<div class="upcal-view-links">
         <portlet:renderURL var="returnUrl"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>
 	    <a class="upcal-view-return" href="${ returnUrl }" 
-	           title="<spring:message code="return.to.preferences.link.title"/>">
-	       <spring:message code="return.to.preferences.link.text"/>
+	           title="<spring:message code="return.to.preferences"/>">
+	       <spring:message code="return.to.preferences"/>
 	    </a>
 	</div>
 

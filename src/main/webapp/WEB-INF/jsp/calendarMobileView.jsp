@@ -58,7 +58,7 @@
             startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
             days: days,
             messages: {
-                allDay: '<spring:message code="event.allday"/>'
+                allDay: '<spring:message code="all.day"/>'
             },
             eventListView: {
                 type: "cal.EventListView",
@@ -133,7 +133,7 @@
 	          
 	                <!-- Event time -->
 	                <div class="event-detail-date">
-	                    <h3><spring:message code="event.date"/>:</h3>
+	                    <h3><spring:message code="date"/>:</h3>
 	                    <p>
 	                        <span class="upcal-event-detail-day">Today</span>
 	                        <span class="upcal-event-detail-starttime">2:00 PM - 3:00 PM</span>
@@ -141,17 +141,17 @@
 	                </div>
 	
 	                <div class="upcal-event-detail-loc-div">
-	                    <h3><spring:message code="event.location"/>:</h3>
+	                    <h3><spring:message code="location"/>:</h3>
 	                    <p class="upcal-event-detail-loc"></p>
 	                </div>          
 	          
 	                <div class="upcal-event-detail-desc-div">
-	                    <h3><spring:message code="event.description"/>:</h3>
+	                    <h3><spring:message code="description"/>:</h3>
 	                    <p class="upcal-event-detail-desc">Event description</p>
 	                </div>
 	
 	                <div class="upcal-event-detail-link-div">
-	                    <h3><spring:message code="event.link"/>:</h3>
+	                    <h3><spring:message code="link"/>:</h3>
 	                    <p>
 	                        <a class="upcal-event-detail-link" href="http://www.event.com" target="_blank">http://www.event.com</a>
 	                    </p>
@@ -163,16 +163,16 @@
 
         <div class="utilities upcal-view-links upcal-hide-on-calendar" style="display:none">
             <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" 
-                    title="<spring:message code="return.to.calendar.link.title"/>" data-role="button">
-                <spring:message code="return.to.calendar.link.text"/>
+                    title="<spring:message code="return.to.calendar"/>" data-role="button">
+                <spring:message code="return.to.calendar"/>
             </a>
         </div>
 
         <c:if test="${ !model.disablePreferences && !model.guest }">
             <div class="utilities upcal-view-links upcal-hide-on-event">
                 <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-                <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
-                    Preferences
+                <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="edit.preferences"/>">
+                    <spring:message code="preferences"/>
                 </a>
             </div>
         </c:if>

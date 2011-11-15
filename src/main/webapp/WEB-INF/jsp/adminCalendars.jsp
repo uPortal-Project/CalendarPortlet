@@ -26,7 +26,7 @@
 
     <div class="upcal-list">
 
-	    <h2><spring:message code="view.admininistration.header"/></h2>
+	    <h2><spring:message code="calendar.administration"/></h2>
 	    
         <ul>
             <c:forEach items="${ calendars }" var="calendar">
@@ -37,8 +37,8 @@
                         <portlet:param name="id" value="${ calendar.id }"/>
                     </portlet:renderURL>
                     <a class="upcal-edit" href="${ editCalendarUrl }" 
-                            title="<spring:message code="calendar.edit.title"/>">
-                        <span><spring:message code="calendar.edit"/></span>
+                            title="<spring:message code="edit.calendar"/>">
+                        <span><spring:message code="edit.calendar"/></span>
                     </a>
                     <!-- Calendar name -->
                     <spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody>
@@ -48,8 +48,8 @@
                         <portlet:param name="calendarId" value="${ calendar.id }"/>
                     </portlet:actionURL>
                     <a class="upcal-delete" href="${ deleteCalendarUrl }" 
-                            title="<spring:message code="calendar.edit.title"/>">
-                        <span><spring:message code="calendar.delete"/></span>
+                            title="<spring:message code="delete.calendar"/>">
+                        <span><spring:message code="delete.calendar"/></span>
                     </a>
                 </li>
             </c:forEach>
@@ -60,8 +60,8 @@
 	       <portlet:param name="action" value="editCalendarDefinition"/>
 	    </portlet:renderURL>
 	    <a class="upcal-add" href="${ addCalendarUrl }" 
-	           title="<spring:message code="calendar.add.title"/>">
-	       <spring:message code="calendar.add"/>
+	           title="<spring:message code="add.a.calendar"/>">
+	       <spring:message code="add.a.calendar"/>
 	    </a>
 	    
     </div>
@@ -69,8 +69,8 @@
     <div class="upcal-view-links">
         <portlet:renderURL var="returnUrl" portletMode="view"/>
         <a class="upcal-view-return" href="${ returnUrl }" 
-                title="<spring:message code="return.to.calendar.link.title"/>">
-           <spring:message code="return.to.calendar.link.text"/>
+                title="<spring:message code="return.to.calendar"/>">
+           <spring:message code="return.to.calendar"/>
         </a>
     </div>
     
