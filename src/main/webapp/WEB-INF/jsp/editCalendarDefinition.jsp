@@ -19,70 +19,40 @@
 
 --%>
 
+<%@ taglib prefix="editPreferences" tagdir="/WEB-INF/tags/edit-preferences" %>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
     <script type="text/javascript"><rs:compressJs>
-		function addRole(id) {
-			var div = document.getElementById(id);
-			var container = document.createElement('div');
-			container.style.padding = "5px";
-			var input = document.createElement('input');
-			input.name = 'role';
-			input.type = 'text';
-			input.size = '20';
-			container.appendChild(input);
-			var remove = document.createElement('a');
-			remove.href = 'javascript:;';
-			remove.onclick = function(){removeRole(this)};
-			remove.appendChild(document.createTextNode(' '));
-			var img = document.createElement('img');
-			img.src = '<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>';
-			img.style.verticalAlign = 'middle';
-			remove.appendChild(img);
-			container.appendChild(remove);
-			div.appendChild(container);
-		}
-		
-		function removeRole(link) {
-			var div = link.parentNode;
-			div.parentNode.removeChild(div);
-		}
-
-		function addParameter(id) {
-			var div = document.getElementById(id);
-			var container = document.createElement('div');
-			container.style.padding = "5px";
-			var input = document.createElement('input');
-			input.name = 'parameterName';
-			input.type = 'text';
-			input.size = '20';
-			container.appendChild(input);
-			input = document.createElement('input');
-			input.name = 'parameterValue';
-			input.type = 'text';
-			input.size = '20';
-			container.appendChild(input);
-			var remove = document.createElement('a');
-			remove.href = 'javascript:;';
-			remove.onclick = function(){removeRole(this)};
-			remove.appendChild(document.createTextNode(' '));
-			var img = document.createElement('img');
-			img.src = '<rs:resourceURL value="/rs/famfamfam/silk/1.3/delete.png"/>';
-			img.style.verticalAlign = 'middle';
-			remove.appendChild(img);
-			container.appendChild(remove);
-			div.appendChild(container);
-		}
-
-		function removeParameter(link) {
-			var div = link.parentNode;
-			div.parentNode.removeChild(div);
-		}
+    up.jQuery(function() {
+        var $ = up.jQuery;
+          $(document).ready(function(){
+              up.ParameterEditor($("div.roles"), {
+                    parameterNamePrefix: $(this).attr("prefix"),
+                    parameterBindName: 'parameters',
+                    auxiliaryBindName: 'parameterOverrides',
+                    useAuxiliaryCheckbox: true,
+                    dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
+                    multivalued: false,
+                    messages: {
+                      remove: '<spring:message code="remove"/>',
+                      addValue: '<spring:message code="add.value"/>'
+                    }
+                  }
+              );
+          });
     </rs:compressJs></script>
 
-<div class="">
-    <h2><spring:message code="edit.calendar"/></h2>
+<div class="fl-widget portlet" role="section">
+
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading">
+            <spring:message code="edit.calendar"/>
+        </h2>
+    </div> <!-- end: portlet-titlebar -->
+
+    <div class="fl-widget-content content portlet-content" role="main">
 
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editCalendarDefinition"/></portlet:actionURL>
     <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
@@ -94,59 +64,54 @@
         </spring:hasBindErrors>
     
        	<form:hidden path="id"/>
-		<p>
-			<label class="portlet-form-field-label">
+        <form:hidden path="fname"/>
+        <form:hidden path="className"/>
+        
+        <table>
+            <tbody>
+		<tr>
+			<td><label class="portlet-form-field-label">
                 <spring:message code="calendar.name"/>:
-			</label>
-			<form:input path="name" size="50"/>
-		</p>
-        <p>
-            <label class="portlet-form-field-label">
-                <spring:message code="calendar.functional.name"/> <img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/information.png"/>" title="<spring:message code="unique.programmatic.name.for.this.calendar.instruction"/>" />:
-            </label>
-            <form:input path="fname" size="50"/>
-        </p>
-        <p>
-            <label class="portlet-form-field-label">
-                <spring:message code="calendar.type"/>:
-            </label>
-            <form:input path="className" size="50"/>
-		</p>
-		<br/>
-		<p id="<portlet:namespace/>role-list">
-			<label class="portlet-form-field-label"><spring:message code="default.roles"/>:</label><br />
-			<c:forEach items="${ calendarDefinitionForm.role }" var="role">
-				<div style="padding-left: 5px;">
-					<input name="role" type="text" value="${ role }" size="20"/>
-					<a class="upcal-delete" href="javascript:;" onclick="removeRole(this)">
-					   <spring:message code="delete"/>
-					</a>
-				</div>
-			</c:forEach>
-			<a class="upcal-add" href="javascript:;" onclick="addRole('<portlet:namespace/>role-list')">
+			</label></td>
+			<td><form:input path="name" size="50"/></td>
+		</tr>
+        <c:forEach items="${ adapter.parameters }" var="parameter">
+            <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>            
+            <tr>
+                <td><spring:message code="${ parameter.labelKey }"/></td>
+                <td>
+                    <editPreferences:preferenceInput input="${ parameter.input }" 
+                        path="${ paramPath }"/>
+                    <c:if test="${ not empty parameter.example }">
+                        <p>Example: ${ parameter.example }</p>
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+        <tr>
+            <td><label class="portlet-form-field-label"><spring:message code="default.roles"/></label></td>
+            <td id="<portlet:namespace/>role-list">
+            <c:forEach items="${ calendarDefinitionForm.role }" var="role">
+                <div style="padding-left: 5px;">
+                    <input name="role" type="text" value="${ role }" size="20"/>
+                    <a class="upcal-delete" href="javascript:;" onclick="removeRole(this)">
+                       <spring:message code="delete"/>
+                    </a>
+                </div>
+            </c:forEach>
+            <a class="upcal-add" href="javascript:;" onclick="addRole('<portlet:namespace/>role-list')">
                 <spring:message code="add.a.role"/>
             </a>
-		</p>
-		<div id="<portlet:namespace/>parameter-list">
-			<label class="portlet-form-field-label"><spring:message code="calendar.parameters"/>:</label><br />
-			<c:forEach items="${ calendarDefinitionForm.parameterName }" var="paramName" varStatus="status">
-				<div>
-					<input name="parameterName" type="text" value="${ paramName }" size="20"/>
-					<input name="parameterValue" type="text" value="${ calendarDefinitionForm.parameterValue[status.index] }" size="20"/>
-					<a class="upcal-delete" href="javascript:;" onclick="removeParameter(this)">
-					   <spring:message code="delete"/>
-					</a>
-				</div>
-			</c:forEach>
-			<a class="upcal-add" href="javascript:;" onclick="addParameter('<portlet:namespace/>parameter-list')">
-				<spring:message code="add.a.parameter"/>
-            </a>
-		</div>
-        <p>
+            </td>
+        </tr>
+        </tbody>
+        </table>        
+        
+        <div class="buttons">
             <button type="submit" class="portlet-form-button">
                 <spring:message code="save.calendar"/>
             </button>
-        </p>
+        </div>
     </form:form>
 
     <div class="upcal-view-links">

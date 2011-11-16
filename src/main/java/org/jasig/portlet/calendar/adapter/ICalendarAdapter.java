@@ -19,11 +19,14 @@
 
 package org.jasig.portlet.calendar.adapter;
 
+import java.util.List;
+
 import javax.portlet.PortletRequest;
 
 import net.fortuna.ical4j.model.Period;
 
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.form.parameter.Parameter;
 
 /**
  * ICalendarAdapter defines an interface for retrieving calendar event data.
@@ -33,6 +36,27 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
  * @author Jen Bourey
  */
 public interface ICalendarAdapter {
+    
+    /**
+     * Get the message key to be used as the title for this adapter.
+     * 
+     * @return
+     */
+    public String getTitleKey();
+    
+    /**
+     * Get the message key to be used as the description for this adapter.
+     * 
+     * @return
+     */
+    public String getDescriptionKey();
+    
+    /**
+     * Get the list of configuration parameters available for this adapter.
+     * 
+     * @return
+     */
+    public List<Parameter> getParameters();
 
 	/**
 	 * Get events for the defined calendar and time period.  The user's 

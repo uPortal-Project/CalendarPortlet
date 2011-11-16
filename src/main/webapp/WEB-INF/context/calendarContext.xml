@@ -49,31 +49,68 @@
     
     <!-- Aliases for depricated bean calendar names -->
     <alias name="httpRssAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter"/>
-    <alias name="httpIcalAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter"/>
+    <alias name="urlTemplateHttpIcalAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter"/>
+    <alias name="urlTemplateHttpIcalAdapter" alias="httpIcalAdapter"/>
     
-    <!-- Simple un-authenticated adapter for iCal-formatted calendars available via http(s) -->
-    <bean id="httpIcalAdapter" 
-        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache"/>
-
     <bean id="templateUrlCreator" class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/> 
     <bean id="urlTemplateHttpIcalAdapter"
         class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache" p:urlCreator-ref="templateUrlCreator"/>
+        p:cache-ref="calendarCache" p:urlCreator-ref="templateUrlCreator"
+        p:titleKey="unauthenticated.http.ical.feed" 
+        p:descriptionKey="remote.ical.feed.available.over.http.or.https">
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                        p:name="url" p:labelKey="feed.url">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                            p:display="TEXT" p:defaultValue="http://"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
     
     <!-- Simple un-authenticated adapter for RSS-formatted calendars available via http(s) -->
     <bean id="httpRssAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache" p:cacheKeyPrefix="rss">
+        p:cache-ref="calendarCache" p:cacheKeyPrefix="rss"
+        p:titleKey="unauthenticated.http.rss.feed" 
+        p:descriptionKey="remote.rss.feed.available.over.http.or.https">
         <property name="contentProcessor">
             <bean class="org.jasig.portlet.calendar.processor.RssContentProcessorImpl"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                        p:name="url" p:labelKey="feed.url">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                            p:display="TEXT" p:defaultValue="http://"/>
+                    </property>
+                </bean>
+            </list>
         </property>
     </bean>
     
     <!-- Simple adapter for iCal files available as files on the server -->	
     <bean id="fileIcalAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
-        p:cache-ref="calendarCache"/>
+        p:cache-ref="calendarCache"
+        p:titleKey="unauthenticated.file.ical.feed" 
+        p:descriptionKey="local.ical.feed.available.on.filesystem">
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                        p:name="file" p:labelKey="file.path">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                            p:display="TEXT" p:defaultValue=""/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
     <!--
      | EXCHANGE INTEGRATION SUPPORT
@@ -106,7 +143,7 @@
     </bean-->
 
     <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
-    <bean id="calDavAdapter" 
+    <!--bean id="calDavAdapter" 
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
         p:cache-ref="calendarCache">
         <property name="credentialsExtractor">
@@ -118,7 +155,7 @@
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
         </property>
-    </bean>
+    </bean-->
     
     
     <!--
@@ -154,13 +191,25 @@
     <!-- Sample CAS Proxy authenticated adapter for iCal-formatted calendars over https -->
     <bean id="casProxyHttpIcalAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache">
+        p:cache-ref="calendarCache" p:titleKey="proxycas.ical.feed" 
+        p:descriptionKey="remote.ical.feed.available.over.http.or.https">
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.CasProxyUrlCreatorImpl"
                 p:proxyTicketService-ref="casTicketService"/>
         </property>
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                        p:name="url" p:labelKey="feed.url">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                            p:display="TEXT" p:defaultValue="http://"/>
+                    </property>
+                </bean>
+            </list>
         </property>
     </bean>    
     

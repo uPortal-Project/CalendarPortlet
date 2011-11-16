@@ -57,7 +57,7 @@
 	
 	    <!-- Add Calendar -->
 	    <portlet:renderURL var="addCalendarUrl">
-	       <portlet:param name="action" value="editCalendarDefinition"/>
+	       <portlet:param name="action" value="createCalendarDefinition"/>
 	    </portlet:renderURL>
 	    <a class="upcal-add" href="${ addCalendarUrl }" 
 	           title="<spring:message code="add.a.calendar"/>">

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Period;
@@ -70,7 +69,7 @@ import com.microsoft.exchange.types.CalendarEvent;
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Header: CalDavCalendarAdapter.java Exp $
  */
-public class CalDavCalendarAdapter implements ICalendarAdapter {
+public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 

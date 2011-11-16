@@ -19,15 +19,22 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
+import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarDefinitionForm;
+import org.jasig.portlet.form.parameter.Parameter;
+import org.jasig.portlet.form.parameter.SingleValuedParameterInput;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,12 +62,47 @@ public class EditCalendarDefinitionController {
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
+	
+	private ApplicationContext context;
+	
+	@Autowired(required = true)
+	public void setApplicationContext(ApplicationContext context) {
+	    this.context = context;
+	}
+	
+	@Autowired
+	private Map<String, ICalendarAdapter> adapters;
+
+    @RequestMapping(params = "action=createCalendarDefinition")
+    public String showNewCalendarDefinitionForm(PortletRequest request, Model model){
+        if (!model.containsAttribute(FORM_NAME)) {
+            final CalendarDefinitionForm form = new CalendarDefinitionForm();
+            model.addAttribute(FORM_NAME, form);
+        }
+        model.addAttribute("adapters", adapters);
+        return "/createCalendarDefinition";
+    }
+
+    @RequestMapping(params = "action=createCalendarDefinition2")
+    public String showEditCalendarDefinitionForm2(PortletRequest request, Model model,
+            @ModelAttribute(FORM_NAME) CalendarDefinitionForm form){
+        ICalendarAdapter adapter = context.getBean(form.getClassName(), ICalendarAdapter.class);
+        for (Parameter pref : adapter.getParameters()) {
+            SingleValuedParameterInput input = (SingleValuedParameterInput) pref.getInput();
+            form.addParameter(pref.getName(), input.getDefaultValue());
+        }
+        model.addAttribute("adapter", context.getBean(form.getClassName()));
+        return "/editCalendarDefinition";
+    }
 
 	@RequestMapping(params = "action=editCalendarDefinition")
-	public String showCalendarDefinitionForm(PortletRequest request, Model model){
-		if (!model.containsAttribute(FORM_NAME)) {
-			model.addAttribute(FORM_NAME, getCalendarDefinitionForm(request));
+	public String showEditCalendarDefinitionForm(PortletRequest request, Model model){
+	    CalendarDefinitionForm form = (CalendarDefinitionForm) model.asMap().get(FORM_NAME);
+		if (form == null) {
+		    form = getCalendarDefinitionForm(request);
+			model.addAttribute(FORM_NAME, form);
 		}
+        model.addAttribute("adapter", context.getBean(form.getClassName(), ICalendarAdapter.class));
 		return "/editCalendarDefinition";
 	}
 
@@ -85,7 +127,11 @@ public class EditCalendarDefinitionController {
         definition.setDefaultRoles(form.getRole());
         definition.setName(form.getName());
         definition.setFname(form.getFname());
-        definition.setParameters(form.getParameters());
+        
+        ICalendarAdapter adapter = context.getBean(definition.getClassName(), ICalendarAdapter.class);
+        for (Parameter pref : adapter.getParameters()) {
+            definition.getParameters().put(pref.getName(), form.getParameters().get(pref.getName()).getValue());
+        }
 	
 		// save the calendar definition
 		calendarStore.storeCalendarDefinition(definition);
@@ -110,17 +156,38 @@ public class EditCalendarDefinitionController {
 				command.setClassName(definition.getClassName());
 				command.setRole(definition.getDefaultRoles());
 				command.addParameters(definition.getParameters());
+				ICalendarAdapter adapter = context.getBean(definition.getClassName(), ICalendarAdapter.class);
+	            for (Parameter pref : adapter.getParameters()) {
+	                SingleValuedParameterInput input = (SingleValuedParameterInput) pref.getInput();
+	                String value;
+	                if (definition.getParameters().containsKey(pref.getName())) {
+	                    value = definition.getParameters().get(pref.getName());
+	                } else {
+	                    value = input.getDefaultValue();
+	                }
+	                command.addParameter(pref.getName(), value);
+	            }
 				return command;
 			} else {
-				// otherwise, construct a brand new form
-				// create the form
-				return new CalendarDefinitionForm();
+			    final CalendarDefinitionForm form = new CalendarDefinitionForm();
+			    ICalendarAdapter adapter = adapters.get(0);
+			    for (Parameter pref : adapter.getParameters()) {
+			        SingleValuedParameterInput input = (SingleValuedParameterInput) pref.getInput();
+			        form.addParameter(pref.getName(), input.getDefaultValue());
+			    }
+			    return form;
 			}
 
 		} else {
 			// otherwise, construct a brand new form
 			// create the form
-			return new CalendarDefinitionForm();
+            final CalendarDefinitionForm form = new CalendarDefinitionForm();
+            ICalendarAdapter adapter = adapters.get(0);
+            for (Parameter pref : adapter.getParameters()) {
+                SingleValuedParameterInput input = (SingleValuedParameterInput) pref.getInput();
+                form.addParameter(pref.getName(), input.getDefaultValue());
+            }
+            return form;
 		}
 	}
 

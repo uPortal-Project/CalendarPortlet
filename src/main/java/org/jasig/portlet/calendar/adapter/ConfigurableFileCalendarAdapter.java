@@ -45,7 +45,7 @@ import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 
 
-public class ConfigurableFileCalendarAdapter implements ICalendarAdapter {
+public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 

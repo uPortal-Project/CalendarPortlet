@@ -72,7 +72,7 @@ import com.microsoft.exchange.types.TimeZone;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public class ExchangeCalendarAdapter implements ICalendarAdapter {
+public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
     protected final static String AVAILABILITY_SOAP_ACTION = "http://schemas.microsoft.com/exchange/services/2006/messages/GetUserAvailability";
     

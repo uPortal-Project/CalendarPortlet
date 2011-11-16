@@ -19,29 +19,31 @@
 
 package org.jasig.portlet.calendar.mvc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.commons.collections.map.LazyMap;
+import org.jasig.portlet.form.attribute.Attribute;
+import org.jasig.portlet.form.attribute.AttributeFactory;
 
 public class CalendarDefinitionForm {
 	
 	private Long id = new Long(-1);
 	
-//	@NotBlank
 	private String className;
 	
-//	@NotBlank
 	private String name;
 	
     private String fname;
 
     private Set<String> role = new HashSet<String>();
-	private List<String> parameterName = new ArrayList<String>();
-	private List<String> parameterValue = new ArrayList<String>();
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Attribute> parameters = LazyMap.decorate(
+            new HashMap<String, Attribute>(), new AttributeFactory());
 
 	public Long getId() {
 		return id;
@@ -83,48 +85,19 @@ public class CalendarDefinitionForm {
 		this.role = role;
 	}
 	
-	public List<String> getParameterName() {
-		return parameterName;
-	}
-
-	public void setParameterName(List<String> parameterName) {
-		this.parameterName = parameterName;
-	}
-
-	public List<String> getParameterValue() {
-		return parameterValue;
-	}
-
-	public void setParameterValue(List<String> parameterValue) {
-		this.parameterValue = parameterValue;
-	}
-
-	public void addParameter(Entry<String,String> entry) {
-		this.parameterName.add(entry.getKey());
-		this.parameterValue.add(entry.getValue());
+	public void addParameter(String name, String value) {
+	    this.parameters.put(name, new Attribute(value));
 	}
 	
 	public void addParameters(Map<String,String> map) {
 		Set<Entry<String,String>> entries = map.entrySet();
 		for (Entry<String,String> entry : entries) {
-			this.addParameter(entry);
+		    this.parameters.put(entry.getKey(), new Attribute(entry.getValue()));
 		}
 	}
 	
-	public Map<String,String> getParameters() {
-		
-		// create a new map to hold our parameters in
-		Map<String,String> map = new HashMap<String,String>();
-
-		// add each parameter to the map
-		int pos = 0;
-		for (String key : this.parameterName) {
-			map.put(key, this.parameterValue.get(pos));
-			pos++;
-		}
-		
-		return map;
-		
+	public Map<String,Attribute> getParameters() {
+	    return this.parameters;
 	}
 	
 }

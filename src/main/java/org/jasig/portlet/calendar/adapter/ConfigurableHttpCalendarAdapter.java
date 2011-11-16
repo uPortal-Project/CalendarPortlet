@@ -76,7 +76,7 @@ import com.microsoft.exchange.types.CalendarEvent;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RefactoredHttpICalendarAdapter.java Exp $
  */
-public final class ConfigurableHttpCalendarAdapter implements ICalendarAdapter {
+public final class ConfigurableHttpCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
