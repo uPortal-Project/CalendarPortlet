@@ -34,8 +34,19 @@ import com.microsoft.exchange.types.CalendarEvent;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: ContentProcessor.java Exp $
  */
-public interface IContentProcessor {
+public interface IContentProcessor<T> {
 
+    /**
+     * Implementations should not return null (at a minimum return
+     * Collections.emptySet()).
+     * 
+     * @param calendarId
+     * @param period
+     * @param in
+     * @return
+     */
+    public T getIntermediateCalendar(Long calendarId, Period period, InputStream in);
+    
 	/**
 	 * Implementations should not return null (at a minimum return
 	 * Collections.emptySet()).
@@ -45,6 +56,6 @@ public interface IContentProcessor {
 	 * @param in
 	 * @return
 	 */
-	Set<VEvent> getEvents(Long calendarId, Period period, InputStream in);
+	public Set<VEvent> getEvents(Long calendarId, Period period, T calendar);
 	
 }

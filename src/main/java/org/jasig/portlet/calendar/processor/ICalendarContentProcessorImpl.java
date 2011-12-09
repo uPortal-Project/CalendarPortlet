@@ -56,29 +56,33 @@ import org.jasig.portlet.calendar.adapter.CalendarException;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: ICalendarContentProcessorImpl.java Exp $
  */
-public class ICalendarContentProcessorImpl implements IContentProcessor {
+public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar> {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
+	
+	public Calendar getIntermediateCalendar(Long calendarId, Period period, InputStream in) {
+        try {
+            log.debug("begin getEvents");
+            CalendarBuilder builder = new CalendarBuilder(new CalendarParserImpl());
+            Calendar calendar = builder.build(in);
+            log.debug("calendar built");
+            return calendar;
+            
+        } catch (IOException e) {
+            log.error("IOException in getEvents", e);
+            throw new CalendarException("caught IOException", e);
+        } catch (ParserException e) {
+            log.error("ParserException in getEvents", e);
+            throw new CalendarException("caught ParserException", e);
+        }
+	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<VEvent> getEvents(Long calendarId, Period period, InputStream in) {
-		try {
-			log.debug("begin getEvents");
-			CalendarBuilder builder = new CalendarBuilder(new CalendarParserImpl());
-			Calendar calendar = builder.build(in);
-			log.debug("calendar built");
-			return convertCalendarToEvents(calendarId, calendar, period);
-			
-		} catch (IOException e) {
-			log.error("IOException in getEvents", e);
-			throw new CalendarException("caught IOException", e);
-		} catch (ParserException e) {
-			log.error("ParserException in getEvents", e);
-			throw new CalendarException("caught ParserException", e);
-		}
+	public Set<VEvent> getEvents(Long calendarId, Period period, Calendar calendar) {
+		return convertCalendarToEvents(calendarId, calendar, period);
 	}
 
 	/**

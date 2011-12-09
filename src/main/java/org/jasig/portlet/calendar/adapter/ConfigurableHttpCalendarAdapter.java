@@ -76,7 +76,7 @@ import com.microsoft.exchange.types.CalendarEvent;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RefactoredHttpICalendarAdapter.java Exp $
  */
-public final class ConfigurableHttpCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
+public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAdapter implements ICalendarAdapter {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
@@ -152,24 +152,54 @@ public final class ConfigurableHttpCalendarAdapter extends AbstractCalendarAdapt
 		
 		// try to get the cached calendar
 		Credentials credentials = credentialsExtractor.getCredentials(request);
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
-		Element cachedElement = this.cache.get(key);
+		
+		// 
+		String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
+
+		T calendar;
+        Element cachedCalendar = this.cache.get(intermediateCacheKey);
+        if (cachedCalendar == null) {
+            // read in the data
+            InputStream stream = retrieveCalendarHttp(url, credentials);
+            // run the stream through the processor
+            calendar = (T) contentProcessor.getIntermediateCalendar(
+                    calendarConfiguration.getId(), period, stream);
+
+            // save the VEvents to the cache
+            cachedCalendar = new Element(intermediateCacheKey, calendar);
+            this.cache.put(cachedCalendar);
+        } else {
+            calendar = (T) cachedCalendar.getValue();
+        }
+
+		// The cache key for retrieving a calendar over HTTP may not include
+		// the period, so we need to add the current period to the existing
+		// cache key.  This might result in the period being contained in the 
+		// key twice, but that won't hurt anything.
+		String processorCacheKey = getPeriodSpecificCacheKey(intermediateCacheKey, period);
+
+		Element cachedElement = this.cache.get(processorCacheKey);
 		if (cachedElement == null) {
-			// read in the data
-			InputStream stream = retrieveCalendarHttp(url, credentials);
-			// run the stream through the processor
-			Set<VEvent> events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
+			Set<VEvent> events = contentProcessor.getEvents(calendarConfiguration.getId(), period, calendar);
 			log.debug("contentProcessor found " + events.size() + " events");
 			
 			// save the VEvents to the cache
-			eventSet = new CalendarEventSet(key, events);
-            cachedElement = new Element(key, eventSet);
+			eventSet = new CalendarEventSet(processorCacheKey, events);
+            cachedElement = new Element(processorCacheKey, eventSet);
 			this.cache.put(cachedElement);
 		} else {
 			eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
 		return eventSet;
+	}
+	
+	protected String getPeriodSpecificCacheKey(String baseKey, Period period) {
+	    StringBuffer buf = new StringBuffer();
+	    buf.append(baseKey);
+	    buf.append(period.getStart().toString());
+	    buf.append(period.getEnd().toString());
+	    return buf.toString();
 	}
 
 	/* (non-Javadoc)

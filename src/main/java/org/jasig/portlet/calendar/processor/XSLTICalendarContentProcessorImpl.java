@@ -22,7 +22,6 @@ package org.jasig.portlet.calendar.processor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Set;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -31,8 +30,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,19 +60,11 @@ public class XSLTICalendarContentProcessorImpl extends ICalendarContentProcessor
 		this.xslFile = xslFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(
-	 * java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
-	 */
-	public Set<VEvent> getEvents(Long calendarId, Period period, InputStream in) {
-		// do xslt
-		InputStream ical = transformToICal(in);
-	        
-		return super.getEvents(calendarId, period, ical);
-	}
+	@Override
+	public Calendar getIntermediateCalendar(Long calendarId, Period period, InputStream in) {
+        InputStream ical = transformToICal(in);
+        return super.getIntermediateCalendar(calendarId, period, ical);
+    }
 
 	protected final InputStream transformToICal(InputStream in) throws CalendarException {
 

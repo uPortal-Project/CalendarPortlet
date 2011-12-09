@@ -83,7 +83,8 @@ public class ICalendarContentProcessorTest {
         IOUtils.copyLarge(in, buffer);
         
         TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
-        events.addAll(processor.getEvents(Long.valueOf((long) 3), period, new ByteArrayInputStream(buffer.toByteArray())));
+        net.fortuna.ical4j.model.Calendar c  = processor.getIntermediateCalendar(Long.valueOf((long) 3), period, new ByteArrayInputStream(buffer.toByteArray()));
+        events.addAll(processor.getEvents(Long.valueOf((long) 3), period, c));
         
         assertEquals(3, events.size());
         

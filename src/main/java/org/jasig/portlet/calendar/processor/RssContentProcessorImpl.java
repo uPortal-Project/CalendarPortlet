@@ -55,22 +55,35 @@ import com.sun.syndication.io.SyndFeedInput;
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RssContentProcessorImpl.java Exp $
  */
-public class RssContentProcessorImpl implements IContentProcessor {
+public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
+	   public SyndFeed getIntermediateCalendar(Long calendarId, Period period,
+	            InputStream in) {
+	        try {
+	            
+	            final SyndFeedInput input = new SyndFeedInput();
+	            final InputStreamReader reader = new InputStreamReader(in);
+	            final SyndFeed feed = input.build(reader);
+	            return feed;
+	            
+	        } catch (IllegalArgumentException e) {
+	            log.error(e);
+	        } catch (FeedException e) {
+	            log.error(e);
+	        }
+	        return null;
+	   }
+
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
 	public Set<VEvent> getEvents(Long calendarId, Period period,
-			InputStream in) {
+			SyndFeed feed) {
 		Set<VEvent> events = new HashSet<VEvent>();
 		
 		try {
-			final SyndFeedInput input = new SyndFeedInput();
-			final InputStreamReader reader = new InputStreamReader(in);
-			final SyndFeed feed = input.build(reader);
-			
 			@SuppressWarnings("unchecked")
 			List<SyndEntry> entries = (List<SyndEntry>) feed.getEntries();
 			for (SyndEntry entry : entries) {
@@ -113,8 +126,6 @@ public class RssContentProcessorImpl implements IContentProcessor {
 			}
 			
 		} catch (IllegalArgumentException e) {
-			log.error(e);
-		} catch (FeedException e) {
 			log.error(e);
 		}
 		
