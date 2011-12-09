@@ -63,6 +63,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
@@ -74,7 +75,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 	@ResourceMapping
 	public ModelAndView getEventList(ResourceRequest request,
-			ResourceResponse response) throws Exception {
+			ResourceResponse response, 
+			@RequestParam("startDate") String startDate,
+			@RequestParam("timePeriod") int days) throws Exception {
+	    
+	    long startTime = System.currentTimeMillis();
 		
 		PortletSession session = request.getPortletSession();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -106,7 +111,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
          */
 
         // get the period for this request
-		Period period = getPeriod(request);
+		Period period = getPeriod(request, startDate, days);
 
 		// get the user's configured time zone
         String timezone = (String) session.getAttribute("timezone");
@@ -214,91 +219,59 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		model.put("errors", errors);
 
 		String etag = String.valueOf(model.hashCode());
-        if (request.getETag() != null && etag.equals(request.getETag())) {
-            response.getCacheControl().setExpirationTime(300);
+		String requestEtag = request.getETag();
+		
+		// if the request ETag matches the hash for this response, send back
+		// an empty response indicating that cached content should be used
+        if (request.getETag() != null && etag.equals(requestEtag)) {
+            response.getCacheControl().setExpirationTime(1);
             response.getCacheControl().setUseCachedContent(true);
-            return null;
+            // returning null appears to cause the response to be committed
+            // before returning to the portal, so just use an empty view
+            return new ModelAndView("empty", Collections.<String,String>emptyMap());
         }
         
         // create new content with new validation tag
         response.getCacheControl().setETag(etag);
-        response.getCacheControl().setExpirationTime(300);
+        response.getCacheControl().setExpirationTime(1);
+        
+        long overallTime = System.currentTimeMillis() - startTime;
+        log.debug("AjaxCalendarController took " + overallTime + " ms to produce JSON model");
 
         return new ModelAndView("json", model);
 	}
 	
 	
-	protected Period getPeriod(ResourceRequest request) {
+	protected Period getPeriod(ResourceRequest request, String startDate, int days) throws ParseException {
 		
 		PortletSession session = request.getPortletSession();
-		PortletPreferences prefs = request.getPreferences();
 		
 		// if the user requested a specific date, use it instead
 		Calendar cal = null;
         String timezone = (String) session.getAttribute("timezone");
         TimeZone tz = TimeZone.getTimeZone(timezone);
         
-		Date startDate = (Date) session.getAttribute("startDate");
 		DateFormat df = new SimpleDateFormat("MM'/'dd'/'yyyy");
 		df.setTimeZone(tz);
-		String requestedDate = (String) request.getParameter("startDate");
-		if (requestedDate != null && !requestedDate.equals("")) {
-			try {
-                startDate = df.parse(requestedDate);
-                cal = Calendar.getInstance(tz);
-                cal.setTime(startDate);
-        	    cal.set(Calendar.HOUR_OF_DAY, 0);
-        	    cal.set(Calendar.MINUTE, 0);
-        	    cal.set(Calendar.SECOND, 0);
-        	    cal.set(Calendar.MILLISECOND, 1);
-                startDate = cal.getTime();
-                session.setAttribute("startDate", cal.getTime());
-			} catch (ParseException ex) {
-				log.warn("Failed to parse starting date for event", ex);
-			}
-		}
+        Date start = df.parse(startDate);
+        cal = Calendar.getInstance(tz);
+        cal.setTime(start);
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 1);
+        start = cal.getTime();
+        log.debug("start date: " + cal);
 
-        if (cal == null) {
-            cal = Calendar.getInstance(tz);
-            cal.setTime((Date) session.getAttribute("startDate"));
-    	    cal.set(Calendar.HOUR_OF_DAY, 0);
-    	    cal.set(Calendar.MINUTE, 0);
-    	    cal.set(Calendar.SECOND, 0);
-    	    cal.set(Calendar.MILLISECOND, 1);
-	    }
-	    
-	    startDate = cal.getTime();
-	    log.debug("start date: " + cal);
-
-		// find how many days into the future we should display events
-		int days = (Integer) session.getAttribute("days");
-		String timePeriod = (String) request.getParameter("timePeriod");
-		if (timePeriod != null && !timePeriod.equals("")) {
-			try {
-				days = Integer.parseInt(timePeriod);
-				session.setAttribute("days", days);
-
-                if ( prefs.isReadOnly( "days" ) == false ) {
-                    prefs.setValue( "days", Integer.toString( days ) );
-                    prefs.store();
-                }
-            } catch (NumberFormatException ex) {
-                log.warn("Failed to parse desired time period", ex);
-            } catch (ReadOnlyException ex) {
-                log.error("Failed to set 'days' preference because it is read only", ex);
-            } catch (IOException ex) {
-                log.warn("Failed to store the 'days' preference", ex);
-            } catch (ValidatorException ex) {
-                log.warn("Failed to store the 'days' preference", ex);
-            }
-		}
+        session.setAttribute("startDate", cal.getTime());
+        session.setAttribute("days", days);
 
         // set the end date based on our desired time period
         cal.add(Calendar.DATE, days);
         cal.set(Calendar.MILLISECOND, 1);
         Date endDate = cal.getTime();
 
-		return new Period(new DateTime(startDate), new DateTime(
+		return new Period(new DateTime(start), new DateTime(
 				endDate));
 	}
 	

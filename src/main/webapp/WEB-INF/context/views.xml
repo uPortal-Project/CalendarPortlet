@@ -31,4 +31,9 @@
         class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"
         p:disableCaching="false"/>
 
+    <!-- Empty view -->
+    <bean name="empty" 
+        class="org.jasig.portlet.calendar.mvc.EmptyView"/>
+
+
 </beans>
