@@ -29,6 +29,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.portlet.calendar.util.AllDayUtil;
 
 /**
@@ -179,6 +180,7 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 				.toComparison();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof JsonCalendarEvent)) {
 			return false;
@@ -192,6 +194,15 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
                 // rise to a ClassCastException if it's actually tested. 
 				// .append(this.event.getUid(), event.event.getUid())
 				.isEquals();
+	}
+	
+	@Override
+	public int hashCode() {
+	    return new HashCodeBuilder(17, 31)
+	        .append(this.dayStart)
+	        .append(this.dayEnd)
+	        .append(this.getSummary())
+	        .toHashCode();
 	}
 
 }

@@ -55,4 +55,9 @@ public class JsonCalendarEventWrapper implements Comparable<JsonCalendarEventWra
         return this.event.equals(o);
     }
 
+    @Override
+    public int hashCode() {
+        return this.event.hashCode();
+    }
+
 }
