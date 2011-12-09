@@ -190,18 +190,19 @@
 </div>
 
 <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
-    <c:if test="${ !usePortalJsLibs }">
+    <c:if test="${ !model.usePortalJsLibs }">
         <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
     </c:if>
 
     <script type="text/javascript"><rs:compressJs>
         var ${n} = ${n} || {};
         <c:choose>
-            <c:when test="${!usePortalJsLibs}">
+            <c:when test="${!model.usePortalJsLibs}">
                 ${n}.jQuery = jQuery.noConflict(true);
             </c:when>
             <c:otherwise>
-                ${n}.jQuery = ${portalJsNamespace ? portalJsNamespace + '.' : ''}jQuery;
+                <c:set var="ns"><c:if test="${ not empty model.portalJsNamespace }">${ model.portalJsNamespace }.</c:if></c:set>
+                ${n}.jQuery = ${ ns }jQuery;
             </c:otherwise>
         </c:choose>
         ${n}.jQuery(function() {

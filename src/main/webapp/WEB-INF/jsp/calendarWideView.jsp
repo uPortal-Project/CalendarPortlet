@@ -24,25 +24,25 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<c:if test="${ !usePortalJsLibs }">
+<c:if test="${ !model.usePortalJsLibs }">
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
 </c:if>
 <script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
-
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
     <c:choose>
-        <c:when test="${!usePortalJsLibs}">
+        <c:when test="${!model.usePortalJsLibs}">
             ${n}.jQuery = jQuery.noConflict(true);
             ${n}.fluid = fluid;
             fluid = null; 
             fluid_1_4 = null;
         </c:when>
         <c:otherwise>
-            ${n}.jQuery = ${portalJsNamespace ? portalJsNamespace + '.' : ''}jQuery;
-            ${n}.fluid = ${portalJsNamespace ? portalJsNamespace + '.' : ''}fluid;
+            <c:set var="ns"><c:if test="${ not empty model.portalJsNamespace }">${ model.portalJsNamespace }.</c:if></c:set>
+            ${n}.jQuery = ${ ns }jQuery;
+            ${n}.fluid = ${ ns }fluid;
         </c:otherwise>
     </c:choose>
     if (!cal.initialized) cal.init(${n}.jQuery, ${n}.fluid);
