@@ -73,14 +73,14 @@
                 changeYear: false,
                 defaultDate: date,
                 onSelect: function(date) {
-                    calView.updateEventList(date, days);
+                    calView.updateEventList(date, calView.options.days);
                 } 
             }
         );
 
         $("#${n}container .upcal-range-day a").click(function(){
             days = $(this).attr("days");
-            calView.updateEventList(date, days);
+            calView.updateEventList(calView.options.startDate, days);
             $(".upcal-range-day a").removeClass("selected-range");
             $(this).addClass("selected-range");
         });
@@ -169,18 +169,23 @@
         <div class="upcal-events">
             <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
                 <div class="portlet-msg-error upcal-errors">
-                    <div class="upcal-error"></div>
+                    <div class="upcal-error"><span class="upcal-error-message">Error Message</span></div>
+                </div>
+                <div class="portlet-msg-info upcal-noevents">
+                    <p>No events</p>
                 </div>
                 <div class="day">
                     <h2 class="dayName">Today</h2>
-                        <div class="upcal-event">
-                            <div class="upcal-event-cal">
-                                <span></span>
+                        <div class="upcal-event-wrapper">
+                            <div class="upcal-event">
+                                <div class="upcal-event-cal">
+                                    <span></span>
+                                </div>
+                                <span class="upcal-event-time">All Day</span>
+                                <h3 class="upcal-event-title">
+                                    <a class="upcal-event-link" href="javascript:;">Event Summary</a>
+                                </h3>
                             </div>
-                            <span class="upcal-event-time">All Day</span>
-                            <h3 class="upcal-event-title">
-                                <a class="upcal-event-link" href="javascript:;">Event Summary</a>
-                            </h3>
                         </div>
                 </div>
             </div>

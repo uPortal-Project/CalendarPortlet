@@ -79,7 +79,7 @@
                 changeYear: false,
                 defaultDate: date,
                 onSelect: function(date) {
-                    calView.updateEventList(date, days);
+                    calView.updateEventList(date, calView.options.days);
                 } 
             }
         );
@@ -95,28 +95,30 @@
 	    
 	    <!-- Calendar Events List -->
 	    <div class="upcal-loading-message portlet-msg-info portlet-msg info">
-            <p><spring:message code="eventlist.loading"/></p>
+            <p><spring:message code="loading"/></p>
         </div>
 	    <div class="upcal-events">
 	        <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
 	            <div class="portlet-msg-error upcal-errors">
-	                <div class="upcal-error"></div>
+	                <div class="upcal-error"><span class="upcal-error-message"></span></div>
 	            </div>
-                <div class="portlet-msg-info upcal-noevents" style="display:none">
+                <div class="portlet-msg-info upcal-noevents">
                     <p>No events</p>
                 </div>
 	            <div class="day">
 	                <h2 class="dayName">Today</h2>
-	                    <div class="upcal-event">
-	                        <!--div class="upcal-event-cal">
-	                            <span></span>
-	                        </div-->
-	                        <div class="upcal-event-time">All Day</div>
-	                        <a class="upcal-event-link" href="javascript:;">
-		                        <h3 class="upcal-event-title">
-		                            Event Summary
-		                        </h3>
-	                        </a>
+                        <div class="upcal-event-wrapper">
+    	                    <div class="upcal-event">
+    	                        <!--div class="upcal-event-cal">
+    	                            <span></span>
+    	                        </div-->
+    	                        <div class="upcal-event-time">All Day</div>
+    	                        <a class="upcal-event-link" href="javascript:;">
+    		                        <h3 class="upcal-event-title">
+    		                            Event Summary
+    		                        </h3>
+    	                        </a>
+                            </div>
 	                    </div>
 	            </div>
 	        </div>

@@ -16,282 +16,311 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 var cal = cal || {};
 if (!cal.init) {
+    
     cal.init = function ($, fluid) {
-    
-        cal.EventDetailView = function(container, overallThat, options) {
-            var that = fluid.initView("cal.EventDetailView", container, options);
-            that.state = {};
-            
-            var cutpoints = [
-                { id: "eventSummary", selector:that.options.selectors.eventSummary },
-                { id: "eventDay", selector: that.options.selectors.eventDay },
-                { id: "eventTime", selector: that.options.selectors.eventTime },
-                { id: "eventLocationDiv:", selector: that.options.selectors.eventLocationDiv },
-                { id: "eventLocation", selector: that.options.selectors.eventLocation },
-                { id: "eventDescriptionDiv:", selector: that.options.selectors.eventDescriptionDiv },
-                { id: "eventDescription", selector: that.options.selectors.eventDescription },
-                { id: "eventLinkDiv:", selector: that.options.selectors.eventLinkDiv },
-                { id: "eventLink", selector: that.options.selectors.eventLink }
-            ];
-            
-            that.showEvent = function (event) {
-                
-                var date = event.startDate;
-                
-                var time = event.startTime;
-                if (event.multiDay) {
-                    date += " - " + event.endDate;
-                    time = event.startTime + " - " + event.endTime + " " + event.endDate;
-                } else if (event.allDay) {
-                    time = overallThat.options.messages.allDay;
-                } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) {
-                    time = event.startTime + " - " + event.endTime;
-                } else {
-                    time = event.startTime;
-                }
-                
-            	var tree = { 
-            		children: [
-            		    { ID: "eventSummary", value: event.summary },
-                        { ID: "eventDay", value: date },
-                        { ID: "eventTime", value: time }
-            		] 
-            	};
-    
-                if (event.location) {
-                    tree.children.push({
-                        ID: "eventLocationDiv:",
-                        children: [
-                            { ID: "eventLocation", value: event.location }
-                        ]
-                    });
-                }
-    
-            	if (event.description) {
-            	    tree.children.push({
-            	        ID: "eventDescriptionDiv:",
-            	        children: [
-            	            { ID: "eventDescription", value: event.description }
-            	        ]
-            	    });
-            	}
-    
-                if (event.url) {
-                    tree.children.push({
-                        ID: "eventLinkDiv:",
-                        children: [
-                            { ID: "eventLink", value: event.url, target: event.url }
-                        ]
-                    });
-                }
-    
-                if (that.state.templates) {
-                    fluid.reRender(that.state.templates, $(container), tree, { cutpoints: cutpoints });
-                } else {
-                    that.state.templates = fluid.selfRender($(container), tree, { cutpoints: cutpoints });
-                }        	
-            	
-            };
-            
-            return that;
-        	
-        };
-    
-        fluid.defaults("cal.EventDetailView", {
-            selectors: {
-            	eventSummary: ".upcal-event-detail-summary",
-            	eventDay: ".upcal-event-detail-day",
-            	eventTime: ".upcal-event-detail-starttime",
-            	eventLocationDiv: ".upcal-event-detail-loc-div",
-            	eventLocation: ".upcal-event-detail-loc",
-            	eventDescriptionDiv: ".upcal-event-detail-desc-div",
-            	eventDescription: ".upcal-event-detail-desc",
-            	eventLinkDiv: ".upcal-event-detail-link-div",
-            	eventLink: ".upcal-event-detail-link"
-            }
-        });
-    
-        cal.EventListView = function(container, overallThat, options) {
-            var that = fluid.initView("cal.EventListView", container, options);
-    
-    		that.state = {};
-    
-        	var cutpoints = [
-                { id: "errors:", selector: that.options.selectors.errors },
-        	    { id: "error:", selector: that.options.selectors.error },
-        		{ id: "day:", selector: that.options.selectors.day },
-        		{ id: "dayName", selector: that.options.selectors.dayName },
-        		{ id: "event:", selector: that.options.selectors.event },
-        		{ id: "eventTime", selector: that.options.selectors.eventTime },
-        		{ id: "eventLink", selector: that.options.selectors.eventLink }
-        	];
-        	
-        	that.showEventList = function (dateMap, dateNames, errors) {
-    	        var tree = { children: [] };
-    
-    	        if ($(errors).size() > 0) {
-    	            var errorTree = { ID: "errors:", children: [] };
-    	            $(errors).each(function (idx, error){
-    	                errorTree.children.push(
-    	                    { ID: "error:", value: error }
-    	                );
-    	            });
-    	            tree.children.push(errorTree);
-    	        }
-    	        
-    	        for (date in dateMap) {
-    	        	var wrappers = dateMap[date];
-    	    		var day = {
-    	    			ID: "day:",
-    	    			children: [
-    	    			    { ID: "dayName", value: dateNames[date] }
-    	    		    ]
-    	    		};
-    	    		$(wrappers).each(function (idx, wrapper){
-    	    		    var event = wrapper.event;
-    	    		    var time;
-    	    		    
-    	    		    if (event.allDay) {
-    	    		        time = overallThat.options.messages.allDay;
-    	    		    } else if (that.options.showEndTime && event.dateEndTime && (event.dateEndTime != event.dateStartTime || event.startDate  != event.endDate ) ) {
-    	    		        time = event.dateStartTime + " - " + event.dateEndTime;
-    	    		    } else {
-    	    		        time = event.dateStartTime;
-    	    		    }
-    	    		    
-    	    			day.children.push({
-    	    				ID: "event:",
-    	    				decorators: [
-    	    				    { type: "addClass", classes: "upcal-color-" + wrapper.colorIndex }
-    	    				],
-    	    				children: [
-    	    				    { ID: "eventTime", value: time },
-    	    				    { 
-    	    				        ID: "eventLink", 
-    	    				        value: event.summary,
-    	                            decorators: [
-                                         { type: "jQuery", func: "click",
-                                             args: function () {
-                                                 overallThat.eventDetailView.showEvent(event);
-                                                 overallThat.locate("hideOnEvent").hide();
-                                                 overallThat.locate("hideOnCalendar").show();
-                                             }
-                                         }
-                                     ] 
-    
-    	    				    }
-    	    				]
-    	    			});
-    	    		});
-    	    		tree.children.push(day);
-    	    	}
-    			
-    	        if (that.state.templates) {
-    	            fluid.reRender(that.state.templates, $(container), tree, { cutpoints: cutpoints });
-    	        } else {
-    	            that.state.templates = fluid.selfRender($(container), tree, { cutpoints: cutpoints });
-    	        }
-    	        
-    	        if (that.locate("event").size() == 0) {
-    	            that.locate("noEventsMessage").show();
-    	        } else {
-                    that.locate("noEventsMessage").hide();
-    	        }
-        	}
-    
-        	return that;
-        };
-    
-        fluid.defaults("cal.EventListView", {
-        	dateMap: null,
-        	showEndTime: true,
-            selectors: {
-                errors: ".upcal-errors",
-                error: ".upcal-error",
-            	day: ".day",
-            	dayName: ".dayName",
-            	event: ".upcal-event",
-            	eventTime: ".upcal-event-time",
-            	eventLink: ".upcal-event-link",
-                noEventsMessage: '.upcal-noevents'
-            }
-        });
-    
-        //start of creator function
-    
-        /**
-         * Calendar view creator function
-         * 
-         * see http://wiki.fluidproject.org/display/fluid/The+creator+function
-         */
-        cal.CalendarView = function(container, options) {
-            var that = fluid.initView("cal.CalendarView", container, options);
-            that.eventListView = fluid.initSubcomponent(that, "eventListView", [that.locate("eventList"), that, fluid.COMPONENT_OPTIONS]);
-            that.eventDetailView = fluid.initSubcomponent(that, "eventDetailView", [that.locate("eventDetail"), that, fluid.COMPONENT_OPTIONS]);
-            
-            /**
-             * Update the event list to include the specified start date and 
-             * number of days
-             */
-            that.updateEventList = function(startDate, days) {
-                
-                // update the state
-                that.options.startDate = startDate;
-                that.options.days = days;
-                
-                that.locate("eventList").hide();
-                that.locate("loadingMessage").show();
-                $.get(that.options.eventsUrl,
-                    { startDate: startDate, timePeriod: days }, 
-                    function(json) {
-                        that.locate("loadingMessage").hide();
-                        that.locate("eventList").show();
-                        that.eventListView.options.dateMap = json.dateMap;
-                        that.eventListView.showEventList(json.dateMap, json.dateNames, json.errors);
-                    }, "json"
-                );        
-            };
-            
-            that.updateEventList(that.options.startDate, that.options.days);
-            that.locate("returnToCalendarLink").click(function(){ 
-                that.locate("hideOnEvent").show();
-                that.locate("hideOnCalendar").hide();
-            });
-            return that;
-        };
-    
-        //end of creator function
         
-        //start of defaults
-    
+        var updateModel = function (that, json) {
+            that.model.dates = [];
+            that.model.events = [];
+            that.model.errors = json.errors;
+            for (var date in json.dateMap) {
+                var dateObj = { name: json.dateNames[date], events: [] };
+                $(json.dateMap[date]).each(function(idx, event) {
+                    var ev = event.event;
+                    var date = ev.startDate;                
+                    var time = ev.startTime;
+                    if (ev.multiDay) {
+                        date += " - " + ev.endDate;
+                        time = ev.startTime + " - " + ev.endTime + " " + ev.endDate;
+                    } else if (ev.allDay) {
+                        time = that.options.messages.allDay;
+                    } else if (ev.endTime && (ev.endTime != ev.startTime || ev.startDate  != ev.endDate ) ) {
+                        time = ev.startTime + " - " + ev.endTime;
+                    } else {
+                        time = ev.startTime;
+                    }
+                    ev.dateString = date;
+                    ev.timeString = time;
+                    ev.cssClass = "upcal-color-" + event.colorIndex;
+                
+                    that.model.events.push(ev);
+                    dateObj.events.push(ev);
+                });
+                that.model.dates.push(dateObj);
+            }
+            if (that.model.events.length > 0) {
+                that.model.event = that.model.events[0];
+            } else {
+                that.model.event = {};
+            }
+            console.log(that.model);
+        };
+        
         fluid.defaults("cal.CalendarView", {
+            gradeNames: ["fluid.viewComponent", "autoInit"],
             startDate: null,
             eventsUrl: null,
             days: 7,
-            eventListView: {
-                type: "cal.EventListView"
-            },
-            eventDetailView: {
-                type: "cal.EventDetailView"
+            messages: {
+                allDay: "All Day"
             },
             selectors: {
+                eventListContainer: ".upcal-event-list",
+                eventDetailContainer: ".upcal-event-details",
                 hideOnEvent: '.upcal-hide-on-event',
                 hideOnCalendar: '.upcal-hide-on-calendar',
-                eventList: '.upcal-event-list',
-                eventDetail: '.upcal-event-details',
-                calendarEvent: '.upcal-event-detail',
-                calendarEventLink: '.upcal-event-link',
                 returnToCalendarLink: '.upcal-view-return',
                 loadingMessage: '.upcal-loading-message'
             },
-            messages: {
-                allDay: "All Day"
+            events: {
+                onReady: null,
+                onUpdateTimePeriod: null,
+                onLoadEventList: null,
+                onEventSelect: null,
+                onEventReturn: null,
+                showEvent: { 
+                    event: "onEventSelect",
+                    args: [ "{CalendarView}", "{arguments}.0" ]
+                },
+                showCalendar: { 
+                    event: "onEventReturn",
+                    args: [ "{CalendarView}" ]
+                }
+            },
+            listeners: {
+                showEvent: function (that, eventIndex) {
+                    that.locate("hideOnEvent").hide();
+                    that.locate("hideOnCalendar").show();
+                },
+                showCalendar: function (that) {
+                    that.locate("hideOnEvent").show();
+                    that.locate("hideOnCalendar").hide();
+                }
+            },
+            components: {
+                EventListView: {
+                    type: "cal.EventListView",
+                    createOnEvent: "onReady",
+                    container: "{CalendarView}.dom.eventListContainer",
+                    options: {
+                        model: "{CalendarView}.model",
+                        events: {
+                            onLoadEventList: "{CalendarView}.events.onLoadEventList",
+                            onEventSelect: "{CalendarView}.events.onEventSelect",
+                            onEventReturn: "{CalendarView}.events.onEventReturn"
+                        }
+                    }
+                },
+                EventDetailView: {
+                    type: "cal.EventDetailView",
+                    createOnEvent: "onReady",
+                    container: "{CalendarView}.dom.eventDetailContainer",
+                    options: {
+                        model: "{CalendarView}.model",
+                        events: {
+                            onEventSelect: "{CalendarView}.events.onEventSelect",
+                            onEventReturn: "{CalendarView}.events.onEventReturn"
+                        }
+                    }
+                }
+            },
+            finalInitFunction: function(that) {
+                that.updateEventList = function (startDate, days) {
+                    that.locate("loadingMessage").show();
+                    $.get(that.options.eventsUrl,
+                        { startDate: startDate, timePeriod: days }, 
+                        function(json) {
+                            updateModel(that, json);
+                            that.options.startDate = startDate;
+                            that.options.days = days;
+                            that.locate("loadingMessage").hide();
+                            that.events.onLoadEventList.fire();
+                            that.events.onEventReturn.fire();
+                        }, "json"
+                    );
+                };
+                
+                that.locate("returnToCalendarLink").live("click", function () {
+                    that.events.onEventReturn.fire();
+                });
+
+                $.get(that.options.eventsUrl,
+                    { startDate: that.options.startDate, timePeriod: that.options.days }, 
+                    function(json) {
+                        updateModel(that, json);
+                        that.events.onReady.fire();
+                        that.events.onLoadEventList.fire();
+                        that.events.onEventReturn.fire();
+                        that.locate("loadingMessage").hide();
+                    }, "json"
+                );
             }
         });
-
-        cal.initialized = true;
+        
+        fluid.defaults("cal.EventListView", {
+            gradeNames: ["fluid.rendererComponent", "autoInit"],
+            renderOnInit: true,
+            selectors: {
+                errors: ".upcal-errors",
+                error: ".upcal-error",
+                errorMessage: ".upcal-error-message",
+                day: ".day",
+                dayName: ".dayName",
+                eventWrapper: ".upcal-event-wrapper",
+                event: ".upcal-event",
+                eventTime: ".upcal-event-time",
+                eventLink: ".upcal-event-link",
+                noEventsMessage: '.upcal-noevents'
+            },
+            events: {
+                onLoadEventList: null,
+                refreshList: {
+                    event: "onLoadEventList",
+                    args: [ "{EventListView}" ]
+                }
+            },
+            listeners: {
+                refreshList: function(that) {
+                    that.refreshView();
+                },
+            },
+            repeatingSelectors: [ "day", "eventWrapper", "error" ],
+            // renderer proto-tree defining how data should be bound
+            protoTree: {
+                expander: [{
+                    type: "fluid.renderer.condition",
+                    condition: { funcName: "cal.truthy", args: "${errors}" },
+                    trueTree: {
+                        errors: {
+                        },
+                        expander: {
+                            type: "fluid.renderer.repeat",
+                            repeatID: "error",
+                            controlledBy: "errors",
+                            pathAs: "error",
+                            tree: {
+                                errorMessage: { value: "${{error}}" }
+                            }
+                        }
+                    }
+                },
+                { 
+                    type: "fluid.renderer.condition",
+                    condition: { funcName: "cal.truthy", args: "${events}" },
+                    falseTree: {
+                        noEventsMessage: {}
+                    }
+                },
+                {
+                    type: "fluid.renderer.repeat",
+                    repeatID: "day",
+                    controlledBy: "dates",
+                    pathAs: "day",
+                    tree: {
+                        dayName: { value: "${{day}.name}" },
+                        expander: {
+                            type: "fluid.renderer.repeat",
+                            repeatID: "eventWrapper",
+                            controlledBy: "{day}.events",
+                            pathAs: "event",
+                            valueAs: "eventValue",
+                            tree: {
+                                event: {
+                                    decorators: [
+                                         { type: "addClass", classes: "{eventValue}.cssClass" }
+                                     ]
+                                },
+                                eventTime: { value: "${{event}.timeString}" },
+                                eventLink: { target: "javascript:;", linktext: "${{event}.summary}" },
+                            }
+                        }
+                    }
+                }]
+            },
+            finalInitFunction: function (that) {
+                that.locate("eventLink").live("click", function () {
+                    var link = $(this);
+                    var eventDiv = $(link.parents(that.options.selectors.event).get(0));
+                    var eventIndex = eventDiv.index(that.options.selectors.event);
+                    that.events.onEventSelect.fire(that.model.events[eventIndex]);
+                });
+                
+            }
+        });
+        
+        cal.truthy = function(arr) {
+            return (arr ? true : false);
+        }
+        
+        fluid.defaults("cal.EventDetailView", {
+            gradeNames: ["fluid.rendererComponent", "autoInit"],
+            renderOnInit: true,
+            events: {
+                onEventSelect: null,
+                onShowEvent: {
+                    event: "onEventSelect",
+                    args: [ "{EventDetailView}", "{arguments}.0" ]
+                }
+            },
+            listeners: {
+                onShowEvent: function(that, event) {
+                    that.model.event = event;
+                    that.refreshView();
+                },
+            },
+          selectors: {
+                eventSummary: ".upcal-event-detail-summary",
+                eventDay: ".upcal-event-detail-day",
+                eventTime: ".upcal-event-detail-starttime",
+                eventLocationDiv: ".upcal-event-detail-loc-div",
+                eventLocation: ".upcal-event-detail-loc",
+                eventDescriptionDiv: ".upcal-event-detail-desc-div",
+                eventDescription: ".upcal-event-detail-desc",
+                eventLinkDiv: ".upcal-event-detail-link-div",
+                eventLink: ".upcal-event-detail-link"
+            },
+            protoTree: {
+                eventSummary: { value: "${event.summary}" },
+                eventDay: { value: "${event.dateString}" },
+                eventTime: { value: "${event.timeString}" },
+                expander: [{
+                    type: "fluid.renderer.condition",
+                    condition: "${event.description}",
+                    trueTree: {
+                        eventDescriptionDiv: {
+                        },
+                        eventDescription: {
+                            value: "${event.description}"
+                        }
+                    }
+                },
+                {
+                    type: "fluid.renderer.condition",
+                    condition: "${event.location}",
+                    trueTree: {
+                        eventLocationDiv: {
+                        },
+                        eventLocation: {
+                            value: "${event.location}"
+                        }
+                    }
+                },
+                {
+                    type: "fluid.renderer.condition",
+                    condition: "${event.link}",
+                    trueTree: {
+                        eventLinkDiv: {
+                        },
+                        eventLink: {
+                            value: "${event.link}"
+                        }
+                    }
+                }]
+            }
+        });
+        
     };
-}
+    
+};

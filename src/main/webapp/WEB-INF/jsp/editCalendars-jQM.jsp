@@ -60,7 +60,15 @@
 </div>
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
-    ${n}.jQuery = jQuery.noConflict(true);
+    <c:choose>
+        <c:when test="${!model.usePortalJsLibs}">
+            ${n}.jQuery = jQuery.noConflict(true);
+        </c:when>
+        <c:otherwise>
+            <c:set var="ns"><c:if test="${ not empty model.portalJsNamespace }">${ model.portalJsNamespace }.</c:if></c:set>
+            ${n}.jQuery = ${ ns }jQuery;
+        </c:otherwise>
+    </c:choose>
     ${n}.jQuery(function(){
         var $ = ${n}.jQuery;
         var newUrl = '${ newUrl }';
