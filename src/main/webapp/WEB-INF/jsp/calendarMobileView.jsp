@@ -93,7 +93,7 @@
 	                <div class="upcal-error"></div>
 	            </div>
                 <div class="portlet-msg-info upcal-noevents" style="display:none">
-                    <p>No events</p>
+                    <p><spring:message code="eventlist.noevents"/></p>
                 </div>
 	            <div class="day">
 	                <h2 class="dayName">Today</h2>
