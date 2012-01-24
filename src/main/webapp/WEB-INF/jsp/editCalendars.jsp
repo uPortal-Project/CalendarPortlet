@@ -26,19 +26,14 @@
 
 <div class="upcal-editview">
 
-<div class="upcal-edit-links">
-    <portlet:renderURL var="preferencesUrl"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-    <a href="${ preferencesUrl }" title="<spring:message code="preferences.link.title"/>">
-        <spring:message code="preferences.link.text"/>
-    </a>
-    <c:if test="${ sessionScope.isAdmin }">
-        <span class="upcal-pipe">|</span>
+<c:if test="${ sessionScope.isAdmin }">
+	<div class="upcal-edit-links">
         <portlet:renderURL var="adminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
         <a href="${ adminUrl }" title="<spring:message code="administration.link.title"/>">
             <spring:message code="administration.link.text"/>
         </a>
-    </c:if>
-</div>
+	</div>
+</c:if>
 
 <h2><spring:message code="view.useredit.header"/></h2>
 
