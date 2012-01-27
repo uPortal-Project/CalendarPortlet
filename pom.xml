@@ -272,7 +272,7 @@
             <dependency>
                 <groupId>org.osaf</groupId>
                 <artifactId>caldav4j</artifactId>
-                <version>0.6.1</version>
+                <version>0.7</version>
                 <exclusions>
                     <exclusion>
                         <groupId>ical4j</groupId>
