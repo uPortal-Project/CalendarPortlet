@@ -19,130 +19,114 @@
 
 package org.jasig.portlet.calendar.mvc;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portlet.calendar.util.AllDayUtil;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
+public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 
-	private final VEvent event;
-	private final Date dayStart;
-	private final Date dayEnd;
-	private final DateFormat tf;
-	private final DateFormat df;
+	private final DateTime dayStart;
+	private final DateTime dayEnd;
 	private final boolean isAllDay;
 	private final boolean isMultiDay;
 	
-	public JsonCalendarEvent(VEvent event, Date date, TimeZone tz) {
-		
-		this.event = event;
-		
-		Calendar cal = Calendar.getInstance(tz);
-		cal.setTime(date);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+	private final String summary;
+	private final String description;
+	private final String location;
+	
+	private final String dateStartTime;
+	private final String dateEndTime;
+	private final String startTime;
+	private final String endTime;
+	private final String startDate;
+	private final String endDate;
+	
+	public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval day, DateTimeFormatter df, DateTimeFormatter tf) {
+
+        this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;
+        this.description = event.getDescription() != null ? event.getDescription().getValue() : null;
+        this.location = event.getLocation() != null ? event.getLocation().getValue() : null;
 		
 		boolean multi = false;
-		if (event.getStartDate().getDate().before(cal.getTime())) {
-			dayStart = cal.getTime();
+		if (eventInterval.getStart().isBefore(day.getStart())) {
+			dayStart = day.getStart();
 			multi = true;
 		} else {
-			dayStart = event.getStartDate().getDate();
+			dayStart = eventInterval.getStart();
 		}
-		
-		cal.add(Calendar.DATE, 1);
 		
 		if (event.getEndDate() == null) {
 		    dayEnd = null;
-		} else if (event.getEndDate().getDate().after(cal.getTime())) {
-			dayEnd = cal.getTime();
+		} else if (eventInterval.getEnd().isAfter(day.getEnd())) {
+			dayEnd = day.getEnd();
 			multi = true;
 		} else {
-			dayEnd = event.getEndDate().getDate();
+			dayEnd = eventInterval.getEnd();
 		}
 		this.isMultiDay = multi;
 		
-		df = new SimpleDateFormat("EEEE MMMM d");
-		df.setTimeZone(tz);
-		
-		tf = new SimpleDateFormat("h:mm a");
-		tf.setTimeZone(tz);
-		
-		this.isAllDay = AllDayUtil.isAllDayEvent(dayStart, dayEnd, tz);
+        this.dateStartTime = tf.print(dayStart);
+        this.startTime = tf.print(eventInterval.getStart());
+        this.startDate = df.print(eventInterval.getStart());
+
+        if (event.getEndDate() != null) {
+            this.dateEndTime = tf.print(dayEnd);
+            this.endTime = tf.print(eventInterval.getEnd());
+            this.endDate = df.print(eventInterval.getEnd());
+        } else {
+            this.dateEndTime = null;
+            this.endTime = null;
+            this.endDate = null;
+        }
+
+        Interval dayEventInterval = new Interval(dayStart, dayEnd);
+        this.isAllDay = dayEventInterval.equals(day);
 		
 	}
 	
 	public String getSummary() {
-		if (this.event.getSummary() != null) {
-			return this.event.getSummary().getValue();
-		} else {
-			return null;
-		}
+	    return this.summary;
 	}
 	
 	public String getDescription() {
-		if (this.event.getDescription() != null) {
-			return this.event.getDescription().getValue();
-		} else return null;
+	    return this.description;
 	}
 	
 	public String getLocation() {
-		if (this.event.getLocation() != null) {
-			return this.event.getLocation().getValue();
-		} else {
-			return null;
-		}
+	    return this.location;
 	}
 	
 	public String getDateStartTime() {
-		return tf.format(this.dayStart);
+	    return this.dateStartTime;
 	}
 	
 	public String getDateEndTime() {
-		if (this.event.getEndDate() != null) {
-			return tf.format(this.dayEnd);
-		} else {
-			return null;
-		}
+	    return this.dateEndTime;
 	}
 
 	public String getStartTime() {
-		return tf.format(this.event.getStartDate().getDate());
+	    return this.startTime;
 	}
 	
 	public String getEndTime() {
-		if (this.event.getEndDate() != null) {
-			return tf.format(this.event.getEndDate().getDate());
-		} else {
-			return null;
-		}
+	    return this.endTime;
 	}
 
 	public String getStartDate() {
-		return df.format(this.event.getStartDate().getDate());
+	    return this.startDate;
 	}
 	
 	public String getEndDate() {
-		if (this.event.getEndDate() != null) {
-			return df.format(this.event.getEndDate().getDate());
-		} else {
-			return null;
-		}
+	    return this.endDate;
 	}
 
 	public boolean isAllDay() {
@@ -153,19 +137,15 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 		return this.isMultiDay;
 	}
 	
-//	public int getColorIndex() {
-//		return this.colorIndex;
-//	}
-
-	public Date getDayStart() {
-		return dayStart;
+	public DateTime getDayStart() {
+		return this.dayStart;
 	}
 
-	public Date getDayEnd() {
-		return dayEnd;
+	public DateTime getDayEnd() {
+		return this.dayEnd;
 	}
 
-	public int compareTo(JsonCalendarEvent event) {		
+	public int compareTo(CalendarDisplayEvent event) {		
 		// Order events by start date, then end date, then summary.
 		// If all properties are equal, use the calendar and event ids to 
 		// ensure similar events from different calendars are not misinterpreted
@@ -182,10 +162,10 @@ public class JsonCalendarEvent implements Comparable<JsonCalendarEvent> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof JsonCalendarEvent)) {
+		if (o == null || !(o instanceof CalendarDisplayEvent)) {
 			return false;
 		}
-		JsonCalendarEvent event = (JsonCalendarEvent) o;
+		CalendarDisplayEvent event = (CalendarDisplayEvent) o;
 		return (new EqualsBuilder())
 				.append(this.dayStart, event.dayStart)
 				.append(this.dayEnd, event.dayEnd)

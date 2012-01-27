@@ -59,6 +59,7 @@
         <cas.version>3.1.8</cas.version>
         <hsqldb.version>2.2.4</hsqldb.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
+        <joda-time.version>2.0</joda-time.version>
         <resource-server.version>1.0.23</resource-server.version>
         <spring.version>3.0.5.RELEASE</spring.version>
         <mockito.version>1.8.4</mockito.version>
@@ -185,6 +186,11 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -436,6 +442,10 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

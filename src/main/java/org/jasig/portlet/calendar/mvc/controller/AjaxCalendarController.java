@@ -19,31 +19,19 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.TreeSet;
 
-import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
-import javax.portlet.ReadOnlyException;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
-import javax.portlet.ValidatorException;
-
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,8 +42,13 @@ import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
-import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
+import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEventWrapper;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,11 +104,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
          */
 
         // get the period for this request
-		Period period = getPeriod(request, startDate, days);
+		Interval interval = getPeriod(request, startDate, days);
 
 		// get the user's configured time zone
         String timezone = (String) session.getAttribute("timezone");
-        TimeZone tz = TimeZone.getTimeZone(timezone);
+        DateTimeZone tz = DateTimeZone.forID(timezone);
 		
 		int index = 0;
 		List<String> errors = new ArrayList<String>();
@@ -131,8 +124,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
 					ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting
 							.getCalendarDefinition().getClassName());
 	
-					Set<JsonCalendarEvent> calendarEvents = calendarEventsDao.getEvents(adapter, callisting, period, request, tz);
-                    for (JsonCalendarEvent e : calendarEvents) {
+					Set<CalendarDisplayEvent> calendarEvents = calendarEventsDao.getEvents(adapter, callisting, interval, request, tz);
+                    for (CalendarDisplayEvent e : calendarEvents) {
                       	events.add(new JsonCalendarEventWrapper(e, index));
                     }
 	
@@ -169,25 +162,28 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		// define a DateFormat object that uniquely identifies dates in a way 
 		// that can easily be ordered 
-        DateFormat orderableDf = new SimpleDateFormat("yyyy-MM-dd");
-        orderableDf.setTimeZone(tz);
+        DateTimeFormatter orderableDf = new DateTimeFormatterBuilder()
+                .appendYear(4, 4).appendLiteral("-").appendMonthOfYear(2)
+                .appendLiteral("-").appendDayOfMonth(2).toFormatter()
+                .withZone(tz);
 
         // define a DateFormat object that can produce user-facing display 
         // names for dates
-        DateFormat displayDf = new SimpleDateFormat("EEEE MMMM d");
-        displayDf.setTimeZone(tz);
+        DateTimeFormatter displayDf = new DateTimeFormatterBuilder()
+                .appendLiteral(" ").appendDayOfWeekText()
+                .appendMonthOfYearText().appendLiteral(" ").appendDayOfMonth(1)
+                .toFormatter().withZone(tz);
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface
-		Calendar cal = Calendar.getInstance(tz);
-		String today = orderableDf.format(cal.getTime());
-		cal.add(Calendar.DATE, 1);
-		String tomorrow = orderableDf.format(cal.getTime());
+        DateMidnight now = new DateMidnight(tz);
+		String today = orderableDf.print(now);
+		String tomorrow = orderableDf.print(now.plusDays(1));
 
 		Map<String, String> dateDisplayNames = new HashMap<String, String>();
 		Map<String, List<JsonCalendarEventWrapper>> eventsByDay = new LinkedHashMap<String, List<JsonCalendarEventWrapper>>();
 		for (JsonCalendarEventWrapper event : events) {
-			String day = orderableDf.format(event.getEvent().getDayStart());
+			String day = orderableDf.print(event.getEvent().getDayStart());
 			
 			// if we haven't seen this day before, add entries to the event
 			// and date name maps
@@ -205,7 +201,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    		} else if (tomorrow.equals(day)) {
 		    		dateDisplayNames.put(day, "Tomorrow");
 	    		} else {
-		    		dateDisplayNames.put(day, displayDf.format(event.getEvent().getDayStart()));
+		    		dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
 	    		}
 	    	}
 	    	
@@ -242,37 +238,25 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	}
 	
 	
-	protected Period getPeriod(ResourceRequest request, String startDate, int days) throws ParseException {
+	protected Interval getPeriod(ResourceRequest request, String startDate, int days) throws ParseException {
 		
 		PortletSession session = request.getPortletSession();
-		
-		// if the user requested a specific date, use it instead
-		Calendar cal = null;
-        String timezone = (String) session.getAttribute("timezone");
-        TimeZone tz = TimeZone.getTimeZone(timezone);
-        
-		DateFormat df = new SimpleDateFormat("MM'/'dd'/'yyyy");
-		df.setTimeZone(tz);
-        Date start = df.parse(startDate);
-        cal = Calendar.getInstance(tz);
-        cal.setTime(start);
-	    cal.set(Calendar.HOUR_OF_DAY, 0);
-	    cal.set(Calendar.MINUTE, 0);
-	    cal.set(Calendar.SECOND, 0);
-	    cal.set(Calendar.MILLISECOND, 1);
-        start = cal.getTime();
-        log.debug("start date: " + cal);
 
-        session.setAttribute("startDate", cal.getTime());
+		// if the user requested a specific date, use it instead
+        String timezone = (String) session.getAttribute("timezone");
+        DateTimeZone tz = DateTimeZone.forID(timezone);
+
+        DateTimeFormatter df = new DateTimeFormatterBuilder()
+                .appendMonthOfYear(2).appendLiteral("/").appendDayOfMonth(2)
+                .appendLiteral("/").appendYear(4, 4).toFormatter().withZone(tz);
+        DateMidnight start = new DateMidnight(df.parseDateTime(startDate), tz);
+        Interval interval = new Interval(start, start.plusDays(days));
+        log.debug("new interval: " + interval.toString());
+
+        session.setAttribute("startDate", start);
         session.setAttribute("days", days);
 
-        // set the end date based on our desired time period
-        cal.add(Calendar.DATE, days);
-        cal.set(Calendar.MILLISECOND, 1);
-        Date endDate = cal.getTime();
-
-		return new Period(new DateTime(start), new DateTime(
-				endDate));
+		return interval;
 	}
 	
     private CalendarEventsDao calendarEventsDao;

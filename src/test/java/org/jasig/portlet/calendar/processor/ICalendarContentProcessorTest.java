@@ -28,17 +28,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.Iterator;
-import java.util.TimeZone;
 import java.util.TreeSet;
 
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.portlet.calendar.VEventStartComparator;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,22 +61,10 @@ public class ICalendarContentProcessorTest {
         
         Resource calendarFile = applicationContext.getResource("classpath:/sampleEvents.ics");
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(Calendar.YEAR, 2010);
-        cal.set(Calendar.MONTH, 1);
-        cal.set(Calendar.DATE, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        DateTime start = new DateTime();
-        start.setTime(cal.getTimeInMillis());
-        
-        cal.set(Calendar.YEAR, 2012);
-        DateTime end = new DateTime(cal.getTime());
-
-        Period period = new Period(start, end);
+        DateMidnight start = new DateMidnight(2010, 1, 1, DateTimeZone.UTC);
+        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
+                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
+                .plusYears(3).toDate()));
 
         InputStream in = calendarFile.getInputStream();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -86,26 +74,22 @@ public class ICalendarContentProcessorTest {
         net.fortuna.ical4j.model.Calendar c  = processor.getIntermediateCalendar(Long.valueOf((long) 3), period, new ByteArrayInputStream(buffer.toByteArray()));
         events.addAll(processor.getEvents(Long.valueOf((long) 3), period, c));
         
-        assertEquals(3, events.size());
+        assertEquals(5, events.size());
         
         Iterator<VEvent> iterator = events.iterator();
         VEvent event = iterator.next();
         assertEquals("Independence Day", event.getSummary().getValue());
         assertNull(event.getStartDate().getTimeZone());
-        assertFalse(event.getStartDate().isUtc());
         
         event = iterator.next();
         assertEquals("Vikings @ Saints  [NBC]", event.getSummary().getValue());
-        cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
-        cal.setTimeInMillis(event.getStartDate().getDate().getTime());
-        assertEquals(0, cal.get(Calendar.HOUR_OF_DAY));
-        assertEquals(30, cal.get(Calendar.MINUTE));
-        assertTrue(event.getStartDate().isUtc());
+        DateTime eventStart = new DateTime(event.getStartDate().getDate(), DateTimeZone.UTC);
+        assertEquals(0, eventStart.getHourOfDay());
+        assertEquals(30, eventStart.getMinuteOfHour());
         
         event = iterator.next();
         assertEquals("Independence Day", event.getSummary().getValue());
         assertNull(event.getStartDate().getTimeZone());
-        assertFalse(event.getStartDate().isUtc());
         
     }
 

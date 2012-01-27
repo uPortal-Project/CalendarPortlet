@@ -19,13 +19,11 @@
 
 package org.jasig.portlet.calendar.service;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
@@ -35,6 +33,8 @@ import javax.portlet.PortletSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -142,18 +142,13 @@ public class SessionSetupInitializationService implements IInitializationService
 		session.setAttribute("timezone", timezone);
 
 		// set now as the starting date
-		Calendar cal = Calendar.getInstance();
-	    cal.set(Calendar.HOUR_OF_DAY, 0);
-	    cal.set(Calendar.MINUTE, 0);
-	    cal.set(Calendar.SECOND, 0);
-	    cal.set(Calendar.MILLISECOND, 1);
-	    cal.setTimeZone(TimeZone.getTimeZone(timezone));
-		session.setAttribute("startDate", cal.getTime());
+		final DateMidnight start = new DateMidnight(DateTimeZone.forID(timezone));
+		session.setAttribute("startDate", start);
 
 		// set the default number of days to display
 		// get days from preferences, or use the default if not found
-		String prefDays = prefs.getValue( "days", String.valueOf( defaultDays ) );
-		int tempDays = Integer.parseInt( prefDays );
+		final String prefDays = prefs.getValue( "days", String.valueOf( defaultDays ) );
+		final int tempDays = Integer.parseInt( prefDays );
 		session.setAttribute("days", tempDays);
 		
 		// mark this session as initialized

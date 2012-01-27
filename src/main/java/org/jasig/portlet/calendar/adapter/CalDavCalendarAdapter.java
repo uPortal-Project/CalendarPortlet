@@ -19,15 +19,16 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
@@ -54,10 +55,12 @@ import org.jasig.portlet.calendar.credentials.DefaultCredentialsExtractorImpl;
 import org.jasig.portlet.calendar.credentials.ICredentialsExtractor;
 import org.jasig.portlet.calendar.url.DefaultUrlCreatorImpl;
 import org.jasig.portlet.calendar.url.IUrlCreator;
-import org.osaf.caldav4j.CalDAV4JException;
-import org.osaf.caldav4j.CalDAVCalendarCollection;
+import org.osaf.caldav4j.CalDAVCollection;
+import org.osaf.caldav4j.exceptions.CalDAV4JException;
 import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
 import org.osaf.caldav4j.methods.HttpClient;
+import org.osaf.caldav4j.model.request.CalendarQuery;
+import org.osaf.caldav4j.util.GenerateQuery;
 
 import com.microsoft.exchange.types.CalendarEvent;
 
@@ -156,31 +159,36 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 			HostConfiguration hostConfiguration = new HostConfiguration();
 			hostConfiguration.setHost(hostUrl.getHost(), port, Protocol.getProtocol(hostUrl.getProtocol()));
 
-			// construct a new calendar collection for our URL
-			CalDAVCalendarCollection collection = new CalDAVCalendarCollection(
-					url, hostConfiguration, new CalDAV4JMethodFactory(),
-					org.osaf.caldav4j.CalDAVConstants.PROC_ID_DEFAULT);
-
 			// construct a new HttpClient with the proper HostConfiguration and
 			// set the authentication credentials if they are non-null
 			HttpClient client = new HttpClient();
 			client.setHostConfiguration(hostConfiguration);
+			System.out.println(client.getHost());
 			if (credentials != null) {
 				client.getState().setCredentials(AuthScope.ANY, credentials);
+				client.getParams().setAuthenticationPreemptive(true);
 			}
 
-			// retrieve a list of calendars from the collection for the 
-			// requested Period
-			net.fortuna.ical4j.model.Calendar cal = collection.getCalendarByPath(client, hostUrl.getPath());
+			GenerateQuery gq = new GenerateQuery();
+			gq.setTimeRange(period.getStart(), period.getEnd());
+			CalendarQuery query = gq.generate();
 
-			return cal;
+			CalDAVCollection col = new CalDAVCollection(url, hostConfiguration, new CalDAV4JMethodFactory(),
+                    org.osaf.caldav4j.CalDAVConstants.PROC_ID_DEFAULT);
+			System.out.println(col.testConnection(client));
+			System.out.println(col.getCalendarCollectionRoot());
+			System.out.println(col.getCalendar(client, "/"));
+			List<Calendar> cals = col.queryCalendars(client, query);
+			System.out.println("calendars: " + cals.size());
+			System.out.println(cals.get(0));
+			
+			return cals.get(0);
 
 		} catch (CalDAV4JException e) {
 			log.error("CalDAV exception: ", e);
 			throw new CalendarException(e);
-		} catch (MalformedURLException e) {
-			throw new CalendarException(e);
 		} catch (Exception e) {
+		    System.out.println(e);
 		    throw new CalendarException("Unknown exception while retrieving calendar", e);
 		}
 

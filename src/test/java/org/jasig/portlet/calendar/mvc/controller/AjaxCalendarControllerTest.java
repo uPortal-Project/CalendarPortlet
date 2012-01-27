@@ -39,7 +39,7 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 
-import org.jasig.portlet.calendar.mvc.JsonCalendarEvent;
+import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,7 +82,7 @@ public class AjaxCalendarControllerTest {
 		Period period = new Period(new DateTime(periodStart), new DateTime(end));
 		
 		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
-		List<JsonCalendarEvent> events = new ArrayList<JsonCalendarEvent>();
+		List<CalendarDisplayEvent> events = new ArrayList<CalendarDisplayEvent>();
 //		events.addAll(controller.getJsonEvents(event, period, tz));
 //		Collections.sort(events);
 //		assertEquals(2, events.size());
@@ -114,10 +114,10 @@ public class AjaxCalendarControllerTest {
 		Period period = new Period(new DateTime(start), new DateTime(end));
 	
 		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
-//		Set<JsonCalendarEvent> events = controller.getJsonEvents(event, period, tz);
+//		Set<CalendarDisplayEvent> events = controller.getJsonEvents(event, period, tz);
 //		assertEquals(1, events.size());
 //
-//		Iterator<JsonCalendarEvent> dateIter = events.iterator();
+//		Iterator<CalendarDisplayEvent> dateIter = events.iterator();
 //		assertEquals("Monday January 3", df.format(dateIter.next().getDayStart()));
 		
 	}

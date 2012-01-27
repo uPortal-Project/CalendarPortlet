@@ -19,21 +19,17 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
-import javax.portlet.ReadOnlyException;
 import javax.portlet.RenderRequest;
-import javax.portlet.ValidatorException;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -48,6 +44,8 @@ import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.IInitializationService;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +94,6 @@ public class CalendarController implements ApplicationContextAware {
         PortletPreferences prefs = request.getPreferences();
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		Calendar cal = Calendar.getInstance();
 		
 		// get the list of hidden calendars
 		@SuppressWarnings("unchecked")
@@ -138,54 +135,28 @@ public class CalendarController implements ApplicationContextAware {
 		 */
 
 		//StartDate can only be changed via an AJAX request
-		Date startDate = (Date) session.getAttribute("startDate");
+		DateMidnight startDate = (DateMidnight) session.getAttribute("startDate");
 		log.debug("startDate from session is: "+startDate);
-		cal.setTime(startDate);
-		model.put("startDate", startDate);
+		model.put("startDate", startDate.toDate());
 
 		// find how many days into the future we should display events
 		int days = (Integer) session.getAttribute("days");
-		//check whether the number of days has been changed in this request
-		String timePeriod = (String) request.getParameter("timePeriod");
-		if (timePeriod != null && !timePeriod.equals("")) {
-			try {
-				days = Integer.parseInt(timePeriod);
-				session.setAttribute("days", days);
-
-				if ( prefs.isReadOnly( "days" ) == false ) {
-					prefs.setValue( "days", Integer.toString( days ) );
-					prefs.store();
-				}
-			} catch (NumberFormatException ex) {
-				log.warn("Failed to parse desired time period", ex);
-			} catch (ReadOnlyException ex) {
-				log.error("Failed to set 'days' preference because it is read only", ex);
-			} catch (IOException ex) {
-				log.warn("Failed to store the 'days' preference", ex);
-			} catch (ValidatorException ex) {
-				log.warn("Failed to store the 'days' preference", ex);
-			}
-		}
 		model.put("days", days);
 
 		// set the end date based on our desired time period
-		cal.add(Calendar.DATE, days);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		Date endDate = cal.getTime();
-		model.put("endDate", endDate);
+		DateMidnight endDate = startDate.plusDays(days);
+		model.put("endDate", endDate.toDate());
 
-		Period period = new Period(new DateTime(startDate), new DateTime(
-				endDate));
+		Period period = new Period(new DateTime(startDate.toDate()), new DateTime(
+				endDate.toDate()));
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface
-		cal = Calendar.getInstance();
-		model.put("today", cal.getTime());
-		cal.add(Calendar.DATE, 1);
-		model.put("tomorrow", cal.getTime());
+        // get the user's configured time zone
+        String timezone = (String) session.getAttribute("timezone");
+		DateMidnight today = new DateMidnight(DateTimeZone.forID(timezone));
+		model.put("today", today.toDate());
+		model.put("tomorrow", today.plusDays(1).toDate());
 
 		/**
 		 * retrieve the calendars defined for this portlet instance

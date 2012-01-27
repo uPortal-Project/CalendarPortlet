@@ -128,16 +128,24 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 					// create a new property list, setting the date
 					// information to this event period
 					PropertyList newprops = new PropertyList();
-					DtStart start = new DtStart();
-					start.setDate(eventper.getStart());
-					start.setTimeZone(event.getStartDate().getTimeZone());
-					start.setUtc(event.getStartDate().isUtc());
+					DtStart start;
+					if (event.getStartDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
+	                    start = new DtStart(new net.fortuna.ical4j.model.DateTime(eventper.getStart()));
+					} else {
+					    start = new DtStart(new net.fortuna.ical4j.model.Date(eventper.getStart()));
+					}
+//					start.setDate(eventper.getStart());
+//					start.setTimeZone(event.getStartDate().getTimeZone());
+//					if (start.isUtc()) {
+//					    event.getStartDate().setUtc(true);
+//					}
 					newprops.add(start);
+                    System.out.println("Processor: " + event.getSummary().getValue() + " - " + event.getStartDate() + ", " + eventper.getStart() + " > " + start.toString() + " > " + start.getDate().toString() + ", " + event.getStartDate().isUtc() + ", " + start.isUtc());
 					if (event.getEndDate() != null) {
-                        DtEnd end = new DtEnd();
-                        end.setTimeZone(event.getEndDate().getTimeZone());
-                        end.setDate(eventper.getEnd());
-                        end.setUtc(event.getEndDate().isUtc());
+                        DtEnd end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
+//                        end.setTimeZone(event.getEndDate().getTimeZone());
+//                        end.setDate(eventper.getEnd());
+//                        end.setUtc(event.getEndDate().isUtc());
     					newprops.add(end);
 					}
 					for (Iterator<Property> iter2 = props.iterator(); iter2

@@ -21,7 +21,7 @@ package org.jasig.portlet.calendar.mvc;
 
 
 /**
- * JsonCalendarEventWrapper wraps a shared/cached JsonCalendarEvent and provides
+ * JsonCalendarEventWrapper wraps a shared/cached CalendarDisplayEvent and provides
  * a way to add user-specific information such as a color code.
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
@@ -29,15 +29,15 @@ package org.jasig.portlet.calendar.mvc;
  */
 public class JsonCalendarEventWrapper implements Comparable<JsonCalendarEventWrapper> {
     
-    private final JsonCalendarEvent event;
+    private final CalendarDisplayEvent event;
     private final int colorIndex;
     
-    public JsonCalendarEventWrapper(JsonCalendarEvent event, int colorIndex) {
+    public JsonCalendarEventWrapper(CalendarDisplayEvent event, int colorIndex) {
         this.event = event;
         this.colorIndex = colorIndex;
     }
 
-    public JsonCalendarEvent getEvent() {
+    public CalendarDisplayEvent getEvent() {
         return event;
     }
 

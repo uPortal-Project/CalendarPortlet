@@ -20,14 +20,16 @@
 package org.jasig.portlet.calendar.mvc;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
-import net.fortuna.ical4j.model.DateTime;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import net.fortuna.ical4j.model.component.VEvent;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.junit.Test;
 
 /**
@@ -38,41 +40,49 @@ public class JsonCalendarEventTest {
 	
 	@Test
 	public void testStartDate() {
-		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
-		
-		Calendar cal = Calendar.getInstance(tz);
-		cal.set(Calendar.YEAR, 2011);
-		cal.set(Calendar.MONTH, 0);
-		cal.set(Calendar.DATE, 3);
-		cal.set(Calendar.HOUR_OF_DAY, 4);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		Date start = cal.getTime();
-		
-		cal.add(Calendar.DATE, 2);
-		Date end = cal.getTime();
-		
-		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
 
-		cal.set(Calendar.DATE, 3);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		Date date = cal.getTime();		
-		JsonCalendarEvent json = new JsonCalendarEvent(event, date, tz);
-		assertEquals("4:00 AM", json.getDateStartTime());
-		assertEquals("12:00 AM", json.getDateEndTime());
+        DateTimeFormatter df = new DateTimeFormatterBuilder().appendDayOfWeekText()
+                .appendLiteral(" ").appendMonthOfYearText().appendLiteral(" ")
+                .appendDayOfMonth(1).toFormatter().withZone(tz);        
+        
+        DateTimeFormatter tf = new DateTimeFormatterBuilder().appendClockhourOfHalfday(1)
+                .appendLiteral(":").appendMinuteOfHour(2).appendLiteral(" ")
+                .appendHalfdayOfDayText().toFormatter().withZone(tz);
+
+		DateTime date = new DateMidnight(2011, 1, 3, tz).toDateTime();
 		
-		cal.set(Calendar.DATE, 4);
-		date = cal.getTime();		
-		json = new JsonCalendarEvent(event, date, tz);
+		DateTime start = new DateTime(2011, 1, 3, 4, 0, tz);
+		DateTime end = start.plusDays(2);
+		
+		VEvent event = new VEvent(new net.fortuna.ical4j.model.DateTime(start.toDate()), new net.fortuna.ical4j.model.DateTime(end.toDate()), "Test Event");
+		Interval eventInterval = new Interval(start, end);
+
+		DateMidnight dateStart = new DateMidnight(date, tz);
+		Interval day = new Interval(dateStart, dateStart.plusDays(1));
+		CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
+		assertEquals("4:00 AM", json.getDateStartTime());
+        assertEquals("12:00 AM", json.getDateEndTime());
+		assertEquals("Monday January 3", json.getStartDate());
+		assertEquals("Wednesday January 5", json.getEndDate());
+		assertEquals("4:00 AM", json.getStartTime());
+		assertEquals("4:00 AM", json.getEndTime());
+		assertTrue(json.isMultiDay());
+		assertFalse(json.isAllDay());
+		
+        day = new Interval(dateStart.plusDays(1), dateStart.plusDays(2));
+		json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
 		assertEquals("12:00 AM", json.getDateStartTime());
 		assertEquals("12:00 AM", json.getDateEndTime());
+        assertTrue(json.isMultiDay());
+        assertTrue(json.isAllDay());
 		
-		cal.set(Calendar.DATE, 5);
-		date = cal.getTime();		
-		json = new JsonCalendarEvent(event, date, tz);
+        day = new Interval(dateStart.plusDays(2), dateStart.plusDays(3));
+		json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
 		assertEquals("12:00 AM", json.getDateStartTime());
 		assertEquals("4:00 AM", json.getDateEndTime());
+        assertTrue(json.isMultiDay());
+        assertFalse(json.isAllDay());
 		
 	}
 
