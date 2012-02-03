@@ -31,11 +31,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Period;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.adapter.CalendarException;
+import org.joda.time.Interval;
 
 import com.microsoft.exchange.types.CalendarEvent;
 
@@ -61,9 +61,9 @@ public class XSLTICalendarContentProcessorImpl extends ICalendarContentProcessor
 	}
 
 	@Override
-	public Calendar getIntermediateCalendar(Long calendarId, Period period, InputStream in) {
+	public Calendar getIntermediateCalendar(Interval interval, InputStream in) {
         InputStream ical = transformToICal(in);
-        return super.getIntermediateCalendar(calendarId, period, ical);
+        return super.getIntermediateCalendar(interval, ical);
     }
 
 	protected final InputStream transformToICal(InputStream in) throws CalendarException {

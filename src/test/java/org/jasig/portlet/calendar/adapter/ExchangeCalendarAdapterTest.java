@@ -26,8 +26,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -44,8 +42,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 
@@ -54,6 +50,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.VEventStartComparator;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,7 +98,7 @@ public class ExchangeCalendarAdapterTest {
     ExchangeCalendarAdapter adapter = spy(new ExchangeCalendarAdapter());  
     String emailAddress = "user1@school.edu";
     Resource sampleExchangeResponse;
-    Period period;
+    Interval interval;
 
     @Before
     public void setUp() throws IOException {
@@ -109,28 +108,14 @@ public class ExchangeCalendarAdapterTest {
         adapter.setWebServiceOperations(webService);
         adapter.setCache(cache);
         
-        when(keyGenerator.getKey(any(CalendarConfiguration.class), any(Period.class), any(PortletRequest.class), anyString())).thenReturn("key");
+        when(keyGenerator.getKey(any(CalendarConfiguration.class), any(Interval.class), any(PortletRequest.class), anyString())).thenReturn("key");
         adapter.setCacheKeyGenerator(keyGenerator);
         
         adapter.setEmailAttribute("email");
         when(request.getAttribute(PortletRequest.USER_INFO)).thenReturn(Collections.singletonMap("email", emailAddress));
 
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.set(Calendar.YEAR, 2010);
-        cal.set(Calendar.MONTH, 10);
-        cal.set(Calendar.DATE, 1);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        DateTime start = new DateTime();
-        start.setTime(cal.getTimeInMillis());
-        
-        cal.set(Calendar.MONTH, 11);
-        cal.set(Calendar.DATE, 1);
-        DateTime end = new DateTime(cal.getTime());
-
-        period = new Period(start, end);
+        DateTime start = new DateTime(2010, 10, 1, 0, 0, DateTimeZone.UTC);
+        interval = new Interval(start, start.plusMonths(1));
 
         Source source = new StreamSource(sampleExchangeResponse.getInputStream());
         GetUserAvailabilityResponse response = (GetUserAvailabilityResponse) marshaller.unmarshal(source);
@@ -139,9 +124,9 @@ public class ExchangeCalendarAdapterTest {
     
     @Test
     public void testCache() throws DatatypeConfigurationException {
-        doReturn(Collections.<VEvent>emptySet()).when(adapter).retrieveExchangeEvents(config, period, emailAddress);
-        adapter.getEvents(config, period, request);
-        adapter.getEvents(config, period, request);
+        doReturn(Collections.<VEvent>emptySet()).when(adapter).retrieveExchangeEvents(config, interval, emailAddress);
+        adapter.getEvents(config, interval, request);
+        adapter.getEvents(config, interval, request);
 //        verify(adapter, times(1)).retrieveExchangeEvents(config, period, emailAddress);
     }
  
@@ -150,7 +135,7 @@ public class ExchangeCalendarAdapterTest {
         
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         List<VEvent> events = new ArrayList<VEvent>();
-        events.addAll(adapter.retrieveExchangeEvents(config, period, emailAddress));
+        events.addAll(adapter.retrieveExchangeEvents(config, interval, emailAddress));
         
         Collections.sort(events, new VEventStartComparator());
         assertEquals(2, events.size());
@@ -238,17 +223,7 @@ public class ExchangeCalendarAdapterTest {
     @Test
     public void testGetXmlDate() throws DatatypeConfigurationException {
         // construct a calendar representing 4:30PM on June 4, 2010
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.set(Calendar.YEAR, 2010);
-        cal.set(Calendar.MONTH, 5);
-        cal.set(Calendar.HOUR_OF_DAY, 16);
-        cal.set(Calendar.MINUTE, 30);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.DATE, 3);
-        DateTime date = new DateTime();
-        date.setUtc(true);
-        date.setTime(cal.getTimeInMillis());
+        DateTime date = new DateTime(2010, 6, 3, 16, 30, DateTimeZone.UTC);
         
         XMLGregorianCalendar xmlCal = adapter.getXmlDate(date);
         assertEquals(2010, xmlCal.getYear());

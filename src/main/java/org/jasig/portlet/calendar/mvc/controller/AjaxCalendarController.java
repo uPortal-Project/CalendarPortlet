@@ -170,7 +170,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
         // define a DateFormat object that can produce user-facing display 
         // names for dates
         DateTimeFormatter displayDf = new DateTimeFormatterBuilder()
-                .appendLiteral(" ").appendDayOfWeekText()
+                .appendDayOfWeekText().appendLiteral(" ")
                 .appendMonthOfYearText().appendLiteral(" ").appendDayOfMonth(1)
                 .toFormatter().withZone(tz);
 

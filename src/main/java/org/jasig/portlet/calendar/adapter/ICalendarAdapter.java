@@ -23,10 +23,9 @@ import java.util.List;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.form.parameter.Parameter;
+import org.joda.time.Interval;
 
 /**
  * ICalendarAdapter defines an interface for retrieving calendar event data.
@@ -72,7 +71,7 @@ public interface ICalendarAdapter {
 	 * @throws CalendarException
 	 */
 	public CalendarEventSet getEvents(CalendarConfiguration calendar,
-			Period period, PortletRequest request) throws CalendarException;
+			Interval interval, PortletRequest request) throws CalendarException;
 
 	/**
 	 * Get hyper link for the defined calendar. In cases where the calendar resource
@@ -85,6 +84,6 @@ public interface ICalendarAdapter {
 	 * @throws CalendarException
 	 */
 	public String getLink(CalendarConfiguration calendar,
-			Period period, PortletRequest request) throws CalendarLinkException;
+			Interval interval, PortletRequest request) throws CalendarLinkException;
 	
 }

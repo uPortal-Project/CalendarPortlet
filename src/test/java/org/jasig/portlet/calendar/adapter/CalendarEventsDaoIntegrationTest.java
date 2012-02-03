@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
@@ -73,18 +72,14 @@ public class CalendarEventsDaoIntegrationTest {
         
         DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
         DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+        Interval interval = new Interval(start, start.plusDays(7));
         
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
-                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
-                .plusDays(7).toDate()));
-        
-        Calendar c  = processor.getIntermediateCalendar((long) 3, period, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(Long.valueOf((long) 3), period, c);
+        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+        Set<VEvent> events = processor.getEvents(interval, c);
 
         assertEquals(2, events.size());
 
         List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        Interval interval = new Interval(start, start.plusDays(7));
         
         for (VEvent event : events) {
             displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
@@ -95,9 +90,6 @@ public class CalendarEventsDaoIntegrationTest {
         assertEquals("12:00 AM", event.getStartTime());
         
         event = displayEvents.get(1);
-        System.out.println(event.getSummary());
-        System.out.println(event.getDayStart());
-        System.out.println(event.getStartTime());
         assertEquals(9, event.getDayStart().getHourOfDay());
         
     }
@@ -107,18 +99,14 @@ public class CalendarEventsDaoIntegrationTest {
         
         DateTimeZone tz = DateTimeZone.forID("America/Chicago");
         DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+        Interval interval = new Interval(start, start.plusDays(7));
         
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
-                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
-                .plusDays(7).toDate()));
-        
-        Calendar c  = processor.getIntermediateCalendar((long) 3, period, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(Long.valueOf((long) 3), period, c);
+        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+        Set<VEvent> events = processor.getEvents(interval, c);
 
         assertEquals(2, events.size());
 
         List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        Interval interval = new Interval(start, start.plusDays(7));
         
         for (VEvent event : events) {
             displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
@@ -138,18 +126,14 @@ public class CalendarEventsDaoIntegrationTest {
         
         DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
         DateMidnight start = new DateMidnight(2013, 2, 3, tz);
+        Interval interval = new Interval(start, start.plusDays(7));
         
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
-                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
-                .plusDays(7).toDate()));
-        
-        Calendar c  = processor.getIntermediateCalendar((long) 3, period, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(Long.valueOf((long) 3), period, c);
+        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+        Set<VEvent> events = processor.getEvents(interval, c);
 
         assertEquals(1, events.size());
 
         List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        Interval interval = new Interval(start, start.plusDays(7));
         
         for (VEvent event : events) {
             displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
@@ -157,9 +141,6 @@ public class CalendarEventsDaoIntegrationTest {
         Collections.sort(displayEvents);
 
         CalendarDisplayEvent event = displayEvents.get(0);
-        System.out.println(event.getSummary());
-        System.out.println(event.getDayStart());
-        System.out.println(event.getStartTime());
         assertEquals("9:00 AM", event.getStartTime());
         
     }
@@ -169,18 +150,14 @@ public class CalendarEventsDaoIntegrationTest {
         
         DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
         DateMidnight start = new DateMidnight(2013, 1, 3, tz);
+        Interval interval = new Interval(start, start.plusDays(7));
         
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
-                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
-                .plusDays(7).toDate()));
-        
-        Calendar c  = processor.getIntermediateCalendar((long) 3, period, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(Long.valueOf((long) 3), period, c);
+        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+        Set<VEvent> events = processor.getEvents(interval, c);
 
         assertEquals(1, events.size());
 
         List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        Interval interval = new Interval(start, start.plusDays(7));
         
         for (VEvent event : events) {
             displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
@@ -188,9 +165,30 @@ public class CalendarEventsDaoIntegrationTest {
         Collections.sort(displayEvents);
 
         CalendarDisplayEvent event = displayEvents.get(0);
-        System.out.println(event.getSummary());
-        System.out.println(event.getDayStart());
-        System.out.println(event.getStartTime());
+        assertEquals("2:00 PM", event.getStartTime());
+        
+    }
+    
+    @Test
+    public void testGetBedeworkEvent() throws IOException, URISyntaxException, ParseException {
+        
+        DateTimeZone tz = DateTimeZone.forID("America/Phoenix");
+        DateMidnight start = new DateMidnight(2014, 2, 2, tz);
+        Interval interval = new Interval(start, start.plusDays(1));
+        
+        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+        Set<VEvent> events = processor.getEvents(interval, c);
+
+        assertEquals(1, events.size());
+
+        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+        
+        for (VEvent event : events) {
+            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
+        }
+        Collections.sort(displayEvents);
+
+        CalendarDisplayEvent event = displayEvents.get(0);
         assertEquals("2:00 PM", event.getStartTime());
         
     }

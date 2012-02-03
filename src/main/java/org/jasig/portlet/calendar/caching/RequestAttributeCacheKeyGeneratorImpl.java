@@ -21,9 +21,8 @@ package org.jasig.portlet.calendar.caching;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.joda.time.Interval;
 
 /**
  * RequestAttributeCacheKeyGeneratorImpl is an implementation of ICacheKeyGenerator
@@ -37,9 +36,9 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 public class RequestAttributeCacheKeyGeneratorImpl extends DefaultCacheKeyGeneratorImpl {
 
 	public String getKey(CalendarConfiguration configuration,
-			Period period, PortletRequest request, String calendarIdentifier) {
+			Interval interval, PortletRequest request, String calendarIdentifier) {
 	    
-	    final String baseKey = super.getKey(configuration, period, request, calendarIdentifier);
+	    final String baseKey = super.getKey(configuration, interval, request, calendarIdentifier);
 	    final String username = (String) request.getPortletSession().getAttribute("username");
 		return baseKey.concat(".").concat(username);
 	}

@@ -21,9 +21,8 @@ package org.jasig.portlet.calendar.caching;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.joda.time.Interval;
 
 /**
  * 
@@ -42,6 +41,6 @@ public interface ICacheKeyGenerator {
 	 * @return
 	 */
 	public String getKey(CalendarConfiguration configuration,
-			Period period, PortletRequest request, String calendarIdentifier);
+			Interval interval, PortletRequest request, String calendarIdentifier);
 
 }

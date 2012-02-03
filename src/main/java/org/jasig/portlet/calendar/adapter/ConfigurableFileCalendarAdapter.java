@@ -29,7 +29,6 @@ import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -43,6 +42,7 @@ import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
+import org.joda.time.Interval;
 
 
 public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
@@ -56,20 +56,20 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 
 	
 	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
-			Period period, PortletRequest request) throws CalendarException {
+			Interval interval, PortletRequest request) throws CalendarException {
 		Set<VEvent> events = Collections.emptySet();
 		
 		String fileName = calendarConfiguration.getCalendarDefinition().getParameters().get("file");
 		
 		// try to get the cached calendar
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(fileName));
+		String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(fileName));
 		Element cachedElement = this.cache.get(key);
         CalendarEventSet eventSet;
 		if (cachedElement == null) {
 			// read in the data
 			InputStream stream = retrieveCalendar(fileName);
 			// run the stream through the processor
-			events = contentProcessor.getEvents(calendarConfiguration.getId(), period, stream);
+			events = contentProcessor.getEvents(interval, stream);
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
             eventSet = new CalendarEventSet(key, events);
@@ -111,7 +111,7 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
 	 */
-	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
+	public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) {
 		throw new CalendarLinkException("This calendar has no link");
 	}
 	

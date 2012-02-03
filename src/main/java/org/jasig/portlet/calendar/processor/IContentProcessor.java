@@ -22,8 +22,9 @@ package org.jasig.portlet.calendar.processor;
 import java.io.InputStream;
 import java.util.Set;
 
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
+
+import org.joda.time.Interval;
 
 import com.microsoft.exchange.types.CalendarEvent;
 
@@ -45,7 +46,7 @@ public interface IContentProcessor<T> {
      * @param in
      * @return
      */
-    public T getIntermediateCalendar(Long calendarId, Period period, InputStream in);
+    public T getIntermediateCalendar(Interval interval, InputStream in);
     
 	/**
 	 * Implementations should not return null (at a minimum return
@@ -56,6 +57,6 @@ public interface IContentProcessor<T> {
 	 * @param in
 	 * @return
 	 */
-	public Set<VEvent> getEvents(Long calendarId, Period period, T calendar);
+	public Set<VEvent> getEvents(Interval interval, T calendar);
 	
 }

@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -72,9 +71,7 @@ public class CalendarEventsDao {
             Interval interval, PortletRequest request, DateTimeZone tz) {
 
         // get the set of pre-timezone-corrected events for the requested period
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(interval.getStartMillis()), new net.fortuna.ical4j.model.DateTime(
-                interval.getEndMillis()));
-        final CalendarEventSet eventSet = adapter.getEvents(calendar, period, request);
+        final CalendarEventSet eventSet = adapter.getEvents(calendar, interval, request);
 
         // append the requested time zone id to the retrieve event set's cache
         // key to generate a timezone-aware cache key

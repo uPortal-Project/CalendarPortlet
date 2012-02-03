@@ -24,15 +24,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
-
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +42,7 @@ import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.IInitializationService;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,8 +144,7 @@ public class CalendarController implements ApplicationContextAware {
 		DateMidnight endDate = startDate.plusDays(days);
 		model.put("endDate", endDate.toDate());
 
-		Period period = new Period(new DateTime(startDate.toDate()), new DateTime(
-				endDate.toDate()));
+		Interval interval = new Interval(startDate, endDate);
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface
@@ -183,7 +179,7 @@ public class CalendarController implements ApplicationContextAware {
 							.getCalendarDefinition().getClassName());
 	
 					//get hyperlink to calendar
-					links.put(callisting.getId(), adapter.getLink(callisting, period, request));
+					links.put(callisting.getId(), adapter.getLink(callisting, interval, request));
 					
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());

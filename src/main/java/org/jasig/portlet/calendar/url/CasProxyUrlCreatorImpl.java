@@ -22,8 +22,6 @@ package org.jasig.portlet.calendar.url;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
-import net.fortuna.ical4j.model.Period;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.client.validation.Assertion;
@@ -31,6 +29,7 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl;
 import org.jasig.portlet.cas.ICASProxyTicketService;
+import org.joda.time.Interval;
 
 /**
  * This {@link IUrlCreator} implementation requires injection
@@ -63,7 +62,7 @@ public class CasProxyUrlCreatorImpl implements IUrlCreator {
 	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.portlet.PortletRequest, net.fortuna.ical4j.model.Period)
 	 */
 	public String constructUrl(CalendarConfiguration calendarListing,
-			Period period, PortletRequest request) {
+			Interval interval, PortletRequest request) {
 		String configuredUrl = calendarListing.getCalendarDefinition()
 		.getParameters().get("url");
 

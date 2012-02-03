@@ -31,9 +31,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
@@ -49,6 +46,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 import org.springframework.ws.client.core.WebServiceOperations;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
@@ -115,7 +116,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
      */
     public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
-            Period period, PortletRequest request) throws CalendarException {
+            Interval interval, PortletRequest request) throws CalendarException {
         
         // try to get the cached calendar
         
@@ -123,12 +124,12 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
         String email = userInfo.get(this.emailAttribute);
 
-        String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(email));
+        String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(email));
         Element cachedElement = this.cache.get(key);
         CalendarEventSet eventSet;
         if (cachedElement == null) {
             log.debug("Retreiving exchange events for account " + email);
-            Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, period, email);
+            Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, interval, email);
             log.debug("Exchange adapter found " + events.size() + " events");
             // save the CalendarEvents to the cache
             eventSet = new CalendarEventSet(key, events);
@@ -153,13 +154,10 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * @throws CalendarException
      */
     public Set<VEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
-            Period period, String emailAddress) throws CalendarException {
+            Interval interval, String emailAddress) throws CalendarException {
 
         if (log.isDebugEnabled()) {
-            StringBuilder buff = new StringBuilder();
-            buff.append("Period details:  start=").append(period.getStart())
-                            .append(", end=").append(period.getEnd());
-            log.debug(buff.toString());
+            log.debug("Retrieving exchange events for period: " + interval);
         }
 
         Set<VEvent> events = new HashSet<VEvent>();
@@ -167,7 +165,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         try {
             
             // construct the SOAP request object to use
-            GetUserAvailabilityRequest soapRequest = getAvailabilityRequest(period, emailAddress);
+            GetUserAvailabilityRequest soapRequest = getAvailabilityRequest(interval, emailAddress);
             
             // use the request to retrieve data from the Exchange server
             GetUserAvailabilityResponse response = (GetUserAvailabilityResponse) webServiceOperations
@@ -196,13 +194,13 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         return events;
     }
 
-    public String getLink(CalendarConfiguration calendar, Period period,
+    public String getLink(CalendarConfiguration calendar, Interval interval,
             PortletRequest request) throws CalendarLinkException {
         // TODO Auto-generated method stub
         return "";
     }
     
-    protected GetUserAvailabilityRequest getAvailabilityRequest(Period period, String emailAddress) throws DatatypeConfigurationException {
+    protected GetUserAvailabilityRequest getAvailabilityRequest(Interval interval, String emailAddress) throws DatatypeConfigurationException {
 
         // construct the SOAP request object to use
         GetUserAvailabilityRequest soapRequest = new GetUserAvailabilityRequest();
@@ -226,8 +224,8 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         
         Duration dur = new Duration();
         
-        XMLGregorianCalendar start = getXmlDate(period.getStart()); 
-        XMLGregorianCalendar end = getXmlDate(period.getEnd()); 
+        XMLGregorianCalendar start = getXmlDate(interval.getStart()); 
+        XMLGregorianCalendar end = getXmlDate(interval.getEnd()); 
         dur.setEndTime(end);
         dur.setStartTime(start);
         
@@ -273,7 +271,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         DatatypeFactory factory = DatatypeFactory.newInstance();
 
         // create a new UTC-based DateTime to represent the event start time
-        DateTime eventStart = new DateTime();
+        net.fortuna.ical4j.model.DateTime eventStart = new net.fortuna.ical4j.model.DateTime();
         eventStart.setUtc(true);
         Calendar startCal = msEvent.getStartTime().toGregorianCalendar(
                 java.util.TimeZone.getTimeZone(UTC), Locale.getDefault(),
@@ -281,7 +279,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         eventStart.setTime(startCal.getTimeInMillis());
 
         // create a new UTC-based DateTime to represent the event ent time
-        DateTime eventEnd = new DateTime();
+        net.fortuna.ical4j.model.DateTime eventEnd = new net.fortuna.ical4j.model.DateTime();
         eventEnd.setUtc(true);
         Calendar endCal = msEvent.getEndTime().toGregorianCalendar(
                 java.util.TimeZone.getTimeZone(UTC), Locale.getDefault(),
@@ -309,19 +307,17 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * @return
      * @throws DatatypeConfigurationException
      */
-    protected XMLGregorianCalendar getXmlDate(Date date) throws DatatypeConfigurationException {
-        // construct a new calendar object from the specified date
-        Calendar cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
-        cal.setTimeInMillis(date.getTime());
+    protected XMLGregorianCalendar getXmlDate(DateTime date) throws DatatypeConfigurationException {
+        DateTime utcdate = date.toDateTime(DateTimeZone.UTC);
         
         // construct an XMLGregorianCalendar
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
         XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(); 
-        start.setYear(cal.get(Calendar.YEAR));
-        start.setMonth(cal.get(Calendar.MONTH) + 1);
-        start.setTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
-                cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND));
-        start.setDay(cal.get(Calendar.DATE));
+        start.setYear(date.getYear());
+        start.setMonth(date.getMonthOfYear());
+        start.setTime(date.getHourOfDay(), date.getMinuteOfHour(),
+                date.getSecondOfMinute(), date.getMillisOfSecond());
+        start.setDay(date.getDayOfMonth());
         return start;
     }
     

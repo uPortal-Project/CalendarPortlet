@@ -21,17 +21,19 @@ package org.jasig.portlet.calendar.url;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
-import net.fortuna.ical4j.model.Period;
-
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarException;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 
 /**
@@ -50,6 +52,8 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	private final String URL_ENCODING = "UTF-8";
 	private final String DEFAULT_DATE_FORMAT = "yyyyMMdd";
 
+    private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -57,7 +61,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	 *      net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
 	public String constructUrl(CalendarConfiguration configuration,
-			Period period, PortletRequest request) {
+			Interval interval, PortletRequest request) {
 
 		// get the current username from the session
 		PortletSession session = request.getPortletSession();
@@ -66,7 +70,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 		}
 		String username = (String) session.getAttribute("username");
 
-		return constructUrlInternal(configuration, period, username);
+		return constructUrlInternal(configuration, interval, username);
 	}
 
 	/**
@@ -77,7 +81,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	 * @return
 	 */
 	public String constructUrlInternal(CalendarConfiguration configuration,
-			Period period, String username) {
+			Interval interval, String username) {
 
 		// get the template url from the calendar configuration
 		String url = (String) configuration.getCalendarDefinition()
@@ -104,15 +108,15 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 				}
 
 				// replace the start date in the url
-				String startString = URLEncoder.encode(DateFormatUtils.format(
-						period.getStart().getTime(), urlDateFormat),
-						URL_ENCODING);
+                String startString = URLEncoder.encode(
+                        getDateFormatter(urlDateFormat).print(
+                                interval.getStart()), URL_ENCODING);
 				url = url.replace(START_DATE_TOKEN, startString);
 				
 				// replace the end date in the url
-				String endString = URLEncoder
-						.encode(DateFormatUtils.format(period.getEnd()
-								.getTime(), urlDateFormat), URL_ENCODING);
+                String endString = URLEncoder.encode(
+                        getDateFormatter(urlDateFormat)
+                                .print(interval.getEnd()), URL_ENCODING);
 				url = url.replace(END_DATE_TOKEN, endString);
 				
 			}
@@ -123,5 +127,16 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 
 		return url;
 	}
+
+    protected DateTimeFormatter getDateFormatter(String format) {
+        if (this.dateFormatters.containsKey(format)) {
+            return this.dateFormatters.get(format);
+        } else {
+            DateTimeFormatter df = new DateTimeFormatterBuilder()
+                    .appendPattern(format).toFormatter();
+            this.dateFormatters.put(format, df);
+            return df;
+        }
+    }
 
 }

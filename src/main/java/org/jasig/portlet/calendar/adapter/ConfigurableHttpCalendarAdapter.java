@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -50,6 +49,7 @@ import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.jasig.portlet.calendar.url.DefaultUrlCreatorImpl;
 import org.jasig.portlet.calendar.url.IUrlCreator;
+import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.microsoft.exchange.types.CalendarEvent;
@@ -143,10 +143,10 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
 	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
-			Period period, PortletRequest request) throws CalendarException {
+			Interval interval, PortletRequest request) throws CalendarException {
 		CalendarEventSet eventSet;
 		
-		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
+		String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 		
 		log.debug("generated url: " + url);
 		
@@ -154,7 +154,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 		Credentials credentials = credentialsExtractor.getCredentials(request);
 		
 		// 
-		String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
+		String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
 
 		T calendar;
         Element cachedCalendar = this.cache.get(intermediateCacheKey);
@@ -163,7 +163,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             InputStream stream = retrieveCalendarHttp(url, credentials);
             // run the stream through the processor
             calendar = (T) contentProcessor.getIntermediateCalendar(
-                    calendarConfiguration.getId(), period, stream);
+                    interval, stream);
 
             // save the VEvents to the cache
             cachedCalendar = new Element(intermediateCacheKey, calendar);
@@ -176,11 +176,11 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 		// the period, so we need to add the current period to the existing
 		// cache key.  This might result in the period being contained in the 
 		// key twice, but that won't hurt anything.
-		String processorCacheKey = getPeriodSpecificCacheKey(intermediateCacheKey, period);
+		String processorCacheKey = getPeriodSpecificCacheKey(intermediateCacheKey, interval);
 
 		Element cachedElement = this.cache.get(processorCacheKey);
 		if (cachedElement == null) {
-			Set<VEvent> events = contentProcessor.getEvents(calendarConfiguration.getId(), period, calendar);
+			Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
 			log.debug("contentProcessor found " + events.size() + " events");
 			
 			// save the VEvents to the cache
@@ -194,18 +194,17 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 		return eventSet;
 	}
 	
-	protected String getPeriodSpecificCacheKey(String baseKey, Period period) {
+	protected String getPeriodSpecificCacheKey(String baseKey, Interval interval) {
 	    StringBuffer buf = new StringBuffer();
 	    buf.append(baseKey);
-	    buf.append(period.getStart().toString());
-	    buf.append(period.getEnd().toString());
+	    buf.append(interval.toString());
 	    return buf.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
 	 */
-	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) {
+	public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) {
 		throw new CalendarLinkException("This calendar has no link");
 	}
 	

@@ -47,6 +47,7 @@ import net.fortuna.ical4j.model.property.RRule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.adapter.CalendarException;
+import org.joda.time.Interval;
 
 
 /**
@@ -60,7 +61,7 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	public Calendar getIntermediateCalendar(Long calendarId, Period period, InputStream in) {
+	public Calendar getIntermediateCalendar(Interval interval, InputStream in) {
         try {
             log.debug("begin getEvents");
             CalendarBuilder builder = new CalendarBuilder(new CalendarParserImpl());
@@ -81,8 +82,8 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<VEvent> getEvents(Long calendarId, Period period, Calendar calendar) {
-		return convertCalendarToEvents(calendarId, calendar, period);
+	public Set<VEvent> getEvents(Interval interval, Calendar calendar) {
+		return convertCalendarToEvents(calendar, interval);
 	}
 
 	/**
@@ -94,9 +95,13 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 	 * @throws CalendarException
 	 */
 	@SuppressWarnings("unchecked")
-	protected final Set<VEvent> convertCalendarToEvents(Long calendarId,
-			net.fortuna.ical4j.model.Calendar calendar, Period period)
+	protected final Set<VEvent> convertCalendarToEvents(
+			net.fortuna.ical4j.model.Calendar calendar, Interval interval)
 			throws CalendarException {
+
+        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
+                interval.getStartMillis()),
+                new net.fortuna.ical4j.model.DateTime(interval.getEndMillis()));
 
 		Set<VEvent> events = new HashSet<VEvent>();
 
@@ -134,18 +139,14 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 					} else {
 					    start = new DtStart(new net.fortuna.ical4j.model.Date(eventper.getStart()));
 					}
-//					start.setDate(eventper.getStart());
-//					start.setTimeZone(event.getStartDate().getTimeZone());
-//					if (start.isUtc()) {
-//					    event.getStartDate().setUtc(true);
-//					}
 					newprops.add(start);
-                    System.out.println("Processor: " + event.getSummary().getValue() + " - " + event.getStartDate() + ", " + eventper.getStart() + " > " + start.toString() + " > " + start.getDate().toString() + ", " + event.getStartDate().isUtc() + ", " + start.isUtc());
 					if (event.getEndDate() != null) {
-                        DtEnd end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
-//                        end.setTimeZone(event.getEndDate().getTimeZone());
-//                        end.setDate(eventper.getEnd());
-//                        end.setUtc(event.getEndDate().isUtc());
+                        DtEnd end;
+                        if (event.getEndDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
+                            end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
+                        } else {
+                            end = new DtEnd(new net.fortuna.ical4j.model.Date(eventper.getEnd()));
+                        }
     					newprops.add(end);
 					}
 					for (Iterator<Property> iter2 = props.iterator(); iter2

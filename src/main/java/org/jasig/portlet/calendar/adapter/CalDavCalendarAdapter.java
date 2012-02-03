@@ -55,6 +55,7 @@ import org.jasig.portlet.calendar.credentials.DefaultCredentialsExtractorImpl;
 import org.jasig.portlet.calendar.credentials.ICredentialsExtractor;
 import org.jasig.portlet.calendar.url.DefaultUrlCreatorImpl;
 import org.jasig.portlet.calendar.url.IUrlCreator;
+import org.joda.time.Interval;
 import org.osaf.caldav4j.CalDAVCollection;
 import org.osaf.caldav4j.exceptions.CalDAV4JException;
 import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
@@ -103,27 +104,26 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 	}
 
 	public CalendarEventSet getEvents(
-			CalendarConfiguration calendarConfiguration, Period period,
+			CalendarConfiguration calendarConfiguration, Interval interval,
 			PortletRequest request) throws CalendarException {
 		Set<VEvent> events = new HashSet<VEvent>();
 
-		String url = this.urlCreator.constructUrl(calendarConfiguration, period, request);
+		String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 		
 		log.debug("generated url: " + url);
 		
 		// try to get the cached calendar
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, period, request, cacheKeyPrefix.concat(".").concat(url));
+		String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
 		Element cachedElement = this.cache.get(key);
         CalendarEventSet eventSet;
 		if (cachedElement == null) {
 			// read in the data
 			// retrieve calendars for the current user
 			net.fortuna.ical4j.model.Calendar calendar = retrieveCalendar(
-					url, period, credentialsExtractor.getCredentials(request));
+					url, interval, credentialsExtractor.getCredentials(request));
 
 			// extract events from the calendars
-				events.addAll(convertCalendarToEvents(
-						calendarConfiguration.getId(), calendar, period));
+				events.addAll(convertCalendarToEvents(calendar, interval));
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
             eventSet = new CalendarEventSet(key, events);
@@ -140,12 +140,12 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
-	public String getLink(CalendarConfiguration calendar, Period period, PortletRequest request) throws CalendarLinkException {
+	public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) throws CalendarLinkException {
 		throw new CalendarLinkException("This calendar has no link");
 	}
 	
 	protected final net.fortuna.ical4j.model.Calendar retrieveCalendar(
-			String url, Period period, Credentials credentials) {
+			String url, Interval interval, Credentials credentials) {
 
 		try {
 			
@@ -170,7 +170,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 			}
 
 			GenerateQuery gq = new GenerateQuery();
-			gq.setTimeRange(period.getStart(), period.getEnd());
+            gq.setTimeRange(new net.fortuna.ical4j.model.Date(interval
+                    .getStart().toDate()), new net.fortuna.ical4j.model.Date(
+                    interval.getEnd().toDate()));
 			CalendarQuery query = gq.generate();
 
 			CalDAVCollection col = new CalDAVCollection(url, hostConfiguration, new CalDAV4JMethodFactory(),
@@ -194,11 +196,15 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
 	}
 
-	protected final Set<VEvent> convertCalendarToEvents(Long calendarId,
-			net.fortuna.ical4j.model.Calendar calendar, Period period)
+	protected final Set<VEvent> convertCalendarToEvents(
+			net.fortuna.ical4j.model.Calendar calendar, Interval interval)
 			throws CalendarException {
 
-		Set<VEvent> events = new HashSet<VEvent>();
+        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
+                interval.getStartMillis()),
+                new net.fortuna.ical4j.model.DateTime(interval.getEndMillis()));
+
+        Set<VEvent> events = new HashSet<VEvent>();
 
 		// if the calendar is null, return empty set
 		if (calendar == null) {

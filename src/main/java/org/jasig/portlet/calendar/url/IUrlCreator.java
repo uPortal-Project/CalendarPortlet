@@ -21,10 +21,9 @@ package org.jasig.portlet.calendar.url;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter;
+import org.joda.time.Interval;
 
 /**
  * This interface defines operations for constructing the URL to be retrieved
@@ -44,6 +43,6 @@ public interface IUrlCreator {
 	 * @return
 	 */
 	String constructUrl(CalendarConfiguration configuration,
-			Period period, PortletRequest request);
+			Interval interval, PortletRequest request);
 	
 }

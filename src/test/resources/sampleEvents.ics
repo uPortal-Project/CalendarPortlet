@@ -73,4 +73,27 @@ DTEND;TZID="America/New_York":20080912T170000
 DTSTAMP:20080912T010928Z
 SEQUENCE:4
 END:VEVENT
+BEGIN:VEVENT
+CATEGORIES:Lectures
+CATEGORIES:Lectures_Seminars
+CONTACT;ALTREP="http://www.cs.rpi.edu/";X-BEDEWORK-UID=00f18251-0fcfe6db-0
+ 10f-cfe6df76-000000fe:Computer Science
+CREATED:20120119T234709Z
+DESCRIPTION:The speaker is Dr. Amir Atiya\, Cairo University\, Egypt (curr
+ ently on leave at Veros Systems\, TX)\, and the title of his talk is\, "G
+ aussian Processes for Classification."  Refreshments to be served at 3:30
+  p.m.
+DTEND;TZID=America/New_York:20140202T170000
+DTSTAMP:20120119T234709Z
+DTSTART;TZID=America/New_York:20140202T160000
+LAST-MODIFIED:20120119T234709Z
+LOCATION;X-BEDEWORK-UID=00f18252-1f3ba2fc-011f-3c8ab45b-000000a7:Troy 2012 
+STATUS:CONFIRMED
+SUMMARY:Computer Science Colloquium
+UID:CAL-00f18254-34f54e35-0134-f85de3bb-00006937calendars@rpi.edu
+URL:http://www.cs.rpi.edu/news/colloquia/Feb02_2012.html
+X-BEDEWORK-ALIAS;X-BEDEWORK-PARAM-DISPLAYNAME=Lectures:/user/public-user/L
+ ectures_Seminars/Lectures
+X-BEDEWORK-SUBMITTEDBY:coonrc for CompSci (agrp_compsci)
+END:VEVENT
 END:VCALENDAR

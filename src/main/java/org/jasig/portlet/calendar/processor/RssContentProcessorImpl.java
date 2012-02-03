@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Description;
@@ -40,7 +39,9 @@ import net.fortuna.ical4j.model.property.Url;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.Interval;
 
+import com.microsoft.exchange.types.CalendarEvent;
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -59,8 +60,7 @@ public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	   public SyndFeed getIntermediateCalendar(Long calendarId, Period period,
-	            InputStream in) {
+	   public SyndFeed getIntermediateCalendar(Interval interval, InputStream in) {
 	        try {
 	            
 	            final SyndFeedInput input = new SyndFeedInput();
@@ -79,8 +79,7 @@ public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
 	 */
-	public Set<VEvent> getEvents(Long calendarId, Period period,
-			SyndFeed feed) {
+	public Set<VEvent> getEvents(Interval interval, SyndFeed feed) {
 		Set<VEvent> events = new HashSet<VEvent>();
 		
 		try {
@@ -98,7 +97,7 @@ public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
 				}
 				
 				// we only want to add this feed if it's in the desired time period
-				if (start != null && start.after(period.getStart()) && start.before(period.getEnd())) {
+				if (start != null && interval.contains(start.getTime())) {
 
 					props.add(new DtStart(new DateTime(start)));
 					props.add(new Summary(entry.getTitle()));

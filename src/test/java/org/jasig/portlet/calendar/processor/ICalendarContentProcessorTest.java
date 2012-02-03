@@ -20,9 +20,7 @@
 package org.jasig.portlet.calendar.processor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +29,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.commons.io.IOUtils;
@@ -39,6 +36,7 @@ import org.jasig.portlet.calendar.VEventStartComparator;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,17 +60,15 @@ public class ICalendarContentProcessorTest {
         Resource calendarFile = applicationContext.getResource("classpath:/sampleEvents.ics");
 
         DateMidnight start = new DateMidnight(2010, 1, 1, DateTimeZone.UTC);
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(
-                start.toDate()), new net.fortuna.ical4j.model.DateTime(start
-                .plusYears(3).toDate()));
+        Interval interval = new Interval(start, start.plusYears(3));
 
         InputStream in = calendarFile.getInputStream();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copyLarge(in, buffer);
         
         TreeSet<VEvent> events = new TreeSet<VEvent>(new VEventStartComparator());
-        net.fortuna.ical4j.model.Calendar c  = processor.getIntermediateCalendar(Long.valueOf((long) 3), period, new ByteArrayInputStream(buffer.toByteArray()));
-        events.addAll(processor.getEvents(Long.valueOf((long) 3), period, c));
+        net.fortuna.ical4j.model.Calendar c  = processor.getIntermediateCalendar(interval, new ByteArrayInputStream(buffer.toByteArray()));
+        events.addAll(processor.getEvents(interval, c));
         
         assertEquals(5, events.size());
         

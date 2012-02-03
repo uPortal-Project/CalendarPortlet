@@ -21,11 +21,11 @@ package org.jasig.portlet.calendar.url;
 
 import javax.portlet.PortletRequest;
 
-import net.fortuna.ical4j.model.Period;
-
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarException;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 /**
  * {@link IUrlCreator} implementation specific for integrating
@@ -49,12 +49,18 @@ http://localhost:8080/calendarkey/ws/netid/20081009/20081010
  * @version $Header: CalendarkeyUrlCreatorImpl.java Exp $
  */
 public class CalendarkeyUrlCreatorImpl implements IUrlCreator {
+    
+    private DateTimeFormatter formatter;
+    
+    public CalendarkeyUrlCreatorImpl() {
+        formatter = new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").toFormatter();        
+    }
 
 	/* (non-Javadoc)
 	 * @see org.jasig.portlet.calendar.adapter.UrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration, javax.portlet.PortletRequest, net.fortuna.ical4j.model.Period)
 	 */
 	public String constructUrl(CalendarConfiguration calendarListing,
-			Period period, PortletRequest request) {
+			Interval interval, PortletRequest request) {
 		String baseUrl = calendarListing.getCalendarDefinition().getParameters().get("baseUrl");
 		StringBuilder finalUrl = new StringBuilder();
 		finalUrl.append(baseUrl);
@@ -68,9 +74,9 @@ public class CalendarkeyUrlCreatorImpl implements IUrlCreator {
 		finalUrl.append(username);
 		finalUrl.append("/");
 		
-		finalUrl.append(DateFormatUtils.format(period.getStart().getTime(), "yyyyMMdd"));
+		finalUrl.append(formatter.print(interval.getStart()));
 		finalUrl.append("/");
-		finalUrl.append(DateFormatUtils.format(period.getEnd().getTime(), "yyyyMMdd"));
+        finalUrl.append(formatter.print(interval.getEnd()));
 		return finalUrl.toString();
 	}
 
