@@ -630,25 +630,31 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
-                <groupId>net.sf.alchim</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>0.7.1</version>
+                <groupId>org.jasig.resourceserver</groupId>
+                <artifactId>resource-server-plugin</artifactId>
+                <version>${resource-server.version}</version>
                 <executions>
                     <execution>
+                        <id>aggregate-resources</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>compress</goal>
+                            <goal>batch-aggregate</goal>
                         </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
+                            <includes>
+                                <include>skin.xml</include>
+                                <include>skin-shared.xml</include>
+                                <include>skin-mobile.xml</include>
+                                <include>skin-mobile-shared.xml</include>
+                            </includes>
+                            <sharedJavaScriptDirectory>scripts/</sharedJavaScriptDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.min.js</exclude>
-                    </excludes>
-                    <linebreakpos>10000</linebreakpos>
-                    <suffix>.min</suffix>
-                    <jswarn>false</jswarn>
-                </configuration>
             </plugin>
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>

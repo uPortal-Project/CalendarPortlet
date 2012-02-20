@@ -21,13 +21,13 @@
 
 <%@ taglib prefix="editPreferences" tagdir="/WEB-INF/tags/edit-preferences" %>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+<rs:aggregatedResources path="${ model.usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 
     <script type="text/javascript"><rs:compressJs>
     up.jQuery(function() {
         var $ = up.jQuery;
           $(document).ready(function(){
-              up.ParameterEditor($("div.roles"), {
+              cal.ParameterEditor($("div.roles"), {
                     parameterNamePrefix: $(this).attr("prefix"),
                     parameterBindName: 'parameters',
                     auxiliaryBindName: 'parameterOverrides',

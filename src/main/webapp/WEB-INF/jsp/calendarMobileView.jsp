@@ -23,12 +23,7 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<c:if test="${ !model.usePortalJsLibs }">
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
-    <script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
-</c:if>
-<script type="text/javascript" src="<c:url value="/scripts/CalendarView.min.js"/>"></script>
+<rs:aggregatedResources path="${ model.usePortalJsLibs ? '/skin-mobile-shared.xml' : '/skin-mobile.xml' }"/>
 
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
