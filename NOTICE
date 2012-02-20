@@ -49,9 +49,10 @@ This project includes:
   Ehcache Core under The Apache Software License, Version 2.0
   Ehcache Web Filters under The Apache Software License, Version 2.0
   ezmorph under The Apache Software License, Version 2.0
+  FindBugs-jsr305 under The Apache Software License, Version 2.0
   Groovy under Apache License, Version 2.0
   groovy-engine under BSD License
-  Guava (Google Common Libraries) under The Apache Software License, Version 2.0
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under BSD style
   Hibernate under GNU LESSER GENERAL PUBLIC LICENSE
   HSQLDB Database under HSQLDB License, a BSD open source license
@@ -69,6 +70,7 @@ This project includes:
   jaxen under Apache style license
   jdom under Apache style license
   JLine under BSD
+  Joda time under Apache 2
   js-engine under BSD License
   json-lib under The Apache Software License, Version 2.0
   JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
@@ -83,6 +85,7 @@ This project includes:
   Objenesis under MIT License
   org.apache.tools.ant under Apache License, Version 2.0
   OWASP AntiSamy under BSD License
+  Portlet Form Resources under Apache License Version 2.0
   Resource Server API under Apache License Version 2.0
   Resource Server Content under Apache License Version 2.0
   Resource Server Core under Apache License Version 2.0
@@ -125,7 +128,6 @@ This project includes:
   xmlParserAPIs under Apache License, Version 2.0
   xom under LGPL
   XStream Core under BSD style
-  yuicompressor under BSD License
 
  
 This project also includes code under copywrite of the following institutions:
