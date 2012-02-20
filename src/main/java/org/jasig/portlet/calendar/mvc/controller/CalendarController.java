@@ -61,9 +61,6 @@ public class CalendarController implements ApplicationContextAware {
     public static final String PREFERENCE_DISABLE_PREFERENCES = "disablePreferences";
     public static final String PREFERENCE_DISABLE_ADMINISTRATION = "disableAdministration";
 
-    public static final String PREFERENCE_USE_PORTAL_JS_LIBS = "usePortalJsLibs";
-    public static final String PREFERENCE_PORTAL_JS_NAMESPACE = "portalJsNamespace";
-
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	@ActionMapping
@@ -210,9 +207,6 @@ public class CalendarController implements ApplicationContextAware {
         Boolean disableAdmin = Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_ADMINISTRATION, "false"));
         model.put(PREFERENCE_DISABLE_ADMINISTRATION, disableAdmin);
         
-        model.put(PREFERENCE_USE_PORTAL_JS_LIBS, prefs.getValue(PREFERENCE_USE_PORTAL_JS_LIBS, "true"));
-        model.put(PREFERENCE_PORTAL_JS_NAMESPACE, prefs.getValue(PREFERENCE_PORTAL_JS_NAMESPACE, "up"));
-
 		return new ModelAndView(viewSelector.getCalendarViewName(request), "model", model);
 	}
 

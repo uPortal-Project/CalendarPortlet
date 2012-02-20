@@ -26,7 +26,7 @@
     <js included="plain" resource="true">/rs/jquery/1.6.1/jquery-1.6.1.js</js>
     <js included="aggregated" resource="true">/rs/jquery/1.6.1/jquery-1.6.1.min.js</js>
 
-    <js included="plain" resource="true">/rs/jqueryui/1.13.8/jquery-ui-1.8.13.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
     <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
 
     <js included="plain" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.js</js>

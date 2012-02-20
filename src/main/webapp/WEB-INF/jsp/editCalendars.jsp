@@ -20,9 +20,16 @@
 --%>
 
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
-
+<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+<c:if test="${!usePortalJsLibs}">
+    <script type="text/javascript"><rs:compressJs>
+            jQuery.noConflict(true);
+            fluid = null; 
+            fluid_1_4 = null;
+    </rs:compressJs></script>
+</c:if>
 
 <div class="upcal-editview">
 
@@ -190,9 +197,6 @@
 </div>
 
 <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
-    <c:if test="${ !model.usePortalJsLibs }">
-        <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
-    </c:if>
 
     <script type="text/javascript"><rs:compressJs>
         var ${n} = ${n} || {};

@@ -29,7 +29,16 @@
 <portlet:actionURL var="newUrl" escapeXml="false"><portlet:param name="action" value="addSharedCalendar"/>
     <portlet:param name="id" value="ID"/></portlet:actionURL>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.5/jquery-1.5.min.js"/>"></script>
+<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-mobile-shared.xml' : '/skin-mobile.xml' }"/>
+<c:set var="n"><portlet:namespace/></c:set>
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+<c:if test="${!usePortalJsLibs}">
+    <script type="text/javascript"><rs:compressJs>
+            jQuery.noConflict(true);
+            fluid = null; 
+            fluid_1_4 = null;
+    </rs:compressJs></script>
+</c:if>
 
 <div class="portlet">
 

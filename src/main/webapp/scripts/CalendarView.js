@@ -55,7 +55,6 @@ if (!cal.init) {
             } else {
                 that.model.event = {};
             }
-            console.log(that.model);
         };
         
         fluid.defaults("cal.CalendarView", {
@@ -404,7 +403,7 @@ if (!cal.init) {
             paramPath = getParameterPath(link.attr("paramName"), that);
             link.before($(document.createElement("div"))
                 .append(
-                    $(document.createElement("input")).attr("name", paramPath)
+                    $(document.createElement("input")).attr("name", paramPath).attr("type", "text")
                 ).append(
                     $(document.createElement("a")).attr("href", "javascript:;")
                         .addClass(that.options.displayClasses.deleteValueLink)

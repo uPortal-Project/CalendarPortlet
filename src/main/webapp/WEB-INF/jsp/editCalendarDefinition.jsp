@@ -21,26 +21,44 @@
 
 <%@ taglib prefix="editPreferences" tagdir="/WEB-INF/tags/edit-preferences" %>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<rs:aggregatedResources path="${ model.usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
+<c:set var="n"><portlet:namespace/></c:set>
+<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 
     <script type="text/javascript"><rs:compressJs>
-    up.jQuery(function() {
-        var $ = up.jQuery;
-          $(document).ready(function(){
-              cal.ParameterEditor($("div.roles"), {
-                    parameterNamePrefix: $(this).attr("prefix"),
-                    parameterBindName: 'parameters',
-                    auxiliaryBindName: 'parameterOverrides',
-                    useAuxiliaryCheckbox: true,
-                    dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
-                    multivalued: false,
-                    messages: {
-                      remove: '<spring:message code="remove"/>',
-                      addValue: '<spring:message code="add.value"/>'
+        var ${n} = ${n} || {};
+        <c:choose>
+            <c:when test="${!usePortalJsLibs}">
+                ${n}.jQuery = jQuery.noConflict(true);
+                ${n}.fluid = fluid;
+                fluid = null; 
+                fluid_1_4 = null;
+            </c:when>
+            <c:otherwise>
+                <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
+                ${n}.jQuery = ${ ns }jQuery;
+                ${n}.fluid = ${ ns }fluid;
+            </c:otherwise>
+        </c:choose>
+        if (!cal.initialized) cal.init(${n}.jQuery, ${n}.fluid);
+        ${n}.cal = cal;
+        ${n}.jQuery(function() {
+            var $ = ${n}.jQuery;
+            var cal = ${n}.cal;
+            $(document).ready(function(){
+                cal.ParameterEditor($("#${n}parameters"), {
+                      parameterNamePrefix: '',
+                      parameterBindName: 'parameters',
+                      auxiliaryBindName: 'parameterOverrides',
+                      useAuxiliaryCheckbox: true,
+                      multivalued: true,
+                      messages: {
+                        remove: '<spring:message code="remove.role"/>',
+                        addValue: '<spring:message code="add.value"/>'
+                      }
                     }
-                  }
-              );
-          });
+                );
+            });
+        });
     </rs:compressJs></script>
 
 <div class="fl-widget portlet" role="section">
@@ -67,7 +85,7 @@
         <form:hidden path="fname"/>
         <form:hidden path="className"/>
         
-        <table>
+        <table id="${n}parameters">
             <tbody>
 		<tr>
 			<td><label class="portlet-form-field-label">
@@ -90,18 +108,16 @@
         </c:forEach>
         <tr>
             <td><label class="portlet-form-field-label"><spring:message code="default.roles"/></label></td>
-            <td id="<portlet:namespace/>role-list">
-            <c:forEach items="${ calendarDefinitionForm.role }" var="role">
-                <div style="padding-left: 5px;">
-                    <input name="role" type="text" value="${ role }" size="20"/>
-                    <a class="upcal-delete" href="javascript:;" onclick="removeRole(this)">
-                       <spring:message code="delete"/>
-                    </a>
-                </div>
-            </c:forEach>
-            <a class="upcal-add" href="javascript:;" onclick="addRole('<portlet:namespace/>role-list')">
-                <spring:message code="add.a.role"/>
-            </a>
+            <td>
+                <c:forEach items="${ calendarDefinitionForm.role }" var="role">
+                  <div>
+                     <input name="role" value="${ role }" type="text"/>
+                     <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
+                  </div>
+                </c:forEach>
+                <a class="add-parameter-value-link" href="javascript:;" paramName="role">
+                    <spring:message code="add.a.role"/>
+                </a>
             </td>
         </tr>
         </tbody>

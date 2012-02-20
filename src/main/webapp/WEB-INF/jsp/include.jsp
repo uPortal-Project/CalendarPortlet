@@ -32,3 +32,5 @@
 <%@ taglib prefix="antisamy" tagdir="/WEB-INF/tags/antisamy" %>
 
 <portlet:defineObjects/>
+<c:set var="usePortalJsLibs" value="${renderRequest.preferences.map['usePortalJsLibs'][0]}"/>
+<c:set var="portalJsNamespace" value="${renderRequest.preferences.map['portalJsNamespace'][0]}"/>

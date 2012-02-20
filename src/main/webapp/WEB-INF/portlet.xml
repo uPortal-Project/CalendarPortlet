@@ -56,32 +56,23 @@
                 <value>7</value>
             </preference>
             
-            <!-- 
-                Set includeJQuery to true to explicitly import jQuery and
-                jQuery UI javascript libraries within the portlet.  When true,
-                this setting will also cause the portlet to use jQuery's 
-                noConflict feature in extreme mode.
-                
-                This setting should be set to "true" for uPortal 3.1 and above,
-                and false for earlier uPortal versions or for Liferay.
-            -->
             <preference>
                 <name>usePortalJsLibs</name>
-                <value>true</value>
+                <value>false</value>
             </preference>
             <preference>
-                <name>portalJsLibNamespace</name>
+                <name>portalJsNamespace</name>
                 <value>up</value>
             </preference>
         </portlet-preferences>
         
         <!--
-            Adminisrative role mapping.  This mapping is required if you
+            Administrative role mapping.  This mapping is required if you
             want to use the administrative features.
         -->
         <security-role-ref>
             <role-name>calendarAdmin</role-name>
-            <role-link>local.2</role-link>
+            <role-link>Portal Administrators</role-link>
         </security-role-ref>
 
 
@@ -91,19 +82,19 @@
         -->
         <security-role-ref>
             <role-name>everyone</role-name>
-            <role-link>local.0</role-link>
+            <role-link>Everyone</role-link>
         </security-role-ref>
         <security-role-ref>
             <role-name>student</role-name>
-            <role-link>local.1</role-link>
+            <role-link>Students</role-link>
         </security-role-ref>
         <security-role-ref>
             <role-name>faculty</role-name>
-            <role-link>local.2</role-link>
+            <role-link>Faculty</role-link>
         </security-role-ref>
         <security-role-ref>
             <role-name>staff</role-name>
-            <role-link>local.3</role-link>
+            <role-link>Staff</role-link>
         </security-role-ref>
     </portlet>
     

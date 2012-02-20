@@ -21,15 +21,6 @@
 <resources xmlns="http://www.jasig.org/uportal/web/skin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
-    <js included="plain" resource="true">/rs/jquery/1.6.1/jquery-1.6.1.js</js>
-    <js included="aggregated" resource="true">/rs/jquery/1.6.1/jquery-1.6.1.min.js</js>
-
-    <js included="plain" resource="true">/rs/jqueryui/1.13.8/jquery-ui-1.8.13.js</js>
-    <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
-
-    <js included="plain" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.js</js>
-    <js included="aggregated" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js</js>
-
     <js>scripts/CalendarView.js</js>
 
 </resources>
