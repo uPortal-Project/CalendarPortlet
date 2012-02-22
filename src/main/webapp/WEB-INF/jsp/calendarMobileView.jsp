@@ -28,7 +28,7 @@
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
     <c:choose>
-        <c:when test="${!initParam['usePortalJsLibs]}">
+        <c:when test="${!usePortalJsLibs}">
             ${n}.jQuery = jQuery.noConflict(true);
             ${n}.fluid = fluid;
             fluid = null; 
