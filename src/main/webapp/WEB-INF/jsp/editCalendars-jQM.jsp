@@ -20,8 +20,7 @@
 --%>
 
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<portlet:defineObjects/>
-<c:set var="n"><portlet:namespace/></c:set>
+
 <portlet:actionURL var="hideUrl" escapeXml="false"><portlet:param name="action" value="hideCalendar"/>
     <portlet:param name="configurationId" value="ID"/></portlet:actionURL>
 <portlet:actionURL var="showUrl" escapeXml="false"><portlet:param name="action" value="showCalendar"/>
@@ -32,13 +31,6 @@
 <rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-mobile-shared.xml' : '/skin-mobile.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
-<c:if test="${!usePortalJsLibs}">
-    <script type="text/javascript"><rs:compressJs>
-            jQuery.noConflict(true);
-            fluid = null; 
-            fluid_1_4 = null;
-    </rs:compressJs></script>
-</c:if>
 
 <div class="portlet">
 
@@ -70,12 +62,16 @@
 <script type="text/javascript"><rs:compressJs>
     var ${n} = ${n} || {};
     <c:choose>
-        <c:when test="${!model.usePortalJsLibs}">
+        <c:when test="${!usePortalJsLibs}">
             ${n}.jQuery = jQuery.noConflict(true);
+            ${n}.fluid = fluid;
+            fluid = null; 
+            fluid_1_4 = null;
         </c:when>
         <c:otherwise>
-            <c:set var="ns"><c:if test="${ not empty model.portalJsNamespace }">${ model.portalJsNamespace }.</c:if></c:set>
+            <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
             ${n}.jQuery = ${ ns }jQuery;
+            ${n}.fluid = ${ ns }fluid;
         </c:otherwise>
     </c:choose>
     ${n}.jQuery(function(){
