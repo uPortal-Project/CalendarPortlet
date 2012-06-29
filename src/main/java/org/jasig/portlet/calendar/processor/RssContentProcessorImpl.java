@@ -41,7 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.Interval;
 
-import com.microsoft.exchange.types.CalendarEvent;
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -51,85 +50,85 @@ import com.sun.syndication.io.SyndFeedInput;
 
 /**
  * This {@link IContentProcessor} implementation uses Rome to extract
- * {@link CalendarEvent}s from RSS formatted streams.
- * 
+ * {@link CalendarEventSet}s from RSS formatted streams.
+ *
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RssContentProcessorImpl.java Exp $
  */
 public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
-	   public SyndFeed getIntermediateCalendar(Interval interval, InputStream in) {
-	        try {
-	            
-	            final SyndFeedInput input = new SyndFeedInput();
-	            final InputStreamReader reader = new InputStreamReader(in);
-	            final SyndFeed feed = input.build(reader);
-	            return feed;
-	            
-	        } catch (IllegalArgumentException e) {
-	            log.error(e);
-	        } catch (FeedException e) {
-	            log.error(e);
-	        }
-	        return null;
-	   }
+       public SyndFeed getIntermediateCalendar(Interval interval, InputStream in) {
+            try {
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
-	 */
-	public Set<VEvent> getEvents(Interval interval, SyndFeed feed) {
-		Set<VEvent> events = new HashSet<VEvent>();
-		
-		try {
-			@SuppressWarnings("unchecked")
-			List<SyndEntry> entries = (List<SyndEntry>) feed.getEntries();
-			for (SyndEntry entry : entries) {
-				PropertyList props = new PropertyList();
-				
-				// Attempt to use the pubDate element as the start date for this
-				// event.  RSS feeds don't really give us anything to use
-				// for an end date.
-				Date start = null;
-				if (entry.getPublishedDate() != null) {
-					start = entry.getPublishedDate();
-				}
-				
-				// we only want to add this feed if it's in the desired time period
-				if (start != null && interval.contains(start.getTime())) {
+                final SyndFeedInput input = new SyndFeedInput();
+                final InputStreamReader reader = new InputStreamReader(in);
+                final SyndFeed feed = input.build(reader);
+                return feed;
 
-					props.add(new DtStart(new DateTime(start)));
-					props.add(new Summary(entry.getTitle()));
-					props.add(new Description(entry.getDescription().getValue()));
+            } catch (IllegalArgumentException e) {
+                log.error(e.getMessage(), e);
+            } catch (FeedException e) {
+                log.error(e.getMessage(), e);
+            }
+            return null;
+       }
 
-					// use the RSS item Guid as the Uid for this event
-					String guid = null;
-					if (entry instanceof Item && ((Item) entry).getGuid() != null) {
-						guid = ((Item) entry).getGuid().getValue();
-						props.add(new Uid(guid));
-					}
-					
-					// try to find a link for this event
-					if (entry.getLink() != null) {
-						try {
-							props.add(new Url(new URI(entry.getLink())));
-						} catch (URISyntaxException e1) { }
-					}
-					
-					// construct and add the new calendar event
-					VEvent event = new VEvent(props);
-					events.add(event);
-				}
-				
-			}
-			
-		} catch (IllegalArgumentException e) {
-			log.error(e);
-		}
-		
-		// return the list of matching calendar events
-		return events;
-	}
+    /* (non-Javadoc)
+     * @see org.jasig.portlet.calendar.adapter.ContentProcessor#getEvents(java.lang.Long, net.fortuna.ical4j.model.Period, java.io.InputStream)
+     */
+    public Set<VEvent> getEvents(Interval interval, SyndFeed feed) {
+        Set<VEvent> events = new HashSet<VEvent>();
+
+        try {
+            @SuppressWarnings("unchecked")
+            List<SyndEntry> entries = (List<SyndEntry>) feed.getEntries();
+            for (SyndEntry entry : entries) {
+                PropertyList props = new PropertyList();
+
+                // Attempt to use the pubDate element as the start date for this
+                // event.  RSS feeds don't really give us anything to use
+                // for an end date.
+                Date start = null;
+                if (entry.getPublishedDate() != null) {
+                    start = entry.getPublishedDate();
+                }
+
+                // we only want to add this feed if it's in the desired time period
+                if (start != null && interval.contains(start.getTime())) {
+
+                    props.add(new DtStart(new DateTime(start), true));
+                    props.add(new Summary(entry.getTitle()));
+                    props.add(new Description(entry.getDescription().getValue()));
+
+                    // use the RSS item Guid as the Uid for this event
+                    String guid = null;
+                    if (entry instanceof Item && ((Item) entry).getGuid() != null) {
+                        guid = ((Item) entry).getGuid().getValue();
+                        props.add(new Uid(guid));
+                    }
+
+                    // try to find a link for this event
+                    if (entry.getLink() != null) {
+                        try {
+                            props.add(new Url(new URI(entry.getLink())));
+                        } catch (URISyntaxException e1) { }
+                    }
+
+                    // construct and add the new calendar event
+                    VEvent event = new VEvent(props);
+                    events.add(event);
+                }
+
+            }
+
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        // return the list of matching calendar events
+        return events;
+    }
 
 }

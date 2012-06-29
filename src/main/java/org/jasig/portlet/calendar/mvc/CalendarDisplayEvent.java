@@ -65,7 +65,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 		}
 		
 		if (event.getEndDate() == null) {
-		    dayEnd = null;
+		    dayEnd = dayStart;
 		} else if (eventInterval.getEnd().isAfter(day.getEnd())) {
 			dayEnd = day.getEnd();
 			multi = true;
