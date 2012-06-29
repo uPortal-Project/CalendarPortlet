@@ -58,8 +58,12 @@
         <bean class="org.jasig.portlet.calendar.service.SessionSetupInitializationService"
             p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore"/>
 
+        <!--
+            Uncomment the following section for MS Exchange calendars
+        -->
         <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
-            p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"/-->
+            p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"
+            p:ntlmDomain="${ntlm.domain}"/-->
         
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.

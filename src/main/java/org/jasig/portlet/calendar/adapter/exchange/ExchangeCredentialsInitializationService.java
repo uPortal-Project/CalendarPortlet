@@ -23,8 +23,8 @@ import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
 import org.jasig.portlet.calendar.service.IInitializationService;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -64,10 +64,18 @@ public class ExchangeCredentialsInitializationService implements
     public void setPasswordAttribute(String passwordAttribute) {
         this.passwordAttribute = passwordAttribute;
     }
+
+    private String ntlmDomain = null;
     
-    /* (non-Javadoc)
-     * @see org.jasig.portlet.calendar.service.IInitializationService#initialize(javax.portlet.PortletRequest)
+    /**
+     * Set the domain () of this machine for NTLM authentication.
+     * 
+     * @param passwordAttribute
      */
+    public void setNtlmDomain(String ntlmDomain) {
+        this.ntlmDomain = ntlmDomain;
+    }
+
     public void initialize(PortletRequest request) {
 
         // get the username and password from the UserInfo map
@@ -77,8 +85,8 @@ public class ExchangeCredentialsInitializationService implements
         String password = userInfo.get(passwordAttribute);
 
         // construct a credentials object from the username and password
-        Credentials credentials = new UsernamePasswordCredentials(username, password);
-
+        Credentials credentials = new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
+        
         // cache the credentials object to this thread
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
@@ -86,7 +94,7 @@ public class ExchangeCredentialsInitializationService implements
             RequestContextHolder.setRequestAttributes(requestAttributes);
         }
         requestAttributes.setAttribute(
-                ExchangeHttpWebServiceMessageSender.EXCHANGE_CREDENTIALS_ATTRIBUTE,
+                ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE,
                 credentials, RequestAttributes.SCOPE_SESSION);
     }
 

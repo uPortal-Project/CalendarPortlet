@@ -19,6 +19,7 @@
 
 package org.jasig.portlet.calendar.adapter;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,8 @@ import javax.portlet.PortletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
 
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -47,10 +50,12 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
-import org.joda.time.Period;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceOperations;
+import org.springframework.ws.soap.SoapHeaderElement;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 import com.microsoft.exchange.messages.FreeBusyResponseType;
@@ -167,10 +172,29 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
             // construct the SOAP request object to use
             GetUserAvailabilityRequest soapRequest = getAvailabilityRequest(interval, emailAddress);
             
+            final WebServiceMessageCallback actionCallback = new SoapActionCallback(
+                    AVAILABILITY_SOAP_ACTION);
+            
+            final WebServiceMessageCallback customCallback = new WebServiceMessageCallback() {
+
+                @Override
+                public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
+                    actionCallback.doWithMessage(message);
+                    SoapMessage soap = (SoapMessage) message;
+                    QName rsv = new QName(
+                            "http://schemas.microsoft.com/exchange/services/2006/types", 
+                            "RequestServerVersion", 
+                            "ns3"); 
+                    SoapHeaderElement version = soap.getEnvelope().getHeader()
+                                                    .addHeaderElement(rsv);
+                    version.addAttribute(new QName("Version"), "Exchange2010_SP2");
+                }
+                
+            };
+            
             // use the request to retrieve data from the Exchange server
             GetUserAvailabilityResponse response = (GetUserAvailabilityResponse) webServiceOperations
-                    .marshalSendAndReceive(soapRequest, new SoapActionCallback(
-                            AVAILABILITY_SOAP_ACTION));
+                    .marshalSendAndReceive(soapRequest, customCallback);
             
             // for each FreeBusy response, parse the list of events
             for (FreeBusyResponseType freeBusy : response
@@ -308,8 +332,6 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * @throws DatatypeConfigurationException
      */
     protected XMLGregorianCalendar getXmlDate(DateTime date) throws DatatypeConfigurationException {
-        DateTime utcdate = date.toDateTime(DateTimeZone.UTC);
-        
         // construct an XMLGregorianCalendar
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
         XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(); 

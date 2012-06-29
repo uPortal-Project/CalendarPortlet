@@ -37,65 +37,62 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.joda.time.Interval;
 
-import com.microsoft.exchange.types.CalendarEvent;
-
-
 /**
  * This {@link IContentProcessor} implementation uses XSLT to transform an XML
- * stream into iCal. The iCal is then extracted into {@link CalendarEvent}s.
- * 
+ * stream into iCal. The iCal is then extracted into {@link CalendarEventSet}s.
+ *
  * @author Anthony Colebourne
  * @version $Header: XSLTICalendarContentProcessorImpl.java Exp $
  */
 public class XSLTICalendarContentProcessorImpl extends ICalendarContentProcessorImpl {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
-	public XSLTICalendarContentProcessorImpl() {
-		super();
-	}
+    public XSLTICalendarContentProcessorImpl() {
+        super();
+    }
 
-	public XSLTICalendarContentProcessorImpl(String xslFile) {
-		super();
-		this.xslFile = xslFile;
-	}
+    public XSLTICalendarContentProcessorImpl(String xslFile) {
+        super();
+        this.xslFile = xslFile;
+    }
 
-	@Override
-	public Calendar getIntermediateCalendar(Interval interval, InputStream in) {
+    @Override
+    public Calendar getIntermediateCalendar(Interval interval, InputStream in) {
         InputStream ical = transformToICal(in);
         return super.getIntermediateCalendar(interval, ical);
     }
 
-	protected final InputStream transformToICal(InputStream in) throws CalendarException {
+    protected final InputStream transformToICal(InputStream in) throws CalendarException {
 
-		StreamSource xmlSource = new StreamSource(in);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
-		try {
-			log.debug("Stylesheet is "+xslFile);
-			
-			InputStream xsl = this.getClass().getClassLoader().getResourceAsStream(xslFile);
-			
-			Transformer tx = TransformerFactory.newInstance().newTransformer(new StreamSource(xsl));
-			tx.transform(xmlSource,new StreamResult(out));
+        StreamSource xmlSource = new StreamSource(in);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			log.debug(out.toString());
-			
-			InputStream result = new ByteArrayInputStream(out.toByteArray());
-			
-			return result;
-		}
-		catch(TransformerConfigurationException tce) {
-			log.error("Failed to configure transformer",tce);
-			throw new CalendarException("Failed to configure transformer",tce);
-		}
-		catch(TransformerException txe) {
-			throw new CalendarException("Failed transformation",txe);
-		}
-	}
+        try {
+            log.debug("Stylesheet is "+xslFile);
 
-	private String xslFile;
-	public void setXslFile(String xslFile) {
-		this.xslFile = xslFile;
-	}
+            InputStream xsl = this.getClass().getClassLoader().getResourceAsStream(xslFile);
+
+            Transformer tx = TransformerFactory.newInstance().newTransformer(new StreamSource(xsl));
+            tx.transform(xmlSource,new StreamResult(out));
+
+            log.debug(out.toString());
+
+            InputStream result = new ByteArrayInputStream(out.toByteArray());
+
+            return result;
+        }
+        catch(TransformerConfigurationException tce) {
+            log.error("Failed to configure transformer",tce);
+            throw new CalendarException("Failed to configure transformer",tce);
+        }
+        catch(TransformerException txe) {
+            throw new CalendarException("Failed transformation",txe);
+        }
+    }
+
+    private String xslFile;
+    public void setXslFile(String xslFile) {
+        this.xslFile = xslFile;
+    }
 }

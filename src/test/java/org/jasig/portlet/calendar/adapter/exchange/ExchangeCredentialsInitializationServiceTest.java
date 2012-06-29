@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.auth.NTCredentials;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.portlet.MockPortletRequest;
@@ -57,7 +58,7 @@ public class ExchangeCredentialsInitializationServiceTest {
         service.initialize(request);
         
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) requestAttributes.getAttribute(ExchangeHttpWebServiceMessageSender.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        final NTCredentials credentials = (NTCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
         assertEquals("user", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
     }
@@ -72,7 +73,7 @@ public class ExchangeCredentialsInitializationServiceTest {
         service.initialize(request);
         
         final RequestAttributes newRequestAttributes = RequestContextHolder.getRequestAttributes();
-        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) newRequestAttributes.getAttribute(ExchangeHttpWebServiceMessageSender.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        final NTCredentials credentials = (NTCredentials) newRequestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
         assertEquals("user", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
         assertEquals("testVal", newRequestAttributes.getAttribute("testAttr", RequestAttributes.SCOPE_SESSION));

@@ -93,7 +93,7 @@
         </property>
     </bean>
     
-    <!-- Simple adapter for iCal files available as files on the server -->	
+    <!-- Simple adapter for iCal files available as files on the server --> 
     <bean id="fileIcalAdapter" 
         class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
         p:cache-ref="calendarCache"
@@ -130,7 +130,17 @@
     </bean>
     <bean id="destinationProvider" class="org.springframework.ws.client.support.destination.Wsdl11DestinationProvider"
         p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
-    <bean id="webServiceMessageSender" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeHttpWebServiceMessageSender"/>
+    <bean id="credentialsProvider" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeWsCredentialsProvider"/>
+    <bean id="httpClient" class="org.jasig.portlet.calendar.adapter.exchange.NtlmAuthHttpClient"
+        p:credentialsProvider-ref="credentialsProvider">
+        <constructor-arg>
+            <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
+        </constructor-arg>
+    </bean>
+    <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
+        p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
+        p:maxTotalConnections="200">
+    </bean>
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"
         p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
         p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller">
@@ -139,10 +149,14 @@
     <bean id="exchangeAdapter" 
         class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
         p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
+        p:titleKey="exchange.ws.integration" 
+        p:descriptionKey="exchange.ws.integration"
         p:emailAttribute="mail">
     </bean-->
 
-    <!-- CalDAV adapter for calendars available via the CalDAV protocol -->
+    <!-- 
+     | CalDAV adapter for calendars available via the CalDAV protocol
+     +-->
     <!--bean id="calDavAdapter" 
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
         p:cache-ref="calendarCache">
@@ -228,7 +242,7 @@
         <property name="urlCreator">
         <bean class="org.jasig.portlet.calendar.url.CalendarkeyUrlCreatorImpl"/>
         </property>
-    </bean>	
+    </bean> 
     -->
 
 </beans>

@@ -52,12 +52,10 @@ import org.jasig.portlet.calendar.url.IUrlCreator;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.microsoft.exchange.types.CalendarEvent;
-
 
 /**
  * Implementation of {@link ICalendarAdapter} that uses Commons HttpClient
- * for retrieving {@link CalendarEvent}s.
+ * for retrieving {@link CalendarEventSet}s.
  * 
  * This bean requires an EhCache {@link Cache} be provided.
  * This bean also depends on instances of 3 different interfaces 
@@ -69,7 +67,7 @@ import com.microsoft.exchange.types.CalendarEvent;
  * </ul>
  * 
  * By specifying alternate implementations for these interfaces, multiple instances of
- * this class can be configured to consume {@link CalendarEvent}s from a variety of different
+ * this class can be configured to consume {@link CalendarEventSet}s from a variety of different
  * end points, for example an RSS feed behind basic auth, a CalendarKey implementation behind
  * a shared secret, or behind CAS.
  * 
@@ -136,7 +134,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	 * <li>if the fetch is necessary, consult the {@link ICredentialsExtractor} for necessary {@link Credentials}</li>
 	 * <li>Invoke retrieveCalendarHttp</li>
 	 * <li>Pass the returned {@link InputStream} into the configured {@link IContentProcessor}</li>
-	 * <li>Return the {@link CalendarEvent}s</li>
+	 * <li>Return the {@link CalendarEventSet}s</li>
 	 * </ol>
 	 * 
 	 *  (non-Javadoc)

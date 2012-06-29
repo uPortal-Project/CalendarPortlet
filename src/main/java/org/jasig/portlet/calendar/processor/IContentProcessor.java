@@ -26,12 +26,10 @@ import net.fortuna.ical4j.model.component.VEvent;
 
 import org.joda.time.Interval;
 
-import com.microsoft.exchange.types.CalendarEvent;
-
 /**
  * This interface defines a mechanism for converting an
- * {@link InputStream} into a {@link Set} of {@link CalendarEvent}s.
- * 
+ * {@link InputStream} into a {@link Set} of {@link CalendarEventSet}s.
+ *
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: ContentProcessor.java Exp $
  */
@@ -40,23 +38,23 @@ public interface IContentProcessor<T> {
     /**
      * Implementations should not return null (at a minimum return
      * Collections.emptySet()).
-     * 
+     *
      * @param calendarId
      * @param period
      * @param in
      * @return
      */
     public T getIntermediateCalendar(Interval interval, InputStream in);
-    
-	/**
-	 * Implementations should not return null (at a minimum return
-	 * Collections.emptySet()).
-	 * 
-	 * @param calendarId
-	 * @param period
-	 * @param in
-	 * @return
-	 */
-	public Set<VEvent> getEvents(Interval interval, T calendar);
-	
+
+    /**
+     * Implementations should not return null (at a minimum return
+     * Collections.emptySet()).
+     *
+     * @param calendarId
+     * @param period
+     * @param in
+     * @return
+     */
+    public Set<VEvent> getEvents(Interval interval, T calendar);
+
 }

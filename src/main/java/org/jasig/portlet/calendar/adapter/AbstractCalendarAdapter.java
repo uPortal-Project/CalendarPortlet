@@ -18,6 +18,7 @@
  */
 package org.jasig.portlet.calendar.adapter;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.jasig.portlet.form.parameter.Parameter;
@@ -33,7 +34,7 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
 
     private String titleKey;
     private String descriptionKey;
-    private List<Parameter> parameters;
+    private List<Parameter> parameters = Collections.emptyList();  // For adapters that don't need parameters
     
     @Override
     public String getTitleKey() {
