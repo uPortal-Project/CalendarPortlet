@@ -51,8 +51,8 @@
         var days = ${model.days};
 
         var options = {
-            eventsUrl: '<portlet:resourceURL/>', 
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${model.timezone}"/>', 
+            eventsUrl: '<portlet:resourceURL id="START-DAYS"/>', 
+            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
             days: days,
             messages: {
                 allDay: '<spring:message code="all.day"/>'

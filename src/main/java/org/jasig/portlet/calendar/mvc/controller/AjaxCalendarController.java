@@ -68,9 +68,12 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 	@ResourceMapping
 	public ModelAndView getEventList(ResourceRequest request,
-			ResourceResponse response, 
-			@RequestParam("startDate") String startDate,
-			@RequestParam("timePeriod") int days) throws Exception {
+			ResourceResponse response) throws Exception {
+	    
+	    final String resourceId = request.getResourceID();
+	    final String startDate = resourceId.split("-")[0];
+	    final int days = Integer.parseInt(resourceId.split("-")[1]);
+	    
 	    
 	    long startTime = System.currentTimeMillis();
 		
@@ -247,8 +250,8 @@ public class AjaxCalendarController implements ApplicationContextAware {
         DateTimeZone tz = DateTimeZone.forID(timezone);
 
         DateTimeFormatter df = new DateTimeFormatterBuilder()
-                .appendMonthOfYear(2).appendLiteral("/").appendDayOfMonth(2)
-                .appendLiteral("/").appendYear(4, 4).toFormatter().withZone(tz);
+                .appendMonthOfYear(2).appendDayOfMonth(2)
+                .appendYear(4, 4).toFormatter().withZone(tz);
         DateMidnight start = new DateMidnight(df.parseDateTime(startDate), tz);
         Interval interval = new Interval(start, start.plusDays(days));
         log.debug("new interval: " + interval.toString());

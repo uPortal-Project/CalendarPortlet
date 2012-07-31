@@ -50,10 +50,11 @@
         // The 'days' variable is used in functions beyond the CalendarView
         var days = ${model.days};
 
+        <fmt:formatDate var="startDate" value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${model.timezone}"/>
         var options = {
-            eventsUrl: '<portlet:resourceURL/>', 
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${model.timezone}"/>', 
-            days: days,
+                eventsUrl: '<portlet:resourceURL id="START-DAYS"/>', 
+                startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
+                days: days,
             messages: {
                 allDay: '<spring:message code="all.day"/>'
             }

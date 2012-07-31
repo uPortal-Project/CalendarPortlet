@@ -128,8 +128,11 @@ if (!cal.init) {
             finalInitFunction: function(that) {
                 that.updateEventList = function (startDate, days) {
                     that.locate("loadingMessage").show();
-                    $.get(that.options.eventsUrl,
-                        { startDate: startDate, timePeriod: days }, 
+                    var eventsUrl = that.options.eventsUrl
+                        .replace('START', startDate.replace(/\//g, ""))
+                        .replace('DAYS', that.options.days);
+                    $.get(eventsUrl,
+                        {  }, 
                         function(json) {
                             updateModel(that, json);
                             that.options.startDate = startDate;
@@ -145,8 +148,11 @@ if (!cal.init) {
                     that.events.onEventReturn.fire();
                 });
 
-                $.get(that.options.eventsUrl,
-                    { startDate: that.options.startDate, timePeriod: that.options.days }, 
+                var eventsUrl = that.options.eventsUrl
+                    .replace('START', that.options.startDate.replace(/\//g, ""))
+                    .replace('DAYS', that.options.days);
+                $.get(eventsUrl,
+                    {  }, 
                     function(json) {
                         updateModel(that, json);
                         that.events.onReady.fire();
