@@ -23,6 +23,6 @@
 
     <css>css/calendar.css</css>
 
-    <js>scripts/CalendarView.js</js>
+    <js>scripts/calendar.js</js>
 
 </resources>

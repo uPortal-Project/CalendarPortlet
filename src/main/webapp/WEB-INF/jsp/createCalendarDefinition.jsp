@@ -23,13 +23,6 @@
 <rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
-<c:if test="${!usePortalJsLibs}">
-    <script type="text/javascript"><rs:compressJs>
-            jQuery.noConflict(true);
-            fluid = null; 
-            fluid_1_4 = null;
-    </rs:compressJs></script>
-</c:if>
 
 <div class="fl-widget portlet" role="section">
 

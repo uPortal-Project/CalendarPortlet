@@ -23,6 +23,7 @@
 <rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
+<jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div class="upcal-editview">
 
@@ -192,20 +193,6 @@
 <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
 
     <script type="text/javascript"><rs:compressJs>
-        var ${n} = ${n} || {};
-        <c:choose>
-            <c:when test="${!usePortalJsLibs}">
-                ${n}.jQuery = jQuery.noConflict(true);
-                ${n}.fluid = fluid;
-                fluid = null; 
-                fluid_1_4 = null;
-            </c:when>
-            <c:otherwise>
-                <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
-                ${n}.jQuery = ${ ns }jQuery;
-                ${n}.fluid = ${ ns }fluid;
-            </c:otherwise>
-        </c:choose>
         ${n}.jQuery(function() {
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");

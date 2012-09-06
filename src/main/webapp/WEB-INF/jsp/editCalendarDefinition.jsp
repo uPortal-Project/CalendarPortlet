@@ -22,41 +22,40 @@
 <%@ taglib prefix="editPreferences" tagdir="/WEB-INF/tags/edit-preferences" %>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
-<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
+<jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
     <script type="text/javascript"><rs:compressJs>
-        var ${n} = ${n} || {};
-        <c:choose>
-            <c:when test="${!usePortalJsLibs}">
-                ${n}.jQuery = jQuery.noConflict(true);
-                ${n}.fluid = fluid;
-                fluid = null; 
-                fluid_1_4 = null;
-            </c:when>
-            <c:otherwise>
-                <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
-                ${n}.jQuery = ${ ns }jQuery;
-                ${n}.fluid = ${ ns }fluid;
-            </c:otherwise>
-        </c:choose>
-        if (!cal.initialized) cal.init(${n}.jQuery, ${n}.fluid);
-        ${n}.cal = cal;
-        ${n}.jQuery(function() {
-            var $ = ${n}.jQuery;
-            var cal = ${n}.cal;
+    ${n}.jQuery(function() {
+        var $ = ${n}.jQuery;
+        var _ = ${n}._;
+        var Backbone = ${n}.Backbone;
+        var upcal = ${n}.upcal;
             $(document).ready(function(){
-                cal.ParameterEditor($("#${n}parameters"), {
-                      parameterNamePrefix: '',
-                      parameterBindName: 'parameters',
-                      auxiliaryBindName: 'parameterOverrides',
-                      useAuxiliaryCheckbox: true,
-                      multivalued: true,
-                      messages: {
-                        remove: '<spring:message code="remove.role"/>',
-                        addValue: '<spring:message code="add.value"/>'
-                      }
+                var RoleParamView = Backbone.View.extend({
+                    initialize: function(){
+                        this.render();
+                    },
+                    render: function(){
+                        // Compile the template using underscore
+                        var template = _.template( $("#${n}roleParamTemplate").html(), {} );
+                        // Load the compiled HTML into the Backbone "el"
+                        this.$el.html( template );
                     }
-                );
+                });
+                
+
+                $("#${n}parameters .role-params").delegate("a.delete-parameter-value-link", "click", function () {
+                	var link = this;
+                	$(link).parent().remove();
+                });
+                
+                $("#${n}parameters .role-params a.add-parameter-value-link").click(function () {
+                	var link = this;
+                    var roleParamView = new RoleParamView();
+                    console.log(roleParamView);
+                	$(link).before(roleParamView.$el);
+                });
+                
             });
         });
     </rs:compressJs></script>
@@ -108,7 +107,7 @@
         </c:forEach>
         <tr>
             <td><label class="portlet-form-field-label"><spring:message code="default.roles"/></label></td>
-            <td>
+            <td class="role-params">
                 <c:forEach items="${ calendarDefinitionForm.role }" var="role">
                   <div>
                      <input name="role" value="${ role }" type="text"/>
@@ -138,3 +137,10 @@
     </div>
     
 </div>
+
+<script id="${n}roleParamTemplate" type="text/template">
+    <div>
+        <input name="role" type="text"/>
+        <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
+    </div>
+</script>

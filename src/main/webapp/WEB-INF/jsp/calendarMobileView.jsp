@@ -23,158 +23,165 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-mobile-shared.xml' : '/skin-mobile.xml' }"/>
-
-<script type="text/javascript"><rs:compressJs>
-    var ${n} = ${n} || {};
-    <c:choose>
-        <c:when test="${!usePortalJsLibs}">
-            ${n}.jQuery = jQuery.noConflict(true);
-            ${n}.fluid = fluid;
-            fluid = null; 
-            fluid_1_4 = null;
-        </c:when>
-        <c:otherwise>
-            <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
-            ${n}.jQuery = ${ ns }jQuery;
-            ${n}.fluid = ${ ns }fluid;
-        </c:otherwise>
-    </c:choose>
-    if (!cal.initialized) cal.init(${n}.jQuery, ${n}.fluid);
-    ${n}.cal = cal;
-    ${n}.jQuery(function() {
-        var $ = ${n}.jQuery;
-        var cal = ${n}.cal;
-
-        // The 'days' variable is used in functions beyond the CalendarView
-        var days = ${model.days};
-        
-        var options = {
-            eventsUrl: '<portlet:resourceURL id="START-DAYS"/>', 
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
-            days: days,
-            messages: {
-                allDay: '<spring:message code="all.day"/>'
-            },
-            eventListView: {
-                type: "cal.EventListView",
-                options: {
-                    showEndTime: false
-                }
-            }
-        };
-        var calView = cal.CalendarView("#${n}container", options);
-        
-        var date = new Date();
-        date.setFullYear(<fmt:formatDate value="${model.startDate}" pattern="yyyy" timeZone="${model.timezone}"/>, Number(<fmt:formatDate value="${model.startDate}" pattern="M" timeZone="${model.timezone}"/>)-1, <fmt:formatDate value="${model.startDate}" pattern="d" timeZone="${model.timezone}"/>);
-        $('#${n}inlineCalendar').datepicker(
-            {
-                inline: true,
-                changeMonth: false,
-                changeYear: false,
-                defaultDate: date,
-                onSelect: function(date) {
-                    calView.updateEventList(date, calView.options.days);
-                } 
-            }
-        );
-
-    });
-</rs:compressJs></script>
+<c:set var="mobile" value="${ true }"/>
+<jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="portlet ptl-calendar view-mobile">
 	<div data-role="content" class="portlet-content">
+        <div class="upcal-events">
 
-	    <!-- Mini-Calendar (jQuery UI) -->
-	    <div id="${n}inlineCalendar" class="upcal-inline-calendar upcal-hide-on-event"></div>
-	    
-	    <!-- Calendar Events List -->
-	    <div class="upcal-loading-message portlet-msg-info portlet-msg info">
-            <p><spring:message code="loading"/></p>
-        </div>
-	    <div class="upcal-events">
-	        <div class="upcal-events upcal-event-list upcal-hide-on-event" style="display:none">
-	            <div class="portlet-msg-error upcal-errors">
-	                <div class="upcal-error"><span class="upcal-error-message"></span></div>
-	            </div>
-                <div class="portlet-msg-info upcal-noevents">
-                    <p>No events</p>
+            <div class="upcal-event-view">
+                <!-- Mini-Calendar (jQuery UI) -->
+                <div class="upcal-inline-calendar"></div>
+
+                <!-- Calendar Events List -->
+                <div class="upcal-loading-message portlet-msg-info portlet-msg info">
+                    <p><spring:message code="loading"/></p>
                 </div>
-	            <div class="day">
-	                <h2 class="dayName">Today</h2>
-                        <div class="upcal-event-wrapper">
-    	                    <div class="upcal-event">
-    	                        <!--div class="upcal-event-cal">
-    	                            <span></span>
-    	                        </div-->
-    	                        <div class="upcal-event-time">All Day</div>
-    	                        <a class="upcal-event-link" href="javascript:;">
-    		                        <h3 class="upcal-event-title">
-    		                            Event Summary
-    		                        </h3>
-    	                        </a>
-                            </div>
-	                    </div>
-	            </div>
-	        </div>
-	        
-	        <div class="upcal-event-details upcal-hide-on-calendar">
-	
-	            <div class="upcal-event-detail">
-	                <!-- Event title -->
-	                <h2 class="upcal-event-detail-summary">Event Summary</h2>
-	          
-	                <!-- Calendar event is from -->
-	                <div class="upcal-event-detail-cal">
-	                    <span> <!-- Calendar name to go here. --> </span>
-	                </div>
-	          
-	                <!-- Event time -->
-	                <div class="event-detail-date">
-	                    <h3><spring:message code="date"/>:</h3>
-	                    <p>
-	                        <span class="upcal-event-detail-day">Today</span>
-	                        <span class="upcal-event-detail-starttime">2:00 PM - 3:00 PM</span>
-	                    </p>
-	                </div>
-	
-	                <div class="upcal-event-detail-loc-div">
-	                    <h3><spring:message code="location"/>:</h3>
-	                    <p class="upcal-event-detail-loc"></p>
-	                </div>          
-	          
-	                <div class="upcal-event-detail-desc-div">
-	                    <h3><spring:message code="description"/>:</h3>
-	                    <p class="upcal-event-detail-desc">Event description</p>
-	                </div>
-	
-	                <div class="upcal-event-detail-link-div">
-	                    <h3><spring:message code="link"/>:</h3>
-	                    <p>
-	                        <a class="upcal-event-detail-link" href="http://www.event.com" target="_blank">http://www.event.com</a>
-	                    </p>
-	                </div>
-	            </div>
-	            
-	        </div>
-	    </div>
-
-        <div class="utilities upcal-view-links upcal-hide-on-calendar" style="display:none">
-            <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;" 
-                    title="<spring:message code="return.to.calendar"/>" data-role="button">
-                <spring:message code="return.to.calendar"/>
-            </a>
-        </div>
-
-        <c:if test="${ !model.disablePreferences && !model.guest }">
-            <div class="utilities upcal-view-links upcal-hide-on-event">
-                <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-                <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="edit.preferences"/>">
-                    <spring:message code="preferences"/>
-                </a>
+                
+                <div class="upcal-event-list" style="display:none">
+                </div>
+                
+                <c:if test="${ !model.disablePreferences && !model.guest }">
+                    <div class="utilities upcal-view-links upcal-hide-on-event">
+                        <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
+                        <a data-role="button" href="${ preferencesUrl }" title="<spring:message code="edit.preferences"/>">
+                            <spring:message code="preferences"/>
+                        </a>
+                    </div>
+                </c:if>
+                
             </div>
-        </c:if>
-        
+
+                <div class="upcal-event-details" style="display:none">
+
+                    <div class="upcal-event-detail">
+                    </div>
+
+                    <div class="utilities upcal-list-link">
+                        <a class="upcal-view-return" href="javascript:;" 
+                                title="<spring:message code="return.to.calendar"/>" data-role="button">
+                            <spring:message code="return.to.calendar"/>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
   
     </div>
 </div>
+
+
+<!-- Templates -->
+
+<script type="text/template" id="event-list-template">
+    ${"<%"} if (_(days).length == 0) { ${"%>"}
+        <div class="portlet-msg-info">
+            <p>No events</p>
+        </div>
+    ${"<%"} } else { ${"%>"}
+        ${"<%"} _(days).each(function(day) { ${"%>"}
+            <div class="day">
+                <h2>${"<%="} day.displayName ${"%>"}</h2>
+                ${"<%"} day.events.each(function(event) { ${"%>"}
+                    <div class="upcal-event-wrapper">
+                        <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
+                            <div class="upcal-event-cal">
+                                <span></span>
+                            </div>
+                            <div class="upcal-event-time">
+                                ${"<%"} if (event.attributes.allDay) { ${"%>"}
+                                    All Day
+                                ${"<%"} } else { ${"%>"}
+                                    ${"<%="} event.attributes.dateStartTime ${"%>"}
+                                ${"<%"} } ${"%>"}
+                            </div>
+                            
+                            <a class="upcal-event-link ui-link" href="javascript:;">
+                                ${"<%="} event.attributes.summary ${"%>"}
+                            </a>
+                    </div>
+                ${"<%"} }); ${"%>"}
+            </div>
+        ${"<%"} }); ${"%>"}
+        </div>
+    ${"<%"} } ${"%>"}
+    
+</script>
+
+<script type="text/template" id="event-detail-template">
+    <!-- Event title -->
+    <h2>${"<%="} event.summary ${"%>"}</h2>
+
+    <!-- Event time -->
+    <div class="event-detail-date">
+        <h3>Date:</h3>
+        <p>
+            ${"<%"} if (event.multiDay) { ${"%>"}
+                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
+            ${"<%"} } else if (event.allDay) { ${"%>"}
+                All Day ${"<%="} event.startDate ${"%>"}
+            ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
+                ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+            ${"<%"} } else { ${"%>"}
+                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+            ${"<%"} } ${"%>"}
+        
+        </p>
+    </div>
+    
+    ${"<%"} if (event.location) { ${"%>"}
+        <div>
+            <h3>Location:</h3>
+            <p>${"<%="} event.location ${"%>"}</p>
+        </div>
+    ${"<%"} } ${"%>"}
+
+    ${"<%"} if (event.description) { ${"%>"}
+        <div>
+            <h3>Description:</h3>
+            <p>${"<%="} event.description ${"%>"}</p>
+        </div>
+    ${"<%"} } ${"%>"}
+
+    ${"<%"} if (event.link) { ${"%>"}
+        <div>
+            <h3>Link:</h3>
+            <p>
+                <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
+            </p>
+        </div>
+    ${"<%"} } ${"%>"}
+    
+</script>
+
+<script type="text/javascript"><rs:compressJs>
+    ${n}.jQuery(function() {
+        var $ = ${n}.jQuery;
+        var _ = ${n}._;
+        var Backbone = ${n}.Backbone;
+        var upcal = ${n}.upcal;
+        
+        var ListView = upcal.EventListView.extend({
+            el: "#${n}container .upcal-event-view",
+            template: _.template($("#event-list-template").html())
+        });
+
+        var DetailView = upcal.EventDetailView.extend({
+            el: "#${n}container .upcal-event-details",
+            template: _.template($("#event-detail-template").html())
+        });
+        
+        var view = new upcal.CalendarView({
+            container: "#${n}container",
+            listView: new ListView(),
+            detailView: new DetailView(),
+            eventsUrl: '<portlet:resourceURL id="START-DAYS"/>', 
+            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
+            days: "${ model.days }"
+        });
+        view.getEvents();
+        
+    });
+</rs:compressJs></script>

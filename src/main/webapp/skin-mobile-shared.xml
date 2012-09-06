@@ -21,6 +21,6 @@
 <resources xmlns="http://www.jasig.org/uportal/web/skin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
-    <js>scripts/CalendarView.js</js>
+    <js>scripts/calendar.js</js>
 
 </resources>
