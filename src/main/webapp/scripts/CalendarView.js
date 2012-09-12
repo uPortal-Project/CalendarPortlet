@@ -130,7 +130,7 @@ if (!cal.init) {
                     that.locate("loadingMessage").show();
                     var eventsUrl = that.options.eventsUrl
                         .replace('START', startDate.replace(/\//g, ""))
-                        .replace('DAYS', that.options.days);
+                        .replace('DAYS', days);
                     $.get(eventsUrl,
                         {  }, 
                         function(json) {
