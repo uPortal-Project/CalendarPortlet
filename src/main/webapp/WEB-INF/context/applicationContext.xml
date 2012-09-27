@@ -73,7 +73,7 @@
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
                 <property name="cacheMaxAges">
-                    <map>
+                    <map value-type="java.lang.Long">
                         <entry key="/**/*.aggr.min.js" value="31536000"/>
                         <entry key="/**/*.aggr.min.css" value="31536000"/>
                     </map>
