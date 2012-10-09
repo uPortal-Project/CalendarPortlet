@@ -170,9 +170,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>net.fortuna.ical4j</groupId>
+                <groupId>org.mnode.ical4j</groupId>
                 <artifactId>ical4j</artifactId>
-                <version>1.0-rc3</version>
+                <version>1.0.3</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -448,7 +448,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.fortuna.ical4j</groupId>
+            <groupId>org.mnode.ical4j</groupId>
             <artifactId>ical4j</artifactId>
         </dependency>
         <dependency>
@@ -908,13 +908,13 @@
             </build>
         </profile>
         <profile>
-	        <id>site</id>
-	        <distributionManagement>
-		        <site>
-		            <id>developer.jasig</id>
-		            <url>${jasig-site-dist-base}/CalendarPortlet/${project.version}</url>
-		        </site>
-		    </distributionManagement>
-	    </profile>
+            <id>site</id>
+            <distributionManagement>
+                <site>
+                    <id>developer.jasig</id>
+                    <url>${jasig-site-dist-base}/CalendarPortlet/${project.version}</url>
+                </site>
+            </distributionManagement>
+        </profile>
     </profiles>
 </project>
