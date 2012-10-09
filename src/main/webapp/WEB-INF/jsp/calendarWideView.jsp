@@ -29,7 +29,7 @@
 <div id="${n}container" class="upcal-fullview">
     <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
         <div class="upcal-edit-links">
-            <c:if test="${ !model.disablePreferences }">
+            <c:if test="${ !model.disablePreferences && !model.guest }">
                 <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
                 <a href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
                     <spring:message code="preferences"/>
@@ -236,7 +236,7 @@
         });
         
         var view = new upcal.CalendarView({
-        	container: "#${n}container",
+            container: "#${n}container",
             listView: new ListView(),
             detailView: new DetailView(),
             eventsUrl: '<portlet:resourceURL id="START-DAYS"/>', 
