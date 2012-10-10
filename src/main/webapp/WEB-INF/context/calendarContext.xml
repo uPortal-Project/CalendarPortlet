@@ -157,7 +157,7 @@
     <!-- 
      | CalDAV adapter for calendars available via the CalDAV protocol
      +-->
-    <!--bean id="calDavAdapter" 
+    <bean id="calDavAdapter"
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
         p:cache-ref="calendarCache">
         <property name="credentialsExtractor">
@@ -169,7 +169,7 @@
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
         </property>
-    </bean-->
+    </bean>
     
     
     <!--
