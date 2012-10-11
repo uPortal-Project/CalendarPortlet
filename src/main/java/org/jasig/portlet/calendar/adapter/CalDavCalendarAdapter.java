@@ -43,8 +43,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
@@ -76,8 +74,6 @@ import org.osaf.caldav4j.util.UrlUtils;
 public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
     protected final Log log = LogFactory.getLog(this.getClass());
-
-    static String CALDAV_GOOGLE = "https://www.google.com/calendar/dav/%s/events/";
 
     private Cache cache;
     private IUrlCreator urlCreator = new DefaultUrlCreatorImpl();

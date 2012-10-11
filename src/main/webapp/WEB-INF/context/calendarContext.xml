@@ -169,7 +169,7 @@
      | configure uPortal to cache user passwords.  This adapter requires access
      | to the user's password which is why the URL must be HTTPS instead of HTTP
      +-->
-    <bean id="calDavAdapter"
+    <!--<bean id="calDavAdapter"
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
         p:cache-ref="calendarCache"
         p:titleKey="authenticated.caldav.feed"
@@ -196,8 +196,8 @@
             </list>
         </property>
     </bean>
-    
-    
+    -->
+
     <!--
      | BASIC AUTHENTICATION SUPPORT
      |
