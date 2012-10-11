@@ -43,7 +43,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
@@ -57,11 +56,13 @@ import org.jasig.portlet.calendar.url.DefaultUrlCreatorImpl;
 import org.jasig.portlet.calendar.url.IUrlCreator;
 import org.joda.time.Interval;
 import org.osaf.caldav4j.CalDAVCollection;
+import org.osaf.caldav4j.CalDAVConstants;
 import org.osaf.caldav4j.exceptions.CalDAV4JException;
 import org.osaf.caldav4j.methods.CalDAV4JMethodFactory;
 import org.osaf.caldav4j.methods.HttpClient;
 import org.osaf.caldav4j.model.request.CalendarQuery;
 import org.osaf.caldav4j.util.GenerateQuery;
+import org.osaf.caldav4j.util.UrlUtils;
 
 /**
  * Implementation of {@link ICalendarAdapter} that uses CalDAV
@@ -107,17 +108,19 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
         String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 
-        log.debug("generated url: " + url);
+        if (log.isDebugEnabled()) {
+            log.debug("generated url: " + url);
+        }
 
         // try to get the cached calendar
         String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
         Element cachedElement = this.cache.get(key);
         CalendarEventSet eventSet;
         if (cachedElement == null) {
-            // read in the data
+            Credentials credentials = credentialsExtractor.getCredentials(request);
             // retrieve calendars for the current user
             net.fortuna.ical4j.model.Calendar calendar = retrieveCalendar(
-                    url, interval, credentialsExtractor.getCredentials(request));
+                    url, interval, credentials);
 
             // extract events from the calendars
                 events.addAll(convertCalendarToEvents(calendar, interval));
@@ -141,6 +144,8 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
         throw new CalendarLinkException("This calendar has no link");
     }
 
+    // Have not gotten queries working so this method returns all events in
+    // the calendar.
     protected final net.fortuna.ical4j.model.Calendar retrieveCalendar(
             String url, Interval interval, Credentials credentials) {
 
@@ -153,41 +158,52 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
                 port = hostUrl.getDefaultPort();
             }
 
-            HostConfiguration hostConfiguration = new HostConfiguration();
-            hostConfiguration.setHost(hostUrl.getHost(), port, Protocol.getProtocol(hostUrl.getProtocol()));
+            HttpClient httpClient = new HttpClient();
+            httpClient.getHostConfiguration()
+                    .setHost(hostUrl.getHost(), port, Protocol.getProtocol(hostUrl.getProtocol()));
 
-            // construct a new HttpClient with the proper HostConfiguration and
-            // set the authentication credentials if they are non-null
-            HttpClient client = new HttpClient();
-            client.setHostConfiguration(hostConfiguration);
-            System.out.println(client.getHost());
+            if (log.isDebugEnabled()) {
+                log.debug("connecting to calDAV host "
+                        + httpClient.getHostConfiguration().getHost());
+//                    + " for user " + credentials.());
+            }
             if (credentials != null) {
-                client.getState().setCredentials(AuthScope.ANY, credentials);
-                client.getParams().setAuthenticationPreemptive(true);
+                httpClient.getState().setCredentials(AuthScope.ANY, credentials);
+                httpClient.getParams().setAuthenticationPreemptive(true);
             }
 
-            GenerateQuery gq = new GenerateQuery();
-            gq.setTimeRange(new net.fortuna.ical4j.model.Date(interval
-                    .getStart().toDate()), new net.fortuna.ical4j.model.Date(
-                    interval.getEnd().toDate()));
-            CalendarQuery query = gq.generate();
+            String calendarPath = hostUrl.getPath();
+            CalDAVCollection calDAVCollection = new CalDAVCollection(
+                    calendarPath, httpClient.getHostConfiguration(),
+                    new CalDAV4JMethodFactory(), CalDAVConstants.PROC_ID_DEFAULT);
 
-            CalDAVCollection col = new CalDAVCollection(url, hostConfiguration, new CalDAV4JMethodFactory(),
-                    org.osaf.caldav4j.CalDAVConstants.PROC_ID_DEFAULT);
-            System.out.println(col.testConnection(client));
-            System.out.println(col.getCalendarCollectionRoot());
-            System.out.println(col.getCalendar(client, "/"));
-            List<Calendar> cals = col.queryCalendars(client, query);
-            System.out.println("calendars: " + cals.size());
-            System.out.println(cals.get(0));
+//            log.debug(calDAVCollection.testConnection(httpClient));
+            if (log.isDebugEnabled()) {
+                log.debug(calDAVCollection.getCalendarCollectionRoot());
+            }
 
-            return cals.get(0);
+              // Haven't gotten queries working
+//            GenerateQuery gq = new GenerateQuery();
+//            gq.setTimeRange(new net.fortuna.ical4j.model.Date(interval
+//                    .getStart().toDate()), new net.fortuna.ical4j.model.Date(
+//                    interval.getEnd().toDate()));
+//            CalendarQuery query = gq.generate();
+
+            // Haven't gotten queries working even for single calendar.
+            // Also I don't think Google supports viewing
+            // or querying multiple calendars at once.
+//            List<Calendar> cals = calDAVCollection.queryCalendars(client, query);
+//            return cals.get(0);
+
+            Calendar cal = calDAVCollection.getCalendar(httpClient, "");
+            log.debug(cal);
+            return cal;
 
         } catch (CalDAV4JException e) {
             log.error("CalDAV exception: ", e);
             throw new CalendarException(e);
         } catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             throw new CalendarException("Unknown exception while retrieving calendar", e);
         }
 
@@ -205,7 +221,7 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
         // if the calendar is null, return empty set
         if (calendar == null) {
-            log.warn("calendar was empty, returning empty set");
+            log.info("calendar empty, returning empty set");
             return Collections.emptySet();
         }
 

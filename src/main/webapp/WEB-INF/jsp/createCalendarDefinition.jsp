@@ -35,7 +35,7 @@
 
     <div class="fl-widget-content content portlet-content" role="main">
 
-    <portlet:renderURL var="postUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
+    <portlet:renderURL escapeXml='false' var="postUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
     <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
     
         <spring:hasBindErrors name="calendarDefinitionForm">

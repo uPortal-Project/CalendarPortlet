@@ -44,7 +44,7 @@ public class ExchangeCredentialsInitializationService implements
     private String usernameAttribute = "user.login.id";
     
     /**
-     * Set the naem of the user attribute to be used for retrieving the Exchange
+     * Set the name of the user attribute to be used for retrieving the Exchange
      * authentication username from the portlet UserInfo map. 
      * 
      * @param usernameAttribute
@@ -70,7 +70,7 @@ public class ExchangeCredentialsInitializationService implements
     /**
      * Set the domain () of this machine for NTLM authentication.
      * 
-     * @param passwordAttribute
+     * @param ntlmDomain NT Domain
      */
     public void setNtlmDomain(String ntlmDomain) {
         this.ntlmDomain = ntlmDomain;
