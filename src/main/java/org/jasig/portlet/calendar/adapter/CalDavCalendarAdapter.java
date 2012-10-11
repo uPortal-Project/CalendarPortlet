@@ -112,7 +112,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
         String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 
-        log.debug("generated url: " + url);
+        if (log.isDebugEnabled()) {
+            log.debug("generated url: " + url);
+        }
 
         // try to get the cached calendar
         String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
@@ -125,8 +127,7 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
                     url, interval, credentials);
 
             // extract events from the calendars
-                events.addAll(convertCalendarToEvents(
-                        calendar, interval, credentials));
+                events.addAll(convertCalendarToEvents(calendar, interval));
             log.debug("contentProcessor found " + events.size() + " events");
             // save the CalendarEvents to the cache
             eventSet = new CalendarEventSet(key, events);
@@ -213,8 +214,7 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
     }
 
     protected final Set<VEvent> convertCalendarToEvents(
-            net.fortuna.ical4j.model.Calendar calendar, Interval interval,
-            Credentials credentials)
+            net.fortuna.ical4j.model.Calendar calendar, Interval interval)
             throws CalendarException {
 
         Period period = new Period(new net.fortuna.ical4j.model.DateTime(
@@ -225,7 +225,7 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
         // if the calendar is null, return empty set
         if (calendar == null) {
-            log.info("calendar was empty, returning empty set");
+            log.info("calendar empty, returning empty set");
             return Collections.emptySet();
         }
 

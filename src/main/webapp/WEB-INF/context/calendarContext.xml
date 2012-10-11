@@ -155,19 +155,45 @@
     </bean-->
 
     <!-- 
-     | CalDAV adapter for calendars available via the CalDAV protocol
+     | CalDAV adapter for calendars available via the CalDAV protocol.
+     |
+     | For Google the URL format is https://www.google.com/calendar/dav/calid/events.
+     | (see https://developers.google.com/google-apps/calendar/caldav).
+     |
+     | Google-hosted educational accounts:
+     | If users login to portal with a Google-hosted email address, to show the
+     | user's personal calendar the CalDAV URL would be
+     | https://www.google.com/calendar/dav/@USERNAME@/events where www.google.com
+     | would be replaced with the university's web address.  To use
+     | the calDAV adapter you must also uncomment user-attribute password in portlet.xml and
+     | configure uPortal to cache user passwords.  This adapter requires access
+     | to the user's password which is why the URL must be HTTPS instead of HTTP
      +-->
     <bean id="calDavAdapter"
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
-        p:cache-ref="calendarCache">
+        p:cache-ref="calendarCache"
+        p:titleKey="authenticated.caldav.feed"
+        p:descriptionKey="remote.caldav.feed.over.https">
         <property name="credentialsExtractor">
-            <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"/>
+            <bean class="org.jasig.portlet.calendar.credentials.RequestAttributeCredentialsExtractorImpl"
+                    p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"/>
         </property>
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl" p:includePeriod="true"/>
         </property>
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                      p:name="url" p:labelKey="feed.url" p:example="https://www.google.com/calendar/dav/@USERNAME@/events, must use HTTPS">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                              p:display="TEXT" p:defaultValue="https://"/>
+                    </property>
+                </bean>
+            </list>
         </property>
     </bean>
     
