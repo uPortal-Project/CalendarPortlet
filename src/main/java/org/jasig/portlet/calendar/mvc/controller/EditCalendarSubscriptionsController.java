@@ -40,6 +40,7 @@ import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.CalendarStore;
+import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
@@ -103,7 +104,7 @@ public class EditCalendarSubscriptionsController {
 		model.put("mycalendars", mycalendars);
 
 		// add the predefined calendars to the model
-		List<PredefinedCalendarConfiguration> calendars = calendarStore.getPredefinedCalendarConfigurations(subscribeId, false);
+		List<PredefinedCalendarConfiguration> calendars = calendarSetDao.getAvailablePredefinedCalendarConfigurations(request);
 		model.put("calendars", calendars);
 		
 		// get the user's role listings
@@ -271,6 +272,13 @@ public class EditCalendarSubscriptionsController {
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
+
+    private ICalendarSetDao calendarSetDao;
+    
+    @Autowired(required = true)
+    public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
+        this.calendarSetDao = calendarSetDao;
+    }
 
     private IViewSelector viewSelector;
 

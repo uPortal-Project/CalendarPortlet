@@ -28,6 +28,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
 import org.jasig.portlet.calendar.CalendarSet;
+import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.factory.annotation.Required;
@@ -54,21 +55,39 @@ public class HibernateCalendarSetDao implements ICalendarSetDao {
      */
     public CalendarSet<?> getCalendarSet(PortletRequest request) {
         
-        // Get the username from the portlet session.  This implementation
-        // assumes that the session initialization service is run at login time
-        PortletSession session = request.getPortletSession();
-        String username = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
-        
+        final String username = getUsername(request);
+                
         // retrieve a list of calendar configurations for this user
-        List<UserDefinedCalendarConfiguration> cals = calendarStore
+        final List<UserDefinedCalendarConfiguration> cals = calendarStore
             .getCalendarConfigurations(username);
         
-        Set<UserDefinedCalendarConfiguration> calendars = new HashSet<UserDefinedCalendarConfiguration>();
+        final Set<UserDefinedCalendarConfiguration> calendars = new HashSet<UserDefinedCalendarConfiguration>();
         calendars.addAll(cals);
         
-        CalendarSet<UserDefinedCalendarConfiguration> set = new CalendarSet<UserDefinedCalendarConfiguration>();
+        final CalendarSet<UserDefinedCalendarConfiguration> set = new CalendarSet<UserDefinedCalendarConfiguration>();
         set.setConfigurations(calendars);
         return set;
+    }
+
+    @Override
+    public List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(PortletRequest request) {
+
+        final String username = getUsername(request);
+
+        // For this ICalendarSetDao, the list is the unfiltered collection from CalendarStore...
+        return calendarStore.getPredefinedCalendarConfigurations(username, false);
+    }
+    
+    /*
+     * Implementation
+     */
+    
+    private String getUsername(PortletRequest request) {
+        // Get the username from the portlet session.  This implementation
+        // assumes that the session initialization service is run at login time
+        final PortletSession session = request.getPortletSession();
+        final String rslt = (String) session.getAttribute(SessionSetupInitializationService.USERNAME_KEY);
+        return rslt;
     }
 
 }
