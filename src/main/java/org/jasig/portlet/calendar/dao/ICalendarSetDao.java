@@ -19,12 +19,17 @@
 
 package org.jasig.portlet.calendar.dao;
 
+import java.util.List;
+
 import javax.portlet.PortletRequest;
 
 import org.jasig.portlet.calendar.CalendarSet;
+import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 
 public interface ICalendarSetDao {
     
-    public CalendarSet<?> getCalendarSet(PortletRequest request);
+    CalendarSet<?> getCalendarSet(PortletRequest request);
+    
+    List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(PortletRequest request);
 
 }

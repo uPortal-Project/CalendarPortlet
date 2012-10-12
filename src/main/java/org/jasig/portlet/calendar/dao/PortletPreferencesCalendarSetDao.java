@@ -20,6 +20,7 @@
 package org.jasig.portlet.calendar.dao;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -35,6 +36,8 @@ import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.springframework.beans.factory.annotation.Required;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * PortletPreferencesCalendarSetDao provides a portlet preference-based 
  * implementation of the ICalendarSetDao interface.  This implementation is
@@ -42,7 +45,7 @@ import org.springframework.beans.factory.annotation.Required;
  * configuration or interact with any of the roles features.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
+ * @deprecated Use {@link WhitelistFilteringCalendarSetDao} instead.
  */
 public final class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
     
@@ -78,6 +81,13 @@ public final class PortletPreferencesCalendarSetDao implements ICalendarSetDao {
         
     }
     
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(PortletRequest request) {
+        // Send an empty list because the set of calendars is fix for this ICalendarSetDao...
+        return Collections.emptyList();
+    }
+
     /*
      * Implementation
      */
