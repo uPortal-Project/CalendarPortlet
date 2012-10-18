@@ -138,7 +138,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	 * </ol>
 	 * 
 	 *  (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
+	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, org.joda.time.Interval, javax.portlet.PortletRequest)
 	 */
 	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
 			Interval interval, PortletRequest request) throws CalendarException {

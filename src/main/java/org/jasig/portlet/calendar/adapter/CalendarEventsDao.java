@@ -54,7 +54,7 @@ public class CalendarEventsDao {
     protected final Log log = LogFactory.getLog(getClass());
 
     private Cache cache;
-    
+
     /**
      * @param cache the cache to set
      */
@@ -85,7 +85,7 @@ public class CalendarEventsDao {
             return jsonEvents;
         }
         
-        // if the timezone-corrected event set is not availble in the cache
+        // if the timezone-corrected event set is not available in the cache
         // generate a new set and cache it
         else {
 
