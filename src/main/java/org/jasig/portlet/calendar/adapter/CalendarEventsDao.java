@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Revision$
  */
 public class CalendarEventsDao {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private Cache cache;
@@ -66,14 +66,32 @@ public class CalendarEventsDao {
     private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
 
     private Map<String, DateTimeFormatter> timeFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
-    
+
+    /**
+     * Obtains the calendar events from the adapter and returns timezone-adjusted
+     * events within the requested interval.
+     * @param adapter Adapter to invoke to obtain the calendar events
+     * @param calendar Per-user Calendar configuration
+     * @param interval Interval to return events for
+     * @param request Portlet request
+     * @param tz Timezone to adjust the calendar events to (typically the user's timezone)
+     * @return Set of calendar events meeting the requested criteria
+     */
     public Set<CalendarDisplayEvent> getEvents(ICalendarAdapter adapter, CalendarConfiguration calendar,
             Interval interval, PortletRequest request, DateTimeZone tz) {
 
-        // get the set of pre-timezone-corrected events for the requested period
+        // Get the set of calendar events for the requested period.
+        // We invoke the adapter before checking cache because we expect the adapter
+        // to do the first-level caching of the events.
         final CalendarEventSet eventSet = adapter.getEvents(calendar, interval, request);
 
-        // append the requested time zone id to the retrieve event set's cache
+        // The calendar events from the adapter will reflect the timezone of the calendar
+        // server in the event times.  The events need to be corrected to reflect the
+        // requested timezone (typically the user's timezone). Adjusting the
+        // event's timezone is an expensive operation so the JSON of the
+        // timezone-adjusted events is cached per timezone.
+
+        // Append the requested time zone id to the retrieve event set's cache
         // key to generate a timezone-aware cache key
         final String tzKey = eventSet.getKey().concat(tz.getID());
 
@@ -104,8 +122,22 @@ public class CalendarEventsDao {
                 }
             }
             
-            // cache and return the resulting event list
+            // Cache and return the resulting event list.  If the event set
+            // was cached, set the event list to expire at about the same time so it
+            // doesn't live in cache beyond the time the data it is derived
+            // from is considered up to date. Time to live is relative to the
+            // time the item is put into cache so the resulting event list will typically
+            // expire from 1 second before the event set to afterward by the amount
+            // of execution time from the adapter to displayEvents computation
+            // completing which should not be a big delta.
             cachedElement = new Element(tzKey, displayEvents);
+            long currentTime = System.currentTimeMillis();
+            if (eventSet.getExpirationTime() > currentTime) {
+                long timeToLiveInMilliseconds =
+                        eventSet.getExpirationTime() - currentTime;
+                int timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
+                cachedElement.setTimeToLive(timeToLiveInSeconds);
+            }
             this.cache.put(cachedElement);
             return displayEvents;
         } 

@@ -142,8 +142,6 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	 */
 	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
 			Interval interval, PortletRequest request) throws CalendarException {
-		CalendarEventSet eventSet;
-		
 		String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 		
 		log.debug("generated url: " + url);
@@ -171,28 +169,27 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
         }
 
 		// The cache key for retrieving a calendar over HTTP may not include
-		// the period, so we need to add the current period to the existing
-		// cache key.  This might result in the period being contained in the 
+		// the interval, so we need to add the current interval to the existing
+		// cache key.  This might result in the interval being contained in the
 		// key twice, but that won't hurt anything.
-		String processorCacheKey = getPeriodSpecificCacheKey(intermediateCacheKey, interval);
+		String processorCacheKey = getIntervalSpecificCacheKey(intermediateCacheKey, interval);
 
-		Element cachedElement = this.cache.get(processorCacheKey);
+        CalendarEventSet eventSet;
+        Element cachedElement = this.cache.get(processorCacheKey);
 		if (cachedElement == null) {
 			Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
 			log.debug("contentProcessor found " + events.size() + " events");
-			
-			// save the VEvents to the cache
-			eventSet = new CalendarEventSet(processorCacheKey, events);
-            cachedElement = new Element(processorCacheKey, eventSet);
-			this.cache.put(cachedElement);
+
+            // save the calendar event set to the cache
+            eventSet = insertCalendarEventSetIntoCache(this.cache, processorCacheKey, events);
 		} else {
 			eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
 		return eventSet;
 	}
-	
-	protected String getPeriodSpecificCacheKey(String baseKey, Interval interval) {
+
+    protected String getIntervalSpecificCacheKey(String baseKey, Interval interval) {
 	    StringBuffer buf = new StringBuffer();
 	    buf.append(baseKey);
 	    buf.append(interval.toString());

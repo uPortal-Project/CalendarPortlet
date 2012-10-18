@@ -72,6 +72,13 @@ import org.osaf.caldav4j.util.UrlUtils;
  * <a href="http://blogs.nologin.es/rickyepoderi/index.php?/archives/14-Introducing-CalDAV-Part-I.html"/>
  * <a href="http://blogs.nologin.es/rickyepoderi/index.php?/archives/15-Introducing-CalDAV-Part-II.html"/>
  *
+ * URL format varies per provider (see links above).  For Google an URL would be
+ * https://www.google.com/calendar/dav/CALENDERID/events
+ * where CALENDARID is obtained from the properties of the calendars, such as
+ * jameswennmacher@gmail.com for a user's personal calendar, or
+ * en.usa%23holiday%40group.v.calendar.google.com for the US Holidays calendar.
+ * Google uses Basic Authentication (or oAuth 2.0 though this is not implemented yet).
+ *
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Header: CalDavCalendarAdapter.java Exp $
  */
@@ -129,10 +136,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
             // extract events from the calendars
                 events.addAll(convertCalendarToEvents(calendar, interval));
             log.debug("contentProcessor found " + events.size() + " events");
-            // save the CalendarEvents to the cache
-            eventSet = new CalendarEventSet(key, events);
-            cachedElement = new Element(key, eventSet);
-            this.cache.put(cachedElement);
+
+            // save the calendar event set to the cache
+            eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
         } else {
             eventSet = (CalendarEventSet) cachedElement.getValue();
         }

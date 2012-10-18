@@ -20,7 +20,11 @@ package org.jasig.portlet.calendar.adapter;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import net.fortuna.ical4j.model.component.VEvent;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import org.jasig.portlet.form.parameter.Parameter;
 
 /**
@@ -62,5 +66,23 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
     public void setDescriptionKey(String descriptionKey) {
         this.descriptionKey = descriptionKey;
     }
-    
+
+    /**
+     * Creates a CalendarEventSet from a set of calendar events, inserts it into
+     * the cache, and copies the cached element's expiration time into the
+     * CalendarEventSet.
+     *
+     * @param cache Cache to insert the event set into
+     * @param processorCacheKey Key for the event set
+     * @param events set of calendar events to cache
+     * @return Cached CalendarEventSet with cache expiration indication
+     */
+    protected CalendarEventSet insertCalendarEventSetIntoCache(
+            Cache cache, String processorCacheKey, Set<VEvent> events) {
+        CalendarEventSet eventSet = new CalendarEventSet(processorCacheKey, events);
+        Element cachedElement = new Element(processorCacheKey, eventSet);
+        cache.put(cachedElement);
+        eventSet.setExpirationTime(cachedElement.getExpirationTime());
+        return eventSet;
+    }
 }
