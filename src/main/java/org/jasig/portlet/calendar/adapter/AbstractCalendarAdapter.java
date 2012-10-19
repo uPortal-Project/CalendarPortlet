@@ -80,13 +80,15 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
      * @param processorCacheKey Key for the event set
      * @param events set of calendar events to cache
      * @param secondsToLive Number of seconds for the event set to survive in cache.
-     *                      0 for the default cache value.
+     *                      -1 for the default cache value.
      * @return Cached CalendarEventSet with cache expiration indication
      */
     protected CalendarEventSet insertCalendarEventSetIntoCache(
             Cache cache, String processorCacheKey, Set<VEvent> events, int secondsToLive) {
         CalendarEventSet eventSet = new CalendarEventSet(processorCacheKey, events);
         Element cachedElement = new Element(processorCacheKey, eventSet);
+        // Don't allow a 0 value for secondsToLive. It must be at least a 1.
+        secondsToLive = secondsToLive == 0 ? 1 : secondsToLive;
         if (secondsToLive > 0) {
             cachedElement.setTimeToLive(secondsToLive);
         }
@@ -113,6 +115,6 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
      */
     protected CalendarEventSet insertCalendarEventSetIntoCache(
             Cache cache, String processorCacheKey, Set<VEvent> events) {
-        return insertCalendarEventSetIntoCache(cache, processorCacheKey, events, 0);
+        return insertCalendarEventSetIntoCache(cache, processorCacheKey, events, -1);
     }
 }
