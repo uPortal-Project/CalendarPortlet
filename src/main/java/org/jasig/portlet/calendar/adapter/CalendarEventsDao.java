@@ -98,6 +98,9 @@ public class CalendarEventsDao {
         // attempt to retrieve the timezone-aware event set from cache
         Element cachedElement = this.cache.get(tzKey);
         if (cachedElement != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving JSON timezone-aware event set from cache, key:" + tzKey);
+            }
             @SuppressWarnings("unchecked")
             final Set<CalendarDisplayEvent> jsonEvents = (Set<CalendarDisplayEvent>) cachedElement.getValue();
             return jsonEvents;
@@ -137,6 +140,11 @@ public class CalendarEventsDao {
                         eventSet.getExpirationTime() - currentTime;
                 int timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
                 cachedElement.setTimeToLive(timeToLiveInSeconds);
+                if (log.isDebugEnabled()) {
+                    log.debug("Storing JSON timezone-aware event set to cache, key:" + tzKey
+                            + " with expiration in " + timeToLiveInSeconds + " seconds to"
+                            + " coincide with adapter's cache expiration time");
+                }
             }
             this.cache.put(cachedElement);
             return displayEvents;
@@ -149,9 +157,9 @@ public class CalendarEventsDao {
      * Get a JSON-appropriate representation of each recurrence of an event
      * within the specified time period.
      * 
-     * @param event
-     * @param period
-     * @param tz
+     * @param e
+     * @param interval
+     * @param timezone
      * @return
      * @throws IOException
      * @throws URISyntaxException
