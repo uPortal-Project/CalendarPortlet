@@ -176,6 +176,9 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
                 log.debug("Storing calendar cache, key:" + intermediateCacheKey);
             }
         } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving calendar from cache, key:" + intermediateCacheKey);
+            }
             calendar = (T) cachedCalendar.getValue();
         }
 
@@ -210,17 +213,20 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             // in the month view until the stage-2-month calendar event set expires
             // and builds a calendar event set based on the same data as the week
             // was generated with.
-            int timeToLiveInSeconds = 0;
+            int timeToLiveInSeconds = -1;
             long currentTime = System.currentTimeMillis();
             if (cachedCalendar.getExpirationTime() > currentTime) {
                 long timeToLiveInMilliseconds =
                         cachedCalendar.getExpirationTime() - currentTime;
                 timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
             }
-            eventSet = insertCalendarEventSetIntoCache(this.cache, processorCacheKey,
-                    events, timeToLiveInSeconds);
+            eventSet = insertCalendarEventSetIntoCache(this.cache, processorCacheKey, events,
+                    timeToLiveInSeconds > 0 ? timeToLiveInSeconds : -1);
 		} else {
-			eventSet = (CalendarEventSet) cachedElement.getValue();
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving calendar event set from cache, key:" + processorCacheKey);
+            }
+            eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
 		return eventSet;
