@@ -66,7 +66,18 @@ import org.osaf.caldav4j.util.UrlUtils;
 
 /**
  * Implementation of {@link ICalendarAdapter} that uses CalDAV
- * for retrieving {@link CalendarEventSet}s.
+ * for retrieving ical-based {@link CalendarEventSet}s.
+ *
+ * Useful background articles:
+ * <a href="http://blogs.nologin.es/rickyepoderi/index.php?/archives/14-Introducing-CalDAV-Part-I.html"/>
+ * <a href="http://blogs.nologin.es/rickyepoderi/index.php?/archives/15-Introducing-CalDAV-Part-II.html"/>
+ *
+ * URL format varies per provider (see links above).  For Google an URL would be
+ * https://www.google.com/calendar/dav/CALENDERID/events
+ * where CALENDARID is obtained from the properties of the calendars, such as
+ * jameswennmacher@gmail.com for a user's personal calendar, or
+ * en.usa%23holiday%40group.v.calendar.google.com for the US Holidays calendar.
+ * Google uses Basic Authentication (or oAuth 2.0 though this is not implemented yet).
  *
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Header: CalDavCalendarAdapter.java Exp $
@@ -125,11 +136,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
             // extract events from the calendars
                 events.addAll(convertCalendarToEvents(calendar, interval));
             log.debug("contentProcessor found " + events.size() + " events");
-            // save the CalendarEvents to the cache
-            eventSet = new CalendarEventSet(key, events);
-            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
-            cachedElement = new Element(timeAwareKey, eventSet);
-            this.cache.put(cachedElement);
+
+            // save the calendar event set to the cache
+            eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
         } else {
             eventSet = (CalendarEventSet) cachedElement.getValue();
         }
@@ -165,7 +174,6 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
             if (log.isDebugEnabled()) {
                 log.debug("connecting to calDAV host "
                         + httpClient.getHostConfiguration().getHost());
-//                    + " for user " + credentials.());
             }
             if (credentials != null) {
                 httpClient.getState().setCredentials(AuthScope.ANY, credentials);
@@ -196,7 +204,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 //            return cals.get(0);
 
             Calendar cal = calDAVCollection.getCalendar(httpClient, "");
-            log.debug(cal);
+            if (log.isDebugEnabled()) {
+                log.debug(cal);
+            }
             return cal;
 
         } catch (CalDAV4JException e) {
@@ -232,7 +242,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
             Component component = i.next();
             if (component.getName().equals("VEVENT")) {
                 VEvent event = (VEvent) component;
-                log.trace("processing event " + event.getSummary().getValue());
+                if (log.isTraceEnabled()) {
+                    log.trace("processing event " + event.getSummary().getValue());
+                }
                 // calculate the recurrence set for this event
                 // for the specified time period
                 PeriodList periods = event.calculateRecurrenceSet(period);
@@ -263,7 +275,9 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
                     // create the new event from our property list
                     VEvent newevent = new VEvent(newprops);
                     events.add(newevent);
-                    log.trace("added event " + newevent);
+                    if (log.isTraceEnabled()) {
+                        log.trace("added event " + newevent);
+                    }
                 }
             }
         }

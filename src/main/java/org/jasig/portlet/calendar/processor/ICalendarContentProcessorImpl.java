@@ -88,9 +88,8 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 
 	/**
 	 * 
-	 * @param calendarId
 	 * @param calendar
-	 * @param period
+	 * @param interval
 	 * @return
 	 * @throws CalendarException
 	 */
@@ -118,7 +117,9 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 			Component component = i.next();
 			if (component.getName().equals("VEVENT")) {
 				VEvent event = (VEvent) component;
-				log.trace("processing event " + event.getSummary());
+                if (log.isTraceEnabled()) {
+				    log.trace("processing event " + event.getSummary());
+                }
 				// calculate the recurrence set for this event
 				// for the specified time period
 				PeriodList periods = event.calculateRecurrenceSet(period);
@@ -126,7 +127,12 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 				// add each recurrence instance to the event list
 				for (Iterator<Period> iter = periods.iterator(); iter.hasNext();) {
 					Period eventper = iter.next();
-					log.debug("Found time period staring at " + eventper.getStart().isUtc() + ", " + eventper.getStart().getTimeZone() + ", " + event.getStartDate().getTimeZone() + ", " + event.getStartDate().isUtc());
+                    if (log.isDebugEnabled()) {
+					    log.debug("Found time period staring at " + eventper.getStart().isUtc()
+                                + ", " + eventper.getStart().getTimeZone() + ", "
+                                + event.getStartDate().getTimeZone() + ", "
+                                + event.getStartDate().isUtc());
+                    }
 
 					PropertyList props = event.getProperties();
 

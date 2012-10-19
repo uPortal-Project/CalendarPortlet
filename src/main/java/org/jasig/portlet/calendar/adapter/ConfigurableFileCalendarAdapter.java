@@ -71,11 +71,9 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 			// run the stream through the processor
 			events = contentProcessor.getEvents(interval, stream);
 			log.debug("contentProcessor found " + events.size() + " events");
-			// save the CalendarEvents to the cache
-            eventSet = new CalendarEventSet(key, events);
-            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
-            cachedElement = new Element(timeAwareKey, eventSet);
-            this.cache.put(cachedElement);
+
+            // save the calendar event set to the cache
+            eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
         } else {
             eventSet = (CalendarEventSet) cachedElement.getValue();
 		}

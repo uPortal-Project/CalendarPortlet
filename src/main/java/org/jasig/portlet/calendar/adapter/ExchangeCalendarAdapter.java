@@ -136,11 +136,9 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
             log.debug("Retreiving exchange events for account " + email);
             Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, interval, email);
             log.debug("Exchange adapter found " + events.size() + " events");
-            // save the CalendarEvents to the cache
-            eventSet = new CalendarEventSet(key, events);
-            String timeAwareKey = key.concat(String.valueOf(System.currentTimeMillis()));
-            cachedElement = new Element(timeAwareKey, eventSet);
-            this.cache.put(cachedElement);
+
+            // save the calendar event set to the cache
+            eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
         } else {
             eventSet = (CalendarEventSet) cachedElement.getValue();
         }
@@ -153,7 +151,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * period and email address.
      * 
      * @param calendar
-     * @param period
+     * @param interval
      * @param emailAddress
      * @return
      * @throws CalendarException
