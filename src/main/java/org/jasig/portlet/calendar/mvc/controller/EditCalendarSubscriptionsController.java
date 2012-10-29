@@ -25,13 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletSession;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 
 /**
@@ -137,7 +132,15 @@ public class EditCalendarSubscriptionsController {
 		
 		response.setRenderParameter("action", "editSubscriptions");
     }
-    
+
+    @ResourceMapping(value = "exportUserCalendar")
+    public void exportCalendar(ResourceRequest request,
+                                   ResourceResponse response, @RequestParam("configurationId") Long id) {
+        CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
+
+        response.setRenderParameter("action", "editSubscriptions");
+    }
+
     @ActionMapping(params = "action=showCalendar")
     public void showCalendar(ActionRequest request, 
     		ActionResponse response, @RequestParam("configurationId") Long id) {
