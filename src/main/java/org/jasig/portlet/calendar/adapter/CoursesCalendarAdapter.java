@@ -225,7 +225,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     protected final Calendar retrieveCourseCalendar(PortletRequest request, String termCode) {
 
         Calendar calendar = new Calendar();
-        calendar.getProperties().add(new ProdId("-//Jasig Courses Calendar//iCal4j 1.0//EN"));
+        calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
 
