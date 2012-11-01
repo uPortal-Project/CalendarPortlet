@@ -230,6 +230,11 @@
                 <version>1.6.2</version>
             </dependency>
             <dependency>
+                <groupId>org.jasig.portlet.courses</groupId>
+                <artifactId>courses-portlet-dao</artifactId>
+                <version>1.0.0-M3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jasig.portlet.utils</groupId>
                 <artifactId>portlet-form-resources</artifactId>
                 <version>1.0.0-M1</version>
@@ -496,6 +501,10 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portlet.courses</groupId>
+            <artifactId>courses-portlet-dao</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
