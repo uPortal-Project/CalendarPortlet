@@ -239,6 +239,10 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         }
 
         CoursesByTerm coursesByTerm = courseDao.getCoursesByTerm(request, termCode);
+        if (coursesByTerm == null) {
+            log.error("Invalid term code " + termCode);
+            return calendar;
+        }
         List<Course> courses = coursesByTerm.getCourses();
 
         // For each course obtain the list of meeting schedule times and create
@@ -308,7 +312,9 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         eventEnd.setUtc(true);
         eventEnd.setTime(recurrenceEndTime.getTimeInMillis());
 
-        DateTime recurUntil = new DateTime(recurrenceEndDate.getTimeInMillis());
+        DateTime recurUntil = new DateTime();
+        recurUntil.setUtc(true);
+        recurUntil.setTime(recurrenceEndDate.getTimeInMillis());
 
         // create a property list representing the event
         PropertyList props = new PropertyList();
