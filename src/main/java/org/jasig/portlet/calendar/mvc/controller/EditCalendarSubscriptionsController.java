@@ -19,27 +19,30 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.portlet.*;
-
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
+import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
+import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
+import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +50,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+
+import javax.annotation.Resource;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -58,7 +76,7 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  */
 @Controller
 @RequestMapping("EDIT")
-public class EditCalendarSubscriptionsController {
+public class EditCalendarSubscriptionsController implements ApplicationContextAware {
 
 	private static final String FORM_NAME = "calendarPreferencesCommand";	
 
@@ -134,11 +152,46 @@ public class EditCalendarSubscriptionsController {
     }
 
     @ResourceMapping(value = "exportUserCalendar")
-    public void exportCalendar(ResourceRequest request,
+    public String exportCalendar(ResourceRequest request,
                                    ResourceResponse response, @RequestParam("configurationId") Long id) {
-        CalendarConfiguration config = calendarStore.getCalendarConfiguration(id);
+        CalendarConfiguration calendarConfig = calendarStore.getCalendarConfiguration(id);
 
-        response.setRenderParameter("action", "editSubscriptions");
+        try {
+
+            // get an instance of the adapter for this calendar
+            ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(calendarConfig
+                    .getCalendarDefinition().getClassName());
+
+            DateTime intervalStart = new DateTime().minusYears(1);
+            DateTime intervalEnd = new DateTime().plusYears(1);
+            Interval interval = new Interval(intervalStart, intervalEnd);
+            Calendar calendar = calendarEventsDao.getCalendar(adapter, calendarConfig, interval, request);
+
+            response.setContentType("application/octet-stream");
+            // Can you set header 'Content-disposition: attachment; filename=movie.mpg');
+
+            CalendarOutputter calendarOut = new CalendarOutputter();
+            calendarOut.output(calendar, response.getWriter());
+            response.flushBuffer();
+            return null;
+
+        } catch (NoSuchBeanDefinitionException ex) {
+            log.error("Calendar class instance could not be found: " + ex.getMessage());
+        } catch (UserFeedbackCalendarException sce) {
+            // This CalendarException subclass carries a payload for the UI...
+            StringBuilder msg = new StringBuilder();
+            msg.append(calendarConfig.getCalendarDefinition().getName())
+                    .append(":  ").append(sce.getUserFeedback());
+//            errors.add(msg.toString());
+        } catch (Exception ex) {
+            log.warn("Unknown Error", ex);
+//            errors.add("The calendar \"" + calendarConfig.getCalendarDefinition().getName() + "\" is currently unavailable.");
+        }
+
+        //todo catch the errors and redirect to the portal page to display the errors
+        log.error("Writing calendar did not work");
+        return null;
+
     }
 
     @ActionMapping(params = "action=showCalendar")
@@ -269,8 +322,15 @@ public class EditCalendarSubscriptionsController {
     }
 
 	private CalendarStore calendarStore;
-	
-	@Required
+
+    private CalendarEventsDao calendarEventsDao;
+
+    @Autowired(required = true)
+    public void setCalendarEventsDao(CalendarEventsDao calendarEventsDao) {
+        this.calendarEventsDao = calendarEventsDao;
+    }
+
+    @Required
 	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
@@ -288,6 +348,12 @@ public class EditCalendarSubscriptionsController {
     @Autowired(required = true)
     public void setViewSelector(IViewSelector viewSelector) {
         this.viewSelector = viewSelector;
+    }
+
+    private ApplicationContext applicationContext;
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }
