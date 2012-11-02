@@ -27,6 +27,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,7 +129,7 @@ public class ExchangeCalendarAdapterTest {
         doReturn(Collections.<VEvent>emptySet()).when(adapter).retrieveExchangeEvents(config, interval, emailAddress);
         adapter.getEvents(config, interval, request);
         adapter.getEvents(config, interval, request);
-//        verify(adapter, times(1)).retrieveExchangeEvents(config, period, emailAddress);
+        verify(adapter, times(1)).retrieveExchangeEvents(config, interval, emailAddress);
     }
  
     @Test 
