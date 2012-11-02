@@ -199,6 +199,50 @@
     -->
 
     <!--
+     | Courses DAO adapter for creating a calendar from the student's course information
+     | for the specified term.  Uses the courses DAO so DAO configuration
+     | should be identical to the courses portlet so both portlets access the same
+     | data source.
+     +-->
+    <!--
+    <bean id="coursesCalendarAdapter"
+        class="org.jasig.portlet.calendar.adapter.CoursesCalendarAdapter"
+        p:cache-ref="calendarCache"
+        p:courseDao-ref="xmlCourseDao"
+        p:titleKey="courses.dao.calendar.feed"
+        p:descriptionKey="courses.dao.calendar.description">
+        <property name="cacheKeyGenerator">
+            <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl" p:includePeriod="false"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <bean class="org.jasig.portlet.form.parameter.Parameter"
+                      p:name="termCode" p:labelKey="courses.dao.calendar.term.code"
+                      p:descriptionKey="courses.dao.calendar.term.description" p:example="Fall2012 (from course data)">
+                    <property name="input">
+                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
+                              p:display="TEXT" p:defaultValue=""/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    -->
+
+    <!--
+     | Mock data for the course calendar adapter.  The java class is from
+     | the courses-portlet-dao jar file.  See dependency in
+     | pom.xml.  This provides sample data for testing.  Replace this data
+     | source with an appropriate data source (typically a duplicate of the
+     | dao configuration in the courses portlet).
+     -->
+    <!--
+    <bean id="xmlCourseDao"
+          class="org.jasig.portlet.courses.dao.xml.MockCoursesDaoImpl"
+          p:mockData="classpath:mock-data/mock-course-term-data.xml"/>
+    -->
+
+    <!--
      | BASIC AUTHENTICATION SUPPORT
      |
      | Uncomment the following section to enable cached password basic authentication 
