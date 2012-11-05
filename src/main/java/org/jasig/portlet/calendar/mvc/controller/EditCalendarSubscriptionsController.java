@@ -28,8 +28,8 @@ import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
+import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
-import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
@@ -156,6 +156,7 @@ public class EditCalendarSubscriptionsController implements ApplicationContextAw
                                    ResourceResponse response, @RequestParam("configurationId") Long id) {
         CalendarConfiguration calendarConfig = calendarStore.getCalendarConfiguration(id);
 
+        CalendarException exception = null;
         try {
 
             // get an instance of the adapter for this calendar
@@ -167,8 +168,10 @@ public class EditCalendarSubscriptionsController implements ApplicationContextAw
             Interval interval = new Interval(intervalStart, intervalEnd);
             Calendar calendar = calendarEventsDao.getCalendar(adapter, calendarConfig, interval, request);
 
-            response.setContentType("application/octet-stream");
-            // Can you set header 'Content-disposition: attachment; filename=movie.mpg');
+            // Calendars should be fairly small, so no need to save file to disk or
+            // buffer to calculate size.
+            response.setContentType("text/calendar");
+            response.addProperty("Content-disposition", "attachment; filename=calendar.ical");
 
             CalendarOutputter calendarOut = new CalendarOutputter();
             calendarOut.output(calendar, response.getWriter());
@@ -176,22 +179,14 @@ public class EditCalendarSubscriptionsController implements ApplicationContextAw
             return null;
 
         } catch (NoSuchBeanDefinitionException ex) {
-            log.error("Calendar class instance could not be found: " + ex.getMessage());
-        } catch (UserFeedbackCalendarException sce) {
-            // This CalendarException subclass carries a payload for the UI...
-            StringBuilder msg = new StringBuilder();
-            msg.append(calendarConfig.getCalendarDefinition().getName())
-                    .append(":  ").append(sce.getUserFeedback());
-//            errors.add(msg.toString());
+            exception = new CalendarException("Calendar adapter class instance could not be found", ex);
         } catch (Exception ex) {
-            log.warn("Unknown Error", ex);
-//            errors.add("The calendar \"" + calendarConfig.getCalendarDefinition().getName() + "\" is currently unavailable.");
+            exception = new CalendarException ("Error sending calendar "
+                    + calendarConfig.getCalendarDefinition().getName() + " to user for downloading", ex);
         }
 
-        //todo catch the errors and redirect to the portal page to display the errors
-        log.error("Writing calendar did not work");
-        return null;
-
+        // Allow container to handle exceptions and give HTTP error
+        throw exception;
     }
 
     @ActionMapping(params = "action=showCalendar")
