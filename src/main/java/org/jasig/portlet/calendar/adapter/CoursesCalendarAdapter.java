@@ -19,18 +19,29 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import net.fortuna.ical4j.model.*;
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.*;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.Location;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.RRule;
+import net.fortuna.ical4j.model.property.Summary;
+import net.fortuna.ical4j.model.property.Version;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
+import org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.jasig.portlet.courses.dao.ICoursesDao;
@@ -42,12 +53,19 @@ import org.jasig.portlet.courses.model.xml.personal.CoursesByTerm;
 import org.joda.time.Interval;
 
 import javax.portlet.PortletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of {@link org.jasig.portlet.calendar.adapter.ICalendarAdapter} that creates
  * a single calendar in a {@link org.jasig.portlet.calendar.adapter.CalendarEventSet} using data
  * from a user's courses for the term.
+ *
+ * The implementation expects that a term has a start and end date specified.
  *
  * @author James Wennmacher, jameswennmacher@gmail.com
  * @version $Id$
@@ -58,7 +76,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     private Cache cache;
     private ICoursesDao courseDao;
-    private ICacheKeyGenerator cacheKeyGenerator = new DefaultCacheKeyGeneratorImpl();
+    private ICacheKeyGenerator cacheKeyGenerator = new RequestAttributeCacheKeyGeneratorImpl();
     private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
     private String cacheKeyPrefix = "courseDao";
 
@@ -126,82 +144,47 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
             CalendarConfiguration calendarConfiguration, Interval interval,
             PortletRequest request) throws CalendarException {
 
-        // Future nice to have may be to pick term based on interval start date?
-        Map<String,String> parameters = calendarConfiguration.getCalendarDefinition().getParameters();
-        String termCode = parameters.get("termCode");
-        if (StringUtils.isBlank(termCode)) {
-            throw new CalendarException("The Courses Calendar does not have a termCode parameter entry");
-        }
+        String intervalCacheKey = cacheKeyGenerator.getKey(calendarConfiguration,
+                interval, request, cacheKeyPrefix.concat(".") + interval.toString());
 
-        // Stage 1 caches the entire calendar.
-        //
-        // Stage 2 filters the cached calendar down to the requested interval and
-        // caches the calendar events for that interval.
-
-        // Stage 1: Try to get the cached calendar.
-        String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration,
-                interval, request, cacheKeyPrefix.concat(".").concat(termCode));
-        Calendar calendar;
-        Element cachedCalendar = this.cache.get(intermediateCacheKey);
-        if (cachedCalendar == null) {
-
-            // retrieve course calendar for the current user and configured term
-            calendar = retrieveCourseCalendar(request, termCode);
-
-            // save the VEvents to the cache
-            cachedCalendar = new Element(intermediateCacheKey, calendar);
-            this.cache.put(cachedCalendar);
-            if (log.isDebugEnabled()) {
-                log.debug("Storing calendar cache, key:" + intermediateCacheKey);
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieving calendar from cache, key:" + intermediateCacheKey);
-            }
-            calendar = (Calendar) cachedCalendar.getValue();
-        }
-
-        String processorCacheKey = intermediateCacheKey + "." + interval.toString();
-        // Stage 2: Get the calendar event set for the requested interval from cache
-        // or generate it from the calendar from stage 1.
+        // Get the calendar event set for the set of terms from cache
         CalendarEventSet eventSet;
-        Element cachedElement = this.cache.get(processorCacheKey);
-        if (cachedElement == null) {
-            Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
-            log.debug("contentProcessor found " + events.size() + " events");
-
-            // Save the calendar event set to the cache.  Calculate how long
-            // this event set should survive.  We don't want this event set to
-            // survive beyond the expiration of the calendar from stage 1 or you
-            // have the potential of having two sets of events with different
-            // overlapping intervals displaying different data, assuming getting
-            // the calendar in stage 1 returns the whole calendar and not just
-            // the portion of the calendar within the desired interval.
-            //
-            // For instance this inconsistency in calendar event sets can happen
-            // when you get the calendar and display a week, then
-            // near the expiration of the calendar from stage 1 get events for a
-            // month that contains the week.  If you then display the week again
-            // after the calendar (stage 1) has expired, you could get a changed
-            // calendar and generate different calendar events than what you'd see
-            // in the month view until the stage-2-month calendar event set expires
-            // and builds a calendar event set based on the same data as the week
-            // was generated with.
-            int timeToLiveInSeconds = -1;
-            long currentTime = System.currentTimeMillis();
-            if (cachedCalendar.getExpirationTime() > currentTime) {
-                long timeToLiveInMilliseconds =
-                        cachedCalendar.getExpirationTime() - currentTime;
-                timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
-            }
-            eventSet = insertCalendarEventSetIntoCache(this.cache, processorCacheKey, events,
-                    timeToLiveInSeconds > 0 ? timeToLiveInSeconds : -1);
-        } else {
+        Element cachedElement = this.cache.get(intervalCacheKey);
+        if (cachedElement != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Retrieving calendar event set from cache, intermediateCacheKey:" + processorCacheKey);
+                log.debug("Retrieving calendar event set from cache, termCacheKey:" + intervalCacheKey);
             }
-            eventSet = (CalendarEventSet) cachedElement.getValue();
+            return (CalendarEventSet) cachedElement.getValue();
         }
+
+        // Get the terms that overlap the requested interval.  Current implementation
+        // requires the terms to have the start date and end date present in the
+        // term.
+        TermList allTerms = courseDao.getTermList(request);
+        Set<VEvent> calendarEventSet = new HashSet<VEvent>();
+        for (Term term : allTerms.getTerms()) {
+
+            // todo determine if term ending Fri 10/31 (which means THROUGH 10/31 to 23:59:59)
+            // and interval starting Fri 10/31 (meaning 10/31 12:00am) works as expected.
+
+            // Determine if the interval overlaps any terms.
+            if (interval.getStart().isBefore(term.getEnd().getTimeInMillis())
+                    && interval.getEnd().isAfter(term.getStart().getTimeInMillis())) {
+
+                Calendar calendar = retrieveCourseCalendar(request, interval, calendarConfiguration, term);
+                Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
+                log.debug("contentProcessor found " + events.size() + " events");
+                calendarEventSet.addAll(events);
+            }
+        }
+
+        // Save the calendar event set to the cache.
+        eventSet = new CalendarEventSet(intervalCacheKey, calendarEventSet);
+        cachedElement = new Element(intervalCacheKey, eventSet);
+        if (log.isDebugEnabled()) {
+            log.debug("Storing calendar event set to cache, key:" + intervalCacheKey);
+        }
+        cache.put(cachedElement);
 
         return eventSet;
     }
@@ -209,7 +192,8 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     /* (non-Javadoc)
      * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
      */
-    public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) throws CalendarLinkException {
+    public String getLink(CalendarConfiguration calendar, Interval interval,
+                          PortletRequest request) throws CalendarLinkException {
         throw new CalendarLinkException("This calendar has no link");
     }
 
@@ -218,29 +202,44 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
      * for the indicated term.
      *
      *
+     *
+     *
+     *
+     *
      * @param request portlet request
-     * @param termCode term code to get class schedule for
+     * @param interval requested interval
+     * @param calendarConfiguration calendar config
+     * @param term term to get class schedule for
      * @return User's schedule of classes for the indicated term, represented as calendar events
      */
-    protected final Calendar retrieveCourseCalendar(PortletRequest request, String termCode) {
+    protected final Calendar retrieveCourseCalendar(PortletRequest request, Interval interval,
+                                                    CalendarConfiguration calendarConfiguration,
+                                                    Term term) {
+
+        // Try to get the cached calendar for the specified term
+        String termCacheKey = cacheKeyGenerator.getKey(calendarConfiguration,
+                interval, request, cacheKeyPrefix.concat(".").concat(term.getCode()));
+
+        Element cachedCalendar = this.cache.get(termCacheKey);
+        if (cachedCalendar != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving calendar from cache, key:" + termCacheKey);
+            }
+            return (Calendar) cachedCalendar.getValue();
+        }
 
         Calendar calendar = new Calendar();
         calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
 
-        java.util.Calendar termStartDate = null;
-        java.util.Calendar termEndDate = null;
-        TermList termList = courseDao.getTermList(request);
-        Term term = termList.getTerm(termCode);
-        if (term != null) {
-            termStartDate = term.getStart() != null ? term.getStart() : null;
-            termEndDate = term.getEnd() != null ? term.getEnd() : null;
-        }
+        java.util.Calendar termStartDate = term.getStart();
+        java.util.Calendar termEndDate = term.getEnd();
 
-        CoursesByTerm coursesByTerm = courseDao.getCoursesByTerm(request, termCode);
+        CoursesByTerm coursesByTerm = courseDao.getCoursesByTerm(request, term.getCode());
         if (coursesByTerm == null) {
-            log.error("Invalid term code " + termCode);
+            log.info("User " + request.getRemoteUser() + " does not have any courses" +
+                    " for term " + term + " or invalid term code " + term);
             return calendar;
         }
         List<Course> courses = coursesByTerm.getCourses();
@@ -255,10 +254,15 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
                 if (meetingEvent != null) {
                     calendar.getComponents().add(meetingEvent);
                 }
-
             }
         }
 
+        // save the calendar to the cache
+        cachedCalendar = new Element(termCacheKey, calendar);
+        this.cache.put(cachedCalendar);
+        if (log.isDebugEnabled()) {
+            log.debug("Storing calendar cache, key:" + termCacheKey);
+        }
         return calendar;
     }
 

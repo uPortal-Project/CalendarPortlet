@@ -19,11 +19,11 @@
 
 -->
 <terms-and-courses
-    xmlns="https://source.jasig.org/schemas/portlet/courses/courses-by-term"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:courses="https://source.jasig.org/schemas/portlet/courses/common"
-    xsi:schemaLocation="https://source.jasig.org/schemas/portlet/courses/courses-by-term ../../../../../courses-portlet-api/src/main/resources/xsd/generic/course-summary.xsd">
-    
+        xmlns="https://source.jasig.org/schemas/portlet/courses/courses-by-term"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:courses="https://source.jasig.org/schemas/portlet/courses/common"
+        xsi:schemaLocation="https://source.jasig.org/schemas/portlet/courses/courses-by-term ../../../../../courses-portlet-api/src/main/resources/xsd/generic/course-summary.xsd">
+
     <term-list>
         <courses:term>
             <courses:displayName>Winter 2012</courses:displayName>
@@ -31,7 +31,14 @@
             <courses:start>2012-08-20</courses:start>
             <courses:end>2012-12-21</courses:end>
         </courses:term>
-    
+
+        <courses:term>
+            <courses:displayName>Summer 2012</courses:displayName>
+            <courses:code>2012sum</courses:code>
+            <courses:start>2012-06-04</courses:start>
+            <courses:end>2012-07-06</courses:end>
+        </courses:term>
+
         <courses:term current="true">
             <courses:displayName>Spring 2012</courses:displayName>
             <courses:code>2012s</courses:code>
@@ -39,15 +46,15 @@
             <courses:end>2012-06-02</courses:end>
         </courses:term>
     </term-list>
-    
+
     <courses-by-term>
         <term_code>2012s</term_code>
         <gpa>3.25</gpa>
         <credits>40</credits>
-    
+
         <course>
             <title>Design Awareness</title>
-            <code>DSC 101</code>
+            <code>DSC 101 Spring</code>
             <school>School of Design</school>
             <course-meeting>
                 <courses:location>
@@ -71,8 +78,8 @@
             <course-update newUpdate="true" type="announcement">
                 <title>Guest Lecture Thursday</title>
                 <description>
-                Don't miss Thursday's guest lecture by Alan Cooper
-            </description>
+                    Don't miss Thursday's guest lecture by Alan Cooper
+                </description>
                 <url>http://courses.university.edu/dsc101/s11/announcements/1.html</url>
             </course-update>
             <course-textbook isbn="978-0-07-751448-8">
@@ -85,7 +92,7 @@
 
         <course>
             <title>Drawing for Industry</title>
-            <code>IND 120</code>
+            <code>IND 120 Spring</code>
             <school>School of Design</school>
             <course-meeting>
                 <courses:location>
@@ -109,15 +116,15 @@
             <course-update newUpdate="false" type="announcement">
                 <title>Guest Lecture Thursday</title>
                 <description>
-                Don't miss Thursday's guest lecture by Alan Cooper
-            </description>
+                    Don't miss Thursday's guest lecture by Alan Cooper
+                </description>
                 <url>http://courses.university.edu/dsc101/s11/announcements/1.html</url>
             </course-update>
         </course>
 
         <course>
             <title>First-Year Composition</title>
-            <code>ENG 101</code>
+            <code>ENG 101 Spring</code>
             <school>School of Design</school>
             <course-meeting>
                 <courses:location>
@@ -142,7 +149,7 @@
 
         <course>
             <title>Precalculus</title>
-            <code>MAT 170</code>
+            <code>MAT 170 Spring</code>
             <school>School of Design</school>
             <course-meeting>
                 <courses:location>
@@ -166,7 +173,157 @@
 
         <course>
             <title>Graphic Design History</title>
-            <code>GRA 111</code>
+            <code>GRA 111 Spring</code>
+            <school>School of Design</school>
+            <course-meeting>
+                <courses:location>
+                    <courses:displayName>WLH 205</courses:displayName>
+                    <courses:identifier>WLH</courses:identifier>
+                </courses:location>
+                <courses:startTime>14:00:00</courses:startTime>
+                <courses:endTime>15:30:00</courses:endTime>
+                <courses:dayId>T</courses:dayId>
+                <courses:dayId>Th</courses:dayId>
+            </course-meeting>
+            <url>http://courses.university.edu/dsc101/s11</url>
+            <instructor>
+                <courses:abbreviation>Faculty</courses:abbreviation>
+                <courses:fullName>Joe Faculty, Phd</courses:fullName>
+                <courses:identifier>faculty</courses:identifier>
+            </instructor>
+            <grade>A</grade>
+            <credits>4</credits>
+        </course>
+
+    </courses-by-term>
+
+    <courses-by-term>
+        <term_code>2012s</term_code>
+        <gpa>3.25</gpa>
+        <credits>40</credits>
+
+        <course>
+            <title>Design Awareness</title>
+            <code>DSC 101 Summer</code>
+            <school>School of Design</school>
+            <course-meeting>
+                <courses:location>
+                    <courses:displayName>SSS 114</courses:displayName>
+                    <courses:identifier>SSS</courses:identifier>
+                </courses:location>
+                <courses:startTime>13:30:00</courses:startTime>
+                <courses:endTime>14:30:00</courses:endTime>
+                <courses:dayId>M</courses:dayId>
+                <courses:dayId>W</courses:dayId>
+                <courses:dayId>F</courses:dayId>
+            </course-meeting>
+            <url>http://courses.university.edu/dsc101/s11</url>
+            <instructor>
+                <courses:abbreviation>Faculty</courses:abbreviation>
+                <courses:fullName>Joe Faculty, Phd</courses:fullName>
+                <courses:identifier>faculty</courses:identifier>
+            </instructor>
+            <grade>A</grade>
+            <credits>4</credits>
+            <course-update newUpdate="true" type="announcement">
+                <title>Guest Lecture Thursday</title>
+                <description>
+                    Don't miss Thursday's guest lecture by Alan Cooper
+                </description>
+                <url>http://courses.university.edu/dsc101/s11/announcements/1.html</url>
+            </course-update>
+            <course-textbook isbn="978-0-07-751448-8">
+                <author>LOCHBAUM</author>
+                <title>CONNECT GET ACTIVE eBOOK WITH CONNECTPLUS FIT ACCESS CARD</title>
+                <url>http://textbooks.university.edu/isbn/978-0-07-751448-8</url>
+                <comments>REQUIRED</comments>
+            </course-textbook>
+        </course>
+
+        <course>
+            <title>Drawing for Industry</title>
+            <code>IND 120 Summer</code>
+            <school>School of Design</school>
+            <course-meeting>
+                <courses:location>
+                    <courses:displayName>LC 101</courses:displayName>
+                    <courses:identifier>LC</courses:identifier>
+                </courses:location>
+                <courses:startTime>09:30:00</courses:startTime>
+                <courses:endTime>10:30:00</courses:endTime>
+                <courses:dayId>M</courses:dayId>
+                <courses:dayId>W</courses:dayId>
+                <courses:dayId>F</courses:dayId>
+            </course-meeting>
+            <url>http://courses.university.edu/dsc101/s11</url>
+            <instructor>
+                <courses:abbreviation>Staff</courses:abbreviation>
+                <courses:fullName>Sam Staff</courses:fullName>
+                <courses:identifier>staff</courses:identifier>
+            </instructor>
+            <grade>A</grade>
+            <credits>4</credits>
+            <course-update newUpdate="false" type="announcement">
+                <title>Guest Lecture Thursday</title>
+                <description>
+                    Don't miss Thursday's guest lecture by Alan Cooper
+                </description>
+                <url>http://courses.university.edu/dsc101/s11/announcements/1.html</url>
+            </course-update>
+        </course>
+
+        <course>
+            <title>First-Year Composition</title>
+            <code>ENG 101 Summer</code>
+            <school>School of Design</school>
+            <course-meeting>
+                <courses:location>
+                    <courses:displayName>SCL 115</courses:displayName>
+                    <courses:identifier>SCL</courses:identifier>
+                </courses:location>
+                <courses:startTime>16:00:00</courses:startTime>
+                <courses:endTime>18:30:00</courses:endTime>
+                <courses:dayId>Th</courses:dayId>
+                <courses:startDate>2012-04-01</courses:startDate>
+                <courses:endDate>2012-04-30</courses:endDate>
+            </course-meeting>
+            <url>http://courses.university.edu/dsc101/s11</url>
+            <instructor>
+                <courses:abbreviation>Faculty</courses:abbreviation>
+                <courses:fullName>Joe Faculty, Phd</courses:fullName>
+                <courses:identifier>faculty</courses:identifier>
+            </instructor>
+            <grade>A</grade>
+            <credits>4</credits>
+        </course>
+
+        <course>
+            <title>Precalculus</title>
+            <code>MAT 170 Summer</code>
+            <school>School of Design</school>
+            <course-meeting>
+                <courses:location>
+                    <courses:displayName>Becton 101</courses:displayName>
+                    <courses:identifier>BCT</courses:identifier>
+                </courses:location>
+                <courses:startTime>11:00:00</courses:startTime>
+                <courses:endTime>12:00:00</courses:endTime>
+                <courses:dayId>T</courses:dayId>
+                <courses:dayId>Th</courses:dayId>
+            </course-meeting>
+            <url>http://courses.university.edu/dsc101/s11</url>
+            <instructor>
+                <courses:abbreviation>Faculty</courses:abbreviation>
+                <courses:fullName>Joe Faculty, Phd</courses:fullName>
+                <courses:identifier>faculty</courses:identifier>
+            </instructor>
+            <grade>C</grade>
+            <credits>4</credits>
+        </course>
+
+        <course>
+            <title>Graphic Design History</title>
+            <code>GRA 111 Summer</code>
             <school>School of Design</school>
             <course-meeting>
                 <courses:location>
