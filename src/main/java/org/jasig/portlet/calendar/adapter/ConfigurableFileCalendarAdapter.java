@@ -19,22 +19,12 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.portlet.PortletRequest;
-
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.util.Calendars;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -43,6 +33,11 @@ import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.joda.time.Interval;
+
+import javax.portlet.PortletRequest;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
 
 
 public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
@@ -67,9 +62,9 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
         CalendarEventSet eventSet;
 		if (cachedElement == null) {
 			// read in the data
-			InputStream stream = retrieveCalendar(fileName);
+			Calendar calendar = retrieveCalendar(fileName);
 			// run the stream through the processor
-			events = contentProcessor.getEvents(interval, stream);
+			events = contentProcessor.getEvents(interval, calendar);
 			log.debug("contentProcessor found " + events.size() + " events");
 			// save the CalendarEvents to the cache
             eventSet = new CalendarEventSet(key, events);
@@ -83,7 +78,7 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 		return eventSet;
 	}
 
-	protected InputStream retrieveCalendar(String fileName)
+	protected Calendar retrieveCalendar(String fileName)
 			throws CalendarException {
 
 		if(log.isDebugEnabled()) {
@@ -91,21 +86,16 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 		}
 
 		try {
+            return Calendars.load(fileName);
 
-			InputStream in = new FileInputStream(fileName);
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			IOUtils.copyLarge(in, buffer);
-			return new ByteArrayInputStream(buffer.toByteArray());
-
-		} catch (HttpException e) {
-			log.warn("Error fetching iCalendar feed", e);
-			throw new CalendarException("Error fetching iCalendar feed", e);
+		} catch (ParserException e) {
+			log.warn("Error loading iCalendar file feed", e);
+			throw new CalendarException("Error fetching iCalendar file feed", e);
 		} catch (IOException e) {
-			log.warn("Error fetching iCalendar feed", e);
-			throw new CalendarException("Error fetching iCalendar feed", e);
+			log.warn("Error loading iCalendar file feed", e);
+			throw new CalendarException("Error loading iCalendar feed", e);
 		} finally {
 		}
-
 	}
 
 	/* (non-Javadoc)

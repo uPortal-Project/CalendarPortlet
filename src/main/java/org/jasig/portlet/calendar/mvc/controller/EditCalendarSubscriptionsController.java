@@ -89,6 +89,7 @@ public class EditCalendarSubscriptionsController implements ApplicationContextAw
 	
     @ActionMapping
     public void defaultAction(ActionRequest request) {
+        log.debug("executing default action request");
         // default action mapping
     }
     
@@ -171,7 +172,7 @@ public class EditCalendarSubscriptionsController implements ApplicationContextAw
             // Calendars should be fairly small, so no need to save file to disk or
             // buffer to calculate size.
             response.setContentType("text/calendar");
-            response.addProperty("Content-disposition", "attachment; filename=calendar.ical");
+            response.addProperty("Content-disposition", "attachment; filename=calendar.ics");
 
             CalendarOutputter calendarOut = new CalendarOutputter();
             calendarOut.output(calendar, response.getWriter());
