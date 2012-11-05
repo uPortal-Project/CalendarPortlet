@@ -214,18 +214,6 @@
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl" p:includePeriod="false"/>
         </property>
-        <property name="parameters">
-            <list>
-                <bean class="org.jasig.portlet.form.parameter.Parameter"
-                      p:name="termCode" p:labelKey="courses.dao.calendar.term.code"
-                      p:descriptionKey="courses.dao.calendar.term.description" p:example="Fall2012 (from course data)">
-                    <property name="input">
-                        <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
-                              p:display="TEXT" p:defaultValue=""/>
-                    </property>
-                </bean>
-            </list>
-        </property>
     </bean>
     -->
 
@@ -240,7 +228,7 @@
     <bean id="xmlCourseDao"
           class="org.jasig.portlet.courses.dao.xml.MockCoursesDaoImpl"
           p:mockData="classpath:mock-data/mock-course-term-data.xml"/>
-    -->
+          -->
 
     <!--
      | BASIC AUTHENTICATION SUPPORT
