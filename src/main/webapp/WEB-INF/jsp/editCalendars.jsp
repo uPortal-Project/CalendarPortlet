@@ -1,14 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
-<%@ taglib prefix="up" uri="http://www.uportal.org/jsp/jstl/uportal/1.0" %>
-<%@ taglib prefix="rs" uri="http://www.jasig.org/resource-server" %>
-<%@ taglib prefix="antisamy" tagdir="/WEB-INF/tags/antisamy" %>
 <%--
 
     Licensed to Jasig under one or more contributor license
