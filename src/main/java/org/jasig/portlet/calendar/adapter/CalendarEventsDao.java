@@ -19,20 +19,13 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.portlet.PortletRequest;
-
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -44,6 +37,15 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.beans.factory.annotation.Required;
+
+import javax.portlet.PortletRequest;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
@@ -66,6 +68,25 @@ public class CalendarEventsDao {
     private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
 
     private Map<String, DateTimeFormatter> timeFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
+
+    public Calendar getCalendar(ICalendarAdapter adapter, CalendarConfiguration calendarConfig,
+            Interval interval, PortletRequest request) {
+
+        // get the set of pre-timezone-corrected events for the requested period
+        // Rely on the adapter to do caching
+        final CalendarEventSet eventSet = adapter.getEvents(calendarConfig, interval, request);
+
+        // Create a calendar from the events
+        Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+        calendar.getProperties().add(Version.VERSION_2_0);
+        calendar.getProperties().add(CalScale.GREGORIAN);
+
+        for (VEvent event : eventSet.getEvents()) {
+            calendar.getComponents().add(event);
+        }
+        return calendar;
+    }
 
     /**
      * Obtains the calendar events from the adapter and returns timezone-adjusted

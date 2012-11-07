@@ -31,12 +31,14 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStamp;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.UidGenerator;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
@@ -56,6 +58,8 @@ import org.jasig.portlet.courses.model.xml.personal.CoursesByTerm;
 import org.joda.time.Interval;
 
 import javax.portlet.PortletRequest;
+
+import java.net.SocketException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +83,15 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     private ICacheKeyGenerator cacheKeyGenerator = new RequestAttributeCacheKeyGeneratorImpl();
     private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
     private String cacheKeyPrefix = "courseDao";
+    private final UidGenerator uidGenerator;
+    
+    public CoursesCalendarAdapter() {
+        try {
+            this.uidGenerator = new UidGenerator("uidGen");
+        } catch (SocketException e) {
+            throw new RuntimeException("Failed to create UidGenerator", e);
+        }
+    }
 
     /**
      * Map dayCode strings from courses-portlet-api to iCal4j WeekDay objects.
@@ -297,6 +310,9 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
         // create a property list representing the event
         PropertyList props = new PropertyList();
+        
+        props.add(uidGenerator.generateUid());
+        props.add(new DtStamp());
 
         props.add(new DtStart(eventStart));
         props.add(new DtEnd(eventEnd));
@@ -322,7 +338,6 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
                     log.warn("Invalid course day of week string " + dayOfWeek);
                 }
             }
-            recur.setWeekStartDay(WeekDay.SU.getDay());
             RRule rrule = new RRule(recur);
             props.add(rrule);
         }
