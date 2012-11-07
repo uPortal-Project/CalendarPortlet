@@ -23,6 +23,9 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
@@ -53,11 +56,8 @@ import org.jasig.portlet.courses.model.xml.personal.CoursesByTerm;
 import org.joda.time.Interval;
 
 import javax.portlet.PortletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -80,8 +80,30 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
     private String cacheKeyPrefix = "courseDao";
 
-    private Map<String, WeekDay> eventDayOfWeekMap = createEventDaysOfWeekMap(defaultCourseDaysOfWeek());
-    private List<String> courseDayOfWeekList = defaultCourseDaysOfWeek();
+    /**
+     * Map dayCode strings from courses-portlet-api to iCal4j WeekDay objects.
+     */
+    private enum DAYS {
+
+        Su(WeekDay.SU), 
+        M(WeekDay.MO), 
+        T(WeekDay.TU), 
+        W(WeekDay.WE), 
+        Th(WeekDay.TH), 
+        F(WeekDay.FR), 
+        Sa(WeekDay.SA);
+        
+        private final WeekDay icalWeekDay;
+
+        private DAYS(final WeekDay icalWeekDay) {
+            this.icalWeekDay = icalWeekDay;
+        }
+
+        public WeekDay getIcalWeekDay() {
+            return icalWeekDay;
+        }
+
+    }
 
     public void setCache(Cache cache) {
         this.cache = cache;
@@ -101,43 +123,6 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     public void setContentProcessor(IContentProcessor contentProcessor) {
         this.contentProcessor = contentProcessor;
-    }
-
-    private static List<String> defaultCourseDaysOfWeek() {
-        List<String> daysOfWeek = new ArrayList<String>();
-        daysOfWeek.add("Su");
-        daysOfWeek.add("M");
-        daysOfWeek.add("T");
-        daysOfWeek.add("W");
-        daysOfWeek.add("Th");
-        daysOfWeek.add("F");
-        daysOfWeek.add("Sa");
-        return daysOfWeek;
-    }
-
-    private static Map<String, WeekDay> createEventDaysOfWeekMap(List<String> courseDayOfWeekList) {
-        if (courseDayOfWeekList.size() != 7) {
-            throw new IllegalArgumentException("Days of week list must be 7 items; one per day of week");
-        }
-        for (String dayofWeek : courseDayOfWeekList) {
-            if (dayofWeek == null || dayofWeek.length() == 0) {
-                throw new IllegalArgumentException("Days of week list cannot contain nulls or empty strings");
-            }
-        }
-        HashMap<String,WeekDay> courseDayOfWeekMap = new HashMap<String,WeekDay>();
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(0), WeekDay.SU);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(1), WeekDay.MO);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(2), WeekDay.TU);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(3), WeekDay.WE);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(4), WeekDay.TH);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(5), WeekDay.FR);
-        courseDayOfWeekMap.put(courseDayOfWeekList.get(6), WeekDay.SA);
-        return courseDayOfWeekMap;
-    }
-
-    public void setCourseDayOfWeekList(List<String> courseDayOfWeekList) {
-        this.eventDayOfWeekMap = createEventDaysOfWeekMap(courseDayOfWeekList);
-        this.courseDayOfWeekList = courseDayOfWeekList;
     }
 
     public CalendarEventSet getEvents(
@@ -189,9 +174,6 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         return eventSet;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
-     */
     public String getLink(CalendarConfiguration calendar, Interval interval,
                           PortletRequest request) throws CalendarLinkException {
         throw new CalendarLinkException("This calendar has no link");
@@ -200,11 +182,6 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     /**
      * Return the full set of events (class schedule) for all the user's courses
      * for the indicated term.
-     *
-     *
-     *
-     *
-     *
      *
      * @param request portlet request
      * @param interval requested interval
@@ -251,7 +228,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
                 VEvent meetingEvent = createEvent(course, meeting,
                         termStartDate, termEndDate);
-                if (meetingEvent != null) {
+                if (meetingEvent != null) {  // Will be null if we can't parse it
                     calendar.getComponents().add(meetingEvent);
                 }
             }
@@ -286,17 +263,19 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
             log.error("Course " + course.getCode() + " must have start time and end time specified");
             return null;
         }
+        
+        TimeZone tz = selectTimeZone(courseMeeting, termStartDate); 
 
-        java.util.Calendar recurrenceStartTime = determineRecurrenceStartTime(courseMeeting, termStartDate);
-        java.util.Calendar recurrenceEndTime = determineRecurrenceEndTime(recurrenceStartTime, courseMeeting);
-        java.util.Calendar recurrenceEndDate = determineRecurrenceEndDate(courseMeeting, termEndDate);
+        java.util.Calendar firstMeetingStartTime = calculateFirstMeetingStartTime(courseMeeting, termStartDate);
+        java.util.Calendar firstMeetingEndTime = calculateFirstMeetingEndTime(firstMeetingStartTime, courseMeeting);
+        java.util.Calendar recurrenceEndDate = calculateRecurrenceEndDate(courseMeeting, termEndDate);
 
-        if (recurrenceStartTime.after(recurrenceEndTime)) {
+        if (firstMeetingStartTime.after(firstMeetingEndTime)) {
             log.error("Course " + course.getCode() + " start time is after end time");
             return null;
         }
 
-        if (recurrenceStartTime.after(recurrenceEndDate)) {
+        if (firstMeetingStartTime.after(recurrenceEndDate)) {
             log.error("Course " + course.getCode() + " start date is after end date");
             return null;
         }
@@ -304,21 +283,17 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         // Currently assuming you always have at least one day of week specified; e.g. no course
         // meeting with start/end date and time specified but not day of week
 
-        // create a new UTC-based DateTime to represent the event start time
-        // NOTE:  This assumes this uPortal server's timezone is the same as the
-        //        university's timezone.
         DateTime eventStart = new DateTime();
-        eventStart.setUtc(true);
-        eventStart.setTime(recurrenceStartTime.getTimeInMillis());
+        eventStart.setTime(firstMeetingStartTime.getTimeInMillis());
+        eventStart.setTimeZone(tz);
 
-        // create a new UTC-based DateTime to represent the event end time
         DateTime eventEnd = new DateTime();
-        eventEnd.setUtc(true);
-        eventEnd.setTime(recurrenceEndTime.getTimeInMillis());
+        eventEnd.setTime(firstMeetingEndTime.getTimeInMillis());
+        eventStart.setTimeZone(tz);
 
         DateTime recurUntil = new DateTime();
-        recurUntil.setUtc(true);
         recurUntil.setTime(recurrenceEndDate.getTimeInMillis());
+        eventStart.setTimeZone(tz);
 
         // create a property list representing the event
         PropertyList props = new PropertyList();
@@ -340,13 +315,14 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         if (courseDays != null && courseDays.size() > 0) {
             Recur recur = new Recur(Recur.WEEKLY, recurUntil);
             for (String dayOfWeek : courseDays) {
-                WeekDay day = eventDayOfWeekMap.get(dayOfWeek);
+                WeekDay day = DAYS.valueOf(dayOfWeek).getIcalWeekDay();
                 if (day != null) {
                     recur.getDayList().add(day);
                 } else {
                     log.warn("Invalid course day of week string " + dayOfWeek);
                 }
             }
+            recur.setWeekStartDay(WeekDay.SU.getDay());
             RRule rrule = new RRule(recur);
             props.add(rrule);
         }
@@ -355,80 +331,84 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         return event;
     }
 
-    private java.util.Calendar createDateTime(java.util.Calendar date, java.util.Calendar time) {
-        java.util.Calendar classTime = java.util.Calendar.getInstance();
-        classTime.set(
-                date.get(java.util.Calendar.YEAR),
-                date.get(java.util.Calendar.MONTH),
-                date.get(java.util.Calendar.DAY_OF_MONTH),
-                time.get(java.util.Calendar.HOUR_OF_DAY),
-                time.get(java.util.Calendar.MINUTE),
-                time.get(java.util.Calendar.SECOND)
-        );
-        return classTime;
+    private TimeZone selectTimeZone(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
+        java.util.TimeZone jdkTz = null;
+        if (courseMeeting.getStartDate() != null) {
+            jdkTz = courseMeeting.getStartDate().getTimeZone();
+        } else if (termStartDate != null) {
+            jdkTz = termStartDate.getTimeZone();
+        } else {
+            throw new IllegalArgumentException("Arguments courseMeeting and termStartDate cannot both be null");
+        }
+        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+        TimeZone rslt = registry.getTimeZone(jdkTz.getID()); 
+        return rslt;
     }
 
-    // For recurring events the start date is the event start on the first day
-    // the event would occur; e.g. if Term starts on Sunday but the first class
-    // is on Tuesday, the start date is Tuesday.
-    private java.util.Calendar adjustStartDateForDayOfWeek(java.util.Calendar startDate,
-                                                           CourseMeeting courseMeeting) {
-        List<String> courseDays = courseMeeting.getDayIds();
-        
-        // If we don't have courseDays specified return the start date.
-        if (courseDays == null || courseDays.size() == 0 
-                || StringUtils.isBlank(courseDays.get(0))) {
-            return startDate;
-        }
+    private java.util.Calendar combineDateAndTime(java.util.Calendar datePart, java.util.Calendar timePart) {
 
-        // Determine the first day of the week of the course and translate that
-        // to a Calendar day of week value.
-        // Assume the first entry in courseDays is the earliest in the week.
-        int dayOfWeek = -1;
-        String firstDayOfClass = courseDays.get(0);
-        for (int i = 0; i < courseDayOfWeekList.size(); i++) {
-            if (firstDayOfClass.equals(courseDayOfWeekList.get(i))) {
-                dayOfWeek = i;
+        // Start with the first argument
+        java.util.Calendar rslt = (java.util.Calendar) datePart.clone();
+
+        // Update time fields from the second
+        rslt.set(java.util.Calendar.HOUR_OF_DAY, timePart.get(java.util.Calendar.HOUR_OF_DAY));
+        rslt.set(java.util.Calendar.MINUTE, timePart.get(java.util.Calendar.MINUTE));
+        rslt.set(java.util.Calendar.SECOND, timePart.get(java.util.Calendar.SECOND));
+        rslt.set(java.util.Calendar.MILLISECOND, timePart.get(java.util.Calendar.MILLISECOND));
+
+        return rslt;
+
+    }
+
+    private java.util.Calendar calculateFirstMeetingStartTime(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
+
+        java.util.Calendar cmStartDate = courseMeeting.getStartDate();
+        java.util.Calendar candidateStartDate = cmStartDate != null && !cmStartDate.getTime().before(termStartDate.getTime())
+                ? courseMeeting.getStartDate() 
+                : termStartDate;
+        
+        // We have to calculate the first time this course meets...
+        List<String> courseDays = courseMeeting.getDayIds();
+        java.util.Calendar actualStartDate = null; 
+        while (true) {  // Must reach the break statement
+            int calendarDayOfWeek = candidateStartDate.get(java.util.Calendar.DAY_OF_WEEK);
+            for (String dayCode : courseDays) {
+                WeekDay weekDay = DAYS.valueOf(dayCode).getIcalWeekDay();
+                if (calendarDayOfWeek == WeekDay.getCalendarDay(weekDay)) {
+                    // This course meets on this day;  proceed...
+                    actualStartDate = (java.util.Calendar) candidateStartDate.clone();
+                }
+            }
+            if (actualStartDate != null) {
                 break;
+            } else {
+                // Advance & try again...
+                candidateStartDate.add(java.util.Calendar.DAY_OF_YEAR, 1);
             }
         }
-        if (dayOfWeek == -1) {
-            log.warn("Day of week string " + courseDays.get(0)
-                    + " in course meeting is not a valid day of week string.");
-            return startDate;
-        }
-        int offset = dayOfWeek - startDate.get(java.util.Calendar.DAY_OF_WEEK) + 1;
 
-        java.util.Calendar date = (java.util.Calendar) startDate.clone();
-        date.add(java.util.Calendar.DAY_OF_YEAR, offset);
-        return date;
-    }
+        java.util.Calendar meetingStartTime = courseMeeting.getStartTime().toGregorianCalendar();
+        java.util.Calendar rslt = combineDateAndTime(actualStartDate, meetingStartTime);
 
-    private java.util.Calendar determineRecurrenceStartTime(CourseMeeting courseMeeting,
-                                                            java.util.Calendar termDate) {
-        java.util.Calendar meetingDate = courseMeeting.getStartDate();
-        java.util.Calendar meetingTime = courseMeeting.getStartTime().toGregorianCalendar();
-        java.util.Calendar date = meetingDate != null? meetingDate : termDate;
+        return rslt;
 
-        java.util.Calendar roughStart = createDateTime(date, meetingTime);
-        return adjustStartDateForDayOfWeek(roughStart, courseMeeting);
     }
 
     // For recurring events end date date is the event end time on the event start date.
-    private java.util.Calendar determineRecurrenceEndTime(java.util.Calendar startDate,
+    private java.util.Calendar calculateFirstMeetingEndTime(java.util.Calendar firstMeetingStartTime,
                                                           CourseMeeting courseMeeting) {
-        java.util.Calendar meetingTime = courseMeeting.getEndTime().toGregorianCalendar();
-        return createDateTime(startDate, meetingTime);
+        java.util.Calendar meetingEndTime = courseMeeting.getEndTime().toGregorianCalendar();
+        return combineDateAndTime(firstMeetingStartTime, meetingEndTime);
     }
 
     // End date is the end date specified in the meeting or the term end date.
-    private java.util.Calendar determineRecurrenceEndDate(CourseMeeting courseMeeting,
+    private java.util.Calendar calculateRecurrenceEndDate(CourseMeeting courseMeeting,
                                                      java.util.Calendar termDate) {
         java.util.Calendar meetingDate = courseMeeting.getEndDate();
         java.util.Calendar meetingTime = courseMeeting.getEndTime().toGregorianCalendar();
 
         java.util.Calendar endDate = meetingDate != null? meetingDate : termDate;
-        return createDateTime(endDate, meetingTime);
+        return combineDateAndTime(endDate, meetingTime);
     }
 
 }
