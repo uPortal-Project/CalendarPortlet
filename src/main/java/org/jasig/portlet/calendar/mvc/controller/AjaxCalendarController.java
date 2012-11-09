@@ -29,9 +29,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.portlet.PortletSession;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,12 +43,15 @@ import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarConfigurationByNameComparator;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
+import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
+import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEventWrapper;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
@@ -52,10 +59,12 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
@@ -239,6 +248,43 @@ public class AjaxCalendarController implements ApplicationContextAware {
         return new ModelAndView("json", model);
 	}
 	
+    @ResourceMapping(value = "exportUserCalendar")
+    public String exportCalendar(ResourceRequest request,
+                                   ResourceResponse response, @RequestParam("configurationId") Long id) {
+        CalendarConfiguration calendarConfig = calendarStore.getCalendarConfiguration(id);
+
+        CalendarException exception = null;
+        try {
+
+            // get an instance of the adapter for this calendar
+            ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(calendarConfig
+                    .getCalendarDefinition().getClassName());
+
+            DateTime intervalStart = new DateTime().minusYears(1);
+            DateTime intervalEnd = new DateTime().plusYears(1);
+            Interval interval = new Interval(intervalStart, intervalEnd);
+            Calendar calendar = calendarEventsDao.getCalendar(adapter, calendarConfig, interval, request);
+
+            // Calendars should be fairly small, so no need to save file to disk or
+            // buffer to calculate size.
+            response.setContentType("text/calendar");
+            response.addProperty("Content-disposition", "attachment; filename=calendar.ics");
+
+            CalendarOutputter calendarOut = new CalendarOutputter();
+            calendarOut.output(calendar, response.getWriter());
+            response.flushBuffer();
+            return null;
+
+        } catch (NoSuchBeanDefinitionException ex) {
+            exception = new CalendarException("Calendar adapter class instance could not be found", ex);
+        } catch (Exception ex) {
+            exception = new CalendarException ("Error sending calendar "
+                    + calendarConfig.getCalendarDefinition().getName() + " to user for downloading", ex);
+        }
+
+        // Allow container to handle exceptions and give HTTP error
+        throw exception;
+    }
 	
 	protected Interval getPeriod(ResourceRequest request, String startDate, int days) throws ParseException {
 		
@@ -275,7 +321,15 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    this.calendarSetDao = calendarSetDao;
 	}
 
-	private ApplicationContext applicationContext;
+    private CalendarStore calendarStore;
+
+    @Required
+    @Resource(name="calendarStore")
+    public void setCalendarStore(CalendarStore calendarStore) {
+        this.calendarStore = calendarStore;
+    }
+
+    private ApplicationContext applicationContext;
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;
