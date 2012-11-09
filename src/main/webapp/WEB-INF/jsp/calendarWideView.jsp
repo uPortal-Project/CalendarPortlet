@@ -68,6 +68,12 @@
                                 </c:otherwise>
                             </c:choose>
                             <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
+                            <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
+                                <portlet:param name="configurationId" value="${ calendar.id }"/>
+                            </portlet:resourceURL>
+                            <a href="${ exportCalendarUrl }" class="upcal-export" title="<spring:message code='export.calendar'/>">
+                                <span><spring:message code="export"/></span>
+                            </a>
                         </li>
                     </c:forEach>
             </ul>

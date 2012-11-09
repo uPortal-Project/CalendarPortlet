@@ -34,6 +34,7 @@ public class CalendarEventSet implements Serializable {
 
     private final String key;
     private final Set<VEvent> events;
+    private long expirationTime;
     
     public CalendarEventSet(String key, Set<VEvent> events) {
         this.key = key;
@@ -48,4 +49,24 @@ public class CalendarEventSet implements Serializable {
         return events;
     }
 
+    /**
+     * Return the expiration time of this CalendarEventSet.  This property
+     * does not control the expiration time but merely allows communicating the
+     * set expiration time through application layers so each layer does
+     * not need to know if or how a CalendarEventSet was cached.
+     * @return Expiration time in absolute milliseconds when this CalendarEventSet
+     *         is expected to be evicted from cache.  0 if not set.
+     */
+    public long getExpirationTime() {
+        return expirationTime;
+    }
+
+    /**
+     * Set the time in absolute milliseconds when this CalendarEventSet should
+     * be evicted from cache.
+     * @param expirationTime
+     */
+    public void setExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
+    }
 }

@@ -61,7 +61,7 @@
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.0</joda-time.version>
         <resource-server.version>1.0.26</resource-server.version>
-        <spring.version>3.1.1.RELEASE</spring.version>
+        <spring.version>3.1.3.RELEASE</spring.version>
         <mockito.version>1.8.4</mockito.version>
         
         <!-- The JDBC Driver used by the calendar portlet -->
@@ -228,6 +228,11 @@
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>1.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.portlet.courses</groupId>
+                <artifactId>courses-portlet-dao</artifactId>
+                <version>1.0.0-M3</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.portlet.utils</groupId>
@@ -498,6 +503,10 @@
             <artifactId>hibernate</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jasig.portlet.courses</groupId>
+            <artifactId>courses-portlet-dao</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
             <artifactId>portlet-form-resources</artifactId>
         </dependency>
@@ -599,7 +608,12 @@
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-taglib</artifactId>
+            <version>2.1.0-M3</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- ===== Test Dependencies ====================================== -->
         <dependency>
@@ -725,6 +739,7 @@
                                 <include>rs/famfamfam/silk/1.3/calendar*.png</include>
                                 <include>rs/famfamfam/silk/1.3/cross.png</include>
                                 <include>rs/famfamfam/silk/1.3/page_edit.png</include>
+                                <include>rs/famfamfam/silk/1.3/page_white_put.png</include>
                                 <include>rs/famfamfam/silk/1.3/tick.png</include>
                                 <include>rs/jquery/1.6.4/</include>
                                 <include>rs/jqueryui/1.8.13/</include>

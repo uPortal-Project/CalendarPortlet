@@ -46,7 +46,11 @@
         </property>
     </bean>
     
-    <bean id="calendarSetDao" class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
+    <bean id="calendarSetDao" class="org.jasig.portlet.calendar.dao.WhitelistFilteringCalendarSetDao">
+        <property name="enclosedCalendarSetDao">
+            <bean class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
+        </property>
+    </bean>
     
     <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ThemeNameViewSelectorImpl"/>
     

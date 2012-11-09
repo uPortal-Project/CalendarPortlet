@@ -19,20 +19,13 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.portlet.PortletRequest;
-
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -45,16 +38,25 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.beans.factory.annotation.Required;
 
+import javax.portlet.PortletRequest;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
 public class CalendarEventsDao {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private Cache cache;
-    
+
     /**
      * @param cache the cache to set
      */
@@ -66,26 +68,66 @@ public class CalendarEventsDao {
     private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
 
     private Map<String, DateTimeFormatter> timeFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
-    
+
+    public Calendar getCalendar(ICalendarAdapter adapter, CalendarConfiguration calendarConfig,
+            Interval interval, PortletRequest request) {
+
+        // get the set of pre-timezone-corrected events for the requested period
+        // Rely on the adapter to do caching
+        final CalendarEventSet eventSet = adapter.getEvents(calendarConfig, interval, request);
+
+        // Create a calendar from the events
+        Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+        calendar.getProperties().add(Version.VERSION_2_0);
+        calendar.getProperties().add(CalScale.GREGORIAN);
+
+        for (VEvent event : eventSet.getEvents()) {
+            calendar.getComponents().add(event);
+        }
+        return calendar;
+    }
+
+    /**
+     * Obtains the calendar events from the adapter and returns timezone-adjusted
+     * events within the requested interval.
+     * @param adapter Adapter to invoke to obtain the calendar events
+     * @param calendar Per-user Calendar configuration
+     * @param interval Interval to return events for
+     * @param request Portlet request
+     * @param tz Timezone to adjust the calendar events to (typically the user's timezone)
+     * @return Set of calendar events meeting the requested criteria
+     */
     public Set<CalendarDisplayEvent> getEvents(ICalendarAdapter adapter, CalendarConfiguration calendar,
             Interval interval, PortletRequest request, DateTimeZone tz) {
 
-        // get the set of pre-timezone-corrected events for the requested period
+        // Get the set of calendar events for the requested period.
+        // We invoke the adapter before checking cache because we expect the adapter
+        // to do the first-level caching of the events.
         final CalendarEventSet eventSet = adapter.getEvents(calendar, interval, request);
 
-        // append the requested time zone id to the retrieve event set's cache
+        // The calendar events from the adapter will reflect the timezone of the calendar
+        // server in the event times.  The events need to be corrected to reflect the
+        // requested timezone (typically the user's timezone). Adjusting the
+        // event's timezone is an expensive operation so the JSON of the
+        // timezone-adjusted events is cached per timezone.
+
+        // Append the requested time zone id to the retrieve event set's cache
         // key to generate a timezone-aware cache key
         final String tzKey = eventSet.getKey().concat(tz.getID());
 
         // attempt to retrieve the timezone-aware event set from cache
         Element cachedElement = this.cache.get(tzKey);
         if (cachedElement != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving JSON timezone-aware event set from cache, key:" + tzKey);
+            }
             @SuppressWarnings("unchecked")
             final Set<CalendarDisplayEvent> jsonEvents = (Set<CalendarDisplayEvent>) cachedElement.getValue();
             return jsonEvents;
         }
         
-        // if the timezone-corrected event set is not availble in the cache
+        // if the timezone-corrected event set is not available in the cache
         // generate a new set and cache it
         else {
 
@@ -104,8 +146,27 @@ public class CalendarEventsDao {
                 }
             }
             
-            // cache and return the resulting event list
+            // Cache and return the resulting event list.  If the event set
+            // was cached, set the event list to expire at about the same time so it
+            // doesn't live in cache beyond the time the data it is derived
+            // from is considered up to date. Time to live is relative to the
+            // time the item is put into cache so the resulting event list will typically
+            // expire from 1 second before the event set to afterward by the amount
+            // of execution time from the adapter to displayEvents computation
+            // completing which should not be a big delta.
             cachedElement = new Element(tzKey, displayEvents);
+            long currentTime = System.currentTimeMillis();
+            if (eventSet.getExpirationTime() > currentTime) {
+                long timeToLiveInMilliseconds =
+                        eventSet.getExpirationTime() - currentTime;
+                int timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
+                cachedElement.setTimeToLive(timeToLiveInSeconds);
+                if (log.isDebugEnabled()) {
+                    log.debug("Storing JSON timezone-aware event set to cache, key:" + tzKey
+                            + " with expiration in " + timeToLiveInSeconds + " seconds to"
+                            + " coincide with adapter's cache expiration time");
+                }
+            }
             this.cache.put(cachedElement);
             return displayEvents;
         } 
@@ -117,9 +178,9 @@ public class CalendarEventsDao {
      * Get a JSON-appropriate representation of each recurrence of an event
      * within the specified time period.
      * 
-     * @param event
-     * @param period
-     * @param tz
+     * @param e
+     * @param interval
+     * @param timezone
      * @return
      * @throws IOException
      * @throws URISyntaxException

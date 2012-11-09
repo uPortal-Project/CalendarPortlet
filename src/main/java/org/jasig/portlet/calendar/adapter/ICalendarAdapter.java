@@ -65,7 +65,7 @@ public interface ICalendarAdapter {
 	 * authentication resources, or other useful operations.
 	 * 
 	 * @param calendar calendar configuration for which to retrieve events
-	 * @param period time period for which to retrieve events
+	 * @param interval time period for which to retrieve events
 	 * @param request user's portlet request
 	 * @return Set of events for this calendar and time period
 	 * @throws CalendarException
@@ -78,7 +78,7 @@ public interface ICalendarAdapter {
 	 * has a web interface, this method allows provides access to the url.
 	 *  
 	 * @param calendar calendar configuration for which to retrieve events
-	 * @param period time period for which to retrieve events
+	 * @param interval time period for which to retrieve events
 	 * @param request user's servlet request
 	 * @return Set of events for this calendar and time period
 	 * @throws CalendarException

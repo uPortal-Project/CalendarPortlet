@@ -138,25 +138,31 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	 * </ol>
 	 * 
 	 *  (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
+	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, org.joda.time.Interval, javax.portlet.PortletRequest)
 	 */
 	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
 			Interval interval, PortletRequest request) throws CalendarException {
-		CalendarEventSet eventSet;
-		
-		String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
-		
+
+        // Some HTTP iCal providers, such as Google, don't allow you to specify
+        // the interval in the RESTful call so you get the whole calendar. To
+        // avoid receiving the entire calendar every time you need a specific
+        // interval, break up the caching into two stages.
+        //
+        // Stage 1 caches the entire calendar (or partial if the REST call supports intervals).
+        //
+        // Stage 2 filters the cached calendar down to the requested interval and
+        // caches the calendar events for that interval.
+
+        // Stage 1: Try to get the cached calendar.
+        String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
 		log.debug("generated url: " + url);
 		
-		// try to get the cached calendar
-		Credentials credentials = credentialsExtractor.getCredentials(request);
-		
-		// 
-		String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
+        String intermediateCacheKey = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(url));
 
 		T calendar;
         Element cachedCalendar = this.cache.get(intermediateCacheKey);
         if (cachedCalendar == null) {
+            Credentials credentials = credentialsExtractor.getCredentials(request);
             // read in the data
             InputStream stream = retrieveCalendarHttp(url, credentials);
             // run the stream through the processor
@@ -166,33 +172,67 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             // save the VEvents to the cache
             cachedCalendar = new Element(intermediateCacheKey, calendar);
             this.cache.put(cachedCalendar);
+            if (log.isDebugEnabled()) {
+                log.debug("Storing calendar cache, key:" + intermediateCacheKey);
+            }
         } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving calendar from cache, key:" + intermediateCacheKey);
+            }
             calendar = (T) cachedCalendar.getValue();
         }
 
 		// The cache key for retrieving a calendar over HTTP may not include
-		// the period, so we need to add the current period to the existing
-		// cache key.  This might result in the period being contained in the 
+		// the interval, so we need to add the current interval to the existing
+		// cache key.  This might result in the interval being contained in the
 		// key twice, but that won't hurt anything.
-		String processorCacheKey = getPeriodSpecificCacheKey(intermediateCacheKey, interval);
+		String processorCacheKey = getIntervalSpecificCacheKey(intermediateCacheKey, interval);
 
-		Element cachedElement = this.cache.get(processorCacheKey);
+        // Stage 2: Get the calendar event set for the requested interval from cache
+        // or generate it from the calendar from stage 1.
+        CalendarEventSet eventSet;
+        Element cachedElement = this.cache.get(processorCacheKey);
 		if (cachedElement == null) {
 			Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
 			log.debug("contentProcessor found " + events.size() + " events");
-			
-			// save the VEvents to the cache
-			eventSet = new CalendarEventSet(processorCacheKey, events);
-            cachedElement = new Element(processorCacheKey, eventSet);
-			this.cache.put(cachedElement);
+
+            // Save the calendar event set to the cache.  Calculate how long
+            // this event set should survive.  We don't want this event set to
+            // survive beyond the expiration of the calendar from stage 1 or you
+            // have the potential of having two sets of events with different
+            // overlapping intervals displaying different data, assuming getting
+            // the calendar in stage 1 returns the whole calendar and not just
+            // the portion of the calendar within the desired interval.
+            //
+            // For instance this inconsistency in calendar event sets can happen
+            // when you get the calendar and display a week, then
+            // near the expiration of the calendar from stage 1 get events for a
+            // month that contains the week.  If you then display the week again
+            // after the calendar (stage 1) has expired, you could get a changed
+            // calendar and generate different calendar events than what you'd see
+            // in the month view until the stage-2-month calendar event set expires
+            // and builds a calendar event set based on the same data as the week
+            // was generated with.
+            int timeToLiveInSeconds = -1;
+            long currentTime = System.currentTimeMillis();
+            if (cachedCalendar.getExpirationTime() > currentTime) {
+                long timeToLiveInMilliseconds =
+                        cachedCalendar.getExpirationTime() - currentTime;
+                timeToLiveInSeconds = (int)timeToLiveInMilliseconds/1000;
+            }
+            eventSet = insertCalendarEventSetIntoCache(this.cache, processorCacheKey, events,
+                    timeToLiveInSeconds > 0 ? timeToLiveInSeconds : -1);
 		} else {
-			eventSet = (CalendarEventSet) cachedElement.getValue();
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving calendar event set from cache, key:" + processorCacheKey);
+            }
+            eventSet = (CalendarEventSet) cachedElement.getValue();
 		}
 		
 		return eventSet;
 	}
-	
-	protected String getPeriodSpecificCacheKey(String baseKey, Interval interval) {
+
+    protected String getIntervalSpecificCacheKey(String baseKey, Interval interval) {
 	    StringBuffer buf = new StringBuffer();
 	    buf.append(baseKey);
 	    buf.append(interval.toString());

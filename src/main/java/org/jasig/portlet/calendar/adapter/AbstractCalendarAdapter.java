@@ -20,7 +20,13 @@ package org.jasig.portlet.calendar.adapter;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import net.fortuna.ical4j.model.component.VEvent;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.form.parameter.Parameter;
 
 /**
@@ -31,6 +37,8 @@ import org.jasig.portlet.form.parameter.Parameter;
  * @version $Revision$
  */
 public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
+
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     private String titleKey;
     private String descriptionKey;
@@ -62,5 +70,50 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
     public void setDescriptionKey(String descriptionKey) {
         this.descriptionKey = descriptionKey;
     }
-    
+
+    /**
+     * Creates a CalendarEventSet from a set of calendar events, inserts it into
+     * the cache with a specified lifetime, and copies the cached element's
+     * expiration time into the CalendarEventSet.
+     *
+     * @param cache Cache to insert the event set into
+     * @param processorCacheKey Key for the event set
+     * @param events set of calendar events to cache
+     * @param secondsToLive Number of seconds for the event set to survive in cache.
+     *                      < 0 for the default cache value, 0 for unlimited (for
+     *                      consistency with ehCache interface)
+     * @return Cached CalendarEventSet with cache expiration indication
+     */
+    protected CalendarEventSet insertCalendarEventSetIntoCache(
+            Cache cache, String processorCacheKey, Set<VEvent> events, int secondsToLive) {
+        CalendarEventSet eventSet = new CalendarEventSet(processorCacheKey, events);
+        Element cachedElement = new Element(processorCacheKey, eventSet);
+        if (secondsToLive >= 0) {
+            cachedElement.setTimeToLive(secondsToLive);
+        }
+        if (log.isDebugEnabled()) {
+            String message = "Storing calendar event set to cache, key:" + processorCacheKey
+                    + (secondsToLive > 0 ?
+                        " with expiration in " + secondsToLive + " seconds" : "");
+            log.debug(message);
+        }
+        cache.put(cachedElement);
+        eventSet.setExpirationTime(cachedElement.getExpirationTime());
+        return eventSet;
+    }
+
+    /**
+     * Creates a CalendarEventSet from a set of calendar events, inserts it into
+     * the cache, and copies the cached element's expiration time into the
+     * CalendarEventSet.
+     *
+     * @param cache Cache to insert the event set into
+     * @param processorCacheKey Key for the event set
+     * @param events set of calendar events to cache
+     * @return Cached CalendarEventSet with cache expiration indication
+     */
+    protected CalendarEventSet insertCalendarEventSetIntoCache(
+            Cache cache, String processorCacheKey, Set<VEvent> events) {
+        return insertCalendarEventSetIntoCache(cache, processorCacheKey, events, -1);
+    }
 }

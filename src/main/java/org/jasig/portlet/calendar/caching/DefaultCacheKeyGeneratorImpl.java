@@ -19,10 +19,10 @@
 
 package org.jasig.portlet.calendar.caching;
 
-import javax.portlet.PortletRequest;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.joda.time.Interval;
+
+import javax.portlet.PortletRequest;
 
 
 /**
@@ -44,7 +44,7 @@ public class DefaultCacheKeyGeneratorImpl implements ICacheKeyGenerator {
     
 	public String getKey(CalendarConfiguration configuration,
 			Interval interval, PortletRequest request, String calendarIdentifier) {
-		final StringBuffer key = new StringBuffer();
+		final StringBuilder key = new StringBuilder();
 		key.append(calendarIdentifier);
 		if (includePeriod) {
 		    key.append(".");
