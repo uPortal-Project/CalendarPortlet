@@ -14,7 +14,7 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.1.0-RC2-SNAPSHOT</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
@@ -631,7 +631,7 @@
                  <configuration>
                      <autoVersionSubmodules>true</autoVersionSubmodules>
                      <localCheckout>true</localCheckout>
-                     <tagNameFormat>WebProxyPortlet-@{project.version}</tagNameFormat>
+                     <tagNameFormat>CalendarPortlet-@{project.version}</tagNameFormat>
                      <pushChanges>false</pushChanges>
                  </configuration>
               </plugin>
