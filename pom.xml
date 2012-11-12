@@ -625,6 +625,16 @@
     
     <build>
         <plugins>
+             <plugin>
+                 <artifactId>maven-release-plugin</artifactId>
+                 <version>2.2.1</version>
+                 <configuration>
+                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                     <localCheckout>true</localCheckout>
+                     <tagNameFormat>WebProxyPortlet-@{project.version}</tagNameFormat>
+                     <pushChanges>false</pushChanges>
+                 </configuration>
+              </plugin>
               <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
@@ -756,6 +766,7 @@
                 <configuration>
                     <aggregate>true</aggregate>
                     <excludes>
+                        <exclude>.gitignore</exclude>
                         <exclude>target/**</exclude>
                         <exclude>pom.xml.*</exclude>
                         <exclude>release.properties</exclude>
