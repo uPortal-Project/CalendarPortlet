@@ -18,9 +18,9 @@
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
-        <connection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/portlets/CalendarPortlet/trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/CalendarPortlet/trunk</url>
+        <connection>scm:git:git://github.com/Jasig/CalendarPortlet.git</connection>
+        <developerConnection>scm:git:git@github.com:Jasig/CalendarPortlet.git</developerConnection>
+        <url>https://github.com/Jasig/CalendarPortlet</url>
     </scm>
     
     <issueManagement>
