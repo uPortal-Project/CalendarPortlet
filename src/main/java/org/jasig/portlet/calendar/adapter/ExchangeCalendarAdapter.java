@@ -37,9 +37,11 @@ import javax.xml.transform.TransformerException;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStamp;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Summary;
+import net.fortuna.ical4j.model.property.Uid;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -310,6 +312,9 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
 
         // create a property list representing the new event
         PropertyList newprops = new PropertyList();
+        newprops.add(new Uid(msEvent.getCalendarEventDetails().getID()));
+        newprops.add(new DtStamp());
+        
         newprops.add(new DtStart(eventStart));
         newprops.add(new DtEnd(eventEnd));
         newprops.add(new Summary(msEvent.getCalendarEventDetails().getSubject()));
