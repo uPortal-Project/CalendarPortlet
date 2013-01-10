@@ -29,6 +29,7 @@ import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthSchemeFactory;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.auth.BasicSchemeFactory;
 import org.apache.http.impl.auth.NTLMScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
@@ -59,7 +60,8 @@ public class NtlmAuthHttpClient extends DefaultHttpClient {
     private void setup() {
         addRequestInterceptor(new RemoveSoapHeadersInterceptor(), 0);
         AuthSchemeFactory fac = new NTLMSchemeFactory();
-        getAuthSchemes().register(AuthPolicy.BASIC, fac);
+        AuthSchemeFactory bfac = new BasicSchemeFactory();
+        getAuthSchemes().register(AuthPolicy.BASIC, bfac);
         getAuthSchemes().register(AuthPolicy.NTLM, fac);
         getAuthSchemes().register(AuthPolicy.SPNEGO, fac);
     }
