@@ -109,6 +109,14 @@
                 <artifactId>xstream</artifactId>
                 <version>1.3</version>
             </dependency>
+            <!-- Transitive of both commons-httpclient (as v1.2) and courses-portlet-dao 
+                 (as v1.6). You'd think Maven would favor the higher version number, but 
+                 that's not what it's doing, so adding codec 1.6 to this section. -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.6</version>
+            </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
