@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -66,6 +68,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 @Controller
@@ -73,6 +76,19 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 public class AjaxCalendarController implements ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
+
+    @ActionMapping(params = "action=showDatePicker")
+    public void toggleShowDatePicker(@RequestParam(value = "show") String show,
+                                     ActionRequest request,
+                                     ActionResponse response) {
+        try {
+
+            request.getPreferences().setValue("showDatePicker",show);
+            request.getPreferences().store();
+        } catch(Exception exception) {
+            log.info("Exception encountered saving preference: PREFERENCE=showDatePicker, EXCEPTION="+exception);
+        }
+    }
 
 	@ResourceMapping
 	public ModelAndView getEventList(ResourceRequest request,

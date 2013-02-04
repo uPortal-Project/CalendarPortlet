@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
 
     Licensed to Jasig under one or more contributor license
@@ -23,7 +24,8 @@
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
 <c:set var="n"><portlet:namespace/></c:set>
-
+<portlet:actionURL var="showDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='true'/></portlet:actionURL>
+<portlet:actionURL var="hideDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='false'/></portlet:actionURL>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="${n}upcal-miniview">
@@ -54,14 +56,14 @@
                 </span>
                 <span class="upcal-pipe">&nbsp;&nbsp;&nbsp;</span>
                 <h3><spring:message code="date.picker"/></h3>
-                <span class="upcal-range-datepicker" show="true">
-                    <a show="true" href="javascript:;" class="${ model.showDatePicker == true ? "selected-range" : "" }">
+                <span class="upcal-range-datepicker">
+                    <a show="true" href="javascript:;" id="${n}showDatePicker" class="${model.showDatePicker == 'true' ? 'selected-range' : '' }">
                         <spring:message code="show"/>
                     </a>
                 </span>
                 <span class="upcal-pipe">|</span>
-                <span class="upcal-range-datepicker" show="false">
-                    <a show="false" href="javascript:;" class="${ model.showDatePicker == false ? "selected-range" : "" }">
+                <span class="upcal-range-datepicker">
+                    <a show="false" href="javascript:;" id="${n}hideDatePicker" class="${model.showDatePicker == 'false' ? 'selected-range' : '' }">
                         <spring:message code="hide"/>
                     </a>
                 </span>
@@ -235,7 +237,30 @@
         	view.set("days", $(this).attr("days"));
         	view.getEvents();
         });
+
+        $("#${n}container .upcal-range-datepicker a").click(function(event){
+            var show = $(event.target).attr("show");
+            showDatePicker(show);
+            $.ajax({
+                url: show == "true" ? "${showDatePickerURL}" : "${hideDatePickerURL}",
+                success: function (data) {
+                }
+            });
+        });
+
+        var showDatePicker = function(show) {
+            if(show == "true") {
+                $('#${n}container .upcal-inline-calendar').show();
+                $('#${n}showDatePicker').addClass('selected-range');
+                $('#${n}hideDatePicker').removeClass('selected-range');
+            } else {
+                $('#${n}container .upcal-inline-calendar').hide();
+                $('#${n}hideDatePicker').addClass('selected-range');
+                $('#${n}showDatePicker').removeClass('selected-range');
+            }
+        };
+
+        showDatePicker("${model.showDatePicker}");
         view.getEvents();
-        
     });
 </rs:compressJs></script>
