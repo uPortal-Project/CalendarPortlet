@@ -58,6 +58,7 @@
         <!-- Dependency versions -->
         <cas.version>3.1.8</cas.version>
         <hsqldb.version>2.2.4</hsqldb.version>
+        <icu4j.version>50.1.1</icu4j.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.0</joda-time.version>
         <resource-server.version>1.0.26</resource-server.version>
@@ -103,6 +104,11 @@
                         <artifactId>js</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>${icu4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
@@ -646,6 +652,7 @@
               <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
+                  <version>2.13</version>
                   <configuration>
                       <systemproperties>
                           <property>
@@ -802,18 +809,34 @@
                     <generateChildNotices>false</generateChildNotices>
                 </configuration>
             </plugin>
+            <!-- Plug-in to add lifecycles to support db-init, data-import, and data-export -->
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>uportaldata-maven-plugin</artifactId>
+                <version>1.0</version>
+                <!-- extensions must be set to true to pick up the custom phases -->
+                <extensions>true</extensions>
+            </plugin>
             <plugin>
                 <!-- 
                  | Invoke this plugin as follows to drop and recreate the Calendar database tables...
                  |
-                 |   >mvn hibernate3:hbm2ddl
+                 |   >mvn db-init
                  +-->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>hibernate3-maven-plugin</artifactId>
                 <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <componentProperties>
-                        <propertyfile>target/${pom.artifactId}-${pom.version}/WEB-INF/classes/datasource.properties</propertyfile>
+                        <propertyfile>target/${project.artifactId}-${project.version}/WEB-INF/classes/datasource.properties</propertyfile>
                         <drop>true</drop>
                     </componentProperties>
                 </configuration>
@@ -823,6 +846,93 @@
                         <artifactId>${jdbc.artifactId}</artifactId>
                         <version>${jdbc.version}</version>
                         <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- To import the calendar db tables, use mvn [-Ddir=dir] data-import -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>data-import</id>
+                        <phase>data-import</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- Set default value of data location if it is not set -->
+                                <property name="dir" value="${basedir}/src/main/data"/>
+
+                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
+                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <!-- Provided jars don't seem to be added to the runtime
+                                     classpath, so we manually add in servlet.jar here  -->
+                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
+
+                                <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
+                                    <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                    <classpath>
+                                        <pathelement path="${runtime_classpath}" />
+                                        <pathelement path="${plugin_classpath}" />
+                                        <pathelement location="${servlet.jar}" />
+                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
+                                    </classpath>
+
+                                    <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
+                                    <arg value="${dir}" />
+                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
+                                </java>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <!-- The data-export capability is broken as of 2/15/2013. I moved it from the profile section to this section
+                         to use the new custom lifecycle phase data-export but do not have time to debug and figure out why it is
+                         broken - just enough time to verify that moving it here didn't break it :-).  See CAP-137. -->
+                    <!-- To export the calendar db tables, use mvn -Ddir=dir data-export -->
+                    <execution>
+                        <id>data-export</id>
+                        <phase>data-export</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+
+                                <fail unless="dir">
+                                    You must set the "dir" parameter.  (-Ddir={something})
+                                </fail>
+
+                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
+                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <!-- Provided jars don't seem to be added to the runtime
+                                     classpath, so we manually add in servlet.jar here  -->
+                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
+
+                                <java failonerror="true" fork="true" classname="org.danann.cernunnos.runtime.Main">
+                                    <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                    <classpath>
+                                        <pathelement path="${runtime_classpath}" />
+                                        <pathelement path="${plugin_classpath}" />
+                                        <pathelement location="${servlet.jar}" />
+                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
+                                    </classpath>
+                                    <!-- This may be helpful to troubleshoot CAP-137 -->
+                                    <!--<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"/>-->
+
+                                    <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
+                                    <arg value="${dir}" />
+                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
+                                </java>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>rhino</groupId>
+                        <artifactId>js</artifactId>
+                        <version>1.7R1</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -844,103 +954,6 @@
         </plugins>
     </build>
     <profiles>
-        <profile>
-            <id>import</id>
-            <activation>
-                <property>
-                    <name>import</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>rhino</groupId>
-                                <artifactId>js</artifactId>
-                                <version>1.7R1</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <tasks>
-                                <fail unless="dir">
-                                    You must set the "dir" parameter.  (-Ddir={something})
-                                </fail>
-                    
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
-                                <!-- Provided jars don't seem to be added to the runtime
-                                     classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
-
-                                <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                                    <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                    <classpath>
-                                        <pathelement path="${runtime_classpath}" />
-                                        <pathelement path="${plugin_classpath}" />
-                                        <pathelement location="${servlet.jar}" />
-                                    </classpath>
-
-                            
-                                    <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
-                                    <arg value="${dir}" />
-                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>export</id>
-            <activation>
-                <property>
-                    <name>export</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>rhino</groupId>
-                                <artifactId>js</artifactId>
-                                <version>1.7R1</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <tasks>
-                    
-                                <fail unless="dir">
-                                    You must set the "dir" parameter.  (-Ddir={something})
-                                </fail>
-                    
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
-                                <!-- Provided jars don't seem to be added to the runtime
-                                     classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
-                        
-                                <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                                    <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                    <classpath>
-                                        <pathelement path="${runtime_classpath}" />
-                                        <pathelement path="${plugin_classpath}" />
-                                        <pathelement location="${servlet.jar}" />
-                                    </classpath>
-                            
-                                    <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
-                                    <arg value="${dir}" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>site</id>
             <distributionManagement>
