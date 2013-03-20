@@ -83,7 +83,6 @@ import com.microsoft.exchange.types.TimeZone;
 public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
 
     protected final static String AVAILABILITY_SOAP_ACTION = "http://schemas.microsoft.com/exchange/services/2006/messages/GetUserAvailability";
-    
     protected final static String UTC = "UTC";
     
     protected final Log log = LogFactory.getLog(getClass());
@@ -116,6 +115,12 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
     
     public void setEmailAttribute(String emailAttribute) {
         this.emailAttribute = emailAttribute;
+    }
+    
+    private String requestServerVersion = "Exchange2010_SP2";  // default
+    
+    public void setRequestServerVersion(final String requestServerVersion) {
+        this.requestServerVersion = requestServerVersion;
     }
 
     /*
@@ -187,7 +192,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
                             "ns3"); 
                     SoapHeaderElement version = soap.getEnvelope().getHeader()
                                                     .addHeaderElement(rsv);
-                    version.addAttribute(new QName("Version"), "Exchange2010_SP2");
+                    version.addAttribute(new QName("Version"), requestServerVersion);
                 }
                 
             };

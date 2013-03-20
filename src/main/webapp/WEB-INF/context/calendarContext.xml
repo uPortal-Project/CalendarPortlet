@@ -151,7 +151,8 @@
         p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
         p:titleKey="exchange.ws.integration" 
         p:descriptionKey="exchange.ws.integration"
-        p:emailAttribute="mail">
+        p:emailAttribute="mail"
+        p:requestServerVersion="${exchangeWs.requestServerVersion}">
     </bean-->
 
     <!-- 
