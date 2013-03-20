@@ -27,6 +27,8 @@ import jcifs.ntlmssp.Type2Message;
 import jcifs.ntlmssp.Type3Message;
 import jcifs.util.Base64;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.impl.auth.NTLMEngine;
 import org.apache.http.impl.auth.NTLMEngineException;
 
@@ -39,8 +41,15 @@ public final class JCIFSEngine implements NTLMEngine {
             NtlmFlags.NTLMSSP_NEGOTIATE_ALWAYS_SIGN | 
             NtlmFlags.NTLMSSP_REQUEST_TARGET;
 
-    public String generateType1Msg(final String domain, final String workstation)
-            throws NTLMEngineException {
+    private final Log log = LogFactory.getLog(this.getClass());
+
+    public String generateType1Msg(final String domain, final String workstation) throws NTLMEngineException {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Generating NTLM Type 1 message;  domain=" + domain 
+                                    + ", workstation=" + workstation);
+        }
+        
         final Type1Message type1Message = new Type1Message(TYPE_1_FLAGS, domain, workstation);
         return Base64.encode(type1Message.toByteArray());
     }
@@ -48,6 +57,14 @@ public final class JCIFSEngine implements NTLMEngine {
     public String generateType3Msg(final String username, final String password,
             final String domain, final String workstation, final String challenge)
             throws NTLMEngineException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Generating NTLM Type 3 message;  username=" + username 
+                    + ", password.length=" + password.length() + ", domain=" 
+                    + domain + ", workstation=" + workstation 
+                    + ", challenge=" + challenge);
+        }
+        
         Type2Message type2Message;
         try {
             type2Message = new Type2Message(Base64.decode(challenge));
