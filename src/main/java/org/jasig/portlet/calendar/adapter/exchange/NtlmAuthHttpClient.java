@@ -20,7 +20,11 @@
 package org.jasig.portlet.calendar.adapter.exchange;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -35,35 +39,54 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.springframework.beans.factory.InitializingBean;
 
-public class NtlmAuthHttpClient extends DefaultHttpClient {
+public class NtlmAuthHttpClient extends DefaultHttpClient implements InitializingBean {
     
-    public NtlmAuthHttpClient() {
-        setup();
-    }
+    private Map<String,AuthSchemeFactory> authenticationSchemes = null;
+    
+    private final Log log = LogFactory.getLog(this.getClass());
 
-    public NtlmAuthHttpClient(ClientConnectionManager conman) {
+    public NtlmAuthHttpClient() {}
+
+    public NtlmAuthHttpClient(final ClientConnectionManager conman) {
         super(conman);
-        setup();
     }
 
-    public NtlmAuthHttpClient(ClientConnectionManager conman, HttpParams params) {
+    public NtlmAuthHttpClient(final ClientConnectionManager conman, final HttpParams params) {
         super(conman, params);
-        setup();
     }
 
-    public NtlmAuthHttpClient(HttpParams params) {
+    public NtlmAuthHttpClient(final HttpParams params) {
         super(params);
-        setup();
     }
     
+    public void setAuthenticationSchemes(final Map<String,AuthSchemeFactory> authenticationSchemes) {
+        this.authenticationSchemes = authenticationSchemes;
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (authenticationSchemes == null) {
+            authenticationSchemes = new HashMap<String,AuthSchemeFactory>();
+            final AuthSchemeFactory fac = new NTLMSchemeFactory();
+            final AuthSchemeFactory bfac = new BasicSchemeFactory();
+            authenticationSchemes.put(AuthPolicy.BASIC, bfac);
+            authenticationSchemes.put(AuthPolicy.NTLM, fac);
+            authenticationSchemes.put(AuthPolicy.SPNEGO, fac);
+        }
+        setup();
+        if (log.isDebugEnabled()) {
+            log.debug("Support is available for the following authenticationSchemes=" 
+                                                + authenticationSchemes.keySet());
+        }
+    }
+
     private void setup() {
         addRequestInterceptor(new RemoveSoapHeadersInterceptor(), 0);
-        AuthSchemeFactory fac = new NTLMSchemeFactory();
-        AuthSchemeFactory bfac = new BasicSchemeFactory();
-        getAuthSchemes().register(AuthPolicy.BASIC, bfac);
-        getAuthSchemes().register(AuthPolicy.NTLM, fac);
-        getAuthSchemes().register(AuthPolicy.SPNEGO, fac);
+        for (Map.Entry<String,AuthSchemeFactory> y : authenticationSchemes.entrySet()) {
+            getAuthSchemes().register(y.getKey(), y.getValue());
+        }
     }
 
     /**
@@ -74,7 +97,7 @@ public class NtlmAuthHttpClient extends DefaultHttpClient {
    private static final class RemoveSoapHeadersInterceptor implements HttpRequestInterceptor {
  
        @Override
-       public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+       public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
            if (request instanceof HttpEntityEnclosingRequest) {
                if (request.containsHeader(HTTP.TRANSFER_ENCODING)) {
                    request.removeHeaders(HTTP.TRANSFER_ENCODING);
