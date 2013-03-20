@@ -36,8 +36,8 @@ This project includes:
   castor under Apache License, Version 2.0
   Cernunnos - Core under Apache 2
   cglib under Apache License, Version 2.0
-  Codec under Apache License, Version 2.0
   Collections under The Apache Software License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
@@ -72,7 +72,7 @@ This project includes:
   JavaMail API under Sun Binary Code License
   JAXB2 Basics - Runtime under BSD-Style License
   jaxen under Apache style license
-  jcifs under GNU Lesser General Public License, version 2.1
+  jCIFS under GNU Lesser General Public License, version 2.1
   jdom under Apache style license
   JLine under BSD
   Joda time under Apache 2
@@ -122,6 +122,7 @@ This project includes:
   spring-webmvc under The Apache Software License, Version 2.0
   spring-webmvc-portlet under The Apache Software License, Version 2.0
   standard under Apache License, Version 2.0
+  Streaming API for XML under Sun Binary Code License
   WSDL4J under CPL
   WSS4J under The Apache Software License, Version 2.0
   xalan under Apache License, Version 2.0
