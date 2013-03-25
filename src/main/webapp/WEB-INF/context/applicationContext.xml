@@ -111,53 +111,7 @@
 		class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"/>
 
 
-	<!-- 
-	 | HIBERNATE CONFIGURATION
-	 +-->
-	
-	<bean id="calendarStore" parent="abstractStoreTransactionProxy"
-		p:target-ref="calendarStoreTarget"/>
-	
-	<bean id="calendarStoreTarget"
-		class="org.jasig.portlet.calendar.dao.HibernateCalendarStore"
-		parent="abstractHibernateTemplate"/>
-	
-	<bean id="abstractStoreTransactionProxy"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
-		abstract="true" p:transactionManager-ref="transactionManager">
-		<property name="transactionAttributes">
-			<props>
-				<prop key="create*">PROPAGATION_REQUIRED</prop>
-				<prop key="store*">PROPAGATION_REQUIRED</prop>
-				<prop key="remove*">PROPAGATION_REQUIRED</prop>
-                <prop key="init*">PROPAGATION_REQUIRED</prop>
-				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop> 
-			</props>
-		</property>
-	</bean>
-	
-	<bean id="abstractHibernateTemplate" abstract="true" p:sessionFactory-ref="sessionFactory"/>
-	
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager"
-		p:sessionFactory-ref="sessionFactory"/>
-	
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
-		p:dataSource-ref="dataSource" p:configLocation="classpath:hibernate.cfg.xml"/>
-	
-	<bean id="dataSource" 
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-		p:driverClassName="${hibernate.connection.driver_class}"
-		p:url="${hibernate.connection.url}"
-		p:username="${hibernate.connection.username}"
-		p:password="${hibernate.connection.password}"/>
-
-	<!--jee:jndi-lookup id="dataSource" jndi-name="db/LiferayDb" resource-ref="true" /-->
-
-
-	<!-- 
+	<!--
 	 | GENERAL PORTLET CONFIGURATION
 	 +-->
 		

@@ -31,7 +31,8 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/context/applicationContext.xml,
-            /WEB-INF/context/calendarContext.xml
+            /WEB-INF/context/calendarContext.xml,
+            /WEB-INF/context/databaseContext.xml
         </param-value>
     </context-param>
     <context-param>
