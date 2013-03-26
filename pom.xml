@@ -811,9 +811,9 @@
             </plugin>
             <!-- Plug-in to add lifecycles to support db-init, data-import, and data-export -->
             <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>uportaldata-maven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.jasig.portal.maven</groupId>
+                <artifactId>uportal-maven-plugin</artifactId>
+                <version>1.0.0</version>
                 <!-- extensions must be set to true to pick up the custom phases -->
                 <extensions>true</extensions>
             </plugin>
