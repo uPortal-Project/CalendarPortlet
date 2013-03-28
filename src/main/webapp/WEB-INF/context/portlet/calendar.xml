@@ -51,7 +51,9 @@
             <bean class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
         </property>
     </bean>
-    
+
+    <bean id="calendarHelper" class="org.jasig.portlet.calendar.mvc.CalendarHelper"/>
+
     <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ThemeNameViewSelectorImpl"/>
     
     <util:list id="initializationServices">

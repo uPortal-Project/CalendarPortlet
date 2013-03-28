@@ -193,19 +193,23 @@ if (!upcal.init) {
                         var day, days;
                         
                         days = new upcal.CalendarDayList();
-                        $(data.errors).each(function (idx, error) {
+                        if(data && data.errors) {
+                            $(data.errors).each(function (idx, error) {
 
-                        });
-                        
-                        $.each(data.dateMap, function (key, value) {
-                            day = new upcal.CalendarDay({ code: key, displayName: data.dateNames[key] });
-                            $(value).each(function (idx, event) {
-                                var params = event.event;
-                                params.colorIndex = event.colorIndex;
-                                day.get("events").add(new upcal.CalendarEvent(params));
                             });
-                            days.add(day);
-                        });
+                        }
+
+                        if(data && data.dateMap) {
+                            $.each(data.dateMap, function (key, value) {
+                                day = new upcal.CalendarDay({ code: key, displayName: data.dateNames[key] });
+                                $(value).each(function (idx, event) {
+                                    var params = event.event;
+                                    params.colorIndex = event.colorIndex;
+                                    day.get("events").add(new upcal.CalendarEvent(params));
+                                });
+                                days.add(day);
+                            });
+                        }
 
                         // render the event list view
                         listView.model = days;

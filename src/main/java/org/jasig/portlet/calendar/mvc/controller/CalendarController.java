@@ -30,6 +30,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -51,6 +52,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
@@ -69,7 +71,7 @@ public class CalendarController implements ApplicationContextAware {
 	}
 	
 	@RequestMapping
-	public ModelAndView getCalendar(RenderRequest request) {
+	public ModelAndView getCalendar(@RequestParam(required=false,value="interval") String intervalString,RenderRequest request) {
 		
 		/**
 		 * If this is a new session, perform any necessary 
@@ -128,20 +130,30 @@ public class CalendarController implements ApplicationContextAware {
 		 * Find our desired starting and ending dates.
 		 */
 
-		//StartDate can only be changed via an AJAX request
-		DateMidnight startDate = (DateMidnight) session.getAttribute("startDate");
-		log.debug("startDate from session is: "+startDate);
-		model.put("startDate", startDate.toDate());
+        Interval interval = null;
 
-		// find how many days into the future we should display events
-		int days = (Integer) session.getAttribute("days");
-		model.put("days", days);
+        if(!StringUtils.isEmpty(intervalString))
+        {
+            interval = Interval.parse(intervalString);
+            model.put("startDate",new DateMidnight(interval.getStart()).toDate());
+            model.put("days",interval.toDuration().getStandardDays());
+            model.put("endDate",new DateMidnight(interval.getEnd()));
+        } else {
+		    //StartDate can only be changed via an AJAX request
+		    DateMidnight startDate = (DateMidnight) session.getAttribute("startDate");
+		    log.debug("startDate from session is: "+startDate);
+		    model.put("startDate", startDate.toDate());
 
-		// set the end date based on our desired time period
-		DateMidnight endDate = startDate.plusDays(days);
-		model.put("endDate", endDate.toDate());
+		    // find how many days into the future we should display events
+		    int days = (Integer) session.getAttribute("days");
+		    model.put("days", days);
 
-		Interval interval = new Interval(startDate, endDate);
+		    // set the end date based on our desired time period
+		    DateMidnight endDate = startDate.plusDays(days);
+		    model.put("endDate", endDate.toDate());
+
+		    interval = new Interval(startDate, endDate);
+        }
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface

@@ -275,6 +275,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.jasig.portal</groupId>
+                <artifactId>uportal-search-api</artifactId>
+                <version>4.0.10</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate</artifactId>
                 <version>3.2.3.ga</version>
@@ -511,6 +516,10 @@
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-search-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

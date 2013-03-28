@@ -19,7 +19,6 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,16 +41,15 @@ import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
-import org.jasig.portlet.calendar.CalendarConfigurationByNameComparator;
-import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
-import org.jasig.portlet.calendar.adapter.UserFeedbackCalendarException;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
+import org.jasig.portlet.calendar.mvc.CalendarHelper;
 import org.jasig.portlet.calendar.mvc.JsonCalendarEventWrapper;
+import org.jasig.portlet.calendar.util.DateUtil;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -97,84 +95,25 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    final String resourceId = request.getResourceID();
 	    final String startDate = resourceId.split("-")[0];
 	    final int days = Integer.parseInt(resourceId.split("-")[1]);
-	    
-	    
-	    long startTime = System.currentTimeMillis();
-		
-		PortletSession session = request.getPortletSession();
-		Map<String, Object> model = new HashMap<String, Object>();
-		
-
-		/*
-		 * Retrieve the calendar configurations defined for this user request
-		 * and sort them by display name.  This sorting operation ensures that
-		 * the CSS color indices assigned to calendar events will be consistent
-		 * with the colors assigned in the main controller.
-		 */
-		
-		// retrieve the calendars defined for this portlet instance
-		CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
-        List<CalendarConfiguration> calendars = new ArrayList<CalendarConfiguration>();
-        calendars.addAll(set.getConfigurations());
-        
-        // sort the calendars
-        Collections.sort(calendars, new CalendarConfigurationByNameComparator());
-
-		// get the list of hidden calendars
-		@SuppressWarnings("unchecked")
-		HashMap<Long, String> hiddenCalendars = (HashMap<Long, String>) session
-			.getAttribute("hiddenCalendars");
-
-        /*
-         * For each unhidden calendar, get the list of associated events for 
-         * the requested time period.
-         */
+	    final long startTime = System.currentTimeMillis();
+        final List<String> errors = new ArrayList<String>();
+		final Map<String, Object> model = new HashMap<String, Object>();
+        final PortletSession session = request.getPortletSession();
+        // get the user's configured time zone
+        final String timezone = (String) session.getAttribute("timezone");
+        final DateTimeZone tz = DateTimeZone.forID(timezone);
 
         // get the period for this request
-		Interval interval = getPeriod(request, startDate, days);
+        final Interval interval = DateUtil.getInterval(startDate, days,request);
 
-		// get the user's configured time zone
-        String timezone = (String) session.getAttribute("timezone");
-        DateTimeZone tz = DateTimeZone.forID(timezone);
-		
+        final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors,interval,request);
+
 		int index = 0;
-		List<String> errors = new ArrayList<String>();
-		Set<JsonCalendarEventWrapper> events = new TreeSet<JsonCalendarEventWrapper>();
-		for (CalendarConfiguration callisting : calendars) {
+		final Set<JsonCalendarEventWrapper> events = new TreeSet<JsonCalendarEventWrapper>();
+        for(CalendarDisplayEvent e : calendarEvents) {
+            events.add(new JsonCalendarEventWrapper(e,index++));
+        }
 
-			// don't bother to fetch hidden calendars
-			if (hiddenCalendars.get(callisting.getId()) == null) {
-
-				try {
-	
-					// get an instance of the adapter for this calendar
-					ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting
-							.getCalendarDefinition().getClassName());
-	
-					Set<CalendarDisplayEvent> calendarEvents = calendarEventsDao.getEvents(adapter, callisting, interval, request, tz);
-                    for (CalendarDisplayEvent e : calendarEvents) {
-                      	events.add(new JsonCalendarEventWrapper(e, index));
-                    }
-	
-                } catch (NoSuchBeanDefinitionException ex) {
-                    log.error("Calendar class instance could not be found: " + ex.getMessage());
-                } catch (UserFeedbackCalendarException sce) {
-                    // This CalendarException subclass carries a payload for the UI...
-                    StringBuilder msg = new StringBuilder();
-                    msg.append(callisting.getCalendarDefinition().getName())
-                                .append(":  ").append(sce.getUserFeedback());                    
-                    errors.add(msg.toString());
-                } catch (Exception ex) {
-                    log.warn("Unknown Error", ex);
-                    errors.add("The calendar \"" + callisting.getCalendarDefinition().getName() + "\" is currently unavailable.");
-                }
-
-			}
-
-			index++;
-		}
-
-		
 		/*
 		 * Transform the event set into a map keyed by day.  This code is 
 		 * designed to separate events by day according to the user's configured
@@ -301,41 +240,16 @@ public class AjaxCalendarController implements ApplicationContextAware {
         // Allow container to handle exceptions and give HTTP error
         throw exception;
     }
-	
-	protected Interval getPeriod(ResourceRequest request, String startDate, int days) throws ParseException {
-		
-		PortletSession session = request.getPortletSession();
 
-		// if the user requested a specific date, use it instead
-        String timezone = (String) session.getAttribute("timezone");
-        DateTimeZone tz = DateTimeZone.forID(timezone);
-
-        DateTimeFormatter df = new DateTimeFormatterBuilder()
-                .appendMonthOfYear(2).appendDayOfMonth(2)
-                .appendYear(4, 4).toFormatter().withZone(tz);
-        DateMidnight start = new DateMidnight(df.parseDateTime(startDate), tz);
-        Interval interval = new Interval(start, start.plusDays(days));
-        log.debug("new interval: " + interval.toString());
-
-        session.setAttribute("startDate", start);
-        session.setAttribute("days", days);
-
-		return interval;
-	}
-	
-    private CalendarEventsDao calendarEventsDao;
-    
     @Autowired(required = true)
-    public void setCalendarEventsDao(CalendarEventsDao calendarEventsDao) {
-        this.calendarEventsDao = calendarEventsDao;
-    }
+    private CalendarHelper helper;
 
+    @Autowired(required = true)
+    private CalendarEventsDao calendarEventsDao;
+
+    @Autowired(required = true)
 	private ICalendarSetDao calendarSetDao;
-	
-	@Autowired(required = true)
-	public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
-	    this.calendarSetDao = calendarSetDao;
-	}
+
 
     private CalendarStore calendarStore;
 
