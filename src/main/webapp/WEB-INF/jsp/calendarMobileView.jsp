@@ -23,6 +23,7 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
+<jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <c:set var="mobile" value="${ true }"/>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
