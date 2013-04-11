@@ -34,46 +34,46 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 
-	private final DateTime dayStart;
-	private final DateTime dayEnd;
-	private final boolean isAllDay;
-	private final boolean isMultiDay;
+    private final DateTime dayStart;
+    private final DateTime dayEnd;
+    private final boolean isAllDay;
+    private final boolean isMultiDay;
+    
+    private final String summary;
+    private final String description;
+    private final String location;
+    
+    private final String dateStartTime;
+    private final String dateEndTime;
+    private final String startTime;
+    private final String endTime;
+    private final String startDate;
+    private final String endDate;
 	
-	private final String summary;
-	private final String description;
-	private final String location;
-	
-	private final String dateStartTime;
-	private final String dateEndTime;
-	private final String startTime;
-	private final String endTime;
-	private final String startDate;
-	private final String endDate;
-	
-	public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval theSpecificDay, DateTimeFormatter df, DateTimeFormatter tf) {
+    public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval theSpecificDay, DateTimeFormatter df, DateTimeFormatter tf) {
 
         this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;
         this.description = event.getDescription() != null ? event.getDescription().getValue() : null;
         this.location = event.getLocation() != null ? event.getLocation().getValue() : null;
-		
-		boolean multi = false;
-		if (eventInterval.getStart().isBefore(theSpecificDay.getStart())) {
-			dayStart = theSpecificDay.getStart();
-			multi = true;
-		} else {
-			dayStart = eventInterval.getStart();
-		}
-		
-		if (event.getEndDate() == null) {
-		    dayEnd = dayStart;
-		} else if (eventInterval.getEnd().isAfter(theSpecificDay.getEnd())) {
-			dayEnd = theSpecificDay.getEnd();
-			multi = true;
-		} else {
-			dayEnd = eventInterval.getEnd();
-		}
-		this.isMultiDay = multi;
-		
+
+        boolean multi = false;
+        if (eventInterval.getStart().isBefore(theSpecificDay.getStart())) {
+            dayStart = theSpecificDay.getStart();
+            multi = true;
+        } else {
+            dayStart = eventInterval.getStart();
+        }
+        
+        if (event.getEndDate() == null) {
+            dayEnd = dayStart;
+        } else if (eventInterval.getEnd().isAfter(theSpecificDay.getEnd())) {
+            dayEnd = theSpecificDay.getEnd();
+            multi = true;
+        } else {
+            dayEnd = eventInterval.getEnd();
+        }
+        this.isMultiDay = multi;
+        
         this.dateStartTime = tf.print(dayStart);
         this.startTime = tf.print(eventInterval.getStart());
         this.startDate = df.print(eventInterval.getStart());
@@ -87,110 +87,102 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
             this.endTime = null;
             this.endDate = null;
         }
-        
-//        System.out.println(" ## event.getSummary()="+event.getSummary());
-//        System.out.println(" ## event.getStartDate()="+event.getStartDate());
-//        System.out.println(" ## event.getEndDate()="+event.getEndDate());
-//        System.out.println(" ## eventInterval="+eventInterval);
-//        System.out.println(" ## theSpecificDay="+theSpecificDay);
-//        System.out.println(" ## dayStart="+dayStart);
-//        System.out.println(" ## dayEnd="+dayEnd);
 
         Interval dayEventInterval = new Interval(dayStart, dayEnd);
         this.isAllDay = dayEventInterval.equals(theSpecificDay);
-		
-	}
+        
+    }
 	
-	public String getSummary() {
-	    return this.summary;
-	}
-	
-	public String getDescription() {
-	    return this.description;
-	}
-	
-	public String getLocation() {
-	    return this.location;
-	}
-	
-	public String getDateStartTime() {
-	    return this.dateStartTime;
-	}
-	
-	public String getDateEndTime() {
-	    return this.dateEndTime;
-	}
+    public String getSummary() {
+        return this.summary;
+    }
+    
+    public String getDescription() {
+        return this.description;
+    }
+    
+    public String getLocation() {
+        return this.location;
+    }
+    
+    public String getDateStartTime() {
+        return this.dateStartTime;
+    }
+    
+    public String getDateEndTime() {
+        return this.dateEndTime;
+    }
 
-	public String getStartTime() {
-	    return this.startTime;
-	}
-	
-	public String getEndTime() {
-	    return this.endTime;
-	}
+    public String getStartTime() {
+        return this.startTime;
+    }
+    
+    public String getEndTime() {
+        return this.endTime;
+    }
 
-	public String getStartDate() {
-	    return this.startDate;
-	}
-	
-	public String getEndDate() {
-	    return this.endDate;
-	}
+    public String getStartDate() {
+        return this.startDate;
+    }
+    
+    public String getEndDate() {
+        return this.endDate;
+    }
 
-	public boolean isAllDay() {
-		return this.isAllDay;
-	}
-	
-	public boolean isMultiDay() {
-		return this.isMultiDay;
-	}
-	
-	public DateTime getDayStart() {
-		return this.dayStart;
-	}
+    public boolean isAllDay() {
+        return this.isAllDay;
+    }
+    
+    public boolean isMultiDay() {
+        return this.isMultiDay;
+    }
+    
+    public DateTime getDayStart() {
+        return this.dayStart;
+    }
 
-	public DateTime getDayEnd() {
-		return this.dayEnd;
-	}
+    public DateTime getDayEnd() {
+        return this.dayEnd;
+    }
 
-	public int compareTo(CalendarDisplayEvent event) {		
-		// Order events by start date, then end date, then summary.
-		// If all properties are equal, use the calendar and event ids to 
-		// ensure similar events from different calendars are not misinterpreted
-		// as identical.
-		return (new CompareToBuilder())
-				.append(this.dayStart, event.dayStart)
-				.append(this.dayEnd, event.dayEnd)
-				.append(this.getSummary(), event.getSummary())
-				// The UID class doesn't implement comparable and will give
-				// rise to a ClassCastException if it's actually tested. 
-				// .append(this.event.getUid(), event.event.getUid())
-				.toComparison();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof CalendarDisplayEvent)) {
-			return false;
-		}
-		CalendarDisplayEvent event = (CalendarDisplayEvent) o;
-		return (new EqualsBuilder())
-				.append(this.dayStart, event.dayStart)
-				.append(this.dayEnd, event.dayEnd)
-				.append(this.getSummary(), event.getSummary())
+    public int compareTo(CalendarDisplayEvent event) {      
+        // Order events by start date, then end date, then summary.
+        // If all properties are equal, use the calendar and event ids to 
+        // ensure similar events from different calendars are not misinterpreted
+        // as identical.
+        return (new CompareToBuilder())
+                .append(this.dayStart, event.dayStart)
+                .append(this.dayEnd, event.dayEnd)
+                .append(this.getSummary(), event.getSummary())
                 // The UID class doesn't implement comparable and will give
                 // rise to a ClassCastException if it's actually tested. 
-				// .append(this.event.getUid(), event.event.getUid())
-				.isEquals();
-	}
-	
-	@Override
-	public int hashCode() {
-	    return new HashCodeBuilder(17, 31)
-	        .append(this.dayStart)
-	        .append(this.dayEnd)
-	        .append(this.getSummary())
-	        .toHashCode();
-	}
+                // .append(this.event.getUid(), event.event.getUid())
+                .toComparison();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof CalendarDisplayEvent)) {
+            return false;
+        }
+        CalendarDisplayEvent event = (CalendarDisplayEvent) o;
+        return (new EqualsBuilder())
+                .append(this.dayStart, event.dayStart)
+                .append(this.dayEnd, event.dayEnd)
+                .append(this.getSummary(), event.getSummary())
+                // The UID class doesn't implement comparable and will give
+                // rise to a ClassCastException if it's actually tested. 
+                // .append(this.event.getUid(), event.event.getUid())
+                .isEquals();
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31)
+            .append(this.dayStart)
+            .append(this.dayEnd)
+            .append(this.getSummary())
+            .toHashCode();
+    }
 
 }
