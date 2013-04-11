@@ -14,7 +14,7 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1-M1</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
@@ -872,7 +872,7 @@
                         <configuration>
                             <tasks>
                                 <!-- Set default value of data location if it is not set -->
-                                <property name="dir" value="${basedir}/src/main/data"/>
+                                <property name="dir" value="${basedir}/src/main/data" />
 
                                 <property name="runtime_classpath" refid="maven.runtime.classpath" />
                                 <property name="plugin_classpath" refid="maven.plugin.classpath" />
@@ -886,7 +886,7 @@
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
+                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
                                     </classpath>
 
                                     <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
@@ -925,10 +925,10 @@
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
+                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
                                     </classpath>
                                     <!-- This may be helpful to troubleshoot CAP-137 -->
-                                    <!--<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"/>-->
+                                    <!--<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" />-->
 
                                     <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
                                     <arg value="${dir}" />
