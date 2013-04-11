@@ -95,11 +95,11 @@ public class CalendarEventsDao {
      * @param calendar Per-user Calendar configuration
      * @param interval Interval to return events for
      * @param request Portlet request
-     * @param tz Timezone to adjust the calendar events to (typically the user's timezone)
+     * @param usersConfiguredDateTimeZone Timezone to adjust the calendar events to (typically the user's timezone)
      * @return Set of calendar events meeting the requested criteria
      */
     public Set<CalendarDisplayEvent> getEvents(ICalendarAdapter adapter, CalendarConfiguration calendar,
-            Interval interval, PortletRequest request, DateTimeZone tz) {
+            Interval interval, PortletRequest request, DateTimeZone usersConfiguredDateTimeZone) {
 
         // Get the set of calendar events for the requested period.
         // We invoke the adapter before checking cache because we expect the adapter
@@ -114,7 +114,7 @@ public class CalendarEventsDao {
 
         // Append the requested time zone id to the retrieve event set's cache
         // key to generate a timezone-aware cache key
-        final String tzKey = eventSet.getKey().concat(tz.getID());
+        final String tzKey = eventSet.getKey().concat(usersConfiguredDateTimeZone.getID());
 
         // attempt to retrieve the timezone-aware event set from cache
         Element cachedElement = this.cache.get(tzKey);
@@ -136,7 +136,7 @@ public class CalendarEventsDao {
             final Set<CalendarDisplayEvent> displayEvents = new HashSet<CalendarDisplayEvent>();
             for (VEvent event : eventSet.getEvents()) {
                 try {
-                    displayEvents.addAll(getDisplayEvents(event, interval, tz));
+                    displayEvents.addAll(getDisplayEvents(event, interval, usersConfiguredDateTimeZone));
                 } catch (ParseException e) {
                     log.error("Exception parsing event", e);
                 } catch (IOException e) {
@@ -180,13 +180,13 @@ public class CalendarEventsDao {
      * 
      * @param e
      * @param interval
-     * @param timezone
+     * @param usersConfiguredDateTimeZone
      * @return
      * @throws IOException
      * @throws URISyntaxException
      * @throws ParseException
      */
-    protected Set<CalendarDisplayEvent> getDisplayEvents(VEvent e, Interval interval, DateTimeZone timezone) throws IOException, URISyntaxException, ParseException {
+    protected Set<CalendarDisplayEvent> getDisplayEvents(VEvent e, Interval interval, DateTimeZone usersConfiguredDateTimeZone) throws IOException, URISyntaxException, ParseException {
 
         final VEvent event = (VEvent) e.copy();
 
@@ -198,16 +198,16 @@ public class CalendarEventsDao {
                 log.debug("Identified event " + event.getSummary() + " as a floating event");
             }
             
-            int offset = timezone.getOffset(event.getStartDate().getDate().getTime());
-            eventStart = new DateTime(event.getStartDate().getDate().getTime()-offset, timezone);
+            int offset = usersConfiguredDateTimeZone.getOffset(event.getStartDate().getDate().getTime());
+            eventStart = new DateTime(event.getStartDate().getDate().getTime()-offset, usersConfiguredDateTimeZone);
             if (event.getEndDate() != null) {
-                eventEnd = new DateTime(event.getEndDate().getDate().getTime()-offset, timezone);
+                eventEnd = new DateTime(event.getEndDate().getDate().getTime()-offset, usersConfiguredDateTimeZone);
             }
             
         } else {
-            eventStart = new DateTime(event.getStartDate().getDate(), timezone);
+            eventStart = new DateTime(event.getStartDate().getDate(), usersConfiguredDateTimeZone);
             if (event.getEndDate() != null) {
-                eventEnd = new DateTime(event.getEndDate().getDate(), timezone);
+                eventEnd = new DateTime(event.getEndDate().getDate(), usersConfiguredDateTimeZone);
             }
         }
         
@@ -216,37 +216,37 @@ public class CalendarEventsDao {
         }
 
         
-        DateMidnight dayStart = new DateMidnight(event.getStartDate().getDate(), timezone);
-        DateMidnight dayEnd = dayStart.plusDays(1);
+        DateMidnight startOfTheSpecificDay = new DateMidnight(event.getStartDate().getDate(), usersConfiguredDateTimeZone);
+        DateMidnight endOfTheSpecificDay = startOfTheSpecificDay.plusDays(1);
 
-        final DateTimeFormatter df = getDateFormatter(timezone);        
-        final DateTimeFormatter tf = getTimeFormatter(timezone);
+        final DateTimeFormatter df = getDateFormatter(usersConfiguredDateTimeZone);        
+        final DateTimeFormatter tf = getTimeFormatter(usersConfiguredDateTimeZone);
         final Set<CalendarDisplayEvent> events = new HashSet<CalendarDisplayEvent>();
         
         do {
-            final Interval day = new Interval(dayStart, dayEnd);
+            final Interval theSpecificDay = new Interval(startOfTheSpecificDay.getMillis(), endOfTheSpecificDay.getMillis(), usersConfiguredDateTimeZone);
             final Interval eventInterval = new Interval(eventStart, eventEnd);
 
-            final CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
+            final CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, theSpecificDay, df, tf);
             
 
             // if the adjusted event still falls within the 
             // indicated period go ahead and add it to our list
 
             // the event starts exactly at the day boundary
-            if (day.getStart().isEqual(eventStart)) {
+            if (theSpecificDay.getStart().isEqual(eventStart)) {
                 events.add(json);
             }
             
             // the event day overlaps this day
-            else if (day.overlaps(eventInterval)) {
+            else if (theSpecificDay.overlaps(eventInterval)) {
                 events.add(json);
             }
 
-            dayStart = dayStart.plusDays(1);
-            dayEnd = dayEnd.plusDays(1);
+            startOfTheSpecificDay = startOfTheSpecificDay.plusDays(1);
+            endOfTheSpecificDay = endOfTheSpecificDay.plusDays(1);
 
-        } while (dayStart.isBefore(eventEnd) && interval.contains(dayStart));
+        } while (startOfTheSpecificDay.isBefore(eventEnd) && interval.contains(startOfTheSpecificDay));
         
         return events;
     }

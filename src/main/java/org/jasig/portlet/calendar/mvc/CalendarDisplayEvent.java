@@ -50,15 +50,15 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 	private final String startDate;
 	private final String endDate;
 	
-	public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval day, DateTimeFormatter df, DateTimeFormatter tf) {
+	public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval theSpecificDay, DateTimeFormatter df, DateTimeFormatter tf) {
 
         this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;
         this.description = event.getDescription() != null ? event.getDescription().getValue() : null;
         this.location = event.getLocation() != null ? event.getLocation().getValue() : null;
 		
 		boolean multi = false;
-		if (eventInterval.getStart().isBefore(day.getStart())) {
-			dayStart = day.getStart();
+		if (eventInterval.getStart().isBefore(theSpecificDay.getStart())) {
+			dayStart = theSpecificDay.getStart();
 			multi = true;
 		} else {
 			dayStart = eventInterval.getStart();
@@ -66,8 +66,8 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 		
 		if (event.getEndDate() == null) {
 		    dayEnd = dayStart;
-		} else if (eventInterval.getEnd().isAfter(day.getEnd())) {
-			dayEnd = day.getEnd();
+		} else if (eventInterval.getEnd().isAfter(theSpecificDay.getEnd())) {
+			dayEnd = theSpecificDay.getEnd();
 			multi = true;
 		} else {
 			dayEnd = eventInterval.getEnd();
@@ -87,9 +87,17 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
             this.endTime = null;
             this.endDate = null;
         }
+        
+//        System.out.println(" ## event.getSummary()="+event.getSummary());
+//        System.out.println(" ## event.getStartDate()="+event.getStartDate());
+//        System.out.println(" ## event.getEndDate()="+event.getEndDate());
+//        System.out.println(" ## eventInterval="+eventInterval);
+//        System.out.println(" ## theSpecificDay="+theSpecificDay);
+//        System.out.println(" ## dayStart="+dayStart);
+//        System.out.println(" ## dayEnd="+dayEnd);
 
         Interval dayEventInterval = new Interval(dayStart, dayEnd);
-        this.isAllDay = dayEventInterval.equals(day);
+        this.isAllDay = dayEventInterval.equals(theSpecificDay);
 		
 	}
 	
