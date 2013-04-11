@@ -62,7 +62,7 @@ This project includes:
   HttpClient under Apache License
   HttpCore under Apache License
   iCal4j under iCal4j - License
-  icu4j under MIT License
+  ICU4J under ICU License
   JA-SIG CAS Client for Java - Core under JA-SIG License for Use
   Jackson under The Apache Software License, Version 2.0
   jakarta-slide-webdavlib under Apache License, Version 2.0
@@ -123,6 +123,7 @@ This project includes:
   spring-webmvc-portlet under The Apache Software License, Version 2.0
   standard under Apache License, Version 2.0
   Streaming API for XML under Sun Binary Code License
+  uPortal Search API under Apache License Version 2.0
   WSDL4J under CPL
   WSS4J under The Apache Software License, Version 2.0
   xalan under Apache License, Version 2.0
