@@ -92,9 +92,15 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	public ModelAndView getEventList(ResourceRequest request,
 			ResourceResponse response) throws Exception {
 	    
-	    final String resourceId = request.getResourceID();
-	    final String startDate = resourceId.split("-")[0];
-	    final int days = Integer.parseInt(resourceId.split("-")[1]);
+        // Pull parameters out of the resourceId
+        final String resourceId = request.getResourceID();
+        final String[] resourceIdTokens = resourceId.split("-");        
+        final String startDate = resourceIdTokens[0];
+        final int days = Integer.parseInt(resourceIdTokens[1]);
+        final boolean refresh = resourceIdTokens.length > 2 
+                ? Boolean.valueOf(resourceIdTokens[2])
+                : false;
+	    
 	    final long startTime = System.currentTimeMillis();
         final List<String> errors = new ArrayList<String>();
 		final Map<String, Object> model = new HashMap<String, Object>();
@@ -174,6 +180,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    	// add the event to the by-day map
 	    	eventsByDay.get(day).add(event);
 		}
+		
+		if (log.isTraceEnabled()) {
+	        log.trace("Prepared the following eventsByDay collection for user '" 
+	                            + request.getRemoteUser() + "':" + eventsByDay);
+		}
 
 		model.put("dateMap", eventsByDay);
 		model.put("dateNames", dateDisplayNames);
@@ -185,7 +196,12 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		
 		// if the request ETag matches the hash for this response, send back
 		// an empty response indicating that cached content should be used
-        if (request.getETag() != null && etag.equals(requestEtag)) {
+        if (!refresh && request.getETag() != null && etag.equals(requestEtag)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Sending an empty response (due to matched ETag and " 
+                            + "refresh=false) for user '" 
+                            + request.getRemoteUser() + "'");
+            }
             response.getCacheControl().setExpirationTime(1);
             response.getCacheControl().setUseCachedContent(true);
             // returning null appears to cause the response to be committed
@@ -193,6 +209,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
             return new ModelAndView("empty", Collections.<String,String>emptyMap());
         }
         
+        if (log.isTraceEnabled()) {
+            log.trace("Sending a full response for user '" + request.getRemoteUser() 
+                                                    + "' and refresh=" + refresh);
+        }
+
         // create new content with new validation tag
         response.getCacheControl().setETag(etag);
         response.getCacheControl().setExpirationTime(1);

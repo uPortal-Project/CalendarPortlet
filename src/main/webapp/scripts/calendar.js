@@ -21,8 +21,17 @@ var upcal = upcal || {};
 if (!upcal.init) {
     
     upcal.init = function ($, _, Backbone) {
-        
-        
+
+        /*
+         * Whenever we get a valid collection of events from the server, hold 
+         * on to it;  we will "replay" it if our next request is an ETag-match.
+         * 
+         * (NB:  Oddly this ETag business seems to affect different browsers 
+         * different ways.  On FireFox, an ETag match seems provide the $.ajax() 
+         * call with valid data;  on Chrome, nothing.)
+         */
+        var cache = new Array();
+    	
         /* DATA MODELS */
 
         upcal.CalendarDay = Backbone.Model.extend({
@@ -182,26 +191,47 @@ if (!upcal.init) {
                 
                 listView.$(".upcal-loading-message").show();
                 listView.$(".upcal-event-list").hide();
-        
+
+                // Build the URL for fetching events from the portlet
+                var startDateToken = view.get("startDate").replace(/\//g, "");
+                var daysToken = view.get("days");
+                var refreshToken = (cache[startDateToken] && cache[startDateToken][daysToken]) ? 'false' : 'true';
                 var url = view.get("eventsUrl")
-                    .replace(/START/, view.get("startDate").replace(/\//g, ""))
-                    .replace(/DAYS/, view.get("days"));
+                    .replace(/START/, startDateToken)
+                    .replace(/DAYS/, daysToken)
+                    .replace(/REFRESH/, refreshToken);
         
                 $.ajax({
                     url: url,
                     success: function (data) {
-                        var day, days;
-                        
-                        days = new upcal.CalendarDayList();
-                        if(data && data.errors) {
-                            $(data.errors).each(function (idx, error) {
 
+                        var days = new upcal.CalendarDayList();
+                        var day, dateMap, dateNames;
+                        
+                        // Display error messages, if any
+                        if (data && data.errors) {
+                            $(data.errors).each(function (idx, error) {
+                            	// TODO:  Put these in the UI somewhere, for goodness sake...
                             });
                         }
 
-                        if(data && data.dateMap) {
-                            $.each(data.dateMap, function (key, value) {
-                                day = new upcal.CalendarDay({ code: key, displayName: data.dateNames[key] });
+                        // Did we receive new event information from the server?
+                        if (data && data.dateMap && data.dateNames) {
+                        	// Yes -- always replace what we have...
+                        	dateMap = data.dateMap;
+                        	dateNames = data.dateNames;
+                        } else {
+                        	// No -- try to pull from cache...
+                        	var cacheObject = cache[startDateToken] && cache[startDateToken][daysToken];
+                        	dateMap = cacheObject && cacheObject.dateMap;
+                        	dateNames = cacheObject && cacheObject.dateNames;
+                        }
+                        
+                        // Is the event information we have (at this point, however we came by it) viable?
+                        if (dateMap && dateNames) {
+                        	// Yes -- add the events to the model...
+                            $.each(dateMap, function (key, value) {
+                                day = new upcal.CalendarDay({ code: key, displayName: dateNames[key] });
                                 $(value).each(function (idx, event) {
                                     var params = event.event;
                                     params.colorIndex = event.colorIndex;
