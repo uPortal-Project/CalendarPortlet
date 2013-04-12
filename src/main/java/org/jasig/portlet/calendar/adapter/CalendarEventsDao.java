@@ -42,6 +42,7 @@ import javax.portlet.PortletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -215,8 +216,12 @@ public class CalendarEventsDao {
             eventEnd = eventStart;
         }
 
+        // Multi-day events may begin in the past;  make sure to choose a date in range for the first pass...
+        final Date firstDayToProcess = interval.contains(event.getStartDate().getDate().getTime()) 
+                ? event.getStartDate().getDate()
+                : interval.getStart().toDate();
         
-        DateMidnight startOfTheSpecificDay = new DateMidnight(event.getStartDate().getDate(), usersConfiguredDateTimeZone);
+        DateMidnight startOfTheSpecificDay = new DateMidnight(firstDayToProcess, usersConfiguredDateTimeZone);
         DateMidnight endOfTheSpecificDay = startOfTheSpecificDay.plusDays(1);
 
         final DateTimeFormatter df = getDateFormatter(usersConfiguredDateTimeZone);        
