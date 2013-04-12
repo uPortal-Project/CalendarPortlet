@@ -112,71 +112,79 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 		
 		// retrieve the list of events for this calendar within the
 		// specified time period
-		for (Iterator<Component> i = calendar.getComponents().iterator(); i
-				.hasNext();) {
-			Component component = i.next();
-			if (component.getName().equals("VEVENT")) {
-				VEvent event = (VEvent) component;
-                if (log.isTraceEnabled()) {
-				    log.trace("processing event " + event.getSummary());
-                }
-				// calculate the recurrence set for this event
-				// for the specified time period
-				PeriodList periods = event.calculateRecurrenceSet(period);
+		for (Iterator<Component> it = calendar.getComponents().iterator(); it.hasNext();) {
+		    /*
+		     * CAP-143:  Log a warning and ignore events that cannot be 
+		     * processed at this stage
+		     */
+            Component component = it.next();
+		    try {
+	            if (component.getName().equals("VEVENT")) {
+	                VEvent event = (VEvent) component;
+	                if (log.isTraceEnabled()) {
+	                    log.trace("processing event " + event.getSummary());
+	                }
+	                // calculate the recurrence set for this event
+	                // for the specified time period
+	                PeriodList periods = event.calculateRecurrenceSet(period);
 
-				// add each recurrence instance to the event list
-				for (Iterator<Period> iter = periods.iterator(); iter.hasNext();) {
-					Period eventper = iter.next();
-                    if (log.isDebugEnabled()) {
-					    log.debug("Found time period staring at " + eventper.getStart().isUtc()
-                                + ", " + eventper.getStart().getTimeZone() + ", "
-                                + event.getStartDate().getTimeZone() + ", "
-                                + event.getStartDate().isUtc());
-                    }
+	                // add each recurrence instance to the event list
+	                for (Iterator<Period> iter = periods.iterator(); iter.hasNext();) {
+	                    Period eventper = iter.next();
+	                    if (log.isDebugEnabled()) {
+	                        log.debug("Found time period staring at " + eventper.getStart().isUtc()
+	                                + ", " + eventper.getStart().getTimeZone() + ", "
+	                                + event.getStartDate().getTimeZone() + ", "
+	                                + event.getStartDate().isUtc());
+	                    }
 
-					PropertyList props = event.getProperties();
+	                    PropertyList props = event.getProperties();
 
-					// create a new property list, setting the date
-					// information to this event period
-					PropertyList newprops = new PropertyList();
-					DtStart start;
-					if (event.getStartDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-	                    start = new DtStart(new net.fortuna.ical4j.model.DateTime(eventper.getStart()));
-					} else {
-					    start = new DtStart(new net.fortuna.ical4j.model.Date(eventper.getStart()));
-					}
-					newprops.add(start);
-					if (event.getEndDate() != null) {
-                        DtEnd end;
-                        if (event.getEndDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-                            end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
-                        } else {
-                            end = new DtEnd(new net.fortuna.ical4j.model.Date(eventper.getEnd()));
-                        }
-    					newprops.add(end);
-					}
-					for (Iterator<Property> iter2 = props.iterator(); iter2
-							.hasNext();) {
-						Property prop = iter2.next();
+	                    // create a new property list, setting the date
+	                    // information to this event period
+	                    PropertyList newprops = new PropertyList();
+	                    DtStart start;
+	                    if (event.getStartDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
+	                        start = new DtStart(new net.fortuna.ical4j.model.DateTime(eventper.getStart()));
+	                    } else {
+	                        start = new DtStart(new net.fortuna.ical4j.model.Date(eventper.getStart()));
+	                    }
+	                    newprops.add(start);
+	                    if (event.getEndDate() != null) {
+	                        DtEnd end;
+	                        if (event.getEndDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
+	                            end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
+	                        } else {
+	                            end = new DtEnd(new net.fortuna.ical4j.model.Date(eventper.getEnd()));
+	                        }
+	                        newprops.add(end);
+	                    }
+	                    for (Iterator<Property> iter2 = props.iterator(); iter2
+	                            .hasNext();) {
+	                        Property prop = iter2.next();
 
-						// only add non-date-related properties
-						if (!(prop instanceof DtStart)
-						        && !(prop instanceof DtEnd)
-						        && !(prop instanceof Duration)
-						        && !(prop instanceof RRule)
-						        && !(prop instanceof RDate)
-						        && !(prop instanceof ExRule)
-						        && !(prop instanceof ExDate)) {
-						    newprops.add(prop);
-						}
-					}
+	                        // only add non-date-related properties
+	                        if (!(prop instanceof DtStart)
+	                                && !(prop instanceof DtEnd)
+	                                && !(prop instanceof Duration)
+	                                && !(prop instanceof RRule)
+	                                && !(prop instanceof RDate)
+	                                && !(prop instanceof ExRule)
+	                                && !(prop instanceof ExDate)) {
+	                            newprops.add(prop);
+	                        }
+	                    }
 
-					// create the new event from our property list
-					VEvent newevent = new VEvent(newprops);
-					events.add(newevent);
-					log.trace("added event " + newevent);
-				}
-			}
+	                    // create the new event from our property list
+	                    VEvent newevent = new VEvent(newprops);
+	                    events.add(newevent);
+	                    log.trace("added event " + newevent);
+	                }
+	            }
+		    } catch (Exception e) {
+		        final String msg = "Failed to process the following ical4j component:  " + component;
+		        log.warn(msg, e);
+		    }
 		}
 
 		return events;
