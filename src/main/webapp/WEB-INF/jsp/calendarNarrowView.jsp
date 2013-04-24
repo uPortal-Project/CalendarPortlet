@@ -76,7 +76,9 @@
             <div class="upcal-loading-message portlet-msg-info portlet-msg info">
                 <p><spring:message code="loading"/></p>
             </div>
-            
+
+            <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
+
             <div class="upcal-event-list" style="display:none">
             </div>
 

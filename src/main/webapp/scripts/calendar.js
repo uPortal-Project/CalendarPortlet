@@ -192,6 +192,10 @@ if (!upcal.init) {
                 listView.$(".upcal-loading-message").show();
                 listView.$(".upcal-event-list").hide();
 
+                var errorNode = listView.$(".upcal-event-errors");
+                errorNode.hide();
+                errorNode.empty();
+
                 // Build the URL for fetching events from the portlet
                 var startDateToken = view.get("startDate").replace(/\//g, "");
                 var daysToken = view.get("days");
@@ -211,8 +215,11 @@ if (!upcal.init) {
                         // Display error messages, if any
                         if (data && data.errors) {
                             $(data.errors).each(function (idx, error) {
-                            	// TODO:  Put these in the UI somewhere, for goodness sake...
+                                var errorMsg = $('<p></p>')
+                                errorMsg.text(error);
+                                errorNode.append(errorMsg);
                             });
+                            errorNode.show();
                         }
 
                         // Did we receive new event information from the server?
