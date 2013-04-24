@@ -34,6 +34,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+import javax.servlet.http.HttpServletResponse;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
@@ -97,11 +98,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
         final String[] resourceIdTokens = resourceId.split("-");        
         final String startDate = resourceIdTokens[0];
         final int days = Integer.parseInt(resourceIdTokens[1]);
-        final boolean refresh = resourceIdTokens.length > 2 
+        final boolean refresh = resourceIdTokens.length > 2
                 ? Boolean.valueOf(resourceIdTokens[2])
                 : false;
-	    
-	    final long startTime = System.currentTimeMillis();
+
+        final long startTime = System.currentTimeMillis();
         final List<String> errors = new ArrayList<String>();
 		final Map<String, Object> model = new HashMap<String, Object>();
         final PortletSession session = request.getPortletSession();
@@ -193,7 +194,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		String etag = String.valueOf(model.hashCode());
 		String requestEtag = request.getETag();
-		
+
 		// if the request ETag matches the hash for this response, send back
 		// an empty response indicating that cached content should be used
         if (!refresh && request.getETag() != null && etag.equals(requestEtag)) {
@@ -203,7 +204,9 @@ public class AjaxCalendarController implements ApplicationContextAware {
                             + request.getRemoteUser() + "'");
             }
             response.getCacheControl().setExpirationTime(1);
+            response.getCacheControl().setETag(etag);
             response.getCacheControl().setUseCachedContent(true);
+            response.setProperty(ResourceResponse.HTTP_STATUS_CODE, Integer.toString(HttpServletResponse.SC_NOT_MODIFIED));
             // returning null appears to cause the response to be committed
             // before returning to the portal, so just use an empty view
             return new ModelAndView("empty", Collections.<String,String>emptyMap());
