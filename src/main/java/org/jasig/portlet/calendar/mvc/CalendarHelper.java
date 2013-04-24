@@ -100,7 +100,7 @@ public class CalendarHelper implements ApplicationContextAware {
                 try {
                     // get an instance of the adapter for this calendar
                     ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(callisting.getCalendarDefinition().getClassName());
-                    events = calendarEventsDao.getEvents(adapter, callisting, interval, request, tz);
+                    events.addAll(calendarEventsDao.getEvents(adapter, callisting, interval, request, tz));
                 } catch (NoSuchBeanDefinitionException ex) {
                     log.error("Calendar class instance could not be found: " + ex.getMessage());
                 } catch (UserFeedbackCalendarException sce) {
