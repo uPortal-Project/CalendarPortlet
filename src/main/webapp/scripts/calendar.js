@@ -213,7 +213,7 @@ if (!upcal.init) {
                         var day, dateMap, dateNames;
                         
                         // Display error messages, if any
-                        if (data && data.errors) {
+                        if (data && data.errors && data.errors.length > 0) {
                             $(data.errors).each(function (idx, error) {
                                 var errorMsg = $('<p></p>')
                                 errorMsg.text(error);
