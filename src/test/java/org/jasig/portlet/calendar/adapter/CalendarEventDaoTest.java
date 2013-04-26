@@ -112,7 +112,7 @@ public class CalendarEventDaoTest {
        
         Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
         
-        assertEquals(3, events.size());
+        assertEquals(2, events.size());
         
     }
     
