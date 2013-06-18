@@ -223,12 +223,6 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         return events;
     }
 
-    public String getLink(CalendarConfiguration calendar, Interval interval,
-            PortletRequest request) throws CalendarLinkException {
-        // TODO Auto-generated method stub
-        return "";
-    }
-    
     protected GetUserAvailabilityRequest getAvailabilityRequest(Interval interval, String emailAddress) throws DatatypeConfigurationException {
 
         // construct the SOAP request object to use

@@ -239,13 +239,6 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
 	    return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
-	 */
-	public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) {
-		throw new CalendarLinkException("This calendar has no link");
-	}
-	
 	/**
 	 * Uses Commons HttpClient to retrieve the specified url (optionally with the provided 
 	 * {@link Credentials}.

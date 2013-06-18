@@ -188,12 +188,15 @@ public class CalendarController implements ApplicationContextAware {
 							.getCalendarDefinition().getClassName());
 	
 					//get hyperlink to calendar
-					links.put(callisting.getId(), adapter.getLink(callisting, interval, request));
+                    String link = adapter.getLink(callisting, interval, request);
+					if (link != null) {
+                        links.put(callisting.getId(), link);
+                    }
 					
 				} catch (NoSuchBeanDefinitionException ex) {
 					log.error("Calendar class instance could not be found: " + ex.getMessage());
 				} catch (CalendarLinkException linkEx) {
-					log.warn(linkEx);
+                    // Not an error. Ignore
 				} catch (Exception ex) {
 					log.error(ex);
 				}

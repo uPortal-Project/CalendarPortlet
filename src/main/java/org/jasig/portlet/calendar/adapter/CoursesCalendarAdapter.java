@@ -187,11 +187,6 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         return eventSet;
     }
 
-    public String getLink(CalendarConfiguration calendar, Interval interval,
-                          PortletRequest request) throws CalendarLinkException {
-        throw new CalendarLinkException("This calendar has no link");
-    }
-
     /**
      * Return the full set of events (class schedule) for all the user's courses
      * for the indicated term.

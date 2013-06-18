@@ -312,7 +312,7 @@
                 <version>0.7</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>ical4j</groupId>
+                        <groupId>net.fortuna.ical4j</groupId>
                         <artifactId>ical4j</artifactId>
                     </exclusion>
                     <exclusion>

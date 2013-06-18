@@ -27,7 +27,11 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.form.parameter.Parameter;
+import org.joda.time.Interval;
+
+import javax.portlet.PortletRequest;
 
 /**
  * AbstractCalendarAdapter provides a base representation of a calendar
@@ -116,4 +120,9 @@ public abstract class AbstractCalendarAdapter implements ICalendarAdapter {
             Cache cache, String processorCacheKey, Set<VEvent> events) {
         return insertCalendarEventSetIntoCache(cache, processorCacheKey, events, -1);
     }
+
+    public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) throws CalendarLinkException {
+        return null;
+    }
+
 }

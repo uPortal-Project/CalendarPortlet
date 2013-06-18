@@ -96,13 +96,6 @@ public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter imp
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration)
-	 */
-	public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) {
-		throw new CalendarLinkException("This calendar has no link");
-	}
-	
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}

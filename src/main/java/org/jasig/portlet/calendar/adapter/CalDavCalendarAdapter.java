@@ -146,13 +146,6 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
         return eventSet;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getLink(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
-     */
-    public String getLink(CalendarConfiguration calendar, Interval interval, PortletRequest request) throws CalendarLinkException {
-        throw new CalendarLinkException("This calendar has no link");
-    }
-
     // Have not gotten queries working so this method returns all events in
     // the calendar.
     protected final net.fortuna.ical4j.model.Calendar retrieveCalendar(

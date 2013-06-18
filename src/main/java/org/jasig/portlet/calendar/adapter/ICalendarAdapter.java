@@ -80,7 +80,7 @@ public interface ICalendarAdapter {
 	 * @param calendar calendar configuration for which to retrieve events
 	 * @param interval time period for which to retrieve events
 	 * @param request user's servlet request
-	 * @return Set of events for this calendar and time period
+	 * @return Link for the calendar, else null.
 	 * @throws CalendarException
 	 */
 	public String getLink(CalendarConfiguration calendar,
