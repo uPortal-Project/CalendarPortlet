@@ -70,10 +70,10 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
             return calendar;
             
         } catch (IOException e) {
-            log.error("IOException in getEvents", e);
+//            log.error("IOException in getEvents", e);
             throw new CalendarException("caught IOException", e);
         } catch (ParserException e) {
-            log.error("ParserException in getEvents", e);
+//            log.error("ParserException in getEvents", e);
             throw new CalendarException("caught ParserException", e);
         }
 	}

@@ -166,8 +166,13 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             // read in the data
             InputStream stream = retrieveCalendarHttp(url, credentials);
             // run the stream through the processor
-            calendar = (T) contentProcessor.getIntermediateCalendar(
-                    interval, stream);
+
+            try {
+                calendar = (T) contentProcessor.getIntermediateCalendar(interval, stream);
+            } catch (CalendarException e) {
+                log.error("Calendar parsing exception: " + e.getCause().getMessage() + " from calendar at " + url);
+                throw e;
+            }
 
             // save the VEvents to the cache
             cachedCalendar = new Element(intermediateCacheKey, calendar);
