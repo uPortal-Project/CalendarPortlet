@@ -22,6 +22,9 @@ package org.jasig.portlet.calendar.mvc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+
+import java.util.Locale;
+
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.joda.time.DateMidnight;
@@ -44,7 +47,7 @@ public class JsonCalendarEventTest {
 
         DateTimeFormatter df = new DateTimeFormatterBuilder().appendDayOfWeekText()
                 .appendLiteral(" ").appendMonthOfYearText().appendLiteral(" ")
-                .appendDayOfMonth(1).toFormatter().withZone(tz);        
+                .appendDayOfMonth(1).toFormatter().withZone(tz).withLocale(Locale.US);        
         
         DateTimeFormatter tf = new DateTimeFormatterBuilder().appendClockhourOfHalfday(1)
                 .appendLiteral(":").appendMinuteOfHour(2).appendLiteral(" ")
