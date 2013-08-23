@@ -803,6 +803,8 @@
                         <exclude>src/test/resources/sampleEvents.ics</exclude>
                         <exclude>**/src/main/webapp/rs/**</exclude>
                         <exclude>bin/**</exclude>
+                        <exclude>.idea/**</exclude> <!-- Exclude intelliJ files -->
+                        <exclude>overlays/**</exclude> <!-- Exclude intelliJ files -->
                     </excludes>
                     <mapping>
                         <channel>XML_STYLE</channel>
