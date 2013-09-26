@@ -137,6 +137,8 @@
             <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
         </constructor-arg>
     </bean>
+    <!- The connection is attempted 5 times prior to stopping
+        so the actual time before failure will be 5 times p:connectionTimeout ->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
         p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
         p:maxTotalConnections="200">
