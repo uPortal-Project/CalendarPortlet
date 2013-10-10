@@ -175,7 +175,7 @@
         </p>
         <br/>
         <p>
-            <button type="submit" class="portlet-form-button">
+            <button type="submit" class="portlet-form-button btn">
                 <spring:message code="save"/>
             </button>
         </p>

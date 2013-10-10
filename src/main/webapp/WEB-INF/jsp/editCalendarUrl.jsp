@@ -52,7 +52,7 @@
             <form:input path="url" size="50"/>
     	</p>
         <p>
-            <button type="submit" class="portlet-form-button">
+            <button type="submit" class="portlet-form-button btn">
                 <spring:message code="save.calendar"/>
             </button>
         </p>

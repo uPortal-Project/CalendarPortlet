@@ -86,8 +86,8 @@
 .upcal-adminview ul { margin:0 3em 0 1em; }
 .upcal-adminview ul { width:50%; }
 .upcal-edit,
-.upcal-export { display:inline-block; width:16px; height:20px; text-indent:-1600px; padding:0.2em 0; }
-.upcal-delete { display:inline-block; width:16px; height:20px; text-indent:-1600px; padding:0.2em 0; }
+.upcal-export { display:inline-block; width:16px; height:20px; text-indent:-16000px; padding:0.2em 0; }
+.upcal-delete { display:inline-block; width:16px; height:20px; text-indent:-16000px; padding:0.2em 0; }
 .upcal-add { display:inline-block; margin-top:1em; padding-left:20px; }
 
 
@@ -100,3 +100,15 @@
 .upcal-view-links .upcal-view-return { padding-left:20px; }
 
 .upcal-hide-on-calendar { display:none; }
+/**
+ * Responder Theme Overrides
+ */
+.respondr .fl-col-side.fl-force-left.span4 {
+	width: auto;;
+}
+.respondr .upcal-showcals.upcal-list h3 {
+	margin-top: 0;
+}
+.respondr .upcal-view-links.span12 {
+	margin-top: 10px;
+}
