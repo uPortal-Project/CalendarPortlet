@@ -45,9 +45,8 @@
         </div>
     </c:if>
     
-    <div id="calendarPortletHeader" class="fl-col-mixed3">
-    
-        <div class="fl-col-side fl-force-right">
+    <div id="calendarPortletHeader" class="fl-col-mixed3 row-fluid">
+        <div class="fl-col-side fl-force-right span3 pull-right">
             <div class="upcal-showcals upcal-list">
                 <h3><spring:message code="my.calendars"/></h3>
                 <ul>
@@ -80,12 +79,12 @@
             </div>
         </div>
         
-        <div class="fl-col-side fl-force-left">
+        <div class="fl-col-side fl-force-left span4">
             <div class="upcal-inline-calendar"></div>
             <div style="clear: both;"></div>
         </div>
         
-        <div class="fl-col-main">
+        <div class="fl-col-main span5">
         
             <div class="upcal-events">
                 

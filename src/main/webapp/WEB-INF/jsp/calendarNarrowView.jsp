@@ -29,73 +29,73 @@
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="${n}upcal-miniview">
-
     <div class="upcal-events">
-
         <div class="upcal-event-view">
-        
-            <!-- Range Selector -->
-            <div id="${n}calendarRangeSelector" class="upcal-range">
-                <h3><spring:message code="view"/></h3>
-                <span class="upcal-range-day" days="1">
-                    <a days="1" href="javascript:;" class="${ model.days == 1 ? "selected-range" : "" }">
-                        <spring:message code="day"/>
-                    </a>
-                </span>
-                <span class="upcal-pipe">|</span>
-                <span class="upcal-range-day" days="7">
-                    <a days="7" href="javascript:;" class="${ model.days == 7 ? "selected-range" : "" }">
-                        <spring:message code="week"/>
-                    </a>
-                </span>
-                <span class="upcal-pipe">|</span>
-                <span class="upcal-range-day" days="31">
-                    <a days="31" href="javascript:;" class="${ model.days == 31 ? "selected-range" : "" }">
-                        <spring:message code="month"/>
-                    </a>
-                </span>
-                <span class="upcal-pipe">&nbsp;&nbsp;&nbsp;</span>
-                <h3><spring:message code="date.picker"/></h3>
-                <span class="upcal-range-datepicker">
-                    <a show="true" href="javascript:;" id="${n}showDatePicker" class="${model.showDatePicker == 'true' ? 'selected-range' : '' }">
-                        <spring:message code="show"/>
-                    </a>
-                </span>
-                <span class="upcal-pipe">|</span>
-                <span class="upcal-range-datepicker">
-                    <a show="false" href="javascript:;" id="${n}hideDatePicker" class="${model.showDatePicker == 'false' ? 'selected-range' : '' }">
-                        <spring:message code="hide"/>
-                    </a>
-                </span>
-            </div>
-        
-            <!-- Mini-Calendar (jQuery UI) -->
-            <div class="upcal-inline-calendar"></div>
+            <div class="row-fluid">
+                <div class="span4">
+                    <!-- Range Selector -->
+                    <div id="${n}calendarRangeSelector" class="upcal-range">
+                        <h3><spring:message code="view"/></h3>
+                        <span class="upcal-range-day" days="1">
+                            <a days="1" href="javascript:;" class="${ model.days == 1 ? "selected-range" : "" }">
+                                <spring:message code="day"/>
+                            </a>
+                        </span>
+                        <span class="upcal-pipe">|</span>
+                        <span class="upcal-range-day" days="7">
+                            <a days="7" href="javascript:;" class="${ model.days == 7 ? "selected-range" : "" }">
+                                <spring:message code="week"/>
+                            </a>
+                        </span>
+                        <span class="upcal-pipe">|</span>
+                        <span class="upcal-range-day" days="31">
+                            <a days="31" href="javascript:;" class="${ model.days == 31 ? "selected-range" : "" }">
+                                <spring:message code="month"/>
+                            </a>
+                        </span>
+                        <span class="upcal-pipe">&nbsp;&nbsp;&nbsp;</span>
+                        <h3><spring:message code="date.picker"/></h3>
+                        <span class="upcal-range-datepicker">
+                            <a show="true" href="javascript:;" id="${n}showDatePicker" class="${model.showDatePicker == 'true' ? 'selected-range' : '' }">
+                                <spring:message code="show"/>
+                            </a>
+                        </span>
+                        <span class="upcal-pipe">|</span>
+                        <span class="upcal-range-datepicker">
+                            <a show="false" href="javascript:;" id="${n}hideDatePicker" class="${model.showDatePicker == 'false' ? 'selected-range' : '' }">
+                                <spring:message code="hide"/>
+                            </a>
+                        </span>
+                    </div>
+                    <!-- Mini-Calendar (jQuery UI) -->
+                    <div class="upcal-inline-calendar"></div>
+                </div>
+                <div class="span8">
+                    <!-- Calendar Events List -->
+                    <div class="upcal-loading-message portlet-msg-info portlet-msg info">
+                        <p><spring:message code="loading"/></p>
+                    </div>
 
-            <!-- Calendar Events List -->
-            <div class="upcal-loading-message portlet-msg-info portlet-msg info">
-                <p><spring:message code="loading"/></p>
-            </div>
+                    <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
 
-            <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
-
-            <div class="upcal-event-list" style="display:none">
+                    <div class="upcal-event-list" style="display:none"></div>
+                </div>
             </div>
-
-            <!-- View Links -->
-            <div class="upcal-view-links">
-                <a id="${n}viewMoreEventsLink" class="upcal-view-more" 
-                        href="<portlet:renderURL windowState="maximized"/>"
-                        title="<spring:message code="view.more.events"/>">
-                    <spring:message code="view.more.events"/>
-                </a>
-                
-                <a id="${n}returnToCalendarLink" class="upcal-view-links" href="javascript:;" 
-                        style="display:none" title="<spring:message code="return.to.calendar"/>">
-                    <spring:message code="return.to.calendar"/>
-                </a>
+            <div class="row-fluid">
+                <!-- View Links -->
+                <div class="upcal-view-links span12">
+                    <a id="${n}viewMoreEventsLink" class="upcal-view-more" 
+                            href="<portlet:renderURL windowState="maximized"/>"
+                            title="<spring:message code="view.more.events"/>">
+                        <spring:message code="view.more.events"/>
+                    </a>
+                    
+                    <a id="${n}returnToCalendarLink" class="upcal-view-links" href="javascript:;" 
+                            style="display:none" title="<spring:message code="return.to.calendar"/>">
+                        <spring:message code="return.to.calendar"/>
+                    </a>
+                </div>
             </div>
-            
         </div>
 
         <div class="upcal-event-details" style="display:none">
@@ -111,6 +111,7 @@
             </div>
 
         </div>
+</div>
     </div>
 </div>
 

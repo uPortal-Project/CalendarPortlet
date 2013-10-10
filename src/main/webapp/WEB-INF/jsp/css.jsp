@@ -31,5 +31,5 @@
     .upcal-export { background:transparent url(<rs:resourceURL value="/rs/famfamfam/silk/1.3/page_white_put.png"/>) 0 3px no-repeat; }
 
     .upcal-view-links .upcal-view-more { background:transparent url(<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_right.png"/>) top right no-repeat; }
-	.upcal-view-links .upcal-view-return { background:transparent url(<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>) top left no-repeat; }
+	.upcal-view-links .upcal-view-return { background:transparent url(<rs:resourceURL value="/rs/famfamfam/silk/1.3/arrow_left.png"/>) top left no-repeat; padding-left: 20px; }
 </style>

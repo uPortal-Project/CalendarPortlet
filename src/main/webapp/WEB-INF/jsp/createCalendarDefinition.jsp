@@ -67,7 +67,7 @@
         </table>
         
         <div class="buttons">
-            <button type="submit" class="portlet-form-button">
+            <button type="submit" class="portlet-form-button btn">
                 <spring:message code="next"/>
             </button>
         </div>
