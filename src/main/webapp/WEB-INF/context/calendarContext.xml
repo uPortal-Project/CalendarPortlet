@@ -137,6 +137,17 @@
             <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
         </constructor-arg>
     </bean>
+    <!- The connection is attempted 5 times prior to stopping
+        so the actual time before failure will be 5 times p:connectionTimeout 
+        Suggested way of testing Connection Timeout is by hitting a
+        domain with a port that is firewalled:
+        ie. http://www.google.com:81
+        
+        Suggested way of testing Socket Timeout(p:readTimeout) is by using a tool locally to connect
+        but not respond.  Example tool: bane
+        http://blog.danielwellman.com/2010/09/introducing-bane-a-test-harness-for-server-connections.html
+        usage: $bane 10010 NeverRespond
+        ie http://localhost:10010 ->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
         p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
         p:maxTotalConnections="200">
