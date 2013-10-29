@@ -36,7 +36,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Decorates another instance of {@link ICalendarSetDao} and filters the results 
- * it provides by the specified whilelist, unless the list is empty.  In that 
+ * it provides by the specified whitelist, unless the list is empty.  In that
  * case all results will be displayed.
  * 
  * @author awills
