@@ -39,7 +39,7 @@
         <value>America/Phoenix</value>
         <value>America/Los_Angeles</value>
         <value>America/Anchorage</value>
-        <value>America/Hawaii</value>        
+        <value>US/Hawaii</value>        
     </util:list>
     
     
