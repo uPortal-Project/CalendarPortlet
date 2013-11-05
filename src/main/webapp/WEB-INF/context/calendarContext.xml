@@ -164,6 +164,10 @@
         p:descriptionKey="exchange.ws.integration"
         p:emailAttribute="mail"
         p:requestServerVersion="${exchangeWs.requestServerVersion}">
+        <property name="cacheKeyGenerator">
+            <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
+                  p:includePeriod="true"/>
+        </property>
     </bean-->
 
     <!-- 
