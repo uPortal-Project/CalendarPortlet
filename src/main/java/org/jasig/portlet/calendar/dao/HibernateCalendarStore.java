@@ -256,11 +256,16 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* This method initializes the calendar tables for the user.  It adds calendar associations that were not present
+	 * last time this was run if the user has access to the calendar.
+	 *
+	 * NOTE:  This method should be synchronized to prevent duplicate rows of data that might occur when a user
+	 * logs in and there are multiple calendar portlets on the home page.  Multiple render threads
+	 * could execute this method simultaneously and cause calendars to be associated more than once.
+	 *
 	 * @see org.jasig.portlet.calendar.dao.CalendarStore#initCalendar(java.lang.String, java.util.Set)
 	 */
-	public void initCalendar(String subscribeId, Set<String> roles) {
+	public synchronized void initCalendar(String subscribeId, Set<String> roles) {
 		try {
 
 			// if the user doesn't have any roles, we don't have any
@@ -288,7 +293,7 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 				config.setSubscribeId(subscribeId);
 				storeCalendarConfiguration(config);
 			}
-			
+
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
 		}
