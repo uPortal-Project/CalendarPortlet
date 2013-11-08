@@ -14,7 +14,7 @@
     
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>2.1.3-M2</version>
+    <version>2.1.3-SNAPSHOT</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
