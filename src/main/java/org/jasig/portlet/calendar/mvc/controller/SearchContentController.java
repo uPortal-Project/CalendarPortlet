@@ -79,6 +79,7 @@ public class SearchContentController {
                     searchResult.setTitle(e.getSummary());
                     searchResult.setSummary(summary);
                     searchResult.setPortletUrl(url);
+                    searchResult.getType().add("Calendar");
                     searchResults.getSearchResult().add(searchResult);
                 }
             }
