@@ -31,9 +31,9 @@
 .upcal-pipe { color:#ccc; padding:0 0 .2em }
 
 /* Full View Layout */
-.upcal-fullview .fl-col-mixed3 .fl-col-main { padding-right:15px; margin:0 270px; }
+.upcal-fullview .fl-col-mixed3 .fl-col-main { padding-left:15px; margin:0 270px; }
 .upcal-fullview .fl-col-mixed3 .fl-col-side { width:200px; padding:0 10px; }
-.upcal-fullview .fl-col-mixed3 .fl-force-left { width:250px; padding:0 10px; }
+.upcal-fullview .fl-col-mixed3 .fl-force-left { width:270px; padding:0px; }
 
 /* Display Calendar Toggle */
 .upcal-active,
