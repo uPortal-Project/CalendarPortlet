@@ -22,6 +22,8 @@ package org.jasig.portlet.calendar.mvc;
 import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 
+import org.springframework.stereotype.Component;
+
 /**
  * ThemeNameViewSelectorImpl determines appropriate views by examining a "themeName"
  * portlet request property and comparing it to known mobile theme names.  This
@@ -32,6 +34,7 @@ import javax.portlet.WindowState;
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
+@Component
 public class ThemeNameViewSelectorImpl implements IViewSelector {
     
     private final String CALENDAR_WIDE_VIEW = "calendarWideView";
