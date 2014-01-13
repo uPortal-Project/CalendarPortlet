@@ -19,26 +19,21 @@
 
 package org.jasig.portlet.calendar.adapter.exchange;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 public class ExchangeWsCredentialsProvider implements CredentialsProvider {
-
+	protected final Log log = LogFactory.getLog(getClass());
     protected static final String EXCHANGE_CREDENTIALS_ATTRIBUTE = "exchangeCredentials";
-
     @Override
     public void clear() { /* no-op */}
 
     @Override
     public Credentials getCredentials(AuthScope authscope) {
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final Credentials credentials = (Credentials) requestAttributes.getAttribute(
-                ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, 
-                RequestAttributes.SCOPE_SESSION);            
-        return credentials;
+        return ExchangeCredentialsInitializationService.credentials;
     }
 
     @Override

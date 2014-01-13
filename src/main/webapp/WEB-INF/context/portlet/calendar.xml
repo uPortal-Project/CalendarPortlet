@@ -31,7 +31,7 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd  
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <context:component-scan base-package="org.jasig.portlet.calendar.mvc.controller"/>
+    <context:component-scan base-package="org.jasig.portlet.calendar.mvc"/>
     <context:annotation-config/>
     
     <!-- Properties configuration -->
@@ -51,10 +51,6 @@
             <bean class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
         </property>
     </bean>
-
-    <bean id="calendarHelper" class="org.jasig.portlet.calendar.mvc.CalendarHelper"/>
-
-    <bean id="viewSelector" class="org.jasig.portlet.calendar.mvc.ThemeNameViewSelectorImpl"/>
     
     <util:list id="initializationServices">
         
@@ -67,9 +63,7 @@
         <!--
             Uncomment the following section for MS Exchange calendars
         -->
-        <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
-            p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"
-            p:ntlmDomain="${ntlm.domain}"/-->
+        <bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"/>
         
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.

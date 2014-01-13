@@ -1,0 +1,26 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+	<SOAP-ENV:Header>
+		<ns3:RequestServerVersion
+			xmlns:ns3="http://schemas.microsoft.com/exchange/services/2006/types"
+			Version="Exchange2010_SP1" />
+		<t:ExchangeImpersonation
+			xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+			<t:ConnectingSID>
+				<t:PrincipalName>o365st19@ed.ac.uk</t:PrincipalName>
+			</t:ConnectingSID>
+		</t:ExchangeImpersonation>
+	</SOAP-ENV:Header>
+	<SOAP-ENV:Body>
+		<ns2:FindItem
+			xmlns:ns2="http://schemas.microsoft.com/exchange/services/2006/messages"
+			xmlns:ns3="http://schemas.microsoft.com/exchange/services/2006/types"
+			Traversal="Shallow">
+			<ns2:ItemShape>
+				<ns3:BaseShape>AllProperties</ns3:BaseShape>
+			</ns2:ItemShape>
+			<ns2:ParentFolderIds>
+				<ns3:DistinguishedFolderId Id="inbox" />
+			</ns2:ParentFolderIds>
+		</ns2:FindItem>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

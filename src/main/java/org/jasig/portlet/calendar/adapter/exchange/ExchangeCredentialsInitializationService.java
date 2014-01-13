@@ -19,83 +19,32 @@
 
 package org.jasig.portlet.calendar.adapter.exchange;
 
-import java.util.Map;
-
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
-import org.apache.http.auth.Credentials;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.NTCredentials;
 import org.jasig.portlet.calendar.service.IInitializationService;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
- * ExchangeCredentialsInitializationService creates a Credentials object from the 
- * user's login id and cached password and saves it to a ThreadLocal for
- * later use.
+ * ExchangeCredentialsInitializationService stores a username and password (taken from read-only portlet preferences which
+ * will be used to authenticate against exchange.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
 public class ExchangeCredentialsInitializationService implements
         IInitializationService {
+	protected final Log log = LogFactory.getLog(getClass());
+    public static volatile NTCredentials credentials;
 
-    private String usernameAttribute = "user.login.id";
-    
-    /**
-     * Set the name of the user attribute to be used for retrieving the Exchange
-     * authentication username from the portlet UserInfo map. 
-     * 
-     * @param usernameAttribute
-     */
-    public void setUsernameAttribute(String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
-    }
-    
-    private String passwordAttribute = "password";
-    
-    /**
-     * Set the name of the user attribute to be used for retrieving the Exchange
-     * authentication password from the portlet UserInfo map.
-     * 
-     * @param passwordAttribute
-     */
-    public void setPasswordAttribute(String passwordAttribute) {
-        this.passwordAttribute = passwordAttribute;
-    }
-
-    private String ntlmDomain = null;
-    
-    /**
-     * Set the domain () of this machine for NTLM authentication.
-     * 
-     * @param ntlmDomain NT Domain
-     */
-    public void setNtlmDomain(String ntlmDomain) {
-        this.ntlmDomain = ntlmDomain;
-    }
-
-    public void initialize(PortletRequest request) {
-
-        // get the username and password from the UserInfo map
-        @SuppressWarnings("unchecked")
-        Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
-        String username = userInfo.get(usernameAttribute);
-        String password = userInfo.get(passwordAttribute);
-
-        // construct a credentials object from the username and password
-        Credentials credentials = new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
-        
-        // cache the credentials object to this thread
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes == null) {
-            requestAttributes = new PortletRequestAttributes(request);
-            RequestContextHolder.setRequestAttributes(requestAttributes);
-        }
-        requestAttributes.setAttribute(
-                ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE,
-                credentials, RequestAttributes.SCOPE_SESSION);
+	public void initialize(PortletRequest request) {
+        PortletPreferences prefs= request.getPreferences();
+       
+        //do not fill in the domain field else authentication fails with a 503, service not available response
+        credentials = new NTCredentials(prefs.getValue("wsUser", ""), prefs.getValue("wsPassword", ""),
+        		"paramDoesNotSeemToMatter", "");
     }
 
 }

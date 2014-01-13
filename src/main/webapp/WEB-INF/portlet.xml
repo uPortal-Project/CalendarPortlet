@@ -44,16 +44,28 @@
         
         <portlet-preferences>
             
+             <preference>
+                <name>wsUser</name>
+                <value>masterusername@domain</value>
+             	<read-only>true</read-only>
+            </preference>
+            <preference>
+                <name>wsPassword</name>
+                <value>masteruserpassword</value>
+            	<read-only>true</read-only>
+            </preference>
+           
             <!-- Default display timezone -->
             <preference>
                 <name>timezone</name>
-                <value>America/Chicago</value>
+                <value>Europe/London</value>
+                <read-only>true</read-only>
             </preference>
 
             <!-- Default number of days worth of events to show -->
             <preference>
                 <name>days</name>
-                <value>7</value>
+                <value>1</value>
             </preference>
             
             <!-- Optionally disable users' access to the preferences screen -->
@@ -125,14 +137,17 @@
     </user-attribute-->
 
     <!-- Uncomment to use cached password authentication -->
-    <!--user-attribute>
+     <user-attribute>
         <name>password</name>
-    </user-attribute-->
+    </user-attribute>
 
     <!-- Uncomment to use Exchange -->
-    <!--user-attribute>
+    <user-attribute>
         <name>mail</name>
-    </user-attribute-->
+    </user-attribute>
+    <user-attribute>
+        <name>uid</name>
+    </user-attribute>
 
     <event-definition>
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>

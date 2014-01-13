@@ -31,6 +31,9 @@ if (!upcal.init) {
          * call with valid data;  on Chrome, nothing.)
          */
         var cache = new Array();
+        
+        var dataCache = {};
+        var etagCache = {};
     	
         /* DATA MODELS */
 
@@ -199,16 +202,18 @@ if (!upcal.init) {
                 // Build the URL for fetching events from the portlet
                 var startDateToken = view.get("startDate").replace(/\//g, "");
                 var daysToken = view.get("days");
-                var refreshToken = (cache[startDateToken] && cache[startDateToken][daysToken]) ? 'false' : 'true';
+                //dont know what this is for..... var refreshToken = (cache[startDateToken] && cache[startDateToken][daysToken]) ? 'false' : 'true';
                 var url = view.get("eventsUrl")
                     .replace(/START/, startDateToken)
-                    .replace(/DAYS/, daysToken)
-                    .replace(/REFRESH/, refreshToken);
-        
+                    .replace(/DAYS/, daysToken);
+                if(etagCache[startDateToken] && etagCache[startDateToken][daysToken]) {
+                	var etagToken=etagCache[startDateToken][daysToken];
+                    url=url.replace(/ETAG/, etagToken);
+                }
                 $.ajax({
                     url: url,
-                    success: function (data) {
-
+                    success: function (data,textStatus,xhr) {
+                    	var etag=xhr.getResponseHeader('ETag');
                         var days = new upcal.CalendarDayList();
                         var day, dateMap, dateNames;
                         
@@ -227,11 +232,22 @@ if (!upcal.init) {
                         	// Yes -- always replace what we have...
                         	dateMap = data.dateMap;
                         	dateNames = data.dateNames;
+                        	if(!etagCache[startDateToken]){
+                        		etagCache[startDateToken]={};
+                        	}
+                        	if(!dataCache[startDateToken]){
+                        		dataCache[startDateToken]={};
+                        	}
+                        	etagCache[startDateToken][daysToken]=etag;
+                        	//alert("etagcache: "+etagCache[startDateToken][daysToken]);
+                        	dataCache[startDateToken][daysToken]=data;
                         } else {
                         	// No -- try to pull from cache...
-                        	var cacheObject = cache[startDateToken] && cache[startDateToken][daysToken];
-                        	dateMap = cacheObject && cacheObject.dateMap;
-                        	dateNames = cacheObject && cacheObject.dateNames;
+                        	if(dataCache[startDateToken]&& dataCache[startDateToken][daysToken]) {
+	                        	var cachedData = dataCache[startDateToken][daysToken];
+	                        	dateMap = cachedData.dateMap;
+	                        	dateNames = cachedData.dateNames;
+                        	}
                         }
                         
                         // Is the event information we have (at this point, however we came by it) viable?

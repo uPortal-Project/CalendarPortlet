@@ -31,16 +31,44 @@
     http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
     <!-- User timezone options -->
-    <util:list id="timeZones">
-        <!--<value>America/Halifax</value>-->
-        <value>America/New_York</value>
-        <value>America/Chicago</value>
-        <value>America/Denver</value>
-        <value>America/Phoenix</value>
-        <value>America/Los_Angeles</value>
-        <value>America/Anchorage</value>
-        <value>US/Hawaii</value>        
-    </util:list>
+	<util:list id="timeZones">
+		<value>Europe/London</value>
+		<value>Etc/GMT+0</value>
+		<value>Etc/GMT+1</value>
+		<value>Etc/GMT+10</value>
+		<value>Etc/GMT+11</value>
+		<value>Etc/GMT+12</value>
+		<value>Etc/GMT+2</value>
+		<value>Etc/GMT+3</value>
+		<value>Etc/GMT+4</value>
+		<value>Etc/GMT+5</value>
+		<value>Etc/GMT+6</value>
+		<value>Etc/GMT+7</value>
+		<value>Etc/GMT+8</value>
+		<value>Etc/GMT+9</value>
+		<value>Etc/GMT-0</value>
+		<value>Etc/GMT-1</value>
+		<value>Etc/GMT-10</value>
+		<value>Etc/GMT-11</value>
+		<value>Etc/GMT-12</value>
+		<value>Etc/GMT-13</value>
+		<value>Etc/GMT-14</value>
+		<value>Etc/GMT-2</value>
+		<value>Etc/GMT-3</value>
+		<value>Etc/GMT-4</value>
+		<value>Etc/GMT-5</value>
+		<value>Etc/GMT-6</value>
+		<value>Etc/GMT-7</value>
+		<value>Etc/GMT-8</value>
+		<value>Etc/GMT-9</value>
+		<value>America/New_York</value>
+		<value>America/Chicago</value>
+		<value>America/Denver</value>
+		<value>America/Phoenix</value>
+		<value>America/Los_Angeles</value>
+		<value>America/Anchorage</value>
+		<value>America/Hawaii</value>
+	</util:list>
     
     
     <!--
@@ -120,7 +148,7 @@
      | src/main/resources/com/microsoft/exchange/Service.wsdl and uncomment the
      | reference to the ExchangeInitializationService bean in calendar.xml. 
      +-->
-    <!--bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
             <list>
                 <value>com.microsoft.exchange.messages</value>
@@ -137,17 +165,6 @@
             <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
         </constructor-arg>
     </bean>
-    <!- The connection is attempted 5 times prior to stopping
-        so the actual time before failure will be 5 times p:connectionTimeout 
-        Suggested way of testing Connection Timeout is by hitting a
-        domain with a port that is firewalled:
-        ie. http://www.google.com:81
-        
-        Suggested way of testing Socket Timeout(p:readTimeout) is by using a tool locally to connect
-        but not respond.  Example tool: bane
-        http://blog.danielwellman.com/2010/09/introducing-bane-a-test-harness-for-server-connections.html
-        usage: $bane 10010 NeverRespond
-        ie http://localhost:10010 ->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
         p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
         p:maxTotalConnections="200">
@@ -163,12 +180,14 @@
         p:titleKey="exchange.ws.integration" 
         p:descriptionKey="exchange.ws.integration"
         p:emailAttribute="mail"
-        p:requestServerVersion="${exchangeWs.requestServerVersion}">
-        <property name="cacheKeyGenerator">
-            <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
-                  p:includePeriod="true"/>
-        </property>
-    </bean-->
+        p:requestServerVersion="${exchangeWs.requestServerVersion}"
+        p:localDomainName="${localdomainname}">
+        <property name="cacheKeyGenerator"> 
+            <bean 
+			class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl" 
+                   p:includePeriod="true"/> 
+         </property> 
+    </bean>
 
     <!-- 
      | CalDAV adapter for calendars available via the CalDAV protocol.

@@ -21,62 +21,34 @@ package org.jasig.portlet.calendar.adapter.exchange;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.portlet.PortletRequest;
+import javax.portlet.ReadOnlyException;
 
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.http.auth.NTCredentials;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.portlet.MockPortletPreferences;
 import org.springframework.mock.web.portlet.MockPortletRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 public class ExchangeCredentialsInitializationServiceTest {
 
     PortletRequest request;
     ExchangeCredentialsInitializationService service;
     
-    @Before
-    public void setUp() {
-        Map<String,String> userInfo = new HashMap<String,String>();
-        userInfo.put("username", "user");
-        userInfo.put("pass", "pass");
-
+     @Before
+    public void setUp() throws ReadOnlyException {
         request = new MockPortletRequest();
-        request.setAttribute(PortletRequest.USER_INFO, userInfo);
+        MockPortletPreferences mockPreferences = new MockPortletPreferences();
+        mockPreferences.setValue("wsUser", "blah@ed.ac.uk");
+        mockPreferences.setValue("wsPassword", "rand");
+        ((MockPortletRequest)request).setPreferences(mockPreferences);
         service = new ExchangeCredentialsInitializationService();
-        service.setPasswordAttribute("pass");
-        service.setUsernameAttribute("username");
     }
     
     @Test
     public void testInitialize() {
         service.initialize(request);
-        
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final NTCredentials credentials = (NTCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
-        assertEquals("user", credentials.getUserName());
-        assertEquals("pass", credentials.getPassword());
-    }
-
-    
-    @Test
-    public void testWithExistingRequestInitialize() {
-        final RequestAttributes requestAttributes = new PortletRequestAttributes(request);
-        requestAttributes.setAttribute("testAttr", "testVal", RequestAttributes.SCOPE_SESSION);
-        RequestContextHolder.setRequestAttributes(requestAttributes);
-        
-        service.initialize(request);
-        
-        final RequestAttributes newRequestAttributes = RequestContextHolder.getRequestAttributes();
-        final NTCredentials credentials = (NTCredentials) newRequestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
-        assertEquals("user", credentials.getUserName());
-        assertEquals("pass", credentials.getPassword());
-        assertEquals("testVal", newRequestAttributes.getAttribute("testAttr", RequestAttributes.SCOPE_SESSION));
+        assertEquals("blah@ed.ac.uk", ExchangeCredentialsInitializationService.credentials.getUserName());
+        assertEquals("rand", ExchangeCredentialsInitializationService.credentials.getPassword());
     }
 
 }

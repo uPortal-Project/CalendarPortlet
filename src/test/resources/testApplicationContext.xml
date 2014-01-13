@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+<!-- 	<import resource="classpath:applicationContext.xml" /> -->
+	
+	<import resource="file:src/main/webapp/WEB-INF/context/applicationContext.xml" />
+	<import resource="file:src/main/webapp/WEB-INF/context/portlet/calendar.xml" />
+	<import resource="file:src/main/webapp/WEB-INF/context/calendarContext.xml" />
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		lazy-init="false">
+		<property name="locations">
+			<list>
+				<value>classpath:datasource.properties</value>
+				<value>classpath:configuration.properties</value>
+                <value>classpath:application.test.properties</value>
+			</list>
+		</property>
+	</bean>
+	<import resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml" />
+	<!-- <import -->
+	<!-- resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml" 
+		/> -->
+	<bean id="xmlviewresolver" class="org.jasig.portlet.calendar.util.MockViewResolver" /><!-- 
+		overwriting the real bean -->
+	<bean id="CacheExpiresFilter"
+		class="org.jasig.portlet.calendar.mvc.AggregationAwareFilterBean">
+
+	</bean>
+</beans>
