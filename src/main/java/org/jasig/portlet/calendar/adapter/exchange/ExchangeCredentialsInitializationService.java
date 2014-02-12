@@ -21,28 +21,39 @@ package org.jasig.portlet.calendar.adapter.exchange;
 
 import java.util.Map;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jasig.portlet.calendar.service.IInitializationService;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
- * ExchangeCredentialsInitializationService creates a Credentials object from the 
- * user's login id and cached password and saves it to a ThreadLocal for
- * later use.
+ * ExchangeCredentialsInitializationService creates a Credentials object from the user's login id and
+ * cached password and saves it to a ThreadLocal for later use.
+ * This class was enhanced to allow for an institution to have an exchange adapter connected to an on-premise
+ * Exchange server (username is simple username, ntlm domain required) and another exchange adapter connected to
+ * Office365 (username is email address, no ntlm domain) with the behavior determined by a combination of
+ * portlet preferences and bean configuration.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
 public class ExchangeCredentialsInitializationService implements
         IInitializationService {
+    public final String PREFS_NTDOMAIN = "exchangeNtlmDomain";
+    public final String PREFS_EMAIL_ADDRESS_SUFFIX_OVERRIDE = "exchangeEmailAddressSuffixOverride";
 
     private String usernameAttribute = "user.login.id";
-    
+    private String passwordAttribute = "password";
+    private String mailAttribute = "mail";
+    private String ntlmDomain = null;
+
     /**
      * Set the name of the user attribute to be used for retrieving the Exchange
      * authentication username from the portlet UserInfo map. 
@@ -52,8 +63,6 @@ public class ExchangeCredentialsInitializationService implements
     public void setUsernameAttribute(String usernameAttribute) {
         this.usernameAttribute = usernameAttribute;
     }
-    
-    private String passwordAttribute = "password";
     
     /**
      * Set the name of the user attribute to be used for retrieving the Exchange
@@ -65,8 +74,15 @@ public class ExchangeCredentialsInitializationService implements
         this.passwordAttribute = passwordAttribute;
     }
 
-    private String ntlmDomain = null;
-    
+    /**
+     * Set the name of the user attribute used for retrieving the user's email address.  This is used for
+     * Office365 integration.
+     * @param mailAttribute
+     */
+    public void setMailAttribute(String mailAttribute) {
+        this.mailAttribute = mailAttribute;
+    }
+
     /**
      * Set the domain () of this machine for NTLM authentication.
      * 
@@ -84,9 +100,23 @@ public class ExchangeCredentialsInitializationService implements
         String username = userInfo.get(usernameAttribute);
         String password = userInfo.get(passwordAttribute);
 
-        // construct a credentials object from the username and password
-        Credentials credentials = new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
-        
+        // Get the NTLM Domain from portlet preferences if specified, else from the configuration properties.
+        PortletPreferences prefs = request.getPreferences();
+        String ntlmDomain = prefs.getValue(PREFS_NTDOMAIN, "");
+        ntlmDomain = StringUtils.isBlank(ntlmDomain) ? this.ntlmDomain : ntlmDomain;
+
+        // Construct a credentials object from the username and password.
+        // If the domain is specified, we are authenticating to a domain so we need to return NT credentials
+        Object credentials;
+        if (StringUtils.isNotBlank(ntlmDomain)) {
+            credentials = createNTCredentials(ntlmDomain, username, password);
+        } else {
+            String emailAddress = userInfo.get(this.mailAttribute);
+            String emailAddressSuffix = prefs.getValue(PREFS_EMAIL_ADDRESS_SUFFIX_OVERRIDE, "");
+            String computedUsername = determineUsername(username, emailAddress, emailAddressSuffix);
+            credentials= new UsernamePasswordCredentials(computedUsername, password);
+        }
+
         // cache the credentials object to this thread
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
@@ -96,6 +126,24 @@ public class ExchangeCredentialsInitializationService implements
         requestAttributes.setAttribute(
                 ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE,
                 credentials, RequestAttributes.SCOPE_SESSION);
+    }
+
+    protected Credentials createNTCredentials(String ntlmDomain, String username, String password) {
+        // For Exchange domain integration, only the username is applicable, not the email address.  If present
+        // remove the @domain part of an email address in case the user or admin specified an email address
+        // and a password in the user config UI.
+        int index = username.indexOf("@");
+        username = index > 0 ? username.substring(0, index) : username;
+
+        // construct a credentials object from the username and password
+        return new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
+    }
+
+    protected String determineUsername(String loginId, String emailAddress, String emailAddressSuffix) {
+        if (StringUtils.isNotBlank(emailAddressSuffix)) {
+            return loginId + "@" + emailAddressSuffix;
+        }
+        return emailAddress;
     }
 
 }

@@ -118,7 +118,11 @@
                 <artifactId>commons-collections</artifactId>
                 <version>3.2</version>
             </dependency>
-            <!-- Used w/ Exchange WS -->
+            <!-- Used w/ Exchange WS
+             | NOTE:  Do not upgrade to httpclient 4.2.5. It errors to on premise Exchange server with
+             | exchange.NtlmAuthHttpClient.[] - Malformed challenge: Invalid scheme identifier: Negotiate
+             | mvc.CalendarHelper.[] - Unknown Error org.springframework.ws.client.WebServiceTransportException: Unauthorized [401]
+             -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>

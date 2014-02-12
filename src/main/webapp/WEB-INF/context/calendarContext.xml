@@ -20,12 +20,12 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
     http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
@@ -39,73 +39,73 @@
         <value>America/Phoenix</value>
         <value>America/Los_Angeles</value>
         <value>America/Anchorage</value>
-        <value>US/Hawaii</value>        
+        <value>US/Hawaii</value>
     </util:list>
-    
-    
+
+
     <!--
      | CALENDAR ADAPTER REGISTRATIONS 
      +-->
-    
+
     <!-- Aliases for depricated bean calendar names -->
     <alias name="httpRssAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.RssCalendarAdapter"/>
     <alias name="urlTemplateHttpIcalAdapter" alias="edu.yale.its.tp.portlets.calendar.adapter.HttpICalAdapter"/>
     <alias name="urlTemplateHttpIcalAdapter" alias="httpIcalAdapter"/>
-    
-    <bean id="templateUrlCreator" class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/> 
+
+    <bean id="templateUrlCreator" class="org.jasig.portlet.calendar.url.StringTemplateUrlCreatorImpl"/>
     <bean id="urlTemplateHttpIcalAdapter"
-        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache" p:urlCreator-ref="templateUrlCreator"
-        p:titleKey="unauthenticated.http.ical.feed" 
-        p:descriptionKey="remote.ical.feed.available.over.http.or.https">
+          class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+          p:cache-ref="calendarCache" p:urlCreator-ref="templateUrlCreator"
+          p:titleKey="unauthenticated.http.ical.feed"
+          p:descriptionKey="remote.ical.feed.available.over.http.or.https">
         <property name="parameters">
             <list>
                 <bean class="org.jasig.portlet.form.parameter.Parameter"
-                        p:name="url" p:labelKey="feed.url">
+                      p:name="url" p:labelKey="feed.url">
                     <property name="input">
                         <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
-                            p:display="TEXT" p:defaultValue="http://"/>
+                              p:display="TEXT" p:defaultValue="http://"/>
                     </property>
                 </bean>
             </list>
         </property>
     </bean>
-    
+
     <!-- Simple un-authenticated adapter for RSS-formatted calendars available via http(s) -->
-    <bean id="httpRssAdapter" 
-        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache" p:cacheKeyPrefix="rss"
-        p:titleKey="unauthenticated.http.rss.feed" 
-        p:descriptionKey="remote.rss.feed.available.over.http.or.https">
+    <bean id="httpRssAdapter"
+          class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+          p:cache-ref="calendarCache" p:cacheKeyPrefix="rss"
+          p:titleKey="unauthenticated.http.rss.feed"
+          p:descriptionKey="remote.rss.feed.available.over.http.or.https">
         <property name="contentProcessor">
             <bean class="org.jasig.portlet.calendar.processor.RssContentProcessorImpl"/>
         </property>
         <property name="parameters">
             <list>
                 <bean class="org.jasig.portlet.form.parameter.Parameter"
-                        p:name="url" p:labelKey="feed.url">
+                      p:name="url" p:labelKey="feed.url">
                     <property name="input">
                         <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
-                            p:display="TEXT" p:defaultValue="http://"/>
+                              p:display="TEXT" p:defaultValue="http://"/>
                     </property>
                 </bean>
             </list>
         </property>
     </bean>
-    
-    <!-- Simple adapter for iCal files available as files on the server --> 
-    <bean id="fileIcalAdapter" 
-        class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
-        p:cache-ref="calendarCache"
-        p:titleKey="unauthenticated.file.ical.feed" 
-        p:descriptionKey="local.ical.feed.available.on.filesystem">
+
+    <!-- Simple adapter for iCal files available as files on the server -->
+    <bean id="fileIcalAdapter"
+          class="org.jasig.portlet.calendar.adapter.ConfigurableFileCalendarAdapter"
+          p:cache-ref="calendarCache"
+          p:titleKey="unauthenticated.file.ical.feed"
+          p:descriptionKey="local.ical.feed.available.on.filesystem">
         <property name="parameters">
             <list>
                 <bean class="org.jasig.portlet.form.parameter.Parameter"
-                        p:name="file" p:labelKey="file.path">
+                      p:name="file" p:labelKey="file.path">
                     <property name="input">
                         <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
-                            p:display="TEXT" p:defaultValue=""/>
+                              p:display="TEXT" p:defaultValue=""/>
                     </property>
                 </bean>
             </list>
@@ -129,10 +129,12 @@
         </property>
     </bean>
     <bean id="destinationProvider" class="org.springframework.ws.client.support.destination.Wsdl11DestinationProvider"
-        p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
+          p:wsdl="classpath:/com/microsoft/exchange/Services.wsdl"/>
     <bean id="credentialsProvider" class="org.jasig.portlet.calendar.adapter.exchange.ExchangeWsCredentialsProvider"/>
+    <bean id="redirectStrategy" class="org.jasig.portlet.calendar.adapter.exchange.AutodiscoverRedirectStrategy"/>
     <bean id="httpClient" class="org.jasig.portlet.calendar.adapter.exchange.NtlmAuthHttpClient"
-        p:credentialsProvider-ref="credentialsProvider">
+          p:credentialsProvider-ref="credentialsProvider"
+          p:redirectStrategy-ref="redirectStrategy">
         <constructor-arg>
             <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
         </constructor-arg>
@@ -149,21 +151,21 @@
         usage: $bane 10010 NeverRespond
         ie http://localhost:10010 ->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
-        p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
-        p:maxTotalConnections="200">
+          p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
+          p:maxTotalConnections="200">
     </bean>
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"
-        p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
-        p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller">
+          p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
+          p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller">
         <qualifier value="exchange" />
-    </bean>            
-    <bean id="exchangeAdapter" 
-        class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
-        p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
-        p:titleKey="exchange.ws.integration" 
-        p:descriptionKey="exchange.ws.integration"
-        p:emailAttribute="mail"
-        p:requestServerVersion="${exchangeWs.requestServerVersion}">
+    </bean>
+    <bean id="exchangeAdapter"
+          class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
+          p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
+          p:titleKey="exchange.ws.integration"
+          p:descriptionKey="exchange.ws.integration"
+          p:emailAttribute="mail"
+          p:requestServerVersion="${exchangeWs.requestServerVersion}">
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
                   p:includePeriod="true"/>
@@ -253,7 +255,7 @@
      | calendars.  You will also need to uncomment the reference to the 
      | CachedCredentialsInitializationService bean in calendar.xml.
      +-->
-    
+
     <!-- Sample basic authentication HttpClient iCal feed adapter -->
     <!--
     <bean id="basicAuthHttpIcalAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
@@ -266,8 +268,8 @@
         </property>
     </bean>
     -->
-    
-    
+
+
     <!-- 
      | CAS PROXY AUTHENTICATION
      |
@@ -275,15 +277,15 @@
      | need to uncomment the reference to the CasProxyInitializationService bean
      | in calendar.xml.
      +-->
-    
+
     <!-- Sample CAS Proxy authenticated adapter for iCal-formatted calendars over https -->
-    <bean id="casProxyHttpIcalAdapter" 
-        class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
-        p:cache-ref="calendarCache" p:titleKey="proxycas.ical.feed" 
-        p:descriptionKey="remote.ical.feed.available.over.http.or.https">
+    <bean id="casProxyHttpIcalAdapter"
+          class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter"
+          p:cache-ref="calendarCache" p:titleKey="proxycas.ical.feed"
+          p:descriptionKey="remote.ical.feed.available.over.http.or.https">
         <property name="urlCreator">
             <bean class="org.jasig.portlet.calendar.url.CasProxyUrlCreatorImpl"
-                p:proxyTicketService-ref="casTicketService"/>
+                  p:proxyTicketService-ref="casTicketService"/>
         </property>
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.RequestAttributeCacheKeyGeneratorImpl"/>
@@ -291,23 +293,23 @@
         <property name="parameters">
             <list>
                 <bean class="org.jasig.portlet.form.parameter.Parameter"
-                        p:name="url" p:labelKey="feed.url">
+                      p:name="url" p:labelKey="feed.url">
                     <property name="input">
                         <bean class="org.jasig.portlet.form.parameter.SingleTextParameterInput"
-                            p:display="TEXT" p:defaultValue="http://"/>
+                              p:display="TEXT" p:defaultValue="http://"/>
                     </property>
                 </bean>
             </list>
         </property>
-    </bean>    
-    
+    </bean>
+
     <!--
      | ADDITIONAL CALENDAR ADAPTER CONFIGURATIONS
      |   
      | You may register additional calendar adapter configurations or custom
      | implementations here. 
      +-->
-    
+
     <!-- Oracle calendar-key adapter -->
     <!--
     <bean id="calendarKeyAdapter" class="org.jasig.portlet.calendar.adapter.ConfigurableHttpCalendarAdapter">
