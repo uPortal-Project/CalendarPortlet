@@ -19,6 +19,17 @@
 
 package org.jasig.portlet.calendar.adapter;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.portlet.PortletRequest;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
@@ -37,16 +48,6 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.beans.factory.annotation.Required;
-
-import javax.portlet.PortletRequest;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
@@ -144,6 +145,9 @@ public class CalendarEventsDao {
                     log.error("Exception parsing event", e);
                 } catch (URISyntaxException e) {
                     log.error("Exception parsing event", e);
+                } catch (IllegalArgumentException e) {
+                    // todo fix the root problem. Just masking for the moment because no time to fix.
+                    log.error("Likely invalid event returned from exchangeAdapter; see CAP-159");
                 }
             }
             
