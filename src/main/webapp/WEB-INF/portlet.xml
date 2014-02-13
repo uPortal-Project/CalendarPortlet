@@ -70,6 +70,16 @@
                 <name>portalJsNamespace</name>
                 <value>up</value>
             </preference>
+
+            <!-- For exchange integration to override the NTLM domain from configuration.properties.  Typically
+                 used when you have both Office365 integration (can't have an NTLM domain) and on-premise
+                 Exchange integration (requires NTLM domain).  Empty string means no impact.
+            -->
+            <preference>
+                <name>exchangeNtlmDomain</name>
+                <value></value>
+            </preference>
+
         </portlet-preferences>
         
         <!--

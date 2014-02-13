@@ -44,10 +44,8 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public class ExchangeCredentialsInitializationService implements
-        IInitializationService {
-    public final String PREFS_NTDOMAIN = "exchangeNtlmDomain";
-    public final String PREFS_EMAIL_ADDRESS_SUFFIX_OVERRIDE = "exchangeEmailAddressSuffixOverride";
+public class ExchangeCredentialsInitializationService implements IInitializationService {
+    public final static String PREFS_NTDOMAIN = "exchangeNtlmDomain";
 
     private String usernameAttribute = "user.login.id";
     private String passwordAttribute = "password";
@@ -112,9 +110,7 @@ public class ExchangeCredentialsInitializationService implements
             credentials = createNTCredentials(ntlmDomain, username, password);
         } else {
             String emailAddress = userInfo.get(this.mailAttribute);
-            String emailAddressSuffix = prefs.getValue(PREFS_EMAIL_ADDRESS_SUFFIX_OVERRIDE, "");
-            String computedUsername = determineUsername(username, emailAddress, emailAddressSuffix);
-            credentials= new UsernamePasswordCredentials(computedUsername, password);
+            credentials= new UsernamePasswordCredentials(emailAddress, password);
         }
 
         // cache the credentials object to this thread
@@ -137,13 +133,6 @@ public class ExchangeCredentialsInitializationService implements
 
         // construct a credentials object from the username and password
         return new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
-    }
-
-    protected String determineUsername(String loginId, String emailAddress, String emailAddressSuffix) {
-        if (StringUtils.isNotBlank(emailAddressSuffix)) {
-            return loginId + "@" + emailAddressSuffix;
-        }
-        return emailAddress;
     }
 
 }

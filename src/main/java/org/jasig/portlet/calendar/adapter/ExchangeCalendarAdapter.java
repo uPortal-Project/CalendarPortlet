@@ -34,6 +34,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
+import com.microsoft.exchange.messages.FreeBusyResponseType;
+import com.microsoft.exchange.messages.GetUserAvailabilityRequest;
+import com.microsoft.exchange.messages.GetUserAvailabilityResponse;
+import com.microsoft.exchange.types.ArrayOfCalendarEvent;
+import com.microsoft.exchange.types.ArrayOfMailboxData;
+import com.microsoft.exchange.types.DayOfWeekType;
+import com.microsoft.exchange.types.Duration;
+import com.microsoft.exchange.types.FreeBusyViewOptions;
+import com.microsoft.exchange.types.Mailbox;
+import com.microsoft.exchange.types.MailboxData;
+import com.microsoft.exchange.types.MeetingAttendeeType;
+import com.microsoft.exchange.types.SerializableTimeZoneTime;
+import com.microsoft.exchange.types.TimeZone;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
@@ -44,7 +57,6 @@ import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,20 +71,6 @@ import org.springframework.ws.client.core.WebServiceOperations;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
-
-import com.microsoft.exchange.messages.FreeBusyResponseType;
-import com.microsoft.exchange.messages.GetUserAvailabilityRequest;
-import com.microsoft.exchange.messages.GetUserAvailabilityResponse;
-import com.microsoft.exchange.types.ArrayOfCalendarEvent;
-import com.microsoft.exchange.types.ArrayOfMailboxData;
-import com.microsoft.exchange.types.DayOfWeekType;
-import com.microsoft.exchange.types.Duration;
-import com.microsoft.exchange.types.FreeBusyViewOptions;
-import com.microsoft.exchange.types.Mailbox;
-import com.microsoft.exchange.types.MailboxData;
-import com.microsoft.exchange.types.MeetingAttendeeType;
-import com.microsoft.exchange.types.SerializableTimeZoneTime;
-import com.microsoft.exchange.types.TimeZone;
 
 /**
  * Queries Exchange Web Services API for calendar events.
@@ -117,7 +115,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         this.emailAttribute = emailAttribute;
     }
     
-    private String requestServerVersion = "Exchange2010_SP2";  // default
+    private String requestServerVersion = "Exchange2007_SP1";  // default
     
     public void setRequestServerVersion(final String requestServerVersion) {
         this.requestServerVersion = requestServerVersion;
