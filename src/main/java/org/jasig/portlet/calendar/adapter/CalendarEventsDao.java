@@ -147,7 +147,7 @@ public class CalendarEventsDao {
                     log.error("Exception parsing event", e);
                 } catch (IllegalArgumentException e) {
                     // todo fix the root problem. Just masking for the moment because no time to fix.
-                    log.error("Likely invalid event returned from exchangeAdapter; see CAP-159");
+                    log.info("Likely invalid event returned from exchangeAdapter; see CAP-159");
                 }
             }
             
