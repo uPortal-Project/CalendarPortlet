@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.jasig.portlet.calendar.service.IInitializationService;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -97,6 +98,10 @@ public class ExchangeCredentialsInitializationService implements IInitialization
         Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
         String username = userInfo.get(usernameAttribute);
         String password = userInfo.get(passwordAttribute);
+        if (password == null) {
+            throw new CalendarException("Required user attribute password is null. Insure user-attribute password"
+                    + " is enabled in portlet.xml and CAS ClearPass is properly configured");
+        }
 
         // Get the NTLM Domain from portlet preferences if specified, else from the configuration properties.
         PortletPreferences prefs = request.getPreferences();
@@ -110,6 +115,10 @@ public class ExchangeCredentialsInitializationService implements IInitialization
             credentials = createNTCredentials(ntlmDomain, username, password);
         } else {
             String emailAddress = userInfo.get(this.mailAttribute);
+            if (emailAddress == null) {
+                throw new CalendarException("Required user attribute email address is null. Insure user-attribute mail"
+                        + " is enabled in portlet.xml and populated via LDAP or other approach");
+            }
             credentials= new UsernamePasswordCredentials(emailAddress, password);
         }
 
@@ -128,6 +137,10 @@ public class ExchangeCredentialsInitializationService implements IInitialization
         // For Exchange domain integration, only the username is applicable, not the email address.  If present
         // remove the @domain part of an email address in case the user or admin specified an email address
         // and a password in the user config UI.
+        if (username == null) {
+            throw new CalendarException("Required user attribute username is null. Insure user-attribute user.login.id"
+                    + " is enabled in portlet.xml");
+        }
         int index = username.indexOf("@");
         username = index > 0 ? username.substring(0, index) : username;
 
