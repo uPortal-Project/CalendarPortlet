@@ -76,80 +76,80 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-    @ActionMapping(params = "action=showDatePicker")
-    public void toggleShowDatePicker(@RequestParam(value = "show") String show,
-                                     ActionRequest request,
-                                     ActionResponse response) {
-        try {
+	@ActionMapping(params = "action=showDatePicker")
+	public void toggleShowDatePicker(@RequestParam(value = "show") String show,
+									ActionRequest request,
+									ActionResponse response) {
+		try {
 
-            request.getPreferences().setValue("showDatePicker",show);
-            request.getPreferences().store();
-        } catch(Exception exception) {
-            log.info("Exception encountered saving preference: PREFERENCE=showDatePicker, EXCEPTION="+exception);
-        }
-    }
+			request.getPreferences().setValue("showDatePicker",show);
+			request.getPreferences().store();
+		} catch(Exception exception) {
+			log.info("Exception encountered saving preference: PREFERENCE=showDatePicker, EXCEPTION="+exception);
+		}
+	}
 
 	@ResourceMapping
 	public ModelAndView getEventList(ResourceRequest request,
 			ResourceResponse response) throws Exception {
-	    
-        // Pull parameters out of the resourceId
-        final String resourceId = request.getResourceID();
-        final String[] resourceIdTokens = resourceId.split("-");        
-        final String startDate = resourceIdTokens[0];
-        final int days = Integer.parseInt(resourceIdTokens[1]);
-        final boolean refresh = resourceIdTokens.length > 2
-                ? Boolean.valueOf(resourceIdTokens[2])
-                : false;
 
-        final long startTime = System.currentTimeMillis();
-        final List<String> errors = new ArrayList<String>();
+		// Pull parameters out of the resourceId
+		final String resourceId = request.getResourceID();
+		final String[] resourceIdTokens = resourceId.split("-");
+		final String startDate = resourceIdTokens[0];
+		final int days = Integer.parseInt(resourceIdTokens[1]);
+		final boolean refresh = resourceIdTokens.length > 2
+				? Boolean.valueOf(resourceIdTokens[2])
+				: false;
+
+		final long startTime = System.currentTimeMillis();
+		final List<String> errors = new ArrayList<String>();
 		final Map<String, Object> model = new HashMap<String, Object>();
-        final PortletSession session = request.getPortletSession();
-        // get the user's configured time zone
-        final String timezone = (String) session.getAttribute("timezone");
-        final DateTimeZone tz = DateTimeZone.forID(timezone);
+		final PortletSession session = request.getPortletSession();
+		// get the user's configured time zone
+		final String timezone = (String) session.getAttribute("timezone");
+		final DateTimeZone tz = DateTimeZone.forID(timezone);
 
-        // get the period for this request
-        final Interval interval = DateUtil.getInterval(startDate, days,request);
+		// get the period for this request
+		final Interval interval = DateUtil.getInterval(startDate, days,request);
 
-        final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors,interval,request);
+		final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors,interval,request);
 
 		int index = 0;
 		final Set<JsonCalendarEventWrapper> events = new TreeSet<JsonCalendarEventWrapper>();
-        for(CalendarDisplayEvent e : calendarEvents) {
-            events.add(new JsonCalendarEventWrapper(e,index++));
-        }
+		for(CalendarDisplayEvent e : calendarEvents) {
+			events.add(new JsonCalendarEventWrapper(e,index++));
+		}
 
 		/*
-		 * Transform the event set into a map keyed by day.  This code is 
+		 * Transform the event set into a map keyed by day.  This code is
 		 * designed to separate events by day according to the user's configured
 		 * time zone.  This ensures that we keep complicated time-zone handling
 		 * logic out of the JavaScript.
-		 * 
-		 * Events are keyed by a string uniquely representing the date that is 
+		 *
+		 * Events are keyed by a string uniquely representing the date that is
 		 * still orderable.  So that we can display a more user-friendly date
 		 * name, we also create a map representing date display names for each
 		 * date keyed in this response.
 		 */
 
-		// define a DateFormat object that uniquely identifies dates in a way 
-		// that can easily be ordered 
-        DateTimeFormatter orderableDf = new DateTimeFormatterBuilder()
-                .appendYear(4, 4).appendLiteral("-").appendMonthOfYear(2)
-                .appendLiteral("-").appendDayOfMonth(2).toFormatter()
-                .withZone(tz);
+		// define a DateFormat object that uniquely identifies dates in a way
+		// that can easily be ordered
+		DateTimeFormatter orderableDf = new DateTimeFormatterBuilder()
+				.appendYear(4, 4).appendLiteral("-").appendMonthOfYear(2)
+				.appendLiteral("-").appendDayOfMonth(2).toFormatter()
+				.withZone(tz);
 
-        // define a DateFormat object that can produce user-facing display 
-        // names for dates
-        DateTimeFormatter displayDf = new DateTimeFormatterBuilder()
-                .appendDayOfWeekText().appendLiteral(" ")
-                .appendMonthOfYearText().appendLiteral(" ").appendDayOfMonth(1)
-                .toFormatter().withZone(tz);
+		// define a DateFormat object that can produce user-facing display
+		// names for dates
+		DateTimeFormatter displayDf = new DateTimeFormatterBuilder()
+				.appendDayOfWeekText().appendLiteral(" ")
+				.appendMonthOfYearText().appendLiteral(" ").appendDayOfMonth(1)
+				.toFormatter().withZone(tz);
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface
-        DateMidnight now = new DateMidnight(tz);
+		DateMidnight now = new DateMidnight(tz);
 		String today = orderableDf.print(now);
 		String tomorrow = orderableDf.print(now.plusDays(1));
 
@@ -157,34 +157,34 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		Map<String, List<JsonCalendarEventWrapper>> eventsByDay = new LinkedHashMap<String, List<JsonCalendarEventWrapper>>();
 		for (JsonCalendarEventWrapper event : events) {
 			String day = orderableDf.print(event.getEvent().getDayStart());
-			
+
 			// if we haven't seen this day before, add entries to the event
 			// and date name maps
-	    	if (!eventsByDay.containsKey(day)) {
-	    		
-	    		// add a list for this day to the eventsByDay map
-	    		eventsByDay.put(day, new ArrayList<JsonCalendarEventWrapper>());
-	    		
-	    		// Add an appropriate day name for this date to the date names
-	    		// map.  If the day appears to be today or tomorrow display a 
-	    		// special string value.  Otherwise, use the user-facing date
-	    		// format object
-	    		if (today.equals(day)) {
-		    		dateDisplayNames.put(day, "Today");
-	    		} else if (tomorrow.equals(day)) {
-		    		dateDisplayNames.put(day, "Tomorrow");
-	    		} else {
-		    		dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
-	    		}
-	    	}
-	    	
-	    	// add the event to the by-day map
-	    	eventsByDay.get(day).add(event);
+			if (!eventsByDay.containsKey(day)) {
+
+				// add a list for this day to the eventsByDay map
+				eventsByDay.put(day, new ArrayList<JsonCalendarEventWrapper>());
+
+				// Add an appropriate day name for this date to the date names
+				// map.  If the day appears to be today or tomorrow display a
+				// special string value.  Otherwise, use the user-facing date
+				// format object
+				if (today.equals(day)) {
+					dateDisplayNames.put(day, this.applicationContext.getMessage("today", null, request.getLocale()));
+				} else if (tomorrow.equals(day)) {
+					dateDisplayNames.put(day, this.applicationContext.getMessage("tomorrow", null, request.getLocale()));
+				} else {
+					dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
+				}
+			}
+
+			// add the event to the by-day map
+			eventsByDay.get(day).add(event);
 		}
-		
+
 		if (log.isTraceEnabled()) {
-	        log.trace("Prepared the following eventsByDay collection for user '" 
-	                            + request.getRemoteUser() + "':" + eventsByDay);
+			log.trace("Prepared the following eventsByDay collection for user '"
+								+ request.getRemoteUser() + "':" + eventsByDay);
 		}
 
 		model.put("dateMap", eventsByDay);
@@ -197,93 +197,93 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		// if the request ETag matches the hash for this response, send back
 		// an empty response indicating that cached content should be used
-        if (!refresh && request.getETag() != null && etag.equals(requestEtag)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Sending an empty response (due to matched ETag and " 
-                            + "refresh=false) for user '" 
-                            + request.getRemoteUser() + "'");
-            }
-            response.getCacheControl().setExpirationTime(1);
-            response.getCacheControl().setETag(etag);
-            response.getCacheControl().setUseCachedContent(true);
-            response.setProperty(ResourceResponse.HTTP_STATUS_CODE, Integer.toString(HttpServletResponse.SC_NOT_MODIFIED));
-            // returning null appears to cause the response to be committed
-            // before returning to the portal, so just use an empty view
-            return new ModelAndView("empty", Collections.<String,String>emptyMap());
-        }
-        
-        if (log.isTraceEnabled()) {
-            log.trace("Sending a full response for user '" + request.getRemoteUser() 
-                                                    + "' and refresh=" + refresh);
-        }
+		if (!refresh && request.getETag() != null && etag.equals(requestEtag)) {
+			if (log.isTraceEnabled()) {
+				log.trace("Sending an empty response (due to matched ETag and "
+							+ "refresh=false) for user '"
+							+ request.getRemoteUser() + "'");
+			}
+			response.getCacheControl().setExpirationTime(1);
+			response.getCacheControl().setETag(etag);
+			response.getCacheControl().setUseCachedContent(true);
+			response.setProperty(ResourceResponse.HTTP_STATUS_CODE, Integer.toString(HttpServletResponse.SC_NOT_MODIFIED));
+			// returning null appears to cause the response to be committed
+			// before returning to the portal, so just use an empty view
+			return new ModelAndView("empty", Collections.<String,String>emptyMap());
+		}
 
-        // create new content with new validation tag
-        response.getCacheControl().setETag(etag);
-        response.getCacheControl().setExpirationTime(1);
-        
-        long overallTime = System.currentTimeMillis() - startTime;
-        log.debug("AjaxCalendarController took " + overallTime + " ms to produce JSON model");
+		if (log.isTraceEnabled()) {
+			log.trace("Sending a full response for user '" + request.getRemoteUser()
+													+ "' and refresh=" + refresh);
+		}
 
-        return new ModelAndView("json", model);
+		// create new content with new validation tag
+		response.getCacheControl().setETag(etag);
+		response.getCacheControl().setExpirationTime(1);
+
+		long overallTime = System.currentTimeMillis() - startTime;
+		log.debug("AjaxCalendarController took " + overallTime + " ms to produce JSON model");
+
+		return new ModelAndView("json", model);
 	}
-	
-    @ResourceMapping(value = "exportUserCalendar")
-    public String exportCalendar(ResourceRequest request,
-                                   ResourceResponse response, @RequestParam("configurationId") Long id) {
-        CalendarConfiguration calendarConfig = calendarStore.getCalendarConfiguration(id);
 
-        CalendarException exception = null;
-        try {
+	@ResourceMapping(value = "exportUserCalendar")
+	public String exportCalendar(ResourceRequest request,
+								ResourceResponse response, @RequestParam("configurationId") Long id) {
+		CalendarConfiguration calendarConfig = calendarStore.getCalendarConfiguration(id);
 
-            // get an instance of the adapter for this calendar
-            ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(calendarConfig
-                    .getCalendarDefinition().getClassName());
+		CalendarException exception = null;
+		try {
 
-            DateTime intervalStart = new DateTime().minusYears(1);
-            DateTime intervalEnd = new DateTime().plusYears(1);
-            Interval interval = new Interval(intervalStart, intervalEnd);
-            Calendar calendar = calendarEventsDao.getCalendar(adapter, calendarConfig, interval, request);
+			// get an instance of the adapter for this calendar
+			ICalendarAdapter adapter = (ICalendarAdapter) applicationContext.getBean(calendarConfig
+					.getCalendarDefinition().getClassName());
 
-            // Calendars should be fairly small, so no need to save file to disk or
-            // buffer to calculate size.
-            response.setContentType("text/calendar");
-            response.addProperty("Content-disposition", "attachment; filename=calendar.ics");
+			DateTime intervalStart = new DateTime().minusYears(1);
+			DateTime intervalEnd = new DateTime().plusYears(1);
+			Interval interval = new Interval(intervalStart, intervalEnd);
+			Calendar calendar = calendarEventsDao.getCalendar(adapter, calendarConfig, interval, request);
 
-            CalendarOutputter calendarOut = new CalendarOutputter();
-            calendarOut.output(calendar, response.getWriter());
-            response.flushBuffer();
-            return null;
+			// Calendars should be fairly small, so no need to save file to disk or
+			// buffer to calculate size.
+			response.setContentType("text/calendar");
+			response.addProperty("Content-disposition", "attachment; filename=calendar.ics");
 
-        } catch (NoSuchBeanDefinitionException ex) {
-            exception = new CalendarException("Calendar adapter class instance could not be found", ex);
-        } catch (Exception ex) {
-            exception = new CalendarException ("Error sending calendar "
-                    + calendarConfig.getCalendarDefinition().getName() + " to user for downloading", ex);
-        }
+			CalendarOutputter calendarOut = new CalendarOutputter();
+			calendarOut.output(calendar, response.getWriter());
+			response.flushBuffer();
+			return null;
 
-        // Allow container to handle exceptions and give HTTP error
-        throw exception;
-    }
+		} catch (NoSuchBeanDefinitionException ex) {
+			exception = new CalendarException("Calendar adapter class instance could not be found", ex);
+		} catch (Exception ex) {
+			exception = new CalendarException ("Error sending calendar "
+					+ calendarConfig.getCalendarDefinition().getName() + " to user for downloading", ex);
+		}
 
-    @Autowired(required = true)
-    private CalendarHelper helper;
+		// Allow container to handle exceptions and give HTTP error
+		throw exception;
+	}
 
-    @Autowired(required = true)
-    private CalendarEventsDao calendarEventsDao;
+	@Autowired(required = true)
+	private CalendarHelper helper;
 
-    @Autowired(required = true)
+	@Autowired(required = true)
+	private CalendarEventsDao calendarEventsDao;
+
+	@Autowired(required = true)
 	private ICalendarSetDao calendarSetDao;
 
 
-    private CalendarStore calendarStore;
+	private CalendarStore calendarStore;
 
-    @Required
-    @Resource(name="calendarStore")
-    public void setCalendarStore(CalendarStore calendarStore) {
-        this.calendarStore = calendarStore;
-    }
+	@Required
+	@Resource(name="calendarStore")
+	public void setCalendarStore(CalendarStore calendarStore) {
+		this.calendarStore = calendarStore;
+	}
 
-    private ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;
