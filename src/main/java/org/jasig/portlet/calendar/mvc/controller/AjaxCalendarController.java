@@ -135,17 +135,13 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
 		// define a DateFormat object that uniquely identifies dates in a way
 		// that can easily be ordered
-		DateTimeFormatter orderableDf = new DateTimeFormatterBuilder()
-				.appendYear(4, 4).appendLiteral("-").appendMonthOfYear(2)
-				.appendLiteral("-").appendDayOfMonth(2).toFormatter()
-				.withZone(tz);
+		DateTimeFormatter orderableDf = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter().withZone(tz);
 
 		// define a DateFormat object that can produce user-facing display
+		// as user-facing get it from i18N
+		final String displayPattern = this.applicationContext.getMessage("date.formatter.display", null, "EEE MMM d", request.getLocale());
 		// names for dates
-		DateTimeFormatter displayDf = new DateTimeFormatterBuilder()
-				.appendDayOfWeekText().appendLiteral(" ")
-				.appendMonthOfYearText().appendLiteral(" ").appendDayOfMonth(1)
-				.toFormatter().withZone(tz);
+		DateTimeFormatter displayDf = new DateTimeFormatterBuilder().appendPattern(displayPattern).toFormatter().withZone(tz);
 
 		// define "today" and "tomorrow" so we can display these specially in the
 		// user interface

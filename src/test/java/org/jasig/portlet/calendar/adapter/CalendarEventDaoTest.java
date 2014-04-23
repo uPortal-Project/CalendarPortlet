@@ -25,6 +25,7 @@ import static org.junit.Assert.assertSame;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.TimeZoneRegistry;
@@ -37,127 +38,149 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/testContext.xml")
 public class CalendarEventDaoTest {
-    
-    CalendarEventsDao eventDao = new CalendarEventsDao();
-    TimeZoneRegistry tzRegistry = new TimeZoneRegistryImpl();
-    
-    @Test
-    public void testGetTimeFormatter() {
-        DateTimeZone tz1 = DateTimeZone.forID("America/Los_Angeles");
-        DateTimeZone tz2 = DateTimeZone.forID("America/Chicago");
 
-        DateTimeFormatter timeFormatter1 = eventDao.getTimeFormatter(tz1);
-        DateTimeFormatter timeFormatter2 = eventDao.getTimeFormatter(tz2);
-        
-        assertNotNull(timeFormatter1);
-        assertNotNull(timeFormatter2);
-        
-        assertSame(timeFormatter1, eventDao.getTimeFormatter(tz1));
-        assertSame(timeFormatter2, eventDao.getTimeFormatter(tz2));
-    }
+	CalendarEventsDao eventDao;
+	TimeZoneRegistry tzRegistry = new TimeZoneRegistryImpl();
 
-    @Test
-    public void testGetDateFormatter() {
-        DateTimeZone tz1 = DateTimeZone.forID("America/Los_Angeles");
-        DateTimeZone tz2 = DateTimeZone.forID("America/Chicago");
+	@Autowired(required = true)
+	ApplicationContext context;
 
-        DateTimeFormatter dateFormatter1 = eventDao.getDateFormatter(tz1);
-        DateTimeFormatter dateFormatter2 = eventDao.getDateFormatter(tz2);
-        
-        assertNotNull(dateFormatter1);
-        assertNotNull(dateFormatter2);
-        
-        assertSame(dateFormatter1, eventDao.getDateFormatter(tz1));
-        assertSame(dateFormatter2, eventDao.getDateFormatter(tz2));
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
 
-    @Test
-    public void testGetDisplayEvents() throws IOException, URISyntaxException, ParseException {
+		eventDao = new CalendarEventsDao();
+		eventDao.setMessageSource((MessageSource) context.getBean("messageSource"));
+	}
 
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
 
-        DateTime eventStart = new DateTime(2012, 1, 4, 17, 0, tz);
-        DateTime eventEnd = new DateTime(2012, 1, 4, 18, 0, tz);
-        
-        VEvent event = new VEvent(getICal4jDate(eventStart, tz), getICal4jDate(
-                eventEnd, tz), "Test Event");
-        
-        DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
-        DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
-        Interval interval = new Interval(intervalStart, intervalStop);
-       
-        Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
-        
-        assertEquals(1, events.size());
-        
-    }
-    
-    @Test
-    public void testGetDisplayEventsForLongEvent() throws IOException, URISyntaxException, ParseException {
+	@Test
+	public void testGetTimeFormatter() {
+		DateTimeZone tz1 = DateTimeZone.forID("America/Los_Angeles");
+		DateTimeZone tz2 = DateTimeZone.forID("America/Chicago");
 
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		DateTimeFormatter timeFormatter1 = eventDao.getTimeFormatter(Locale.US,tz1);
+		DateTimeFormatter timeFormatter2 = eventDao.getTimeFormatter(Locale.US,tz2);
 
-        DateTime eventStart = new DateTime(2012, 1, 2, 17, 0, tz);
-        DateTime eventEnd = new DateTime(2012, 1, 6, 2, 0, tz);
-        
-        VEvent event = new VEvent(getICal4jDate(eventStart, tz), getICal4jDate(
-                eventEnd, tz), "Test Event");
-        
-        DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
-        DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
-        Interval interval = new Interval(intervalStart, intervalStop);
-       
-        Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
-        
-        assertEquals(2, events.size());
-        
-    }
-    
-    @Test
-    public void testGetDisplayEventsForNoEndDate() throws IOException, URISyntaxException, ParseException {
+		assertNotNull(timeFormatter1);
+		assertNotNull(timeFormatter2);
 
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		assertSame(timeFormatter1, eventDao.getTimeFormatter(Locale.US,tz1));
+		assertSame(timeFormatter2, eventDao.getTimeFormatter(Locale.US,tz2));
+	}
 
-        DateTime eventStart = new DateTime(2012, 1, 4, 17, 0, tz);
-        
-        VEvent event = new VEvent(getICal4jDate(eventStart, tz), "Test Event");
+	@Test
+	public void testGetDateFormatter() {
+		DateTimeZone tz1 = DateTimeZone.forID("America/Los_Angeles");
+		DateTimeZone tz2 = DateTimeZone.forID("America/Chicago");
 
-        DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
-        DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
-        Interval interval = new Interval(intervalStart, intervalStop);
-       
-        Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
-        
-        assertEquals(1, events.size());
-        
-    }
+		DateTimeFormatter dateFormatter1 = eventDao.getDateFormatter(Locale.US,tz1);
+		DateTimeFormatter dateFormatter2 = eventDao.getDateFormatter(Locale.US,tz2);
 
-    @Test
-    public void testGetDisplayEventsForNoEndDateStartAbutment() throws IOException, URISyntaxException, ParseException {
+		assertNotNull(dateFormatter1);
+		assertNotNull(dateFormatter2);
 
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		assertSame(dateFormatter1, eventDao.getDateFormatter(Locale.US,tz1));
+		assertSame(dateFormatter2, eventDao.getDateFormatter(Locale.US,tz2));
+	}
 
-        DateTime eventStart = new DateTime(2012, 1, 3, 0, 0, tz);
-        
-        VEvent event = new VEvent(getICal4jDate(eventStart, tz), "Test Event");
+	@Test
+	public void testGetDisplayEvents() throws IOException, URISyntaxException, ParseException {
 
-        DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
-        DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
-        Interval interval = new Interval(intervalStart, intervalStop);
-       
-        Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
-        
-        assertEquals(1, events.size());
-        
-    }
-    
-    public net.fortuna.ical4j.model.DateTime getICal4jDate(DateTime date, DateTimeZone timezone) {
-        net.fortuna.ical4j.model.DateTime ical = new net.fortuna.ical4j.model.DateTime(date.toDate());
-        ical.setTimeZone(tzRegistry.getTimeZone(timezone.getID()));
-        return ical;
-    }
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+
+		DateTime eventStart = new DateTime(2012, 1, 4, 17, 0, tz);
+		DateTime eventEnd = new DateTime(2012, 1, 4, 18, 0, tz);
+
+		VEvent event = new VEvent(getICal4jDate(eventStart, tz), getICal4jDate(
+				eventEnd, tz), "Test Event");
+
+		DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
+		DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
+		Interval interval = new Interval(intervalStart, intervalStop);
+
+		Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+
+		assertEquals(1, events.size());
+
+	}
+
+	@Test
+	public void testGetDisplayEventsForLongEvent() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+
+		DateTime eventStart = new DateTime(2012, 1, 2, 17, 0, tz);
+		DateTime eventEnd = new DateTime(2012, 1, 6, 2, 0, tz);
+
+		VEvent event = new VEvent(getICal4jDate(eventStart, tz), getICal4jDate(
+				eventEnd, tz), "Test Event");
+
+		DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
+		DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
+		Interval interval = new Interval(intervalStart, intervalStop);
+
+		Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+
+		assertEquals(2, events.size());
+
+	}
+
+	@Test
+	public void testGetDisplayEventsForNoEndDate() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+
+		DateTime eventStart = new DateTime(2012, 1, 4, 17, 0, tz);
+
+		VEvent event = new VEvent(getICal4jDate(eventStart, tz), "Test Event");
+
+		DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
+		DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
+		Interval interval = new Interval(intervalStart, intervalStop);
+
+		Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+
+		assertEquals(1, events.size());
+
+	}
+
+	@Test
+	public void testGetDisplayEventsForNoEndDateStartAbutment() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+
+		DateTime eventStart = new DateTime(2012, 1, 3, 0, 0, tz);
+
+		VEvent event = new VEvent(getICal4jDate(eventStart, tz), "Test Event");
+
+		DateMidnight intervalStart = new DateMidnight(2012, 1, 3, tz);
+		DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
+		Interval interval = new Interval(intervalStart, intervalStop);
+
+		Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+
+		assertEquals(1, events.size());
+
+	}
+
+	public net.fortuna.ical4j.model.DateTime getICal4jDate(DateTime date, DateTimeZone timezone) {
+		net.fortuna.ical4j.model.DateTime ical = new net.fortuna.ical4j.model.DateTime(date.toDate());
+		ical.setTimeZone(tzRegistry.getTimeZone(timezone.getID()));
+		return ical;
+	}
 
 }

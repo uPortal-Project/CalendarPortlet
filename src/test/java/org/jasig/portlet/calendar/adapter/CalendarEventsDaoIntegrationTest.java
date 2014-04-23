@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -43,6 +44,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,146 +53,147 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "/testContext.xml")
 public class CalendarEventsDaoIntegrationTest {
 
-    CalendarEventsDao eventsDao;
-    IContentProcessor<Calendar> processor;    
-    Resource calendarFile;
-    
-    @Autowired(required = true)
-    ApplicationContext context;
-    
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        
-        eventsDao = new CalendarEventsDao();
-        processor = new ICalendarContentProcessorImpl();
-        calendarFile = context.getResource("classpath:sampleEvents.ics");
-    }
-    
-    @Test
-    public void testGetEvents() throws IOException, URISyntaxException, ParseException {
-        
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-        DateMidnight start = new DateMidnight(2012, 7, 3, tz);
-        Interval interval = new Interval(start, start.plusDays(7));
-        
-        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(interval, c);
+	CalendarEventsDao eventsDao;
+	IContentProcessor<Calendar> processor;
+	Resource calendarFile;
 
-        assertEquals(2, events.size());
+	@Autowired(required = true)
+	ApplicationContext context;
 
-        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        
-        for (VEvent event : events) {
-            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
-        }
-        Collections.sort(displayEvents);
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
 
-        CalendarDisplayEvent event = displayEvents.get(0);
-        assertEquals("12:00 AM", event.getStartTime());
-        
-        event = displayEvents.get(1);
-        assertEquals(9, event.getDayStart().getHourOfDay());
-        
-    }
-    
-    @Test
-    public void testGetEventsAlternateTimezone() throws IOException, URISyntaxException, ParseException {
-        
-        DateTimeZone tz = DateTimeZone.forID("America/Chicago");
-        DateMidnight start = new DateMidnight(2012, 7, 3, tz);
-        Interval interval = new Interval(start, start.plusDays(7));
-        
-        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(interval, c);
+		eventsDao = new CalendarEventsDao();
+		eventsDao.setMessageSource((MessageSource) context.getBean("messageSource"));
+		processor = new ICalendarContentProcessorImpl();
+		calendarFile = context.getResource("classpath:sampleEvents.ics");
+	}
 
-        assertEquals(2, events.size());
+	@Test
+	public void testGetEvents() throws IOException, URISyntaxException, ParseException {
 
-        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        
-        for (VEvent event : events) {
-            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
-        }
-        Collections.sort(displayEvents);
-        
-        CalendarDisplayEvent event = displayEvents.get(0);
-        assertEquals(0, event.getDayStart().getHourOfDay());
-        
-        event = displayEvents.get(1);
-        assertEquals(11, event.getDayStart().getHourOfDay());
-        
-    }
-    
-    @Test
-    public void testGetArizonaEvent() throws IOException, URISyntaxException, ParseException {
-        
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-        DateMidnight start = new DateMidnight(2013, 2, 3, tz);
-        Interval interval = new Interval(start, start.plusDays(7));
-        
-        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(interval, c);
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+		Interval interval = new Interval(start, start.plusDays(7));
 
-        assertEquals(1, events.size());
+		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+		Set<VEvent> events = processor.getEvents(interval, c);
 
-        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        
-        for (VEvent event : events) {
-            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
-        }
-        Collections.sort(displayEvents);
+		assertEquals(2, events.size());
 
-        CalendarDisplayEvent event = displayEvents.get(0);
-        assertEquals("9:00 AM", event.getStartTime());
-        
-    }
-    
-    @Test
-    public void testGetUTCEvent() throws IOException, URISyntaxException, ParseException {
-        
-        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-        DateMidnight start = new DateMidnight(2013, 1, 3, tz);
-        Interval interval = new Interval(start, start.plusDays(7));
-        
-        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(interval, c);
+		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-        assertEquals(1, events.size());
+		for (VEvent event : events) {
+			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+		}
+		Collections.sort(displayEvents);
 
-        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        
-        for (VEvent event : events) {
-            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
-        }
-        Collections.sort(displayEvents);
+		CalendarDisplayEvent event = displayEvents.get(0);
+		assertEquals("12:00 AM", event.getStartTime());
 
-        CalendarDisplayEvent event = displayEvents.get(0);
-        assertEquals("2:00 PM", event.getStartTime());
-        
-    }
-    
-    @Test
-    public void testGetBedeworkEvent() throws IOException, URISyntaxException, ParseException {
-        
-        DateTimeZone tz = DateTimeZone.forID("America/Phoenix");
-        DateMidnight start = new DateMidnight(2014, 2, 2, tz);
-        Interval interval = new Interval(start, start.plusDays(1));
-        
-        Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-        Set<VEvent> events = processor.getEvents(interval, c);
+		event = displayEvents.get(1);
+		assertEquals(9, event.getDayStart().getHourOfDay());
 
-        assertEquals(1, events.size());
+	}
 
-        List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-        
-        for (VEvent event : events) {
-            displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, tz));
-        }
-        Collections.sort(displayEvents);
+	@Test
+	public void testGetEventsAlternateTimezone() throws IOException, URISyntaxException, ParseException {
 
-        CalendarDisplayEvent event = displayEvents.get(0);
-        assertEquals("2:00 PM", event.getStartTime());
-        
-    }
-    
+		DateTimeZone tz = DateTimeZone.forID("America/Chicago");
+		DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+		Interval interval = new Interval(start, start.plusDays(7));
+
+		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+		Set<VEvent> events = processor.getEvents(interval, c);
+
+		assertEquals(2, events.size());
+
+		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+
+		for (VEvent event : events) {
+			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+		}
+		Collections.sort(displayEvents);
+
+		CalendarDisplayEvent event = displayEvents.get(0);
+		assertEquals(0, event.getDayStart().getHourOfDay());
+
+		event = displayEvents.get(1);
+		assertEquals(11, event.getDayStart().getHourOfDay());
+
+	}
+
+	@Test
+	public void testGetArizonaEvent() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		DateMidnight start = new DateMidnight(2013, 2, 3, tz);
+		Interval interval = new Interval(start, start.plusDays(7));
+
+		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+		Set<VEvent> events = processor.getEvents(interval, c);
+
+		assertEquals(1, events.size());
+
+		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+
+		for (VEvent event : events) {
+			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+		}
+		Collections.sort(displayEvents);
+
+		CalendarDisplayEvent event = displayEvents.get(0);
+		assertEquals("9:00 AM", event.getStartTime());
+
+	}
+
+	@Test
+	public void testGetUTCEvent() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+		DateMidnight start = new DateMidnight(2013, 1, 3, tz);
+		Interval interval = new Interval(start, start.plusDays(7));
+
+		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+		Set<VEvent> events = processor.getEvents(interval, c);
+
+		assertEquals(1, events.size());
+
+		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+
+		for (VEvent event : events) {
+			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+		}
+		Collections.sort(displayEvents);
+
+		CalendarDisplayEvent event = displayEvents.get(0);
+		assertEquals("2:00 PM", event.getStartTime());
+
+	}
+
+	@Test
+	public void testGetBedeworkEvent() throws IOException, URISyntaxException, ParseException {
+
+		DateTimeZone tz = DateTimeZone.forID("America/Phoenix");
+		DateMidnight start = new DateMidnight(2014, 2, 2, tz);
+		Interval interval = new Interval(start, start.plusDays(1));
+
+		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+		Set<VEvent> events = processor.getEvents(interval, c);
+
+		assertEquals(1, events.size());
+
+		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+
+		for (VEvent event : events) {
+			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+		}
+		Collections.sort(displayEvents);
+
+		CalendarDisplayEvent event = displayEvents.get(0);
+		assertEquals("2:00 PM", event.getStartTime());
+
+	}
+
 }
