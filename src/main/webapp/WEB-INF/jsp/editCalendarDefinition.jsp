@@ -105,8 +105,10 @@
             <div class="form-group">
                 <label class="col-md-3 control-label"><spring:message code="${ parameter.labelKey }"/></label>
                 <div class="col-md-6">
-                    <input="${ parameter.input }" path="${ paramPath }" class="form-control"/>
-
+                    <editPreferences:preferenceInput input="${ parameter.input }" path="${ paramPath }"/>
+                    <c:if test="${ not empty parameter.example }">
+                        <p>Example: ${ parameter.example }</p>
+                    </c:if>
                 </div>
             </div>
         </c:forEach>
