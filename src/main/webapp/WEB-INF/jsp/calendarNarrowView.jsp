@@ -23,76 +23,79 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
+<rs:aggregatedResources path="${ model.usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
+
 <c:set var="n"><portlet:namespace/></c:set>
 <portlet:actionURL var="showDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='true'/></portlet:actionURL>
 <portlet:actionURL var="hideDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='false'/></portlet:actionURL>
+
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="${n}upcal-miniview">
-    <div class="upcal-events">
+    <div class="container-fluid upcal-events">
         <div class="upcal-event-view">
-            <div class="row-fluid">
-                <div class="span4">
+            <div class="row">
+                <div class="col-md-12">
                     <!-- Range Selector -->
-                    <div id="${n}calendarRangeSelector" class="upcal-range">
-                        <h3><spring:message code="view"/></h3>
-                        <span class="upcal-range-day" days="1">
-                            <a days="1" href="javascript:;" class="${ model.days == 1 ? "selected-range" : "" }">
-                                <spring:message code="day"/>
-                            </a>
-                        </span>
-                        <span class="upcal-pipe">|</span>
-                        <span class="upcal-range-day" days="7">
-                            <a days="7" href="javascript:;" class="${ model.days == 7 ? "selected-range" : "" }">
-                                <spring:message code="week"/>
-                            </a>
-                        </span>
-                        <span class="upcal-pipe">|</span>
-                        <span class="upcal-range-day" days="31">
-                            <a days="31" href="javascript:;" class="${ model.days == 31 ? "selected-range" : "" }">
-                                <spring:message code="month"/>
-                            </a>
-                        </span>
-                        <span class="upcal-pipe">&nbsp;&nbsp;&nbsp;</span>
-                        <h3><spring:message code="date.picker"/></h3>
-                        <span class="upcal-range-datepicker">
-                            <a show="true" href="javascript:;" id="${n}showDatePicker" class="${model.showDatePicker == 'true' ? 'selected-range' : '' }">
-                                <spring:message code="show"/>
-                            </a>
-                        </span>
-                        <span class="upcal-pipe">|</span>
-                        <span class="upcal-range-datepicker">
-                            <a show="false" href="javascript:;" id="${n}hideDatePicker" class="${model.showDatePicker == 'false' ? 'selected-range' : '' }">
-                                <spring:message code="hide"/>
-                            </a>
-                        </span>
+                    <div id="${n}calendarRangeSelector" class="row upcal-range">
+                        <div class="col-md-6">
+                            <h3><spring:message code="view"/></h3>
+                            <div class="btn-grou1p">
+                                <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                                    <spring:message code="day"/>
+                                </button>
+                                <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                                    <spring:message code="week"/>
+                                </button>
+                                <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                                    <spring:message code="month"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h3 class="text-right"><spring:message code="date.picker"/></h3>
+                            <div class="btn-group pull-right">
+                                <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-default upcal-range-datepicker">
+                                    <spring:message code="show"/>
+                                </button>
+                                <button type="button" show="false" href="javascript:;" id="${n}hideDatePicker" class="btn btn-default upcal-range-datepicker">
+                                    <spring:message code="hide"/>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <!-- Mini-Calendar (jQuery UI) -->
                     <div class="upcal-inline-calendar"></div>
                 </div>
-                <div class="span8">
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <!-- Calendar Events List -->
-                    <div class="upcal-loading-message portlet-msg-info portlet-msg info">
-                        <p><spring:message code="loading"/></p>
+                    <div class="upcal-loading-message">
+                        <p class="text-center"><i class="fa fa-spinner fa-spin"></i> <spring:message code="loading"/></p>
                     </div>
 
-                    <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
+                    <div class="alert alert-danger" style="display:none"></div>
 
                     <div class="upcal-event-list" style="display:none"></div>
                 </div>
             </div>
-            <div class="row-fluid">
+            <div class="row">
                 <!-- View Links -->
-                <div class="upcal-view-links span12">
-                    <a id="${n}viewMoreEventsLink" class="upcal-view-more" 
+                <div class="col-md-12 upcal-view-links">
+                    <a id="${n}viewMoreEventsLink" class="btn btn-link pull-right"
                             href="<portlet:renderURL windowState="maximized"/>"
                             title="<spring:message code="view.more.events"/>">
-                        <spring:message code="view.more.events"/>
+                        <spring:message code="view.more.events"/> <i class="fa fa-arrow-right"></i>
                     </a>
                     
-                    <a id="${n}returnToCalendarLink" class="upcal-view-links" href="javascript:;" 
+                    <a id="${n}returnToCalendarLink" class="btn btn-link" href="javascript:;"
                             style="display:none" title="<spring:message code="return.to.calendar"/>">
-                        <spring:message code="return.to.calendar"/>
+                        <spring:message code="return.to.calendar"/> <i class="fa fa-calendar"></i>
                     </a>
                 </div>
             </div>
@@ -100,14 +103,15 @@
 
         <div class="upcal-event-details" style="display:none">
 
-            <div class="upcal-event-detail">
-            </div>
+            <div class="row upcal-event-detail"></div>
 
-            <div class="utilities upcal-list-link">
-                <a class="upcal-view-return" href="javascript:;" 
-                        title="<spring:message code="return.to.calendar"/>" data-role="button">
-                    <spring:message code="return.to.calendar"/>
-                </a>
+            <div class="row utilities upcal-list-link">
+                <div class="col-md-12">
+                    <a class="upcal-view-return" href="javascript:;"
+                            title="<spring:message code="return.to.calendar"/>" data-role="button">
+                        <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+                    </a>
+                </div>
             </div>
 
         </div>
@@ -117,40 +121,44 @@
 <!-- Templates -->
 
 <script type="text/template" id="event-list-template">
+
     ${"<%"} if (_(days).length == 0) { ${"%>"}
-        <div class="portlet-msg-info">
-            <p>No events</p>
+        <div class="row">
+            <div class="col-md-12 events-alert">
+                <div class="alert alert-warning">
+                    <h4><i class="fa fa-exclamation-circle"></i> No events</h4>
+                </div>
+            </div>
         </div>
     ${"<%"} } else { ${"%>"}
         ${"<%"} _(days).each(function(day) { ${"%>"}
-            <div class="day">
-                <h2>${"<%="} day.displayName ${"%>"}</h2>
-                ${"<%"} day.events.each(function(event) { ${"%>"}
-                    <div class="upcal-event-wrapper">
-                        <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
-                            <div class="upcal-event-cal">
-                                <span></span>
+            <div class="row day">
+                <div class="col-md-12">
+                    <h2>${"<%="} day.displayName ${"%>"}</h2>
+                    ${"<%"} day.events.each(function(event) { ${"%>"}
+                        <div class="upcal-event-wrapper">
+                            <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
+                                <div class="upcal-event-cal">
+                                    <span></span>
+                                </div>
+                                <span><strong>
+                                    ${"<%"} if (event.attributes.allDay) { ${"%>"}
+                                        All Day
+                                    ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
+                                        ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
+                                    ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
+                                        ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
+                                    ${"<%"} } else { ${"%>"}
+                                        ${"<%="} event.attributes.startTime ${"%>"}
+                                    ${"<%"} } ${"%>"}
+                                </span></strong>
+                                <h3 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h3>
                             </div>
-                            <span class="upcal-event-time">
-                                ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                    All Day
-                                ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
-                                    ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
-                                ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
-                                ${"<%"} } else { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"}
-                                ${"<%"} } ${"%>"}
-                            </span>
-                            
-                            <h3 class="upcal-event-title"><a href="javascript:;">
-                                ${"<%="} event.attributes.summary ${"%>"}
-                            </a></h3>
-                    </div>
-                ${"<%"} }); ${"%>"}
+                        </div>
+                    ${"<%"} }); ${"%>"}
+                </div>
             </div>
         ${"<%"} }); ${"%>"}
-        </div>
     ${"<%"} } ${"%>"}
     
 </script>
@@ -158,47 +166,52 @@
 <script type="text/template" id="event-detail-template">
     <!-- Event title -->
     <h2>${"<%="} event.summary ${"%>"}</h2>
-
     <!-- Event time -->
-    <div class="event-detail-date">
-        <h3>Date:</h3>
-        <p>
-            ${"<%"} if (event.multiDay) { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
-            ${"<%"} } else if (event.allDay) { ${"%>"}
-                All Day ${"<%="} event.startDate ${"%>"}
-            ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
-            ${"<%"} } else { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"}
-            ${"<%"} } ${"%>"}
-        
-        </p>
+    <div class="row event-detail-date">
+        <div class="col-md-12">
+            <div class="upcal-event-wrapper">
+                <span><strong>
+                    ${"<%"} if (event.multiDay) { ${"%>"}
+                    ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
+                    ${"<%"} } else if (event.allDay) { ${"%>"}
+                    All Day ${"<%="} event.startDate ${"%>"}
+                    ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
+                    ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+                    ${"<%"} } else { ${"%>"}
+                    ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+                    ${"<%"} } ${"%>"}
+                </span></strong>
+            </div>
+        </div>
     </div>
     
     ${"<%"} if (event.location) { ${"%>"}
-        <div>
+    <div class="row">
+        <div class="col-md-12">
             <h3>Location:</h3>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
+    </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.description) { ${"%>"}
-        <div>
+    <div class="row">
+        <div class="col-md-12">
             <h3>Description:</h3>
             <p>${"<%="} event.description ${"%>"}</p>
         </div>
+    </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
-        <div>
+    <div class="row">
+        <div class="col-md-12">
             <h3>Link:</h3>
-            <p>
-                <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
-            </p>
+            <p><a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a></p>
         </div>
+    </div>
     ${"<%"} } ${"%>"}
-    
+
 </script>
 
 <script type="text/javascript"><rs:compressJs>
@@ -227,20 +240,20 @@
             days: "${ model.days }"
         });
         
-        $("#${n}container .upcal-range-day a").click(function () {
+        $("#${n}container .upcal-range-day").click(function () {
         	var link, days;
         	
         	link = $(this);
         	days = link.attr("days");
-        	
-        	$("#${n}container .upcal-range-day a").removeClass("selected-range");
-        	link.addClass("selected-range");
+
+            $("#${n}container .upcal-range-day").removeClass("active");
+            link.addClass("active");
         	
         	view.set("days", $(this).attr("days"));
         	view.getEvents();
         });
 
-        $("#${n}container .upcal-range-datepicker a").click(function(event){
+        $("#${n}container .upcal-range-datepicker").click(function(event){
             var show = $(event.target).attr("show");
             showDatePicker(show);
             $.ajax({
@@ -253,12 +266,12 @@
         var showDatePicker = function(show) {
             if(show == "true") {
                 $('#${n}container .upcal-inline-calendar').show();
-                $('#${n}showDatePicker').addClass('selected-range');
-                $('#${n}hideDatePicker').removeClass('selected-range');
+                $('#${n}showDatePicker').addClass('active');
+                $('#${n}hideDatePicker').removeClass('active');
             } else {
                 $('#${n}container .upcal-inline-calendar').hide();
-                $('#${n}hideDatePicker').addClass('selected-range');
-                $('#${n}showDatePicker').removeClass('selected-range');
+                $('#${n}hideDatePicker').addClass('active');
+                $('#${n}showDatePicker').removeClass('active');
             }
         };
 

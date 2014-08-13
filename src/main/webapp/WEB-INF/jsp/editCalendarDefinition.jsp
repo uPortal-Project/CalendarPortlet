@@ -60,82 +60,76 @@
         });
     </rs:compressJs></script>
 
-<div class="fl-widget portlet" role="section">
+<div class="container-fluid" role="section">
+    <div class="row">
+        <div class="col-md-4">
+            <h2 role="heading"><spring:message code="edit.calendar"/></h2>
+        </div>
+        <div class="col-md-8">
+        <!-- Add Calendar -->
+            <div class="pull-right">
+                <portlet:renderURL var="addCalendarUrl"><portlet:param name="action" value="createCalendarDefinition"/></portlet:renderURL>
+                <a href="${ addCalendarUrl }" title="<spring:message code="add.a.calendar"/>">
+                <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
+                </a> |
+                <portlet:renderURL var="returnUrl" portletMode="view"/>
+                <a href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
+                <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading">
-            <spring:message code="edit.calendar"/>
-        </h2>
-    </div> <!-- end: portlet-titlebar -->
-
-    <div class="fl-widget-content content portlet-content" role="main">
-
+    <div class="row" role="main">
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editCalendarDefinition"/></portlet:actionURL>
-    <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
-    
+    <form:form id="${n}parameters" name="calendar" commandName="calendarDefinitionForm" action="${postUrl}" class="form-horizontal" role="form">
         <spring:hasBindErrors name="calendarDefinitionForm">
-            <div class="portlet-msg-error" role="alert">
-                <form:errors path="*" element="div"/>
-            </div> <!-- end: portlet-msg -->
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">
+                    <form:errors path="*" element="div"/>
+                </div>
+            </div>
         </spring:hasBindErrors>
-    
        	<form:hidden path="id"/>
         <form:hidden path="fname"/>
         <form:hidden path="className"/>
-        
-        <table id="${n}parameters">
-            <tbody>
-		<tr>
-			<td><label class="portlet-form-field-label">
-                <spring:message code="calendar.name"/>:
-			</label></td>
-			<td><form:input path="name" size="50"/></td>
-		</tr>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label"><spring:message code="calendar.name"/></label>
+            <div class="col-md-6">
+                <form:input path="name" class="form-control"/>
+            </div>
+        </div>
         <c:forEach items="${ adapter.parameters }" var="parameter">
-            <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>            
-            <tr>
-                <td><spring:message code="${ parameter.labelKey }"/></td>
-                <td>
-                    <editPreferences:preferenceInput input="${ parameter.input }" 
-                        path="${ paramPath }"/>
-                    <c:if test="${ not empty parameter.example }">
-                        <p>Example: ${ parameter.example }</p>
-                    </c:if>
-                </td>
-            </tr>
+            <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
+            <div class="form-group">
+                <label class="col-md-3 control-label"><spring:message code="${ parameter.labelKey }"/></label>
+                <div class="col-md-6">
+                    <input="${ parameter.input }" path="${ paramPath }" class="form-control"/>
+
+                </div>
+            </div>
         </c:forEach>
-        <tr>
-            <td><label class="portlet-form-field-label"><spring:message code="default.roles"/></label></td>
-            <td class="role-params">
+        <div class="form-group">
+            <label class="col-md-3 control-label"><spring:message code="default.roles"/></label>
+            <div class="col-md-6">
                 <c:forEach items="${ calendarDefinitionForm.role }" var="role">
-                  <div>
-                     <input name="role" value="${ role }" type="text"/>
-                     <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
-                  </div>
+                    <div class="col-md-3">
+                        <input name="role" value="${ role }" type="text" class="form-control"/>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="javascript:;"><i class="fa fa-trash-o"></i> <spring:message code="remove.role"/></a>
+                    </div>
                 </c:forEach>
-                <a class="add-parameter-value-link" href="javascript:;" paramName="role">
-                    <spring:message code="add.a.role"/>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-        </table>        
-        
-        <div class="buttons">
-            <button type="submit" class="portlet-form-button btn">
-                <spring:message code="save.calendar"/>
-            </button>
+            </div>
+            <div class="col-md-6 col-md-offset-3">
+                <a href="javascript:;" paramName="role"><i class="fa fa-plus"></i> <spring:message code="add.a.role"/></a>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary"><spring:message code="save.calendar"/></button>
         </div>
     </form:form>
-
-    <div class="upcal-view-links">
-        <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
-        <a class="upcal-view-return" href="${ returnUrl }" title="<spring:message code="return.to.administration"/>">
-           <spring:message code="return.to.administration"/>
-        </a>
-    </div>
-    
 </div>
 
 <script id="${n}roleParamTemplate" type="text/template">

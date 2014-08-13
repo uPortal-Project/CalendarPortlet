@@ -26,127 +26,119 @@
 
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-<div id="${n}container" class="upcal-fullview">
+<div id="${n}container" class="container-fluid">
     <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
-        <div class="upcal-edit-links">
-            <c:if test="${ !model.disablePreferences && !model.guest }">
-                <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-                <a href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
-                    <spring:message code="preferences"/>
-                </a>
-            </c:if>
-            <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
-                <span class="upcal-pipe">|</span>
-                <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
-                <a href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+        <div class="row">
+            <div class="col-md-12">
+                <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
+                    <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
+                    <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+                    <i class="fa fa-gears"></i>
                     <spring:message code="calendar.administration"/>
-                </a>
-            </c:if>
+                    </a>
+                </c:if>
+                <c:if test="${ !model.disablePreferences && !model.guest }">
+                    <span class="pull-right">&nbsp;|&nbsp;</span>
+                    <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
+                    <a class="pull-right" href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
+                        <i class="fa fa-key"></i>
+                        <spring:message code="preferences"/>
+                    </a>
+                </c:if>
+            </div>
         </div>
     </c:if>
     
-    <div id="calendarPortletHeader" class="fl-col-mixed3 row-fluid">
-        <div class="fl-col-side fl-force-right span3 pull-right">
-            <div class="upcal-showcals upcal-list">
-                <h3><spring:message code="my.calendars"/></h3>
-                <ul>
-                    <c:forEach items="${ model.calendars }" var="calendar">
-                        <li class="color-${ model.colors[calendar.id] }">
-                            <c:choose>
-                                <c:when test="${ empty model.hiddenCalendars[calendar.id] }">
-                                    <portlet:renderURL var="url"><portlet:param name="hideCalendar" value="${ calendar.id }"/></portlet:renderURL>
-                                    <a class="upcal-active" href="${ url }">
-                                        <span><spring:message code="hide"/></span>
-                                    </a> 
-                                </c:when>
-                                <c:otherwise>
-                                    <portlet:renderURL var="url"><portlet:param name="showCalendar" value="${ calendar.id }"/></portlet:renderURL>
-                                    <a class="upcal-inactive" href="${ url }">
-                                        <span><spring:message code="show"/></span>
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                            <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
-                            <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
-                                <portlet:param name="configurationId" value="${ calendar.id }"/>
-                            </portlet:resourceURL>
-                            <a href="${ exportCalendarUrl }" class="upcal-export" title="<spring:message code='export.calendar'/>">
-                                <span><spring:message code="export"/></span>
-                            </a>
-                        </li>
-                    </c:forEach>
-            </ul>
+    <div id="calendarPortletHeader" class="row">
+        <div class="col-md-8 upcal-wideview">
+            <!-- Range Selector -->
+            <div id="${n}calendarRangeSelector" class="row upcal-range">
+                <div class="col-md-12">
+                    <h3><spring:message code="view"/></h3>
+                    <div class="btn-group">
+                        <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                            <spring:message code="day"/>
+                        </button>
+                        <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                            <spring:message code="week"/>
+                        </button>
+                        <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                            <spring:message code="month"/>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="fl-col-side fl-force-left span4">
             <div class="upcal-inline-calendar"></div>
-            <div style="clear: both;"></div>
-        </div>
-        
-        <div class="fl-col-main span5">
-        
-            <div class="upcal-events">
-                
-                <div class="upcal-event-view">
-                    <div id="${n}calendarRangeSelector" class="upcal-range upcal-hide-on-event">
-                        <h3><spring:message code="view"/></h3>
-                            <span class="upcal-range-day" days="1">
-                                <a days="1" href="javascript:;" class="${ model.days == 1 ? "selected-range" : "" }">
-                                    <spring:message code="day"/>
-                                </a>
-                            </span>
-                            <span class="upcal-pipe">|</span>
-                            <span class="upcal-range-day" days="7">
-                                <a days="7" href="javascript:;" class="${ model.days == 7 ? "selected-range" : "" }">
-                                    <spring:message code="week"/>
-                                </a>
-                            </span>
-                            <span class="upcal-pipe">|</span>
-                            <span class="upcal-range-day" days="31">
-                                <a days="31" href="javascript:;" class="${ model.days == 31 ? "selected-range" : "" }">
-                                    <spring:message code="month"/>
-                                </a>
-                            </span>
+            <div class="row">
+                <div class="col-md-12 upcal-events">
+                    <div class="upcal-event-view">
+                        <div class="upcal-loading-message">
+                            <p class="text-center"><i class="fa fa-spinner fa-spin"></i> <spring:message code="loading"/></p>
+                        </div>
+                        <div class="alert alert-danger" style="display:none"></div>
+                        <div class="upcal-event-list"></div>
                     </div>
-            
-                    <p class="upcal-loading-message"><spring:message code="loading"/></p>
-                    <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
-
-                    <div class="upcal-event-list"></div>
-                </div>
-                
-                <div class="upcal-event-details" style="display:none">
-                    <div class="upcal-event-detail">
+                    <div class="upcal-event-details" style="display:none">
+                        <div class="upcal-event-detail"></div>
+                        <div class="upcal-view-links">
+                            <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
+                        title="<spring:message code="return.to.event.list"/>">
+                            <i class="fa fa-arrow-left"></i> <spring:message code="return.to.event.list"/>
+                            </a>
+                        </div>
                     </div>
-
-                    <div class="upcal-view-links">
-                        <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
-                                title="<spring:message code="return.to.event.list"/>">
-                           <spring:message code="return.to.event.list"/>
-                        </a>
-                    </div>
-        
                 </div>
             </div>
-            
-            <!-- View Links -->
-                    
+        </div>
+        <div class="col-md-4">
+            <h3><spring:message code="my.calendars"/></h3>
+            <ul>
+                <c:forEach items="${ model.calendars }" var="calendar">
+                    <li class="color-${ model.colors[calendar.id] }">
+                        <c:choose>
+                            <c:when test="${ empty model.hiddenCalendars[calendar.id] }">
+                                <portlet:renderURL var="url"><portlet:param name="hideCalendar" value="${ calendar.id }"/></portlet:renderURL>
+                                <a href="${ url }">
+                                    <span><i class="fa fa-eye-slash"></i> <spring:message code="hide"/></span>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <portlet:renderURL var="url"><portlet:param name="showCalendar" value="${ calendar.id }"/></portlet:renderURL>
+                                <a class="upcal-inactive" href="${ url }">
+                                    <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                        <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
+                        <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
+                            <portlet:param name="configurationId" value="${ calendar.id }"/>
+                        </portlet:resourceURL>
+                        <a href="${ exportCalendarUrl }" class="pull-right" title="<spring:message code='export.calendar'/>">
+                            <span><i class="fa fa-download"></i> <spring:message code="export"/></span>
+                        </a>
+                    </li>
+                </c:forEach>
+            </ul>
         </div>
     </div>
-
 </div>
 
 <!-- Templates -->
 
 <script type="text/template" id="event-list-template">
+
     ${"<%"} if (_(days).length == 0) { ${"%>"}
-        <div class="portlet-msg-info">
-            <p>No events</p>
+        <div class="row">
+            <div class="col-md-12 events-alert">
+                    <div class="alert alert-warning">
+                        <h4><i class="fa fa-exclamation-circle"></i> No events</h4>
+                    </div>
+            </div>
         </div>
     ${"<%"} } else { ${"%>"}
-        ${"<%"} _(days).each(function(day) { ${"%>"}
-            <div class="day">
+    ${"<%"} _(days).each(function(day) { ${"%>"}
+        <div class="row day">
+            <div class="col-md-12">
                 <h2>${"<%="} day.displayName ${"%>"}</h2>
                 ${"<%"} day.events.each(function(event) { ${"%>"}
                     <div class="upcal-event-wrapper">
@@ -156,26 +148,24 @@
                             </div>
                             <span class="upcal-event-time">
                                 ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                    All Day
+                                All Day
                                 ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
-                                    ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
+                                ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
                                 ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
+                                ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
                                 ${"<%"} } else { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"}
+                                ${"<%="} event.attributes.startTime ${"%>"}
                                 ${"<%"} } ${"%>"}
                             </span>
-                            
-                            <h3 class="upcal-event-title"><a href="javascript:;">
-                                ${"<%="} event.attributes.summary ${"%>"}
-                            </a></h3>
+                            <h3 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h3>
+                        </div>
                     </div>
                 ${"<%"} }); ${"%>"}
             </div>
-        ${"<%"} }); ${"%>"}
         </div>
+        ${"<%"} }); ${"%>"}
     ${"<%"} } ${"%>"}
-    
+
 </script>
 
 <script type="text/template" id="event-detail-template">
@@ -250,14 +240,14 @@
             days: "${ model.days }"
         });
         
-        $("#${n}container .upcal-range-day a").click(function () {
+        $("#${n}container .upcal-range-day").click(function () {
             var link, days;
             
             link = $(this);
             days = link.attr("days");
             
-            $("#${n}container .upcal-range-day a").removeClass("selected-range");
-            link.addClass("selected-range");
+            $("#${n}container .upcal-range-day").removeClass("active");
+            link.addClass("active");
             
             view.set("days", $(this).attr("days"));
             view.getEvents();
@@ -266,8 +256,3 @@
         
     });
 </rs:compressJs></script>
-
-<div id="${n}container" class="upcal-fullview">
-
-
-</div>
