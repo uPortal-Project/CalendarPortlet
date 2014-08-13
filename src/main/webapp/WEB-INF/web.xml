@@ -36,10 +36,6 @@
         </param-value>
     </context-param>
     <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>/WEB-INF/classes/portlet-logging.properties</param-value>
-    </context-param>
-    <context-param>
         <param-name>webAppRootKey</param-name>
         <param-value>calendar.root</param-value>
     </context-param>
