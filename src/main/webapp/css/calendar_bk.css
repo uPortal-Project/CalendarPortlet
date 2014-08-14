@@ -1,0 +1,114 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.color-0, a.color-0 { color: #1062a5; }
+.color-1, a.color-1 { color: #477300; }
+.color-2, a.color-2 { color: #990000; }
+.color-3, a.color-3 { color: #683099; }
+.color-4, a.color-4 { color: #8b4500; }
+.color-5, a.color-5 { color: #008b78; }
+.color-6, a.color-6 { color: #b62162; }
+.color-7, a.color-7 { color: #bb5b1d; }
+.color-8, a.color-8 { color: #7b7b7b; }
+.color-9, a.color-9 { color: #000000; }
+
+.upcal-pipe { color:#ccc; padding:0 0 .2em }
+
+/* Full View Layout */
+.upcal-fullview .fl-col-mixed3 .fl-col-main { padding-left:15px; margin:0 270px; }
+.upcal-fullview .fl-col-mixed3 .fl-col-side { width:200px; padding:0 10px; }
+.upcal-fullview .fl-col-mixed3 .fl-force-left { width:270px; padding:0px; }
+
+/* Display Calendar Toggle */
+.upcal-active,
+.upcal-inactive { display:inline-block; width:24px; height:16px; padding:0.2em 0; background-position:0 0; text-decoration:none; }
+.upcal-active span,
+.upcal-inactive span { visibility:hidden; }
+
+/* Range Selector */
+.upcal-range { margin-bottom:1em; font-size:86%; }
+.upcal-range h3 { display:inline; margin:0; padding-right:0.3em; font-size:1em; font-weight:bold; }
+.upcal-range a.selected-range { color: #999 !important; text-decoration:none; }
+
+/* Events List */
+.upcal-events { margin-bottom:1em; }
+.upcal-fullview .upcal-event-list { min-height:250px; }
+.upcal-events h2 { margin:0.5em 0 0 0; font-size:1em; border-bottom:1px solid #999; }
+.upcal-events h2 .upcal-today-date { padding-left:0.5em; font-size:86%; color:#515151; }
+.upcal-event { padding:0.3em 0; border-bottom:1px dotted #ccc; }
+.upcal-color-0 .upcal-event-cal { background-color:#1062a5; }
+.upcal-color-1 .upcal-event-cal { background-color:#477300; }
+.upcal-color-2 .upcal-event-cal { background-color:#990000; }
+.upcal-color-3 .upcal-event-cal { background-color:#683099; }
+.upcal-color-4 .upcal-event-cal { background-color:#8b4500; }
+.upcal-color-5 .upcal-event-cal { background-color:#008b78; }
+.upcal-color-6 .upcal-event-cal { background-color:#b62162; }
+.upcal-color-7 .upcal-event-cal { background-color:#bb5b1d; }
+.upcal-color-8 .upcal-event-cal { background-color:#7b7b7b; }
+.upcal-color-9 .upcal-event-cal { background-color:#000000; }
+.upcal-event .upcal-event-cal { display:inline-block; height:4px; width:4px; margin-bottom:2px; }
+.upcal-event .upcal-event-cal span { display:none; }
+.upcal-event .upcal-event-time { font-size:86%; font-weight:bold; white-space:nowrap; color:#999; }
+
+.upcal-event h3.upcal-event-title { font-size:1em; margin:0 0 0 1em; }
+.upcal-event .upcal-event-loc { display:inline-block; margin:0.5em 0 0.5em 0.5em; font-size:86%; font-style:italic; }
+
+/* Events Details */
+.upcal-event-details { margin-bottom:1em; }
+.upcal-event-details h2 { margin:1em 0 0.5em 0; padding-bottom:0.2em; font-size:1.2em; border-bottom:1px solid #999; }
+.upcal-event-details h3 { margin:0; font-size:1em; font-weight:bold; }
+.upcal-event-details p { margin-left:1em; margin-bottom:0.5em; padding-bottom:0.5em; border-bottom:1px dotted #ccc; }
+.upcal-event-details .upcal-event-detail-starttime {display:block;}
+
+/* Calendar Lists */
+.upcal-list { margin-bottom:1em; }
+.upcal-list ul { margin:0; padding:0; }
+.upcal-list ul li { margin:0; padding:0; list-style-type:none; border-bottom:1px dotted #ccc; clear:both; }
+
+/* Edit Calendars */
+.upcal-editview ul,
+.upcal-adminview ul { margin:0 3em 0 1em; }
+.upcal-adminview ul { width:50%; }
+.upcal-edit,
+.upcal-export { display:inline-block; width:16px; height:20px; text-indent:-16000px; padding:0.2em 0; }
+.upcal-delete { display:inline-block; width:16px; height:20px; text-indent:-16000px; padding:0.2em 0; }
+.upcal-add { display:inline-block; margin-top:1em; padding-left:20px; }
+
+
+/* Edit Links */
+.upcal-edit-links { padding:0.5em 1em; margin-bottom:1em; border-bottom:1px solid #999; background-color:#eee; }
+
+/* View Links */
+.upcal-view-links { padding:0.5em 1em; border-top:1px solid #999; background-color:#eee; }
+.upcal-view-links .upcal-view-more { padding-right:20px; }
+.upcal-view-links .upcal-view-return { padding-left:20px; }
+
+.upcal-hide-on-calendar { display:none; }
+/**
+ * Responder Theme Overrides
+ */
+.respondr .fl-col-side.fl-force-left.span4 {
+	width: auto;;
+}
+.respondr .upcal-showcals.upcal-list h3 {
+	margin-top: 0;
+}
+.respondr .upcal-view-links.span12 {
+	margin-top: 10px;
+}
