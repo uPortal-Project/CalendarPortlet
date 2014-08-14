@@ -40,7 +40,7 @@
                     <div id="${n}calendarRangeSelector" class="row upcal-range">
                         <div class="col-md-6">
                             <h3><spring:message code="view"/></h3>
-                            <div class="btn-grou1p">
+                            <div class="btn-group">
                                 <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
                                     <spring:message code="day"/>
                                 </button>

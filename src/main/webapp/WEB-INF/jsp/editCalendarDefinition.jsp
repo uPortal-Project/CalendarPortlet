@@ -70,11 +70,15 @@
             <div class="pull-right">
                 <portlet:renderURL var="addCalendarUrl"><portlet:param name="action" value="createCalendarDefinition"/></portlet:renderURL>
                 <a href="${ addCalendarUrl }" title="<spring:message code="add.a.calendar"/>">
-                <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
+                    <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
                 </a> |
                 <portlet:renderURL var="returnUrl" portletMode="view"/>
                 <a href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
-                <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+                    <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+                </a> |
+                <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
+                <a class="upcal-view-return" href="${ returnUrl }" title="<spring:message code="return.to.administration"/>">
+                    <i class="fa fa-gear"></i> <spring:message code="return.to.administration"/>
                 </a>
             </div>
         </div>
@@ -120,12 +124,12 @@
                         <input name="role" value="${ role }" type="text" class="form-control"/>
                     </div>
                     <div class="col-md-3">
-                        <a href="javascript:;"><i class="fa fa-trash-o"></i> <spring:message code="remove.role"/></a>
+                        <a class="delete-parameter-value-link" href="javascript:;"><i class="fa fa-trash-o"></i> <spring:message code="remove.role"/></a>
                     </div>
                 </c:forEach>
             </div>
             <div class="col-md-6 col-md-offset-3">
-                <a href="javascript:;" paramName="role"><i class="fa fa-plus"></i> <spring:message code="add.a.role"/></a>
+                <a class="add-parameter-value-link" href="javascript:;" paramName="role"><i class="fa fa-plus"></i> <spring:message code="add.a.role"/></a>
             </div>
         </div>
         <div class="col-md-12">
@@ -135,8 +139,10 @@
 </div>
 
 <script id="${n}roleParamTemplate" type="text/template">
-    <div>
-        <input name="role" type="text"/>
+    <div class="col-md-3">
+        <input name="role" type="text" class="form-control"/>
+    </div>
+    <div class="col-md-3">
         <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
     </div>
 </script>
