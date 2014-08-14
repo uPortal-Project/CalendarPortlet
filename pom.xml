@@ -46,7 +46,7 @@
     <properties>
         <!-- Dependency versions -->
         <cas.version>3.1.8</cas.version>
-        <hsqldb.version>2.2.4</hsqldb.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
         <icu4j.version>51.2</icu4j.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.0</joda-time.version>
