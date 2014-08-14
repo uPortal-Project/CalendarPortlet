@@ -24,41 +24,39 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-    <script type="text/javascript"><rs:compressJs>
+<script type="text/javascript"><rs:compressJs>
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;
         var _ = ${n}._;
         var Backbone = ${n}.Backbone;
         var upcal = ${n}.upcal;
-            $(document).ready(function(){
-                var RoleParamView = Backbone.View.extend({
-                    initialize: function(){
-                        this.render();
-                    },
-                    render: function(){
-                        // Compile the template using underscore
-                        var template = _.template( $("#${n}roleParamTemplate").html(), {} );
-                        // Load the compiled HTML into the Backbone "el"
-                        this.$el.html( template );
-                    }
-                });
-                
 
-                $("#${n}parameters .role-params").delegate("a.delete-parameter-value-link", "click", function () {
-                	var link = this;
-                	$(link).parent().remove();
-                });
-                
-                $("#${n}parameters .role-params a.add-parameter-value-link").click(function () {
-                	var link = this;
-                    var roleParamView = new RoleParamView();
-                    console.log(roleParamView);
-                	$(link).before(roleParamView.$el);
-                });
-                
-            });
+        var RoleParamView = Backbone.View.extend({
+            initialize: function() {
+                this.render();
+            },
+            render: function( ){
+                // Compile the template using underscore
+                var template = _.template( $("#${n}roleParamTemplate").html(), {} );
+                // Load the compiled HTML into the Backbone "el"
+                this.$el.html( template );
+            }
         });
-    </rs:compressJs></script>
+
+        $("#${n}parameters .role-params").delegate("a.delete-parameter-value-link", "click", function() {
+            var link = this;
+            $(link).parent().remove();
+        });
+
+        $("#${n}parameters .role-params a.add-parameter-value-link").click(function() {
+            var link = this;
+            var roleParamView = new RoleParamView();
+            console.log(roleParamView);
+            $(link).before(roleParamView.$el);
+        });
+
+    });
+</rs:compressJs></script>
 
 <div class="container-fluid" role="section">
     <div class="row">
@@ -116,7 +114,7 @@
                 </div>
             </div>
         </c:forEach>
-        <div class="form-group">
+        <div class="form-group role-params">
             <label class="col-md-3 control-label"><spring:message code="default.roles"/></label>
             <div class="col-md-6">
                 <c:forEach items="${ calendarDefinitionForm.role }" var="role">
