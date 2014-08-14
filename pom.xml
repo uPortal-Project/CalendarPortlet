@@ -50,7 +50,7 @@
         <icu4j.version>51.2</icu4j.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.0</joda-time.version>
-        <resource-server.version>1.0.26</resource-server.version>
+        <resource-server.version>1.0.41</resource-server.version>
         <spring.version>3.1.3.RELEASE</spring.version>
         <uportal-maven-plugin.version>1.0.0</uportal-maven-plugin.version>
         <mockito.version>1.8.4</mockito.version>
@@ -319,6 +319,11 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>antisamy</artifactId>
                 <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -643,7 +648,7 @@
     
     <build>
         <plugins>
-             <plugin>
+            <plugin>
                  <artifactId>maven-release-plugin</artifactId>
                  <version>2.2.1</version>
                  <configuration>
@@ -708,6 +713,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
+                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>skin.xml</include>
                                 <include>skin-shared.xml</include>
@@ -749,8 +755,8 @@
                             </plugin>
                         </plugins>
                     </configuration>
-                </plugin>
-                <plugin>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -770,10 +776,10 @@
                                 <include>rs/famfamfam/silk/1.3/page_edit.png</include>
                                 <include>rs/famfamfam/silk/1.3/page_white_put.png</include>
                                 <include>rs/famfamfam/silk/1.3/tick.png</include>
-                                <include>rs/jquery/1.6.4/</include>
-                                <include>rs/jqueryui/1.8.13/</include>
                                 <include>rs/backbone/0.9.2/</include>
                                 <include>rs/underscore/1.3.3/</include>
+                                <include>rs/bootstrap-namespaced/3.1.1/css/</include>
+                                <include>rs/fontawesome/4.0.3/css/</include>
                             </includes>
                         </overlay>
                     </overlays>
@@ -956,6 +962,26 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>2.3.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <version>1.3.3</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/webapp/css/less</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/css</outputDirectory>
+                    <compress>true</compress>
+                    <includes>
+                        <include>**/*.less</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
