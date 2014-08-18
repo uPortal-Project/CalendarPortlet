@@ -64,7 +64,7 @@
             <h2 role="heading"><spring:message code="edit.calendar"/></h2>
         </div>
         <div class="col-md-8">
-        <!-- Add Calendar -->
+        <!-- Return to Calendar -->
             <div class="pull-right">
                 <portlet:renderURL var="returnUrl" portletMode="view"/>
                 <a href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
@@ -90,7 +90,7 @@
 
             <div class="form-group">
                 <label class="col-md-3 control-label"><spring:message code="calendar.name"/></label>
-                <div class="col-md-6">
+                <div class="col-md-9">
                     <form:input path="name" class="form-control"/>
                 </div>
             </div>
@@ -98,7 +98,7 @@
                 <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
                 <div class="form-group">
                     <label class="col-md-3 control-label"><spring:message code="${ parameter.labelKey }"/></label>
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <editPreferences:preferenceInput cssClass="form-control" input="${ parameter.input }" path="${ paramPath }"/>
                         <c:if test="${ not empty parameter.example }">
                             <p>Example: ${ parameter.example }</p>
@@ -114,7 +114,8 @@
             </div>
             <div class="upcal-button-group col-md-offset-3 col-md-6">
                 <button type="submit" class="btn btn-primary"><spring:message code="save.calendar"/></button>
-                <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
+                <portlet:renderURL var="returnToAdminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
+                <a class="btn btn-link" href="${ returnToAdminUrl }"><spring:message code="cancel"/></a>
             </div>
         </form:form>
     </div>

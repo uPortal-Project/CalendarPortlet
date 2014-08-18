@@ -70,7 +70,8 @@
                         </div>
                         <div class="upcal-button-group col-md-offset-3 col-md-6">
                             <button type="submit" class="btn btn-primary"><spring:message code="next"/></button>
-                            <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
+                            <portlet:renderURL var="returnToAdminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
+                            <a class="btn btn-link" href="${ returnToAdminUrl }"><spring:message code="cancel"/></a>
                         </div>
                     </div>
                 </div>

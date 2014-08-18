@@ -40,13 +40,13 @@ import org.xml.sax.InputSource;
 
 
 /**
- * Reads roles from the portlet.xml file.
+ * Reads security roles (effectively uPortal groups) from the portlet.xml file.
  *
  * @author Josh Helmer, jhelmer@unicon.net
  */
 public class RoleService implements IRoleService, ServletContextAware {
     private static final String PORTLET_XML_PATH = "/WEB-INF/portlet.xml";
-    private static final String ROLES_XPATH = "//security-role-ref/role-name/text()";
+    private static final String ROLES_XPATH = "//security-role-ref/role-link/text()";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

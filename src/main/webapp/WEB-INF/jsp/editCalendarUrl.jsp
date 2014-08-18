@@ -43,7 +43,7 @@
 			<label class="portlet-form-field-label col-md-3 control-label">
 			    <spring:message code="calendar.name"/>:
 			</label>
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <form:input cssClass="form-control" path="name" size="50"/>
             </div>
         </div>
@@ -51,7 +51,7 @@
             <label class="portlet-form-field-label col-md-3 control-label">
                 <spring:message code="calendar.url"/>:
             </label>
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <form:input cssClass="form-control" path="url" size="50"/>
             </div>
         </div>
