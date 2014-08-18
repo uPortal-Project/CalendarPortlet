@@ -50,27 +50,29 @@
     </c:if>
     
     <div id="calendarPortletHeader" class="row">
-        <div class="col-md-8 upcal-wideview">
+        <div class="col-md-3 upcal-wideview">
             <!-- Range Selector -->
             <div id="${n}calendarRangeSelector" class="row upcal-range">
                 <div class="col-md-12">
-                    <h3><spring:message code="view"/></h3>
-                    <div class="btn-group">
-                        <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
-                            <spring:message code="day"/>
-                        </button>
-                        <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
-                            <spring:message code="week"/>
-                        </button>
-                        <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
-                            <spring:message code="month"/>
-                        </button>
+                    <div class="upcal-type-selector">
+                        <h3><spring:message code="view"/></h3>
+                        <div class="btn-group">
+                            <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                                <spring:message code="day"/>
+                            </button>
+                            <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                                <spring:message code="week"/>
+                            </button>
+                            <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                                <spring:message code="month"/>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="upcal-inline-calendar"></div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="row">
                 <div class="col-md-12 upcal-events">
                     <div class="upcal-event-view">
@@ -79,19 +81,19 @@
                         </div>
                         <div class="alert alert-danger" style="display:none"></div>
                         <div class="upcal-event-list"></div>
-                        <div class="upcal-event-details" style="display:none">
-                            <div class="upcal-event-detail"></div>
-                        </div>
+                    </div>
+                    <div class="upcal-event-details" style="display:none">
+                        <div class="upcal-event-detail"></div>
                         <div class="upcal-view-links">
                             <a id="${n}returnToCalendarLink" class="upcal-view-return" href="javascript:;"
-                            title="<spring:message code="return.to.event.list"/>">
+                               title="<spring:message code="return.to.event.list"/>">
                                 <i class="fa fa-arrow-left"></i> <spring:message code="return.to.event.list"/>
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <h3><spring:message code="my.calendars"/></h3>
+                <div class="col-md-12 upcal-my-calendars upcal-list">
+                    <h2><spring:message code="my.calendars"/></h2>
                     <ul>
                         <c:forEach items="${ model.calendars }" var="calendar">
                             <li class="color-${ model.colors[calendar.id] }">
