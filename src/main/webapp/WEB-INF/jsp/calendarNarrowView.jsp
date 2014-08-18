@@ -22,10 +22,8 @@
 
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
-
-<rs:aggregatedResources path="${ model.usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
-
 <c:set var="n"><portlet:namespace/></c:set>
+
 <portlet:actionURL var="showDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='true'/></portlet:actionURL>
 <portlet:actionURL var="hideDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='false'/></portlet:actionURL>
 

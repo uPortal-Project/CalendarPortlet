@@ -33,7 +33,7 @@
                 <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
                 ${n}.jQuery = ${ ns }jQuery;
                 ${n}._ = ${ ns }_;
-                ${n}.Backbone = ${ ns }Backbone;
+                ${n}.Backbone = Backbone.noConflict();
             </c:otherwise>
         </c:choose>
         if (!upcal.initialized) upcal.init(${n}.jQuery, ${n}._, ${n}.Backbone);
