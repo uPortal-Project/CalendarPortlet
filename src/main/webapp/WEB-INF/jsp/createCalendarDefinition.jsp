@@ -70,6 +70,7 @@
                         </div>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary"><spring:message code="next"/></button>
+                            <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
                         </div>
                     </div>
                 </div>

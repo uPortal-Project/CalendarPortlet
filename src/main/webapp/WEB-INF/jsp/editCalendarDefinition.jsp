@@ -120,6 +120,7 @@
             </div>
             <div class="col-md-12">
                 <button type="submit" class="btn btn-primary"><spring:message code="save.calendar"/></button>
+                <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
             </div>
         </form:form>
     </div>
