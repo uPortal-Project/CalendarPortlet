@@ -55,20 +55,14 @@
                 <form:input cssClass="form-control" path="url" size="50"/>
             </div>
         </div>
-        <div class="col-md-12">
+        <div class="upcal-button-group col-md-offset-3 col-md-6">
             <button type="submit" class="portlet-form-button btn btn-primary">
                 <spring:message code="save.calendar"/>
             </button>
+            <portlet:renderURL var="returnUrl"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>
+            <a class="btn btn-link" href="${ returnUrl }" title="<spring:message code="return.to.preferences"/>">
+                <spring:message code="cancel"/>
+            </a>
         </div>
-        
     </form:form>
-    
-	<div class="upcal-view-links">
-        <portlet:renderURL var="returnUrl"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>
-	    <a class="upcal-view-return" href="${ returnUrl }" 
-	           title="<spring:message code="return.to.preferences"/>">
-	       <spring:message code="return.to.preferences"/>
-	    </a>
-	</div>
-
 </div>

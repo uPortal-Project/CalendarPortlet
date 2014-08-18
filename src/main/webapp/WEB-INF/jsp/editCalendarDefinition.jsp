@@ -66,17 +66,9 @@
         <div class="col-md-8">
         <!-- Add Calendar -->
             <div class="pull-right">
-                <portlet:renderURL var="addCalendarUrl"><portlet:param name="action" value="createCalendarDefinition"/></portlet:renderURL>
-                <a href="${ addCalendarUrl }" title="<spring:message code="add.a.calendar"/>">
-                    <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
-                </a> |
                 <portlet:renderURL var="returnUrl" portletMode="view"/>
                 <a href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
                     <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
-                </a> |
-                <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
-                <a class="upcal-view-return" href="${ returnUrl }" title="<spring:message code="return.to.administration"/>">
-                    <i class="fa fa-gear"></i> <spring:message code="return.to.administration"/>
                 </a>
             </div>
         </div>
@@ -114,11 +106,13 @@
                     </div>
                 </div>
             </c:forEach>
-            <div>
-                <span><spring:message code="default.roles"/></span>
-                <form:checkboxes items="${ availableRoles }" path="role" element="div class='checkbox'"/>
+            <div class="form-group">
+                <label class="col-md-3 control-label"><spring:message code="default.roles"/></label>
+                <div class="col-md-6">
+                    <form:checkboxes items="${ availableRoles }" path="role" element="div class='checkbox'"/>
+                </div>
             </div>
-            <div class="col-md-12">
+            <div class="upcal-button-group col-md-offset-3 col-md-6">
                 <button type="submit" class="btn btn-primary"><spring:message code="save.calendar"/></button>
                 <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
             </div>

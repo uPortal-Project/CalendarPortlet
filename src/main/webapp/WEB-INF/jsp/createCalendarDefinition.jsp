@@ -34,9 +34,9 @@
             </h2>
         </div>
         <div class="col-md-6">
-            <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
-            <a class="pull-right" href="${ returnUrl }" title="<spring:message code="return.to.administration"/>">
-                <i class="fa fa-gear"></i> <spring:message code="return.to.administration"/>
+            <portlet:renderURL var="returnUrl" portletMode="view"/>
+            <a class="pull-right" href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
+                <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
             </a>
         </div>
     </div>
@@ -68,7 +68,7 @@
                                 </c:forEach>
                             </form:select>
                         </div>
-                        <div class="col-md-12">
+                        <div class="upcal-button-group col-md-offset-3 col-md-6">
                             <button type="submit" class="btn btn-primary"><spring:message code="next"/></button>
                             <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
                         </div>

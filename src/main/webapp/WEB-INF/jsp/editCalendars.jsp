@@ -25,6 +25,8 @@
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
+<portlet:renderURL portletMode="view" var="returnUrl"/>
+
 <div class="container-fluid">
 
     <div class="row">
@@ -32,18 +34,10 @@
             <h2><spring:message code="edit.calendars"/></h2>
         </div>
         <div class="col-md-8">
-            <a class="pull-right" href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar"/>">
-                <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
-            </a>
-            <span class="pull-right">&nbsp;|&nbsp;</span>
-            <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
-            <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
-                <i class="fa fa-gears"></i> <spring:message code="calendar.administration"/></a>
             <c:if test="${ sessionScope.isAdmin }">
-                <span class="pull-right">&nbsp;|&nbsp;</span>
-                <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-                <a class="pull-right" href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
-                    <i class="fa fa-key"></i> <spring:message code="preferences"/></a>
+                <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
+                <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+                    <i class="fa fa-gears"></i> <spring:message code="calendar.administration"/></a>
             </c:if>
         </div>
     </div>
@@ -164,8 +158,9 @@
                         <form:errors path="timezone" cssClass="alert alert-danger"/>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary"><spring:message code="save"/></button>
+                <div class="upcal-button-group col-md-offset-3 col-md-6">
+                    <button type="submit" class="btn btn-primary"><spring:message code="save.preferences"/></button>
+                    <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
                 </div>
             </form:form>
         </c:if>
