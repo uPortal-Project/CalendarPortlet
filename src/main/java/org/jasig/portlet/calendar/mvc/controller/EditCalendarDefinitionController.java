@@ -30,6 +30,7 @@ import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.mvc.CalendarDefinitionForm;
+import org.jasig.portlet.calendar.service.IRoleService;
 import org.jasig.portlet.form.parameter.Parameter;
 import org.jasig.portlet.form.parameter.SingleValuedParameterInput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +57,18 @@ public class EditCalendarDefinitionController {
 	private static final String FORM_NAME = "calendarDefinitionForm";
 
     private CalendarStore calendarStore;
+    private IRoleService roleService;
 
 	@Required
 	@Resource(name="calendarStore")
 	public void setCalendarStore(CalendarStore calendarStore) {
 		this.calendarStore = calendarStore;
 	}
+
+    @Autowired
+    public void setRoleService(final IRoleService roleService) {
+        this.roleService = roleService;
+    }
 	
 	private ApplicationContext context;
 	
@@ -92,6 +99,7 @@ public class EditCalendarDefinitionController {
             form.addParameter(pref.getName(), input.getDefaultValue());
         }
         model.addAttribute("adapter", context.getBean(form.getClassName()));
+        model.addAttribute("availableRoles", roleService.getKnownRoles());
         return "/editCalendarDefinition";
     }
 
@@ -103,6 +111,7 @@ public class EditCalendarDefinitionController {
 			model.addAttribute(FORM_NAME, form);
 		}
         model.addAttribute("adapter", context.getBean(form.getClassName(), ICalendarAdapter.class));
+        model.addAttribute("availableRoles", roleService.getKnownRoles());
 		return "/editCalendarDefinition";
 	}
 

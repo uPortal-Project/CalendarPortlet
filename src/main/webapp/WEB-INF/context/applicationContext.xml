@@ -160,4 +160,5 @@
 		</property>
 	</bean>
 
+    <bean id="roleService" class="org.jasig.portlet.calendar.service.RoleService"/>
 </beans>

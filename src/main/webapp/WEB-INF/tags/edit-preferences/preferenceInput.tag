@@ -22,17 +22,18 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <%@ tag dynamic-attributes="attributes" isELIgnored="false" %>
-<%@ attribute name="input"   required="true" type="org.jasig.portlet.form.parameter.ParameterInput" %>
-<%@ attribute name="path"    required="true" %>
-<%@ attribute name="name"    required="false" %>
-<%@ attribute name="values"  required="false" type="java.util.Collection" %>
+<%@ attribute name="input"     required="true" type="org.jasig.portlet.form.parameter.ParameterInput" %>
+<%@ attribute name="path"      required="true" %>
+<%@ attribute name="name"      required="false" %>
+<%@ attribute name="values"    required="false" type="java.util.Collection" %>
+<%@ attribute name="cssClass"  required="false" %>
 
 <c:choose>
 
   <c:when test="${ up:instanceOf(input, 'org.jasig.portlet.form.parameter.MultiTextParameterInput') }">
     <c:forEach items="${ values }" var="val">
       <div>
-         <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" />
+         <input class="${ cssClass }" name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" />
          <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
       </div>
     </c:forEach>
@@ -46,10 +47,10 @@
       <!-- Textarea -->
         <c:choose>
             <c:when test="${ values != null }">
-                <textarea>${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
+                <textarea class="${ cssClass }">${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
             </c:when>
             <c:otherwise>
-                <form:textarea path="${path}"/>
+                <form:textarea cssClass="${ cssClass }" path="${path}"/>
             </c:otherwise>
         </c:choose>
       </c:when>
@@ -57,10 +58,10 @@
       <!-- Text input -->
         <c:choose>
             <c:when test="${ values != null }">
-                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" />
+                <input class=${ cssClass } name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" />
             </c:when>
             <c:otherwise>
-                <form:input path="${path}"/>
+                <form:input cssClass="${ cssClass }" path="${path}"/>
             </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -72,11 +73,11 @@
     <c:choose>
       <c:when test="${ input.display == 'RADIO' }">
       <!-- Radio buttons -->
-        <form:radiobuttons path="${ path}" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
+        <form:radiobuttons cssClass="${ cssClass }" path="${ path}" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
       </c:when>
       <c:otherwise>
       <!-- Select menu -->
-        <form:select path="${ path }" multiple="false">
+        <form:select cssClass="${ cssClass }" path="${ path }" multiple="false">
           <c:forEach items="${ input.options }" var="option">
             <spring:message var="label" code="${ option.label }" text="${ option.label }" />
             <form:option value="${ option.value }" label="${ label }" />
@@ -91,11 +92,11 @@
     <c:choose>
       <c:when test="${ input.display == 'CHECKBOX' }">
       <!-- Checkboxes -->
-        <form:checkboxes path="${path}" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
+        <form:checkboxes cssClass="${ cssClass}" path="${path}" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
       </c:when>
       <c:otherwise>
       <!-- Multiple select menu -->
-        <form:select path="${path}" multiple="true">
+        <form:select cssClass="${ cssClass }" path="${path}" multiple="true">
           <c:forEach items="${ input.options }" var="option">
             <spring:message var="label" code="${ option.label }" text="${ option.label }" />
             <form:option value="${ option.value }" label="${ label }" />
