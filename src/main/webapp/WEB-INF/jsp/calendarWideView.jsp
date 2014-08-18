@@ -50,7 +50,7 @@
     </c:if>
     
     <div id="calendarPortletHeader" class="row">
-        <div class="col-md-3 upcal-wideview">
+        <div class="col-md-4 upcal-wideview">
             <!-- Range Selector -->
             <div id="${n}calendarRangeSelector" class="row upcal-range">
                 <div class="col-md-12">
@@ -72,7 +72,7 @@
             </div>
             <div class="upcal-inline-calendar"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="row">
                 <div class="col-md-12 upcal-events">
                     <div class="upcal-event-view">
@@ -92,35 +92,35 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 upcal-my-calendars upcal-list">
-                    <h2><spring:message code="my.calendars"/></h2>
-                    <ul>
-                        <c:forEach items="${ model.calendars }" var="calendar">
-                            <li class="color-${ model.colors[calendar.id] }">
-                                <c:choose>
-                                    <c:when test="${ empty model.hiddenCalendars[calendar.id] }">
-                                        <portlet:renderURL var="url"><portlet:param name="hideCalendar" value="${ calendar.id }"/></portlet:renderURL>
-                                        <a href="${ url }">
-                                            <span><i class="fa fa-eye-slash"></i> <spring:message code="hide"/></span>
-                                        </a>
-                                    </c:when>
-                                <c:otherwise>
-                                    <portlet:renderURL var="url"><portlet:param name="showCalendar" value="${ calendar.id }"/></portlet:renderURL>
-                                    <a class="upcal-inactive" href="${ url }">
-                                        <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
-                                    </a>
-                                </c:otherwise>
-                                </c:choose>
-                                <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
-                                <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar"><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:resourceURL>
-                                <a href="${ exportCalendarUrl }" class="pull-right" title="<spring:message code='export.calendar'/>">
-                                    <span><i class="fa fa-download"></i> <spring:message code="export"/></span>
-                                </a>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </div>
             </div>
+        </div>
+        <div class="col-md-3 upcal-my-calendars">
+            <h2><spring:message code="my.calendars"/></h2>
+            <ul>
+                <c:forEach items="${ model.calendars }" var="calendar">
+                    <li class="color-${ model.colors[calendar.id] }">
+                        <c:choose>
+                            <c:when test="${ empty model.hiddenCalendars[calendar.id] }">
+                                <portlet:renderURL var="url"><portlet:param name="hideCalendar" value="${ calendar.id }"/></portlet:renderURL>
+                                <a href="${ url }">
+                                    <span><i class="fa fa-eye-slash"></i> <spring:message code="hide"/></span>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <portlet:renderURL var="url"><portlet:param name="showCalendar" value="${ calendar.id }"/></portlet:renderURL>
+                                <a class="upcal-inactive" href="${ url }">
+                                    <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                        <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
+                        <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar"><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:resourceURL>
+                        <a href="${ exportCalendarUrl }" class="pull-right" title="<spring:message code='export.calendar'/>">
+                            <span><i class="fa fa-download"></i> <spring:message code="export"/></span>
+                        </a>
+                    </li>
+                </c:forEach>
+            </ul>
         </div>
     </div>
 </div>
