@@ -24,6 +24,40 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
+<script type="text/javascript"><rs:compressJs>
+    ${n}.jQuery(function() {
+        var $ = ${n}.jQuery;
+        var _ = ${n}._;
+        var Backbone = ${n}.Backbone;
+        var upcal = ${n}.upcal;
+
+        var RoleParamView = Backbone.View.extend({
+            initialize: function() {
+                this.render();
+            },
+            render: function( ){
+                // Compile the template using underscore
+                var template = _.template( $("#${n}roleParamTemplate").html(), {} );
+                // Load the compiled HTML into the Backbone "el"
+                this.$el.html( template );
+            }
+        });
+
+        $("#${n}parameters .role-params").delegate("a.delete-parameter-value-link", "click", function() {
+            var link = this;
+            $(link).parent().remove();
+        });
+
+        $("#${n}parameters .role-params a.add-parameter-value-link").click(function() {
+            var link = this;
+            var roleParamView = new RoleParamView();
+//            console.log(roleParamView);
+            $(link).before(roleParamView.$el);
+        });
+
+    });
+</rs:compressJs></script>
+
 <div class="container-fluid" role="section">
     <div class="row">
         <div class="col-md-4">
@@ -73,7 +107,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label"><spring:message code="${ parameter.labelKey }"/></label>
                     <div class="col-md-6">
-                        <editPreferences:preferenceInput input="${ parameter.input }" path="${ paramPath }"/>
+                        <editPreferences:preferenceInput cssClass="form-control" input="${ parameter.input }" path="${ paramPath }"/>
                         <c:if test="${ not empty parameter.example }">
                             <p>Example: ${ parameter.example }</p>
                         </c:if>
@@ -90,3 +124,13 @@
         </form:form>
     </div>
 </div>
+
+
+<script id="${n}roleParamTemplate" type="text/template">
+    <div class="col-md-3">
+        <input name="role" type="text" class="form-control"/>
+    </div>
+    <div class="col-md-3">
+        <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
+    </div>
+</script>
