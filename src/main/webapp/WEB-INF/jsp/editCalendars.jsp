@@ -56,11 +56,9 @@
                         <!-- Edit -->
                         <td>
                             <portlet:renderURL var="editCalendarUrl">
-                            <portlet:param name="action" value="editUrl"/>
-                            <portlet:param name="id" value="${ calendar.id }"/>
+                                <portlet:param name="action" value="editUrl"/>
+                                <portlet:param name="id" value="${ calendar.id }"/>
                             </portlet:renderURL>
-                        </td>
-                        <td>
                             <a href="${ editCalendarUrl }" title="<spring:message code="edit.calendar"/>">
                                 <span><i class="fa fa-edit"></i> <spring:message code="edit.calendar"/></span>
                             </a>
@@ -115,8 +113,6 @@
                             <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
                                 <portlet:param name="configurationId" value="${ calendar.id }"/>
                             </portlet:resourceURL>
-                        </td>
-                        <td>
                             <c:set var="editAction" value="${ model.predefinedEditActions[calendar.calendarDefinition.className] }"/>
                             <c:choose>
                                 <c:when test="${ not empty editAction }">
@@ -143,11 +139,6 @@
                         </td>
                         <td>
                             <span><spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody></span>
-                        </td>
-                        <td>
-                            <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
-                                <portlet:param name="configurationId" value="${ calendar.id }"/>
-                            </portlet:resourceURL>
                         </td>
                         <td>
                             &nbsp;
