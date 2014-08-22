@@ -24,63 +24,57 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<div class="fl-widget portlet" role="section">
+<div class="container-fluid" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading">
-            <spring:message code="add.a.calendar"/>
-        </h2>
-    </div> <!-- end: portlet-titlebar -->
-
-    <div class="fl-widget-content content portlet-content" role="main">
-
-    <portlet:renderURL escapeXml='false' var="postUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
-    <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}">
-    
-        <spring:hasBindErrors name="calendarDefinitionForm">
-            <div class="portlet-msg-error portlet-msg error" role="alert">
-                <form:errors path="*" element="div"/>
-            </div> <!-- end: portlet-msg -->
-        </spring:hasBindErrors>
-
-        <table>
-            <tbody>    
-                <tr><td>
-                    <label class="portlet-form-field-label">
-                        <spring:message code="calendar.functional.name"/> <img src="<rs:resourceURL value="/rs/famfamfam/silk/1.3/information.png"/>" title="<spring:message code="unique.programmatic.name.for.this.calendar.instruction"/>" />:
-                    </label></td>
-                    <td><form:input path="fname" size="50"/></td>
-                </tr>
-                <tr>
-                    <td><label class="portlet-form-field-label">
-                        <spring:message code="calendar.type"/>:
-                    </label></td>
-                    <td><form:select path="className">
-                        <c:forEach items="${ adapters }" var="adapter">
-                            <spring:message code="${ adapter.value.titleKey }" var="label"/>
-                            <form:option value="${ adapter.key }" label="${ label }"/>
-                        </c:forEach>
-                    </form:select></td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="buttons">
-            <button type="submit" class="portlet-form-button btn">
-                <spring:message code="next"/>
-            </button>
+    <div class="row" role="sectionhead">
+        <div class="col-md-6">
+            <h2 role="heading">
+                <spring:message code="add.a.calendar"/>
+            </h2>
         </div>
-        
-    </form:form>
-    
-    <div class="upcal-view-links">
-        <portlet:renderURL var="returnUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
-        <a class="upcal-view-return" href="${ returnUrl }" title="<spring:message code="return.to.administration"/>">
-           <spring:message code="return.to.administration"/>
-        </a>
+        <div class="col-md-6">
+            <portlet:renderURL var="returnUrl" portletMode="view"/>
+            <a class="pull-right" href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
+                <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+            </a>
+        </div>
     </div>
-    
+    <div class="row" role="main">
+        <div class="col-md-6 col-md-offset-2">
+            <portlet:renderURL escapeXml='false' var="postUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
+            <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}" class="form-horizontal" role="form">
+                <div class="row">
+                    <div class="col-md-12">
+                        <spring:hasBindErrors name="calendarDefinitionForm">
+                            <div class="alert alert-danger" role="alert">
+                                <form:errors path="*" element="div"/>
+                            </div>
+                        </spring:hasBindErrors>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><spring:message code="calendar.functional.name"/></label>
+                        <div class="col-md-8">
+                            <form:input class="form-control" path="fname"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><spring:message code="calendar.type"/></label>
+                        <div class="col-md-8">
+                            <form:select class="form-control" path="className">
+                                <c:forEach items="${ adapters }" var="adapter">
+                                    <spring:message code="${ adapter.value.titleKey }" var="label"/>
+                                    <form:option value="${ adapter.key }" label="${ label }"/>
+                                </c:forEach>
+                            </form:select>
+                        </div>
+                        <div class="upcal-button-group col-md-offset-3 col-md-6">
+                            <button type="submit" class="btn btn-primary"><spring:message code="next"/></button>
+                            <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
+                        </div>
+                    </div>
+                </div>
+            </form:form>
+        </div>
     </div>
-
 </div>

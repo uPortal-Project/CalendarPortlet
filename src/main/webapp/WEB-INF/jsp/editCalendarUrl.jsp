@@ -24,12 +24,12 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<div class="upcal-edit-urlview">
+<div class="upcal-edit-urlview container-fluid">
 
 	<h2><spring:message code="edit.calendar"/></h2>
 
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
-    <form:form name="calendar" commandName="userHttpIcalCalendarForm" action="${postUrl}">
+    <form:form name="calendar" cssClass="form-horizontal" commandName="userHttpIcalCalendarForm" action="${postUrl}">
 
 	    <spring:hasBindErrors name="userHttpIcalCalendarForm">
 	        <div class="portlet-msg-error" role="alert">
@@ -39,32 +39,30 @@
 
         <form:hidden path="id"/>
 
-        <p>
-			<label class="portlet-form-field-label">
+        <div class="form-group">
+			<label class="portlet-form-field-label col-md-3 control-label">
 			    <spring:message code="calendar.name"/>:
 			</label>
-            <form:input path="name" size="50"/>
-        </p>
-        <p>
-            <label class="portlet-form-field-label">
+            <div class="col-md-6">
+                <form:input cssClass="form-control" path="name" size="50"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="portlet-form-field-label col-md-3 control-label">
                 <spring:message code="calendar.url"/>:
             </label>
-            <form:input path="url" size="50"/>
-    	</p>
-        <p>
-            <button type="submit" class="portlet-form-button btn">
+            <div class="col-md-6">
+                <form:input cssClass="form-control" path="url" size="50"/>
+            </div>
+        </div>
+        <div class="upcal-button-group col-md-offset-3 col-md-6">
+            <button type="submit" class="portlet-form-button btn btn-primary">
                 <spring:message code="save.calendar"/>
             </button>
-        </p>
-        
+            <portlet:renderURL var="returnUrl"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>
+            <a class="btn btn-link" href="${ returnUrl }" title="<spring:message code="return.to.preferences"/>">
+                <spring:message code="cancel"/>
+            </a>
+        </div>
     </form:form>
-    
-	<div class="upcal-view-links">
-        <portlet:renderURL var="returnUrl"><portlet:param name="action" value="editSubscriptions"/></portlet:renderURL>
-	    <a class="upcal-view-return" href="${ returnUrl }" 
-	           title="<spring:message code="return.to.preferences"/>">
-	       <spring:message code="return.to.preferences"/>
-	    </a>
-	</div>
-
 </div>
