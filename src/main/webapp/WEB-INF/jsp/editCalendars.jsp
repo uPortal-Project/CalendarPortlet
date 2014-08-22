@@ -130,6 +130,30 @@
                         </td>
                     </tr>
                 </c:forEach>
+                <c:forEach items="${ model.hiddencalendars }" var="calendar">
+                    <tr>
+                        <td>
+                            <portlet:actionURL var="displayURL">
+                                <portlet:param name="action" value="addSharedCalendar"/>
+                                <portlet:param name="definitionId" value="${ calendar.id }"/>
+                            </portlet:actionURL>
+                            <a class="upcal-inactive" href="${ displayURL }">
+                                <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
+                            </a>
+                        </td>
+                        <td>
+                            <span><spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody></span>
+                        </td>
+                        <td>
+                            <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar">
+                                <portlet:param name="configurationId" value="${ calendar.id }"/>
+                            </portlet:resourceURL>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                    </tr>
+                </c:forEach>
             </table>
         </div>
     </div>
