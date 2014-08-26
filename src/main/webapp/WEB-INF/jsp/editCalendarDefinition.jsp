@@ -58,7 +58,7 @@
     });
 </rs:compressJs></script>
 
-<div class="container-fluid" role="section">
+<div class="container-fluid bootstrap-styles" role="section">
     <div class="row">
         <div class="col-md-4">
             <h2 role="heading"><spring:message code="edit.calendar"/></h2>

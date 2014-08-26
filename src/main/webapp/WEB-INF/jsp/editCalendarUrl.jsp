@@ -24,7 +24,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<div class="upcal-edit-urlview container-fluid">
+<div class="upcal-edit-urlview container-fluid bootstrap-styles">
 
 	<h2><spring:message code="edit.calendar"/></h2>
 

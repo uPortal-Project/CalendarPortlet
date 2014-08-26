@@ -26,7 +26,7 @@
 
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-<div id="${n}container" class="container-fluid">
+<div id="${n}container" class="container-fluid bootstrap-styles">
     <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
         <div class="row">
             <div class="col-md-12">
