@@ -27,7 +27,7 @@
 
 <portlet:renderURL portletMode="view" var="returnUrl"/>
 
-<div class="container-fluid">
+<div class="container-fluid bootstrap-styles">
 
     <div class="row">
         <div class="col-md-4">

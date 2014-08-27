@@ -24,7 +24,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<div class="container-fluid" role="section">
+<div class="container-fluid bootstrap-styles" role="section">
 
     <!-- Portlet Titlebar -->
     <div class="row" role="sectionhead">

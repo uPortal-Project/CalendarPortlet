@@ -24,7 +24,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
-<div class="container-fluid upcal-adminview">
+<div class="container-fluid bootstrap-styles upcal-adminview">
     <div class="row">
         <div class="col-md-12">
             <!-- Add Calendar -->
