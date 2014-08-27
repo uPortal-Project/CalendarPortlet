@@ -41,6 +41,28 @@
     }
 }
 
+.upcal-wideview {
+    .upcal-calendar-grid {
+        float: left;
+        width: 325px;
+    }
+
+    > .row {
+        margin-left: 350px;
+        margin-right: 0;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .upcal-calendar-grid {
+            float: none;
+        }
+
+        > .row {
+            margin-left: 0;
+        }
+    }
+}
+
 .upcal-my-calendars {
     border: 1px solid #eeeeee;
     padding-bottom: 10px;
@@ -53,6 +75,7 @@
 .upcal-type-selector {
     text-align: center;
     margin: 0 auto;
+    padding-bottom: 15px;
 
     h3 {
         display: inline-block;
