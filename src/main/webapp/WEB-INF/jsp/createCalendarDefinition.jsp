@@ -29,9 +29,9 @@
     <!-- Portlet Titlebar -->
     <div class="row" role="sectionhead">
         <div class="col-md-6">
-            <h2 role="heading">
+            <h4 role="heading">
                 <spring:message code="add.a.calendar"/>
-            </h2>
+            </h4>
         </div>
         <div class="col-md-6">
             <portlet:renderURL var="returnUrl" portletMode="view"/>

@@ -61,7 +61,7 @@
 <div class="container-fluid" role="section">
     <div class="row">
         <div class="col-md-4">
-            <h2 role="heading"><spring:message code="edit.calendar"/></h2>
+            <h4 role="heading"><spring:message code="edit.calendar"/></h4>
         </div>
         <div class="col-md-8">
         <!-- Return to Calendar -->

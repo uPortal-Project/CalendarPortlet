@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="col-lg-6 col-sm-12 upcal-my-calendars">
-                <h2><spring:message code="my.calendars"/></h2>
+                <h3><spring:message code="my.calendars"/></h3>
                 <ul>
                     <c:forEach items="${ model.calendars }" var="calendar">
                         <li class="color-${ model.colors[calendar.id] }">
@@ -133,7 +133,7 @@
         <div class="row">
             <div class="col-md-12 events-alert">
                     <div class="alert alert-warning">
-                        <h4><i class="fa fa-exclamation-circle"></i> No events</h4>
+                        <h5><i class="fa fa-exclamation-circle"></i> No events</h5>
                     </div>
             </div>
         </div>
@@ -141,7 +141,7 @@
     ${"<%"} _(days).each(function(day) { ${"%>"}
         <div class="row day">
             <div class="col-md-12">
-                <h2>${"<%="} day.displayName ${"%>"}</h2>
+                <h3>${"<%="} day.displayName ${"%>"}</h3>
                 ${"<%"} day.events.each(function(event) { ${"%>"}
                     <div class="upcal-event-wrapper">
                         <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
@@ -172,7 +172,7 @@
 
 <script type="text/template" id="event-detail-template">
     <!-- Event title -->
-    <h2>${"<%="} event.summary ${"%>"}</h2>
+    <h3>${"<%="} event.summary ${"%>"}</h3>
 
     <!-- Event time -->
     <div class="event-detail-date">

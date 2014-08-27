@@ -26,7 +26,7 @@
 
 <div class="upcal-edit-urlview container-fluid">
 
-	<h2><spring:message code="edit.calendar"/></h2>
+	<h4><spring:message code="edit.calendar"/></h4>
 
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
     <form:form name="calendar" cssClass="form-horizontal" commandName="userHttpIcalCalendarForm" action="${postUrl}">

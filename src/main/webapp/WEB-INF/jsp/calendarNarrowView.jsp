@@ -37,7 +37,7 @@
                     <!-- Range Selector -->
                     <div id="${n}calendarRangeSelector" class="row upcal-range">
                         <div class="col-md-6">
-                            <h3><spring:message code="view"/></h3>
+                            <h5><spring:message code="view"/></h5>
                             <div class="btn-group">
                                 <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
                                     <spring:message code="day"/>
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <h3 class="text-right"><spring:message code="date.picker"/></h3>
+                            <h5 class="text-right"><spring:message code="date.picker"/></h5>
                             <div class="btn-group pull-right">
                                 <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-default upcal-range-datepicker">
                                     <spring:message code="show"/>
@@ -132,7 +132,7 @@
         ${"<%"} _(days).each(function(day) { ${"%>"}
             <div class="row day">
                 <div class="col-md-12">
-                    <h2>${"<%="} day.displayName ${"%>"}</h2>
+                    <h4>${"<%="} day.displayName ${"%>"}</h4>
                     ${"<%"} day.events.each(function(event) { ${"%>"}
                         <div class="upcal-event-wrapper">
                             <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
@@ -150,7 +150,7 @@
                                         ${"<%="} event.attributes.startTime ${"%>"}
                                     ${"<%"} } ${"%>"}
                                 </span></strong>
-                                <h3 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h3>
+                                <h5 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h5>
                             </div>
                         </div>
                     ${"<%"} }); ${"%>"}
@@ -163,7 +163,7 @@
 
 <script type="text/template" id="event-detail-template">
     <!-- Event title -->
-    <h2>${"<%="} event.summary ${"%>"}</h2>
+    <h4>${"<%="} event.summary ${"%>"}</h4>
     <!-- Event time -->
     <div class="row event-detail-date">
         <div class="col-md-12">
@@ -186,7 +186,7 @@
     ${"<%"} if (event.location) { ${"%>"}
     <div class="row">
         <div class="col-md-12">
-            <h3>Location:</h3>
+            <h5>Location:</h5>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
     </div>
@@ -195,7 +195,7 @@
     ${"<%"} if (event.description) { ${"%>"}
     <div class="row">
         <div class="col-md-12">
-            <h3>Description:</h3>
+            <h5>Description:</h5>
             <p>${"<%="} event.description ${"%>"}</p>
         </div>
     </div>
@@ -204,7 +204,7 @@
     ${"<%"} if (event.link) { ${"%>"}
     <div class="row">
         <div class="col-md-12">
-            <h3>Link:</h3>
+            <h5>Link:</h5>
             <p><a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a></p>
         </div>
     </div>

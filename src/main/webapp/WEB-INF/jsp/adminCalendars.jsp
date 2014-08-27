@@ -42,7 +42,7 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <h2><spring:message code="calendar.administration"/></h2>
+            <h4><spring:message code="calendar.administration"/></h4>
             <c:choose>
                 <c:when test="${ empty calendars }">
                     <spring:message code="add.a.calendar" var="linkText"/>
