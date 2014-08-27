@@ -5,6 +5,7 @@
     .events-alert {
         margin-top: 20px;
     }
+
     .upcal-event-wrapper {
         padding-left: 20px;
         padding-bottom: 15px;
@@ -42,19 +43,19 @@
 }
 
 .upcal-wideview {
+    > .row {
+        margin-left: 350px;
+        margin-right: 0;
+    }
     .upcal-calendar-grid {
         float: left;
         width: 325px;
     }
 
-    > .row {
-        margin-left: 350px;
-        margin-right: 0;
-    }
-
     @media only screen and (max-width: 768px) {
         .upcal-calendar-grid {
             float: none;
+            margin: 0 auto;
         }
 
         > .row {
@@ -64,8 +65,8 @@
 }
 
 .upcal-my-calendars {
-    border: 1px solid #eeeeee;
     padding-bottom: 10px;
+    border-left: 1px solid #eee;
 }
 
 .upcal-button-group {
