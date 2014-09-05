@@ -31,7 +31,7 @@
 
     <div class="row">
         <div class="col-md-4">
-            <h2><spring:message code="edit.calendars"/></h2>
+            <h4><spring:message code="edit.calendars"/></h4>
         </div>
         <div class="col-md-8">
             <c:if test="${ sessionScope.isAdmin }">
@@ -43,7 +43,7 @@
     </div>
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <h3><spring:message code="my.calendars"/></h3>
+            <h5><spring:message code="my.calendars"/></h5>
         </div>
         <div class="col-md-8 col-md-offset-2">
             <table class="table tabale-condensed">
@@ -86,7 +86,7 @@
             </a>
         </div>
         <div class="col-md-8 col-md-offset-2">
-            <h3><spring:message code="preconfigured.calendars"/></h3>
+            <h5><spring:message code="preconfigured.calendars"/></h5>
             <table class="table table-condensed">
                 <c:forEach items="${ model.calendars }" var="calendar">
                     <tr>
@@ -150,7 +150,7 @@
     </div>
     <div class="row">
         <c:if test="${model.timezoneReadOnly == false}">
-            <h2><spring:message code="preferences"/></h2>
+            <h4><spring:message code="preferences"/></h4>
             <div id="${n}calendar-submission-success" class="col=md-12" style="display: none;">
                 <p>
                     <spring:message code="your.preferences.have.been.saved.successfully"/>
