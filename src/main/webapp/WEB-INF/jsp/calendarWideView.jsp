@@ -52,28 +52,26 @@
     <div class="upcal-wideview row">
         <div class="upcal-calendar-grid">
             <!-- Range Selector -->
-            <div id="${n}calendarRangeSelector" class="row upcal-range">
-                <div class="col-md-12">
-                    <div class="upcal-type-selector">
-                        <h3><spring:message code="view"/></h3>
-                        <div class="btn-group">
-                            <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
-                                <spring:message code="day"/>
-                            </button>
-                            <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
-                                <spring:message code="week"/>
-                            </button>
-                            <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
-                                <spring:message code="month"/>
-                            </button>
-                        </div>
+            <div id="${n}calendarRangeSelector" class="upcal-range">
+                <div class="upcal-type-selector">
+                    <h3><spring:message code="view"/></h3>
+                    <div class="btn-group">
+                        <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                            <spring:message code="day"/>
+                        </button>
+                        <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                            <spring:message code="week"/>
+                        </button>
+                        <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                            <spring:message code="month"/>
+                        </button>
                     </div>
                 </div>
                 <div class="clearfix upcal-inline-calendar"></div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-lg-6 col-sm-12">
                 <div class="row">
                     <div class="col-md-12 upcal-events">
                         <div class="upcal-event-view">
@@ -95,7 +93,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 upcal-my-calendars">
+            <div class="col-lg-6 col-sm-12 upcal-my-calendars">
                 <h2><spring:message code="my.calendars"/></h2>
                 <ul>
                     <c:forEach items="${ model.calendars }" var="calendar">
