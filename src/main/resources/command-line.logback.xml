@@ -29,7 +29,7 @@
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%-5level %logger{36} [%date{mm:ss.SSS}] %m%n</pattern>
+            <pattern>CalendarPortlet: %-5level %logger{36} %m%n</pattern>
         </encoder>
     </appender>
 
