@@ -86,7 +86,7 @@
     ${"<%"} } else { ${"%>"}
         ${"<%"} _(days).each(function(day) { ${"%>"}
             <div class="day">
-                <h2>${"<%="} day.displayName ${"%>"}</h2>
+                <h4>${"<%="} day.displayName ${"%>"}</h4>
                 ${"<%"} day.events.each(function(event) { ${"%>"}
                     <div class="upcal-event-wrapper">
                         <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
@@ -115,11 +115,11 @@
 
 <script type="text/template" id="event-detail-template">
     <!-- Event title -->
-    <h2>${"<%="} event.summary ${"%>"}</h2>
+    <h4>${"<%="} event.summary ${"%>"}</h4>
 
     <!-- Event time -->
     <div class="event-detail-date">
-        <h3>Date:</h3>
+        <h5>Date:</h5>
         <p>
             ${"<%"} if (event.multiDay) { ${"%>"}
                 ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
@@ -136,21 +136,21 @@
     
     ${"<%"} if (event.location) { ${"%>"}
         <div>
-            <h3>Location:</h3>
+            <h5>Location:</h5>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.description) { ${"%>"}
         <div>
-            <h3>Description:</h3>
+            <h5>Description:</h5>
             <p>${"<%="} event.description ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
         <div>
-            <h3>Link:</h3>
+            <h5>Link:</h5>
             <p>
                 <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
             </p>

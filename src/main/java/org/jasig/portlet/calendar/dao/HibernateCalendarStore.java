@@ -274,12 +274,16 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements
 			if (roles.isEmpty())
 				return;
 			
-			String query = "from PredefinedCalendarDefinition def "
-				+ "left join fetch def.defaultRoles role where " 
+			String query = "from PredefinedCalendarDefinition pcd where pcd.id in "
+                + "(select distinct def.id from PredefinedCalendarDefinition def "
+				+ "left join def.defaultRoles role where "
 				+ ":subscribeId not in (select config.subscribeId "
 				+ "from def.userConfigurations config)";
-			if (roles.size() > 0)
-				query = query.concat("and role in (:roles)");
+			if (roles.size() > 0) {
+                query = query.concat("and role in (:roles)");
+            }
+            query = query.concat(")");
+
 			Query q = this.getSession().createQuery(query);
 			q.setString("subscribeId", subscribeId);
 			if (roles.size() > 0)
