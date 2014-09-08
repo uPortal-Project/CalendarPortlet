@@ -134,12 +134,12 @@
         <name>casProxyTicket</name>
     </user-attribute-->
 
-    <!-- Uncomment to use cached password authentication -->
+    <!-- Uncomment to use cached password authentication (also needed for Exchange Web Services integration) -->
     <!--user-attribute>
         <name>password</name>
     </user-attribute-->
 
-    <!-- Uncomment to use Exchange -->
+    <!-- Uncomment for Office365 Exchange Web Services integration -->
     <!--user-attribute>
         <name>mail</name>
     </user-attribute-->
