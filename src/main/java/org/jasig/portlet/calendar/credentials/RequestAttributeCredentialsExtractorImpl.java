@@ -27,22 +27,23 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 
 
 /**
- * This {@link ICredentialsExtractor} implementation can retrieve the necessary
- * username and password from named attributes within the user's {@link HttpSession}
- * or {@link PortletSession}.
+ * This {@link ICredentialsExtractor} implementation retrieves the necessary
+ * username and password from named attributes within the USER_INFO map bound
+ * to the {@link javax.portlet.PortletRequest}
  * 
  * @author Nicholas Blair, nblair@doit.wisc.edu
  * @version $Header: RequestAttributeCredentialsExtractorImpl.java Exp $
  */
-public class RequestAttributeCredentialsExtractorImpl implements ICredentialsExtractor {
+public final class RequestAttributeCredentialsExtractorImpl implements ICredentialsExtractor {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+	private final Log log = LogFactory.getLog(getClass());
 	
 	/**
 	 * Default constructor
@@ -65,7 +66,13 @@ public class RequestAttributeCredentialsExtractorImpl implements ICredentialsExt
 	public Credentials getCredentials(PortletRequest request) {
 	    Map<String,String> userInfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
 	    String username = userInfo.get(usernameAttribute);
+        if (StringUtils.isBlank(username)) {
+            log.warn("No username found in the USER_INFO map on the PortletRequest;  attribute name was:  " + usernameAttribute);
+        }
 	    String password = userInfo.get(passwordAttribute);
+        if (StringUtils.isBlank(password)) {
+            log.warn("No password found in the USER_INFO map on the PortletRequest;  attribute name was:  " + passwordAttribute);
+        }
 		return new UsernamePasswordCredentials(username, password);
 	}
 
