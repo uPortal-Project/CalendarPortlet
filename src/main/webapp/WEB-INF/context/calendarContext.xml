@@ -120,7 +120,7 @@
      | src/main/resources/com/microsoft/exchange/Service.wsdl and uncomment the
      | reference to the ExchangeInitializationService bean in calendar.xml. 
      +-->
-    <!--bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
             <list>
                 <value>com.microsoft.exchange.messages</value>
@@ -139,7 +139,7 @@
             <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
         </constructor-arg>
     </bean>
-    <!- The connection is attempted 5 times prior to stopping
+    <!-- The connection is attempted 5 times prior to stopping
         so the actual time before failure will be 5 times p:connectionTimeout 
         Suggested way of testing Connection Timeout is by hitting a
         domain with a port that is firewalled:
@@ -149,7 +149,7 @@
         but not respond.  Example tool: bane
         http://blog.danielwellman.com/2010/09/introducing-bane-a-test-harness-for-server-connections.html
         usage: $bane 10010 NeverRespond
-        ie http://localhost:10010 ->
+        ie http://localhost:10010 -->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
           p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
           p:maxTotalConnections="200">
@@ -170,7 +170,7 @@
             <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
                   p:includePeriod="true"/>
         </property>
-    </bean-->
+    </bean>
 
     <!-- 
      | CalDAV adapter for calendars available via the CalDAV protocol.
@@ -187,7 +187,7 @@
      | configure uPortal to cache user passwords.  This adapter requires access
      | to the user's password which is why the URL must be HTTPS instead of HTTP
      +-->
-    <!--<bean id="calDavAdapter"
+    <bean id="calDavAdapter"
         class="org.jasig.portlet.calendar.adapter.CalDavCalendarAdapter"
         p:cache-ref="calendarCache"
         p:titleKey="authenticated.caldav.feed"
@@ -214,7 +214,6 @@
             </list>
         </property>
     </bean>
-    -->
 
     <!--
      | Courses DAO adapter for creating a calendar from the student's course information
