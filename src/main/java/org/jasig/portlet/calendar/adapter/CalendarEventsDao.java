@@ -255,8 +255,8 @@ public class CalendarEventsDao {
             startOfTheSpecificDay = startOfTheSpecificDay.plusDays(1);
             endOfTheSpecificDay = endOfTheSpecificDay.plusDays(1);
 
-        } while (startOfTheSpecificDay.isBefore(eventEnd) && interval.contains(startOfTheSpecificDay));
-        
+        } while (!startOfTheSpecificDay.isAfter(eventEnd) && interval.contains(startOfTheSpecificDay));
+
         return events;
     }
 

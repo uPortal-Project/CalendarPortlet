@@ -18,10 +18,6 @@
  */
 package org.jasig.portlet.calendar.adapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -30,7 +26,6 @@ import java.util.Set;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryImpl;
 import net.fortuna.ical4j.model.component.VEvent;
-
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -38,6 +33,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 public class CalendarEventDaoTest {
     
@@ -93,6 +92,30 @@ public class CalendarEventDaoTest {
         
         assertEquals(1, events.size());
         
+    }
+
+    /*
+     * Test for CAP-182.  Test boundary case where start time == end time and
+     * no TZ is associated with the event.  Defect was occurring because the
+     * specific day checks were not checking the actual day-of the event because
+     * end time was equal to, not before the start of the day being checked.
+     */
+    @Test
+    public void testGetDisplayEventsSameStartEnd() throws Exception {
+        DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+
+        DateTime eventStart = new DateTime(2012, 1, 4, 17, 0);
+        DateTime eventEnd = new DateTime(2012, 1, 4, 17, 0);
+
+        VEvent event = new VEvent(getICal4jDate(eventStart, null), getICal4jDate(eventEnd, null), "Test Event");
+
+        DateMidnight intervalStart = new DateMidnight(2012, 1, 1, tz);
+        DateMidnight intervalStop = new DateMidnight(2012, 1, 31, tz);
+        Interval interval = new Interval(intervalStart, intervalStop);
+
+        Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, tz);
+
+        assertEquals(1, events.size());
     }
     
     @Test
@@ -156,7 +179,9 @@ public class CalendarEventDaoTest {
     
     public net.fortuna.ical4j.model.DateTime getICal4jDate(DateTime date, DateTimeZone timezone) {
         net.fortuna.ical4j.model.DateTime ical = new net.fortuna.ical4j.model.DateTime(date.toDate());
-        ical.setTimeZone(tzRegistry.getTimeZone(timezone.getID()));
+        if (timezone != null) {
+            ical.setTimeZone(tzRegistry.getTimeZone(timezone.getID()));
+        }
         return ical;
     }
 
