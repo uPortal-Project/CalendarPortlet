@@ -120,7 +120,6 @@ public class CalendarEventsDao {
 
         // attempt to retrieve the timezone-aware event set from cache
         Element cachedElement = this.cache.get(tzKey);
-        cachedElement = null;
         if (cachedElement != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving JSON timezone-aware event set from cache, key:" + tzKey);
