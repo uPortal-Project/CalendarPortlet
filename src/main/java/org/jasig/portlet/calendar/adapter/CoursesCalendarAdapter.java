@@ -372,21 +372,28 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     private java.util.Calendar calculateFirstMeetingStartTime(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
 
+        log.trace("Examining courseMeeting="+courseMeeting);
+
         java.util.Calendar cmStartDate = courseMeeting.getStartDate();
+        log.trace("cmStartDate="+cmStartDate);
         java.util.Calendar candidateStartDate = cmStartDate != null && !cmStartDate.getTime().before(termStartDate.getTime())
-                ? courseMeeting.getStartDate() 
-                : termStartDate;
-        
+                ? (java.util.Calendar) cmStartDate.clone()       // Whether we use the term or meeting date, we must be
+                : (java.util.Calendar) termStartDate.clone();    // careful to clone it b/c Calendar objects are mutable!
+        log.trace("candidateStartDate="+candidateStartDate);
+
         // We have to calculate the first time this course meets...
         List<String> courseDays = courseMeeting.getDayIds();
-        java.util.Calendar actualStartDate = null; 
+        log.trace("courseDays="+courseDays);
+        java.util.Calendar actualStartDate = null;
         while (true) {  // Must reach the break statement
             int calendarDayOfWeek = candidateStartDate.get(java.util.Calendar.DAY_OF_WEEK);
+            log.trace("Considering calendarDayOfWeek="+calendarDayOfWeek);
             for (String dayCode : courseDays) {
                 WeekDay weekDay = DAYS.valueOf(dayCode).getIcalWeekDay();
                 if (calendarDayOfWeek == WeekDay.getCalendarDay(weekDay)) {
                     // This course meets on this day;  proceed...
                     actualStartDate = (java.util.Calendar) candidateStartDate.clone();
+                    log.trace("actualStartDate="+actualStartDate);
                 }
             }
             if (actualStartDate != null) {
