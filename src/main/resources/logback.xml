@@ -91,17 +91,19 @@
    | Turn up logging for portlet specific package
    +-->
   <!--
-  <logger name="org.jasig.portlet.courses" additivity="false" level="DEBUG">
+  <logger name="org.jasig.portlet.calendar" additivity="false" level="DEBUG">
     <appender-ref ref="LOG" />
   </logger>
   -->
 
     <!-- Enable to troubleshoot Exchange Web Services messages at the wire level. -->
+    <!--
     <logger name="org.apache.http.wire" additivity="false" level="DEBUG">
         <appender-ref ref="LOG" />
     </logger>
     <logger name="org.springframework.ws" additivity="false" level="DEBUG">
         <appender-ref ref="LOG" />
     </logger>
+    -->
 
 </configuration>
