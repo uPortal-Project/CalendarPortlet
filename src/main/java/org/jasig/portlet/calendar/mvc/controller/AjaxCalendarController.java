@@ -38,9 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.adapter.CalendarEventsDao;
 import org.jasig.portlet.calendar.adapter.CalendarException;
@@ -57,6 +54,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,7 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping("VIEW")
 public class AjaxCalendarController implements ApplicationContextAware {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @ActionMapping(params = "action=showDatePicker")
     public void toggleShowDatePicker(@RequestParam(value = "show") String show,
@@ -98,9 +97,6 @@ public class AjaxCalendarController implements ApplicationContextAware {
         final String[] resourceIdTokens = resourceId.split("-");        
         final String startDate = resourceIdTokens[0];
         final int days = Integer.parseInt(resourceIdTokens[1]);
-        final boolean refresh = resourceIdTokens.length > 2
-                ? Boolean.valueOf(resourceIdTokens[2])
-                : false;
 
         final long startTime = System.currentTimeMillis();
         final List<String> errors = new ArrayList<String>();
@@ -182,51 +178,44 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    	eventsByDay.get(day).add(event);
 		}
 		
-		if (log.isTraceEnabled()) {
-	        log.trace("Prepared the following eventsByDay collection for user '" 
-	                            + request.getRemoteUser() + "':" + eventsByDay);
-		}
+        log.trace("Prepared the following eventsByDay collection for user {}: {}",
+                request.getRemoteUser(), eventsByDay);
 
 		model.put("dateMap", eventsByDay);
 		model.put("dateNames", dateDisplayNames);
 		model.put("viewName", "jsonView");
 		model.put("errors", errors);
 
-		String etag = String.valueOf(model.hashCode());
-		String requestEtag = request.getETag();
+        String etag = String.valueOf(model.hashCode());
+        // UP-4264 request.getETag() does not work in uPortal, so get the eTag directly from the header.
+		String requestEtag = request.getProperty("If-None-Match");
 
 		// if the request ETag matches the hash for this response, send back
 		// an empty response indicating that cached content should be used
-        if (!refresh && request.getETag() != null && etag.equals(requestEtag)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Sending an empty response (due to matched ETag and " 
-                            + "refresh=false) for user '" 
-                            + request.getRemoteUser() + "'");
-            }
-            response.getCacheControl().setExpirationTime(1);
+        if (etag.equals(requestEtag)) {
+            log.trace("Sending an empty response (due to matched ETag for user {})'", request.getRemoteUser());
+
+            response.getCacheControl().setExpirationTime(1);   // Probably don't need this
             response.getCacheControl().setETag(etag);
-            response.getCacheControl().setUseCachedContent(true);
+            response.getCacheControl().setUseCachedContent(true);   // Probably don't need this
             response.setProperty(ResourceResponse.HTTP_STATUS_CODE, Integer.toString(HttpServletResponse.SC_NOT_MODIFIED));
             // returning null appears to cause the response to be committed
             // before returning to the portal, so just use an empty view
             return new ModelAndView("empty", Collections.<String,String>emptyMap());
         }
         
-        if (log.isTraceEnabled()) {
-            log.trace("Sending a full response for user '" + request.getRemoteUser() 
-                                                    + "' and refresh=" + refresh);
-        }
+        log.trace("Sending a full response for user {}", request.getRemoteUser());
 
         // create new content with new validation tag
         response.getCacheControl().setETag(etag);
-        response.getCacheControl().setExpirationTime(1);
+        response.getCacheControl().setExpirationTime(1);   // Probably don't need this
         
         long overallTime = System.currentTimeMillis() - startTime;
-        log.debug("AjaxCalendarController took " + overallTime + " ms to produce JSON model");
+        log.debug("AjaxCalendarController took {} ms to produce JSON model", overallTime);
 
         return new ModelAndView("json", model);
 	}
-	
+
     @ResourceMapping(value = "exportUserCalendar")
     public String exportCalendar(ResourceRequest request,
                                    ResourceResponse response, @RequestParam("configurationId") Long id) {

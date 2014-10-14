@@ -199,12 +199,10 @@ if (!upcal.init) {
                 // Build the URL for fetching events from the portlet
                 var startDateToken = view.get("startDate").replace(/\//g, "");
                 var daysToken = view.get("days");
-                var refreshToken = (cache[startDateToken] && cache[startDateToken][daysToken]) ? 'false' : 'true';
                 var url = view.get("eventsUrl")
                     .replace(/START/, startDateToken)
-                    .replace(/DAYS/, daysToken)
-                    .replace(/REFRESH/, refreshToken);
-        
+                    .replace(/DAYS/, daysToken);
+
                 $.ajax({
                     url: url,
                     success: function (data) {
@@ -222,16 +220,19 @@ if (!upcal.init) {
                             errorNode.show();
                         }
 
-                        // Did we receive new event information from the server?
+                        // James W: See UP-4264, CAP-157.  Sometimes Chrome returned blank for a 304 response.
+                        // You could see that switching back and forth between dates, switching between day/week/month,
+                        // or switching tabs.  However I think this is a uPortal issue with request.getETag()
+                        // returning a cached eTag value when the browser doesn't send If-None-Match header
+                        // (browser saying I have nothing give me something, uPortal saying use what you got).
+                        // Prior to Calendar v2.2.2 we tried to offset this with client-side caching. I
+                        // removed client-side caching believing CAP-157 fixed the issue.  If that is not the case,
+                        // I suggest removing eTag support from calendar rather than messing with it more.
+
                         if (data && data.dateMap && data.dateNames) {
                         	// Yes -- always replace what we have...
                         	dateMap = data.dateMap;
                         	dateNames = data.dateNames;
-                        } else {
-                        	// No -- try to pull from cache...
-                        	var cacheObject = cache[startDateToken] && cache[startDateToken][daysToken];
-                        	dateMap = cacheObject && cacheObject.dateMap;
-                        	dateNames = cacheObject && cacheObject.dateNames;
                         }
                         
                         // Is the event information we have (at this point, however we came by it) viable?
