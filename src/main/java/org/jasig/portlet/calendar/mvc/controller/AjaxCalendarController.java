@@ -20,7 +20,6 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
-import javax.servlet.http.HttpServletResponse;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
@@ -109,7 +107,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
         // get the period for this request
         final Interval interval = DateUtil.getInterval(startDate, days,request);
 
-        final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors,interval,request);
+        final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors, interval, request);
 
 		int index = 0;
 		final Set<JsonCalendarEventWrapper> events = new TreeSet<JsonCalendarEventWrapper>();
@@ -186,29 +184,28 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		model.put("viewName", "jsonView");
 		model.put("errors", errors);
 
+        // eTag processing, see https://wiki.jasig.org/display/UPM41/Portlet+Caching
         String etag = String.valueOf(model.hashCode());
-        // UP-4264 request.getETag() does not work in uPortal, so get the eTag directly from the header.
-		String requestEtag = request.getProperty("If-None-Match");
-
+        String requestEtag = request.getETag();
 		// if the request ETag matches the hash for this response, send back
 		// an empty response indicating that cached content should be used
         if (etag.equals(requestEtag)) {
-            log.trace("Sending an empty response (due to matched ETag for user {})'", request.getRemoteUser());
+            log.debug("Sending an empty response (due to matched ETag {} for user {})'",
+                    requestEtag, request.getRemoteUser());
 
-            response.getCacheControl().setExpirationTime(1);   // Probably don't need this
-            response.getCacheControl().setETag(etag);
-            response.getCacheControl().setUseCachedContent(true);   // Probably don't need this
-            response.setProperty(ResourceResponse.HTTP_STATUS_CODE, Integer.toString(HttpServletResponse.SC_NOT_MODIFIED));
-            // returning null appears to cause the response to be committed
-            // before returning to the portal, so just use an empty view
-            return new ModelAndView("empty", Collections.<String,String>emptyMap());
+            // Must communicate new expiration time > 0 per Portlet Spec 22.2
+            response.getCacheControl().setExpirationTime(1);
+            response.getCacheControl().setUseCachedContent(true);   // Portal will return cached content or HTTP 304
+            // Return null so response is not committed before portal decides to return HTTP 304 or cached response.
+            return null;
         }
         
         log.trace("Sending a full response for user {}", request.getRemoteUser());
 
         // create new content with new validation tag
         response.getCacheControl().setETag(etag);
-        response.getCacheControl().setExpirationTime(1);   // Probably don't need this
+        // Must have expiration time > 0 to use response.getCacheControl().setUseCachedContent(true)
+        response.getCacheControl().setExpirationTime(1);
         
         long overallTime = System.currentTimeMillis() - startTime;
         log.debug("AjaxCalendarController took {} ms to produce JSON model", overallTime);
