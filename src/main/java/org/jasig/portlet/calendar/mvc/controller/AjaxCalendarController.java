@@ -164,11 +164,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	    		// special string value.  Otherwise, use the user-facing date
 	    		// format object
 	    		if (today.equals(day)) {
-		    		dateDisplayNames.put(day, "Today");
+			    dateDisplayNames.put(day, applicationContext.getMessage("today", null, "Today", request.getLocale()));
 	    		} else if (tomorrow.equals(day)) {
-		    		dateDisplayNames.put(day, "Tomorrow");
+			    dateDisplayNames.put(day, this.applicationContext.getMessage("tomorrow", null, "Tomorrow", request.getLocale()));
 	    		} else {
-		    		dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
+			    dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
 	    		}
 	    	}
 	    	
