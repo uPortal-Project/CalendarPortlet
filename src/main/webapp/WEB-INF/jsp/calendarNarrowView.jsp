@@ -86,13 +86,13 @@
                 <!-- View Links -->
                 <div class="col-md-12 upcal-view-links">
                     <a id="${n}viewMoreEventsLink" class="btn btn-link pull-right"
-                            href="<portlet:renderURL windowState="maximized"/>"
-                            title="<spring:message code="view.more.events"/>">
+                       href="<portlet:renderURL windowState="maximized"/>"
+                       title="<spring:message code="view.more.events"/>">
                         <spring:message code="view.more.events"/> <i class="fa fa-arrow-right"></i>
                     </a>
-                    
+
                     <a id="${n}returnToCalendarLink" class="btn btn-link" href="javascript:;"
-                            style="display:none" title="<spring:message code="return.to.calendar"/>">
+                       style="display:none" title="<spring:message code="return.to.calendar"/>">
                         <spring:message code="return.to.calendar"/> <i class="fa fa-calendar"></i>
                     </a>
                 </div>
@@ -106,7 +106,7 @@
             <div class="row utilities upcal-list-link">
                 <div class="col-md-12">
                     <a class="upcal-view-return" href="javascript:;"
-                            title="<spring:message code="return.to.calendar"/>" data-role="button">
+                       title="<spring:message code="return.to.calendar"/>" data-role="button">
                         <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
                     </a>
                 </div>
@@ -121,44 +121,44 @@
 <script type="text/template" id="event-list-template">
 
     ${"<%"} if (_(days).size() === 0) { ${"%>"}
-        <div class="row">
-            <div class="col-md-12 events-alert">
-                <div class="alert alert-warning">
-                    <h4><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h4>
-                </div>
+    <div class="row">
+        <div class="col-md-12 events-alert">
+            <div class="alert alert-warning">
+                <h4><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h4>
             </div>
         </div>
+    </div>
     ${"<%"} } else { ${"%>"}
-        ${"<%"} _(days).each(function(day) { ${"%>"}
-            <div class="row day">
-                <div class="col-md-12">
-                    <h4>${"<%="} day.displayName ${"%>"}</h4>
-                    ${"<%"} day.events.each(function(event) { ${"%>"}
-                        <div class="upcal-event-wrapper">
-                            <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
-                                <div class="upcal-event-cal">
-                                    <span></span>
-                                </div>
+    ${"<%"} _(days).each(function(day) { ${"%>"}
+    <div class="row day">
+        <div class="col-md-12">
+            <h4>${"<%="} day.displayName ${"%>"}</h4>
+            ${"<%"} day.events.each(function(event) { ${"%>"}
+            <div class="upcal-event-wrapper">
+                <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
+                <div class="upcal-event-cal">
+                    <span></span>
+                </div>
                                 <span><strong>
                                     ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                        <spring:message code="all.day"/>
+                                    <spring:message code="all.day"/>
                                     ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
-                                        ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
+                                    ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
                                     ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
-                                        ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
+                                    ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
                                     ${"<%"} } else { ${"%>"}
-                                        ${"<%="} event.attributes.startTime ${"%>"}
+                                    ${"<%="} event.attributes.startTime ${"%>"}
                                     ${"<%"} } ${"%>"}
                                 </span></strong>
-                                <h5 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h5>
-                            </div>
-                        </div>
-                    ${"<%"} }); ${"%>"}
-                </div>
+                <h5 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h5>
             </div>
+        </div>
         ${"<%"} }); ${"%>"}
+    </div>
+    </div>
+    ${"<%"} }); ${"%>"}
     ${"<%"} } ${"%>"}
-    
+
 </script>
 
 <script type="text/template" id="event-detail-template">
@@ -182,7 +182,7 @@
             </div>
         </div>
     </div>
-    
+
     ${"<%"} if (event.location) { ${"%>"}
     <div class="row">
         <div class="col-md-12">
@@ -213,67 +213,67 @@
 </script>
 
 <script type="text/javascript"><rs:compressJs>
-    ${n}.jQuery(function() {
-        var $ = ${n}.jQuery;
-        var _ = ${n}._;
-        var Backbone = ${n}.Backbone;
-        var upcal = ${n}.upcal;
-        
-        var ListView = upcal.EventListView.extend({
-            el: "#${n}container .upcal-event-view",
-            template: _.template($("#event-list-template").html())
-        });
+${n}.jQuery(function() {
+    var $ = ${n}.jQuery;
+    var _ = ${n}._;
+    var Backbone = ${n}.Backbone;
+    var upcal = ${n}.upcal;
 
-        var DetailView = upcal.EventDetailView.extend({
-            el: "#${n}container .upcal-event-details",
-            template: _.template($("#event-detail-template").html())
-        });
-        
-        var view = new upcal.CalendarView({
-            container: "#${n}container",
-            listView: new ListView(),
-            detailView: new DetailView(),
-            eventsUrl: '<portlet:resourceURL id="START-DAYS"/>',
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
-            days: "${ model.days }"
-        });
-        
-        $("#${n}container .upcal-range-day").click(function () {
-        	var link, days;
-        	
-        	link = $(this);
-        	days = link.attr("days");
+    var ListView = upcal.EventListView.extend({
+        el: "#${n}container .upcal-event-view",
+        template: _.template($("#event-list-template").html())
+    });
 
-            $("#${n}container .upcal-range-day").removeClass("active");
-            link.addClass("active");
-        	
-        	view.set("days", $(this).attr("days"));
-        	view.getEvents();
-        });
+    var DetailView = upcal.EventDetailView.extend({
+        el: "#${n}container .upcal-event-details",
+        template: _.template($("#event-detail-template").html())
+    });
 
-        $("#${n}container .upcal-range-datepicker").click(function(event){
-            var show = $(event.target).attr("show");
-            showDatePicker(show);
-            $.ajax({
-                url: show == "true" ? "${showDatePickerURL}" : "${hideDatePickerURL}",
-                success: function (data) {
-                }
-            });
-        });
+    var view = new upcal.CalendarView({
+        container: "#${n}container",
+        listView: new ListView(),
+        detailView: new DetailView(),
+        eventsUrl: '<portlet:resourceURL id="START-DAYS"/>',
+        startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>',
+        days: "${ model.days }"
+    });
 
-        var showDatePicker = function(show) {
-            if(show == "true") {
-                $('#${n}container .upcal-inline-calendar').show();
-                $('#${n}showDatePicker').addClass('active');
-                $('#${n}hideDatePicker').removeClass('active');
-            } else {
-                $('#${n}container .upcal-inline-calendar').hide();
-                $('#${n}hideDatePicker').addClass('active');
-                $('#${n}showDatePicker').removeClass('active');
-            }
-        };
+    $("#${n}container .upcal-range-day").click(function () {
+        var link, days;
 
-        showDatePicker("${model.showDatePicker}");
+        link = $(this);
+        days = link.attr("days");
+
+        $("#${n}container .upcal-range-day").removeClass("active");
+        link.addClass("active");
+
+        view.set("days", $(this).attr("days"));
         view.getEvents();
     });
-</rs:compressJs></script>
+
+    $("#${n}container .upcal-range-datepicker").click(function(event){
+        var show = $(event.target).attr("show");
+        showDatePicker(show);
+        $.ajax({
+            url: show == "true" ? "${showDatePickerURL}" : "${hideDatePickerURL}",
+            success: function (data) {
+            }
+        });
+    });
+
+    var showDatePicker = function(show) {
+        if(show == "true") {
+            $('#${n}container .upcal-inline-calendar').show();
+            $('#${n}showDatePicker').addClass('active');
+            $('#${n}hideDatePicker').removeClass('active');
+        } else {
+            $('#${n}container .upcal-inline-calendar').hide();
+            $('#${n}hideDatePicker').addClass('active');
+            $('#${n}showDatePicker').removeClass('active');
+        }
+    };
+
+    showDatePicker("${model.showDatePicker}");
+    view.getEvents();
+});
+    </rs:compressJs></script>

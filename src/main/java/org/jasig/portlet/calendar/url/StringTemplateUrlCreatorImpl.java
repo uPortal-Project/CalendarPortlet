@@ -37,7 +37,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 
 
 /**
- * 
+ *
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Header: StringTemplateUrlCreatorImpl.java Exp $
  */
@@ -52,11 +52,11 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	private final String URL_ENCODING = "UTF-8";
 	private final String DEFAULT_DATE_FORMAT = "yyyyMMdd";
 
-    private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
+	private Map<String, DateTimeFormatter> dateFormatters = new ConcurrentHashMap<String, DateTimeFormatter>();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.jasig.portlet.calendar.url.IUrlCreator#constructUrl(org.jasig.portlet.calendar.CalendarConfiguration,
 	 *      net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
 	 */
@@ -74,7 +74,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param configuration
 	 * @param period
 	 * @param username
@@ -101,24 +101,23 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 				// configuration, or if none is configured, use the
 				// default date format
 				String urlDateFormat = (String) configuration
-						.getCalendarDefinition().getParameters().get(
-								"urlDateFormat");
+						.getCalendarDefinition().getParameters().get("urlDateFormat");
 				if (urlDateFormat == null) {
 					urlDateFormat = DEFAULT_DATE_FORMAT;
 				}
 
 				// replace the start date in the url
-                String startString = URLEncoder.encode(
-                        getDateFormatter(urlDateFormat).print(
-                                interval.getStart()), URL_ENCODING);
+				String startString = URLEncoder.encode(
+						getDateFormatter(urlDateFormat).print(
+								interval.getStart()), URL_ENCODING);
 				url = url.replace(START_DATE_TOKEN, startString);
-				
+
 				// replace the end date in the url
-                String endString = URLEncoder.encode(
-                        getDateFormatter(urlDateFormat)
-                                .print(interval.getEnd()), URL_ENCODING);
+				String endString = URLEncoder.encode(
+						getDateFormatter(urlDateFormat)
+								.print(interval.getEnd()), URL_ENCODING);
 				url = url.replace(END_DATE_TOKEN, endString);
-				
+
 			}
 
 		} catch (UnsupportedEncodingException e) {
@@ -128,15 +127,13 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 		return url;
 	}
 
-    protected DateTimeFormatter getDateFormatter(String format) {
-        if (this.dateFormatters.containsKey(format)) {
-            return this.dateFormatters.get(format);
-        } else {
-            DateTimeFormatter df = new DateTimeFormatterBuilder()
-                    .appendPattern(format).toFormatter();
-            this.dateFormatters.put(format, df);
-            return df;
-        }
-    }
+	protected DateTimeFormatter getDateFormatter(String format) {
+		if (this.dateFormatters.containsKey(format)) {
+			return this.dateFormatters.get(format);
+		}
+		DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern(format).toFormatter();
+		this.dateFormatters.put(format, df);
+		return df;
+	}
 
 }

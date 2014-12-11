@@ -33,8 +33,8 @@
                 <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
                     <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
                     <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
-                    <i class="fa fa-gears"></i>
-                    <spring:message code="calendar.administration"/>
+                        <i class="fa fa-gears"></i>
+                        <spring:message code="calendar.administration"/>
                     </a>
                 </c:if>
                 <c:if test="${ !model.disablePreferences && !model.guest }">
@@ -48,7 +48,7 @@
             </div>
         </div>
     </c:if>
-    
+
     <div class="upcal-wideview row">
         <div class="upcal-calendar-grid">
             <!-- Range Selector -->
@@ -130,24 +130,24 @@
 <script type="text/template" id="event-list-template">
 
     ${"<%"} if (_(days).size() === 0) { ${"%>"}
-        <div class="row">
-            <div class="col-md-12 events-alert">
-                    <div class="alert alert-warning">
-                        <h5><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h5>
-                    </div>
+    <div class="row">
+        <div class="col-md-12 events-alert">
+            <div class="alert alert-warning">
+                <h5><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h5>
             </div>
         </div>
+    </div>
     ${"<%"} } else { ${"%>"}
     ${"<%"} _(days).each(function(day) { ${"%>"}
-        <div class="row day">
-            <div class="col-md-12">
-                <h3>${"<%="} day.displayName ${"%>"}</h3>
-                ${"<%"} day.events.each(function(event) { ${"%>"}
-                    <div class="upcal-event-wrapper">
-                        <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
-                            <div class="upcal-event-cal">
-                                <span></span>
-                            </div>
+    <div class="row day">
+        <div class="col-md-12">
+            <h3>${"<%="} day.displayName ${"%>"}</h3>
+            ${"<%"} day.events.each(function(event) { ${"%>"}
+            <div class="upcal-event-wrapper">
+                <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
+                <div class="upcal-event-cal">
+                    <span></span>
+                </div>
                             <span class="upcal-event-time">
                                 ${"<%"} if (event.attributes.allDay) { ${"%>"}
                                 <spring:message code="all.day"/>
@@ -159,13 +159,13 @@
                                 ${"<%="} event.attributes.startTime ${"%>"}
                                 ${"<%"} } ${"%>"}
                             </span>
-                            <h3 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h3>
-                        </div>
-                    </div>
-                ${"<%"} }); ${"%>"}
+                <h3 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h3>
             </div>
         </div>
         ${"<%"} }); ${"%>"}
+    </div>
+    </div>
+    ${"<%"} }); ${"%>"}
     ${"<%"} } ${"%>"}
 
 </script>
@@ -179,82 +179,82 @@
         <h3><spring:message code="date"/>:</h3>
         <p>
             ${"<%"} if (event.multiDay) { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
+            ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
             ${"<%"} } else if (event.allDay) { ${"%>"}
-                <spring:message code="all.day"/> ${"<%="} event.startDate ${"%>"}
+            <spring:message code="all.day"/> ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+            ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else { ${"%>"}
-                ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"}
+            ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"}
             ${"<%"} } ${"%>"}
-        
+
         </p>
     </div>
-    
+
     ${"<%"} if (event.location) { ${"%>"}
-        <div>
-            <h3><spring:message code="location"/>:</h3>
-            <p>${"<%="} event.location ${"%>"}</p>
-        </div>
+    <div>
+        <h3><spring:message code="location"/>:</h3>
+        <p>${"<%="} event.location ${"%>"}</p>
+    </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.description) { ${"%>"}
-        <div>
-            <h3><spring:message code="description"/>:</h3>
-            <p>${"<%="} event.description ${"%>"}</p>
-        </div>
+    <div>
+        <h3><spring:message code="description"/>:</h3>
+        <p>${"<%="} event.description ${"%>"}</p>
+    </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
-        <div>
-            <h3><spring:message code="link"/>:</h3>
-            <p>
-                <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
-            </p>
-        </div>
+    <div>
+        <h3><spring:message code="link"/>:</h3>
+        <p>
+            <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
+        </p>
+    </div>
     ${"<%"} } ${"%>"}
-    
+
 </script>
 
 <script type="text/javascript"><rs:compressJs>
-    ${n}.jQuery(function() {
-        var $ = ${n}.jQuery;
-        var _ = ${n}._;
-        var Backbone = ${n}.Backbone;
-        var upcal = ${n}.upcal;
-        
-        var ListView = upcal.EventListView.extend({
-            el: "#${n}container .upcal-event-view",
-            template: _.template($("#event-list-template").html())
-        });
+${n}.jQuery(function() {
+    var $ = ${n}.jQuery;
+    var _ = ${n}._;
+    var Backbone = ${n}.Backbone;
+    var upcal = ${n}.upcal;
 
-        var DetailView = upcal.EventDetailView.extend({
-            el: "#${n}container .upcal-event-details",
-            template: _.template($("#event-detail-template").html())
-        });
-        
-        var view = new upcal.CalendarView({
-            container: "#${n}container",
-            listView: new ListView(),
-            detailView: new DetailView(),
-            eventsUrl: '<portlet:resourceURL id="START-DAYS"/>',
-            startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>', 
-            days: "${ model.days }"
-        });
-        
-        $("#${n}container .upcal-range-day").click(function () {
-            var link, days;
-            
-            link = $(this);
-            days = link.attr("days");
-            
-            $("#${n}container .upcal-range-day").removeClass("active");
-            link.addClass("active");
-            
-            view.set("days", $(this).attr("days"));
-            view.getEvents();
-        });
-        view.getEvents();
-        
+    var ListView = upcal.EventListView.extend({
+        el: "#${n}container .upcal-event-view",
+        template: _.template($("#event-list-template").html())
     });
-</rs:compressJs></script>
+
+    var DetailView = upcal.EventDetailView.extend({
+        el: "#${n}container .upcal-event-details",
+        template: _.template($("#event-detail-template").html())
+    });
+
+    var view = new upcal.CalendarView({
+        container: "#${n}container",
+        listView: new ListView(),
+        detailView: new DetailView(),
+        eventsUrl: '<portlet:resourceURL id="START-DAYS"/>',
+        startDate: '<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>',
+        days: "${ model.days }"
+    });
+
+    $("#${n}container .upcal-range-day").click(function () {
+        var link, days;
+
+        link = $(this);
+        days = link.attr("days");
+
+        $("#${n}container .upcal-range-day").removeClass("active");
+        link.addClass("active");
+
+        view.set("days", $(this).attr("days"));
+        view.getEvents();
+    });
+    view.getEvents();
+
+});
+    </rs:compressJs></script>

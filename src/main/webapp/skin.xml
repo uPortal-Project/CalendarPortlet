@@ -19,7 +19,7 @@
 
 -->
 <resources xmlns="http://www.jasig.org/uportal/web/skin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
+           xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
     <css included="aggregated" resource="true">/rs/bootstrap-namespaced/3.1.1/css/bootstrap.min.css</css>
     <css included="plain" resource="true">/rs/bootstrap-namespaced/3.1.1/css/bootstrap.css</css>
@@ -43,6 +43,9 @@
 
     <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
     <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
+
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
 
     <js>scripts/calendar.js</js>
 

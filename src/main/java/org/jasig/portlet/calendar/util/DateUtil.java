@@ -18,37 +18,36 @@
  */
 package org.jasig.portlet.calendar.util;
 
+import java.text.ParseException;
+
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
-import javax.portlet.PortletSession;
-import java.text.ParseException;
-
 /**
  * @author Chris Waymire (chris@waymire.net)
  */
 public class DateUtil {
 
-    public static Interval getInterval(String startDate, int days,PortletRequest request) throws ParseException {
-        final PortletSession session = request.getPortletSession();
-        final String timezone = (String) session.getAttribute("timezone");
-        final DateTimeZone tz = DateTimeZone.forID(timezone);
-        final DateTimeFormatter df = new DateTimeFormatterBuilder()
-                .appendMonthOfYear(2).appendDayOfMonth(2)
-                .appendYear(4, 4).toFormatter().withZone(tz);
-        final DateMidnight start = new DateMidnight(df.parseDateTime(startDate), tz);
+	public static Interval getInterval(String startDate, int days,PortletRequest request) throws ParseException {
+		final PortletSession session = request.getPortletSession();
+		final String timezone = (String) session.getAttribute("timezone");
+		final DateTimeZone tz = DateTimeZone.forID(timezone);
+		final DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern("MMddyyyy").toFormatter().withZone(tz);
+		final DateMidnight start = new DateMidnight(df.parseDateTime(startDate), tz);
 
-        return getInterval(start,days);
-    }
+		return getInterval(start,days);
+	}
 
-    public static Interval getInterval(DateMidnight start,int days) {
-        Interval interval = new Interval(start, start.plusDays(days));
-        return interval;
+	public static Interval getInterval(DateMidnight start,int days) {
+		Interval interval = new Interval(start, start.plusDays(days));
+		return interval;
 
-    }
-    private DateUtil() { }
+	}
+	private DateUtil() { }
 }
