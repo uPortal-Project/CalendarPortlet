@@ -129,7 +129,7 @@
 
 <script type="text/template" id="event-list-template">
 
-    ${"<%"} if (_(days).length == 0) { ${"%>"}
+    ${"<%"} if (_(days).size() === 0) { ${"%>"}
         <div class="row">
             <div class="col-md-12 events-alert">
                     <div class="alert alert-warning">
