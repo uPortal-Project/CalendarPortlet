@@ -133,7 +133,7 @@
         <div class="row">
             <div class="col-md-12 events-alert">
                     <div class="alert alert-warning">
-                        <h5><i class="fa fa-exclamation-circle"></i> No events</h5>
+                        <h5><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h5>
                     </div>
             </div>
         </div>
@@ -150,7 +150,7 @@
                             </div>
                             <span class="upcal-event-time">
                                 ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                All Day
+                                <spring:message code="all.day"/>
                                 ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
                                 ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
                                 ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
@@ -176,12 +176,12 @@
 
     <!-- Event time -->
     <div class="event-detail-date">
-        <h3>Date:</h3>
+        <h3><spring:message code="date"/>:</h3>
         <p>
             ${"<%"} if (event.multiDay) { ${"%>"}
                 ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
             ${"<%"} } else if (event.allDay) { ${"%>"}
-                All Day ${"<%="} event.startDate ${"%>"}
+                <spring:message code="all.day"/> ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
                 ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else { ${"%>"}
@@ -193,21 +193,21 @@
     
     ${"<%"} if (event.location) { ${"%>"}
         <div>
-            <h3>Location:</h3>
+            <h3><spring:message code="location"/>:</h3>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.description) { ${"%>"}
         <div>
-            <h3>Description:</h3>
+            <h3><spring:message code="description"/>:</h3>
             <p>${"<%="} event.description ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
         <div>
-            <h3>Link:</h3>
+            <h3><spring:message code="link"/>:</h3>
             <p>
                 <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
             </p>

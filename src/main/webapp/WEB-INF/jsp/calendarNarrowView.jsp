@@ -124,7 +124,7 @@
         <div class="row">
             <div class="col-md-12 events-alert">
                 <div class="alert alert-warning">
-                    <h4><i class="fa fa-exclamation-circle"></i> No events</h4>
+                    <h4><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h4>
                 </div>
             </div>
         </div>
@@ -141,7 +141,7 @@
                                 </div>
                                 <span><strong>
                                     ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                        All Day
+                                        <spring:message code="all.day"/>
                                     ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
                                         ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
                                     ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
@@ -172,7 +172,7 @@
                     ${"<%"} if (event.multiDay) { ${"%>"}
                     ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
                     ${"<%"} } else if (event.allDay) { ${"%>"}
-                    All Day ${"<%="} event.startDate ${"%>"}
+                    <spring:message code="all.day"/> ${"<%="} event.startDate ${"%>"}
                     ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
                     ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
                     ${"<%"} } else { ${"%>"}
@@ -186,7 +186,7 @@
     ${"<%"} if (event.location) { ${"%>"}
     <div class="row">
         <div class="col-md-12">
-            <h5>Location:</h5>
+            <h5><spring:message code="location"/>:</h5>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
     </div>

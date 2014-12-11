@@ -81,7 +81,7 @@
 <script type="text/template" id="event-list-template">
     ${"<%"} if (_(days).length == 0) { ${"%>"}
         <div class="portlet-msg-info">
-            <p>No events</p>
+            <p><spring:message code="no.events"/></p>
         </div>
     ${"<%"} } else { ${"%>"}
         ${"<%"} _(days).each(function(day) { ${"%>"}
@@ -95,7 +95,7 @@
                             </div>
                             <div class="upcal-event-time">
                                 ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                    All Day
+                                    <spring:message code="all.day"/>
                                 ${"<%"} } else { ${"%>"}
                                     ${"<%="} event.attributes.dateStartTime ${"%>"}
                                 ${"<%"} } ${"%>"}
@@ -119,12 +119,12 @@
 
     <!-- Event time -->
     <div class="event-detail-date">
-        <h5>Date:</h5>
+        <h5><spring:message code="date"/>:</h5>
         <p>
             ${"<%"} if (event.multiDay) { ${"%>"}
                 ${"<%="} event.startTime ${"%>"} ${"<%="} event.startDate ${"%>"} - ${"<%="} event.endTime ${"%>"} ${"<%="} event.endDate ${"%>"}
             ${"<%"} } else if (event.allDay) { ${"%>"}
-                All Day ${"<%="} event.startDate ${"%>"}
+                <spring:message code="all.day"/> ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else if (event.endTime && (event.endTime != event.startTime || event.startDate  != event.endDate ) ) { ${"%>"}
                 ${"<%="} event.startTime ${"%>"} ${"<%="} event.endTime ${"%>"} ${"<%="} event.startDate ${"%>"}
             ${"<%"} } else { ${"%>"}
@@ -136,7 +136,7 @@
     
     ${"<%"} if (event.location) { ${"%>"}
         <div>
-            <h5>Location:</h5>
+            <h5><spring:message code="location"/>:</h5>
             <p>${"<%="} event.location ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
