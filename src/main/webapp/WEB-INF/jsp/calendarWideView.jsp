@@ -192,26 +192,26 @@
     </div>
 
     ${"<%"} if (event.location) { ${"%>"}
-    <div>
-        <h3><spring:message code="location"/>:</h3>
-        <p>${"<%="} event.location ${"%>"}</p>
-    </div>
+        <div>
+            <h3><spring:message code="location"/>:</h3>
+            <p>${"<%="} event.location ${"%>"}</p>
+        </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.description) { ${"%>"}
-    <div>
-        <h3><spring:message code="description"/>:</h3>
-        <p>${"<%="} event.description ${"%>"}</p>
-    </div>
+        <div>
+            <h3><spring:message code="description"/>:</h3>
+            <p>${"<%="} event.description ${"%>"}</p>
+        </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
-    <div>
-        <h3><spring:message code="link"/>:</h3>
-        <p>
-            <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
-        </p>
-    </div>
+        <div>
+            <h3><spring:message code="link"/>:</h3>
+            <p>
+                <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
+            </p>
+        </div>
     ${"<%"} } ${"%>"}
 
 </script>

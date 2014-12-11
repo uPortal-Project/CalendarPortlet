@@ -121,42 +121,42 @@
 <script type="text/template" id="event-list-template">
 
     ${"<%"} if (_(days).size() === 0) { ${"%>"}
-    <div class="row">
-        <div class="col-md-12 events-alert">
-            <div class="alert alert-warning">
-                <h4><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h4>
+        <div class="row">
+            <div class="col-md-12 events-alert">
+                <div class="alert alert-warning">
+                    <h4><i class="fa fa-exclamation-circle"></i> <spring:message code="no.events"/></h4>
+                </div>
             </div>
         </div>
-    </div>
     ${"<%"} } else { ${"%>"}
-    ${"<%"} _(days).each(function(day) { ${"%>"}
-    <div class="row day">
-        <div class="col-md-12">
-            <h4>${"<%="} day.displayName ${"%>"}</h4>
-            ${"<%"} day.events.each(function(event) { ${"%>"}
-            <div class="upcal-event-wrapper">
-                <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
-                <div class="upcal-event-cal">
-                    <span></span>
-                </div>
+        ${"<%"} _(days).each(function(day) { ${"%>"}
+            <div class="row day">
+                <div class="col-md-12">
+                    <h4>${"<%="} day.displayName ${"%>"}</h4>
+                    ${"<%"} day.events.each(function(event) { ${"%>"}
+                        <div class="upcal-event-wrapper">
+                            <div class="upcal-event upcal-color-${"<%="} event.attributes.colorIndex ${"%>"}">
+                                <div class="upcal-event-cal">
+                                    <span></span>
+                                </div>
                                 <span><strong>
                                     ${"<%"} if (event.attributes.allDay) { ${"%>"}
-                                    <spring:message code="all.day"/>
+                                        <spring:message code="all.day"/>
                                     ${"<%"} } else if (event.attributes.multiDay) { ${"%>"}
-                                    ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
+                                        ${"<%="} event.attributes.dateStartTime ${"%>"} - ${"<%="} event.attributes.dateEndTime ${"%>"}
                                     ${"<%"} } else if (event.attributes.endTime && (event.attributes.endTime != event.attributes.startTime || event.attributes.startDate  != event.attributes.endDate ) ) { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
+                                        ${"<%="} event.attributes.startTime ${"%>"} - ${"<%="} event.attributes.endTime ${"%>"}
                                     ${"<%"} } else { ${"%>"}
-                                    ${"<%="} event.attributes.startTime ${"%>"}
+                                        ${"<%="} event.attributes.startTime ${"%>"}
                                     ${"<%"} } ${"%>"}
                                 </span></strong>
-                <h5 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h5>
+                                <h5 class="upcal-event-title"><a href="javascript:;">${"<%="} event.attributes.summary ${"%>"}</a></h5>
+                            </div>
+                        </div>
+                    ${"<%"} }); ${"%>"}
+                </div>
             </div>
-        </div>
         ${"<%"} }); ${"%>"}
-    </div>
-    </div>
-    ${"<%"} }); ${"%>"}
     ${"<%"} } ${"%>"}
 
 </script>
@@ -276,4 +276,4 @@ ${n}.jQuery(function() {
     showDatePicker("${model.showDatePicker}");
     view.getEvents();
 });
-    </rs:compressJs></script>
+</rs:compressJs></script>

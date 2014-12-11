@@ -188,7 +188,7 @@
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");
         });
-            </rs:compressJs></script>
+        </rs:compressJs></script>
     </c:if>
 
 </div>

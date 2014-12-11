@@ -76,7 +76,7 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 	/**
 	 *
 	 * @param configuration
-	 * @param period
+	 * @param interval
 	 * @param username
 	 * @return
 	 */
@@ -84,38 +84,32 @@ public class StringTemplateUrlCreatorImpl implements IUrlCreator {
 			Interval interval, String username) {
 
 		// get the template url from the calendar configuration
-		String url = (String) configuration.getCalendarDefinition()
-				.getParameters().get("url");
+		String url = (String) configuration.getCalendarDefinition().getParameters().get("url");
 
 		try {
 
 			// replace the username in the url
-			url = url.replace(USERNAME_TOKEN, URLEncoder.encode(username,
-					URL_ENCODING));
+			url = url.replace(USERNAME_TOKEN, URLEncoder.encode(username, URL_ENCODING));
 
-			// replace the start and end dates in the url, using the configured
-			// date format
+			// replace the start and end dates in the url, using the configured date format
 			if (url.contains(START_DATE_TOKEN) || url.contains(END_DATE_TOKEN)) {
 
-				// get the configured date format from the calendar
-				// configuration, or if none is configured, use the
+				// get the configured date format from the calendar configuration, or if none is configured, use the
 				// default date format
-				String urlDateFormat = (String) configuration
-						.getCalendarDefinition().getParameters().get("urlDateFormat");
+				String urlDateFormat = (String) configuration.getCalendarDefinition()
+						.getParameters().get("urlDateFormat");
 				if (urlDateFormat == null) {
 					urlDateFormat = DEFAULT_DATE_FORMAT;
 				}
 
 				// replace the start date in the url
 				String startString = URLEncoder.encode(
-						getDateFormatter(urlDateFormat).print(
-								interval.getStart()), URL_ENCODING);
+						getDateFormatter(urlDateFormat).print(interval.getStart()), URL_ENCODING);
 				url = url.replace(START_DATE_TOKEN, startString);
 
 				// replace the end date in the url
 				String endString = URLEncoder.encode(
-						getDateFormatter(urlDateFormat)
-								.print(interval.getEnd()), URL_ENCODING);
+						getDateFormatter(urlDateFormat).print(interval.getEnd()), URL_ENCODING);
 				url = url.replace(END_DATE_TOKEN, endString);
 
 			}
