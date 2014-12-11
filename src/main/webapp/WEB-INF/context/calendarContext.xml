@@ -136,7 +136,8 @@
           p:credentialsProvider-ref="credentialsProvider"
           p:redirectStrategy-ref="redirectStrategy">
         <constructor-arg>
-            <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
+            <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"
+                  p:maxTotal="200" p:defaultMaxPerRoute="30"/>
         </constructor-arg>
     </bean>
     <!-- The connection is attempted 5 times prior to stopping
@@ -151,8 +152,7 @@
         usage: $bane 10010 NeverRespond
         ie http://localhost:10010 -->
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender"
-          p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000"
-          p:maxTotalConnections="200">
+          p:httpClient-ref="httpClient" p:connectionTimeout="60000" p:readTimeout="60000">
     </bean>
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate"
           p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
