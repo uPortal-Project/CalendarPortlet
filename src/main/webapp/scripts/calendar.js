@@ -19,7 +19,7 @@
 var upcal = upcal || {};
 
 if (!upcal.init) {
-    
+
     upcal.init = function ($, _, Backbone) {
 
         /*
@@ -31,7 +31,7 @@ if (!upcal.init) {
          * call with valid data;  on Chrome, nothing.)
          */
         var cache = new Array();
-    	
+
         /* DATA MODELS */
 
         upcal.CalendarDay = Backbone.Model.extend({
@@ -66,12 +66,12 @@ if (!upcal.init) {
         upcal.CalendarError = Backbone.Model.extend({
             defaults: function () {
                 return {
-            
+
                 };
             }
         });
-        
-        
+
+
         /* COLLECTIONS */
 
         upcal.CalendarDayList = Backbone.Collection.extend({
@@ -100,13 +100,13 @@ if (!upcal.init) {
                 view.$(".upcal-event-list a").click(function () {
                     var link, feedId;
                     link = $(this);
-            
+
                     var dayDiv = $(link.parents("div.day").get(0));
                     var dayIndex = view.$(".day").index(dayDiv);
-            
+
                     var eventDiv = $(link.parents("div.upcal-event").get(0));
                     var eventIndex = $(dayDiv).find(".upcal-event").index(eventDiv);
-            
+
                     var event = view.model.at(dayIndex).get("events").at(eventIndex);
                     view.trigger("eventSelected", event);
                 });
@@ -126,23 +126,23 @@ if (!upcal.init) {
 
                 var view = this;
                 this.$(".titlebar a").click(function () { view.trigger("showList"); });
-        
+
                 // add any jQM decorator classes
                 this.postRender();
                 return this;
             }
         });
-        
+
         upcal.CalendarParameterView = Backbone.View.extend({
-        	render: function () {
-        		this.$el.append(this.template(this.model));
-        	}
+            render: function () {
+                this.$el.append(this.template(this.model));
+            }
         });
 
         upcal.CalendarView = Backbone.Model.extend({
             defaults: function () {
                 return {
-                	container: null,
+                    container: null,
                     detailView: new upcal.EventDetailView(),
                     listView: new upcal.EventListView(),
                     eventsUrl: null,
@@ -152,10 +152,17 @@ if (!upcal.init) {
             },
             initialize: function () {
                 var view = this;
-        
+
+				var language = window.navigator.userLanguage || window.navigator.language;
+				if ($.datepicker.regional[language] != undefined) $.datepicker.setDefaults($.datepicker.regional[language]);
+				else if ($.datepicker.regional[language.substring(0, 2)] != undefined) $.datepicker.setDefaults($.datepicker.regional[language.substring(0, 2).toLowerCase()]);
+				else $.datepicker.setDefaults($.datepicker.regional['']);
+
                 // initialize the jQuery UI datepicker
+				// even internationalization of datepicker we need to keep the English dateformat to pass it in ajax call
                 $(view.get("container")).find(".upcal-inline-calendar").datepicker({
                     inline: true,
+					dateFormat: 'mm/dd/yy',
                     changeMonth: false,
                     changeYear: false,
                     defaultDate: this.get("startDate"),
@@ -163,9 +170,9 @@ if (!upcal.init) {
                         // when a new date is selected, update the event list
                         view.set("startDate", date);
                         view.getEvents(view.get("startDate"), view.get("days"));
-                    } 
+                    }
                 });
-        
+
                 // render the detail view when an event is selected
                 this.get("listView").bind("eventSelected", function (event) {
                     view.get("listView").$el.hide();
@@ -180,15 +187,15 @@ if (!upcal.init) {
                     view.get("listView").$el.show();
                     view.get("detailView").$el.hide();
                 });
-        
+
                 return this;
             },
             getEvents: function (startDate, days) {
                 var view, listView;
-                
+
                 view = this;
                 listView = view.get("listView");
-                
+
                 listView.$(".upcal-loading-message").show();
                 listView.$(".upcal-event-list").hide();
 
@@ -209,7 +216,7 @@ if (!upcal.init) {
 
                         var days = new upcal.CalendarDayList();
                         var day, dateMap, dateNames;
-                        
+
                         // Display error messages, if any
                         if (data && data.errors && data.errors.length > 0) {
                             $(data.errors).each(function (idx, error) {
@@ -230,14 +237,14 @@ if (!upcal.init) {
                         // I suggest removing eTag support from calendar rather than messing with it more.
 
                         if (data && data.dateMap && data.dateNames) {
-                        	// Yes -- always replace what we have...
-                        	dateMap = data.dateMap;
-                        	dateNames = data.dateNames;
+                            // Yes -- always replace what we have...
+                            dateMap = data.dateMap;
+                            dateNames = data.dateNames;
                         }
-                        
+
                         // Is the event information we have (at this point, however we came by it) viable?
                         if (dateMap && dateNames) {
-                        	// Yes -- add the events to the model...
+                            // Yes -- add the events to the model...
                             $.each(dateMap, function (key, value) {
                                 day = new upcal.CalendarDay({ code: key, displayName: dateNames[key] });
                                 $(value).each(function (idx, event) {
@@ -258,7 +265,7 @@ if (!upcal.init) {
                         listView.$(".upcal-event-list").show();
                     }
                 });
-            }    
+            }
         });
 
     };

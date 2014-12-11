@@ -181,14 +181,14 @@
         </c:if>
     </div>
 
-<c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
+    <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
 
-    <script type="text/javascript"><rs:compressJs>
+        <script type="text/javascript"><rs:compressJs>
         ${n}.jQuery(function() {
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");
         });
-    </rs:compressJs></script>
-</c:if>
+        </rs:compressJs></script>
+    </c:if>
 
 </div>

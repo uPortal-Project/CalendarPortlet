@@ -29,7 +29,7 @@
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="portlet ptl-calendar view-mobile">
-	<div data-role="content" class="portlet-content">
+    <div data-role="content" class="portlet-content">
         <div class="upcal-events">
 
             <div class="upcal-event-view">
@@ -44,7 +44,7 @@
                 <div class="upcal-event-errors portlet-msg-error" style="display:none"></div>
                 <div class="upcal-event-list" style="display:none">
                 </div>
-                
+
                 <c:if test="${ !model.disablePreferences && !model.guest }">
                     <div class="utilities upcal-view-links upcal-hide-on-event">
                         <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
@@ -53,7 +53,7 @@
                         </a>
                     </div>
                 </c:if>
-                
+
             </div>
 
                 <div class="upcal-event-details" style="display:none">
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="utilities upcal-list-link">
-                        <a class="upcal-view-return" href="javascript:;" 
+                        <a class="upcal-view-return" href="javascript:;"
                                 title="<spring:message code="return.to.calendar"/>" data-role="button">
                             <spring:message code="return.to.calendar"/>
                         </a>
@@ -71,7 +71,7 @@
                 </div>
             </div>
         </div>
-  
+
     </div>
 </div>
 
@@ -143,14 +143,14 @@
 
     ${"<%"} if (event.description) { ${"%>"}
         <div>
-            <h5>Description:</h5>
+            <h5><spring:message code="description"/>:</h5>
             <p>${"<%="} event.description ${"%>"}</p>
         </div>
     ${"<%"} } ${"%>"}
 
     ${"<%"} if (event.link) { ${"%>"}
         <div>
-            <h5>Link:</h5>
+            <h5><spring:message code="link"/>:</h5>
             <p>
                 <a href="${"<%="} event.link ${"%>"}" target="_blank">${"<%="} event.link ${"%>"}</a>
             </p>
@@ -165,7 +165,7 @@
         var _ = ${n}._;
         var Backbone = ${n}.Backbone;
         var upcal = ${n}.upcal;
-        
+
         var ListView = upcal.EventListView.extend({
             el: "#${n}container .upcal-event-view",
             template: _.template($("#event-list-template").html())

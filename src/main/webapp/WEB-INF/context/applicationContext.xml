@@ -20,41 +20,38 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:jee="http://www.springframework.org/schema/jee"	
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    http://www.springframework.org/schema/util 
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-2.5.xsd
     http://www.springframework.org/schema/aop
     http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-	http://www.springmodules.org/schema/ehcache
-	http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd
-	http://www.springframework.org/schema/jee 
-	http://www.springframework.org/schema/jee/spring-jee-2.0.xsd">
+    http://www.springframework.org/schema/jee
+    http://www.springframework.org/schema/jee/spring-jee-2.0.xsd">
 
-	<!-- 
-	 | CACHE CONFIGURATION
-	 +-->
-	
-	<!-- EHCache Configuration -->
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation">
-			<value>classpath:ehcache.xml</value>
-		</property>
-	</bean>
-	
-	<!-- Main calendar cache -->
-	<bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
-		p:cacheManager-ref="cacheManager" p:cacheName="calendarCache"/>
+    <!--
+     | CACHE CONFIGURATION
+     +-->
 
-    <bean id="calendarEventsDao" 
+    <!-- EHCache Configuration -->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation">
+            <value>classpath:ehcache.xml</value>
+        </property>
+    </bean>
+
+    <!-- Main calendar cache -->
+    <bean id="calendarCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+        p:cacheManager-ref="cacheManager" p:cacheName="calendarCache"/>
+
+    <bean id="calendarEventsDao"
         class="org.jasig.portlet.calendar.adapter.CalendarEventsDao"
-        p:cache-ref="calendarCache"/>
+        p:cache-ref="calendarCache" p:messageSource-ref="messageSource"/>
 
     <bean id="elementsProvider" class="org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl"/>
 
@@ -67,7 +64,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="CacheExpiresFilter" class="org.jasig.portlet.calendar.mvc.AggregationAwareFilterBean">
         <property name="elementsProvider" ref="elementsProvider"/>
         <property name="filter">
@@ -82,83 +79,83 @@
         </property>
     </bean>
 
-	<!-- 
-	 | CAS PROXY AUTHENTICATION CONFIGURATION
-	 +-->
-	
-	<!-- Ticket validation filter -->
-	<bean id="ticketValidationFilter" 
-		class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"
-		p:serverName="${portal.server.base.url}" p:redirectAfterValidation="false"
-		p:proxyReceptorUrl="/proxy/receptor" p:ticketValidator-ref="ticketValidator"
-		p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"/>
-	
-	<!-- CAS proxy ticket validator -->
-	<bean id="ticketValidator" 
-		class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
-		p:proxyCallbackUrl="${portal.server.base.url}/${portlet.context}/proxy/receptor" 
-		p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"
-		p:acceptAnyProxy="true">
-		<constructor-arg index="0" value="${cas.server.base.url}" />
-	</bean>
-	
-	<!-- CAS Proxy service bean -->
-	<bean id="casTicketService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl"
-		p:serviceUrl="${portal.server.base.url}/${portlet.context}" 
-		p:ticketValidator-ref="ticketValidator"/>
-	
-	<bean id="proxyGrantingTicketStorage" 
-		class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"/>
+    <!--
+     | CAS PROXY AUTHENTICATION CONFIGURATION
+     +-->
+
+    <!-- Ticket validation filter -->
+    <bean id="ticketValidationFilter"
+        class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"
+        p:serverName="${portal.server.base.url}" p:redirectAfterValidation="false"
+        p:proxyReceptorUrl="/proxy/receptor" p:ticketValidator-ref="ticketValidator"
+        p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"/>
+
+    <!-- CAS proxy ticket validator -->
+    <bean id="ticketValidator"
+        class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
+        p:proxyCallbackUrl="${portal.server.base.url}/${portlet.context}/proxy/receptor"
+        p:proxyGrantingTicketStorage-ref="proxyGrantingTicketStorage"
+        p:acceptAnyProxy="true">
+        <constructor-arg index="0" value="${cas.server.base.url}" />
+    </bean>
+
+    <!-- CAS Proxy service bean -->
+    <bean id="casTicketService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl"
+        p:serviceUrl="${portal.server.base.url}/${portlet.context}"
+        p:ticketValidator-ref="ticketValidator"/>
+
+    <bean id="proxyGrantingTicketStorage"
+        class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"/>
 
 
-	<!--
-	 | GENERAL PORTLET CONFIGURATION
-	 +-->
-		
-	<!-- Properties configuration -->
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-		lazy-init="false">
-		<property name="locations">
-			<list>
-				<value>classpath:datasource.properties</value>
-				<value>classpath:configuration.properties</value>
-			</list>
-		</property>
-	</bean>
-	
-	<!-- Message source for this context, loaded from localized "messages_xx" files -->
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
-		p:basenames="i18n/messages" p:useCodeAsDefaultMessage="true"/>
+    <!--
+     | GENERAL PORTLET CONFIGURATION
+     +-->
 
-	<bean id="stringCleaningUtil" 
-		class="org.jasig.portlet.calendar.util.StringCleaningUtil"
-		p:securityFile="classpath:clean-html.xml"/>
+    <!-- Properties configuration -->
+    <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:datasource.properties</value>
+                <value>classpath:configuration.properties</value>
+            </list>
+        </property>
+    </bean>
 
-    <!-- 
+    <!-- Message source for this context, loaded from localized "messages_xx" files -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+        p:basenames="i18n/messages" p:useCodeAsDefaultMessage="true"/>
+
+    <bean id="stringCleaningUtil"
+        class="org.jasig.portlet.calendar.util.StringCleaningUtil"
+        p:securityFile="classpath:clean-html.xml"/>
+
+    <!--
      | View resolvers, look for a named view bean before going to JSP resolution
      +-->
     <bean class="org.springframework.web.servlet.view.XmlViewResolver"
             p:order="0" p:location="/WEB-INF/context/views.xml"/>
 
-	<!-- JSP view resolver -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:order="10" p:cache="true" p:viewClass="org.springframework.web.servlet.view.JstlView"
-		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
-	
-	<!-- Abstract Default Exception Handler Bean -->
-	<bean id="defaultExceptionHandlerTemplate"
-		class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver"
-		abstract="true">
-		<property name="defaultErrorView" value="defError"/>
-		<property name="exceptionMappings">
-			<props>
-				<prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
-				<prop key="javax.portlet.UnavailableException">notAvailable</prop>
-			</props>
-		</property>
-	</bean>
+    <!-- JSP view resolver -->
+    <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:order="10" p:cache="true" p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+
+    <!-- Abstract Default Exception Handler Bean -->
+    <bean id="defaultExceptionHandlerTemplate"
+        class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver"
+        abstract="true">
+        <property name="defaultErrorView" value="defError"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
+                <prop key="javax.portlet.UnavailableException">notAvailable</prop>
+            </props>
+        </property>
+    </bean>
 
     <bean id="roleService" class="org.jasig.portlet.calendar.service.RoleService"/>
 </beans>
