@@ -45,7 +45,7 @@
   <!-- 
    | Specify a local property that sets up the logging directory
    +-->
-  <property scope="local" name="LOG_DIR" value="${calendar.webapp.root}/../../logs/" />
+  <property scope="local" name="LOG_DIR" value="/home/jwennmacher/applications/uportal-tomcat-7.0.39/logs/" />
 
   <!--
    | Setup a file based logger that rolls
@@ -90,11 +90,9 @@
   <!-- 
    | Turn up logging for portlet specific package
    +-->
-  <!--
-  <logger name="org.jasig.portlet.calendar" additivity="false" level="DEBUG">
+  <logger name="org.jasig.portlet.calendar.adapter" additivity="false" level="DEBUG">
     <appender-ref ref="LOG" />
   </logger>
-  -->
 
     <!-- Enable to troubleshoot Exchange Web Services messages at the wire level. -->
     <!--

@@ -144,6 +144,13 @@
         <name>mail</name>
     </user-attribute>
 
+    <user-attribute>
+        <name>mymail</name>
+    </user-attribute>
+    <user-attribute>
+        <name>mypassword</name>
+    </user-attribute>
+
     <event-definition>
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
         <value-type>org.jasig.portal.search.SearchRequest</value-type>
