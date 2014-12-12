@@ -24,7 +24,6 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:util="http://www.springframework.org/schema/util"       
-    xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
@@ -48,7 +47,7 @@
     
     <bean id="calendarSetDao" class="org.jasig.portlet.calendar.dao.WhitelistFilteringCalendarSetDao">
         <property name="enclosedCalendarSetDao">
-            <bean class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao"/>
+            <bean class="org.jasig.portlet.calendar.dao.HibernateCalendarSetDao" p:calendarStore-ref="calendarStore"/>
         </property>
     </bean>
 
@@ -69,7 +68,7 @@
         -->
         <!--bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
             p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"
-            p:ntlmDomain="${ntlm.domain}"/-->
+            p:mailAttribute="${userinfo.mail.key}" p:ntlmDomain="${ntlm.domain}"/-->
         
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.
