@@ -155,7 +155,7 @@
         <name>password</name>
     </user-attribute>
 
-    <!-- For Exchange Web Services integration -->
+    <!-- For Office365 Exchange Web Services integration -->
     <user-attribute>
         <name>mail</name>
     </user-attribute>

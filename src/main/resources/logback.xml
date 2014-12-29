@@ -90,9 +90,11 @@
   <!-- 
    | Turn up logging for portlet specific package
    +-->
-  <logger name="org.jasig.portlet.calendar.adapter" additivity="false" level="DEBUG">
+  <!--
+  <logger name="org.jasig.portlet.calendar" additivity="false" level="DEBUG">
     <appender-ref ref="LOG" />
   </logger>
+  -->
 
     <!-- Enable to troubleshoot Exchange Web Services messages at the wire level. -->
     <!--
