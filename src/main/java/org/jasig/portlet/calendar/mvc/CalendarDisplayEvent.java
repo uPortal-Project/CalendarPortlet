@@ -29,6 +29,9 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
+ * Object that summarizes the portion of an event on a specific day.  If the event spans multiple days, a
+ * <code>CalendarDisplayEvent</code> instance would be created for each day the event occurs on.
+ *
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
@@ -49,7 +52,16 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
     private final String endTime;
     private final String startDate;
     private final String endDate;
-	
+
+    /**
+     * Constructs an object from specified data.
+     *
+     * @param event "Raw" Event object
+     * @param eventInterval Interval portion of the event that applies to this specific day
+     * @param theSpecificDay Interval of the specific day in question
+     * @param df date formatter to represent date displays
+     * @param tf time formatter to represent time displays
+     */
     public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval theSpecificDay, DateTimeFormatter df, DateTimeFormatter tf) {
 
         this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;

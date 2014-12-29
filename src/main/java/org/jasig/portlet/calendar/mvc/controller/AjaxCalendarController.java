@@ -29,7 +29,6 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletSession;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -74,9 +73,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@ActionMapping(params = "action=showDatePicker")
-	public void toggleShowDatePicker(@RequestParam(value = "show") String show,
-									ActionRequest request,
-									ActionResponse response) {
+	public void toggleShowDatePicker(@RequestParam(value = "show") String show, ActionRequest request) {
 		try {
 
 			request.getPreferences().setValue("showDatePicker",show);
@@ -87,12 +84,11 @@ public class AjaxCalendarController implements ApplicationContextAware {
 	}
 
 	@ResourceMapping
-	public ModelAndView getEventList(ResourceRequest request,
-			ResourceResponse response) throws Exception {
-	    
+	public ModelAndView getEventList(ResourceRequest request,ResourceResponse response) throws Exception {
+
         // Pull parameters out of the resourceId
         final String resourceId = request.getResourceID();
-        final String[] resourceIdTokens = resourceId.split("-");        
+        final String[] resourceIdTokens = resourceId.split("-");
         final String startDate = resourceIdTokens[0];
         final int days = Integer.parseInt(resourceIdTokens[1]);
 
@@ -137,8 +133,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		// names for dates
 		DateTimeFormatter displayDf = new DateTimeFormatterBuilder().appendPattern(displayPattern).toFormatter().withZone(tz);
 
-		// define "today" and "tomorrow" so we can display these specially in the
-		// user interface
+		// define "today" and "tomorrow" so we can display these specially in the user interface
 		DateMidnight now = new DateMidnight(tz);
 		String today = orderableDf.print(now);
 		String tomorrow = orderableDf.print(now.plusDays(1));
@@ -148,30 +143,28 @@ public class AjaxCalendarController implements ApplicationContextAware {
 		for (JsonCalendarEventWrapper event : events) {
 			String day = orderableDf.print(event.getEvent().getDayStart());
 
-			// if we haven't seen this day before, add entries to the event
-			// and date name maps
+			// if we haven't seen this day before, add entries to the event and date name maps
 	    	if (!eventsByDay.containsKey(day)) {
-	    		
+
 	    		// add a list for this day to the eventsByDay map
 	    		eventsByDay.put(day, new ArrayList<JsonCalendarEventWrapper>());
-	    		
-	    		// Add an appropriate day name for this date to the date names
-	    		// map.  If the day appears to be today or tomorrow display a 
-	    		// special string value.  Otherwise, use the user-facing date
-	    		// format object
+
+	    		// Add an appropriate day name for this date to the date names map.
+	    		// If the day appears to be today or tomorrow display a special string value.
+	    		// Otherwise, use the user-facing date format object.
 	    		if (today.equals(day)) {
-			    dateDisplayNames.put(day, applicationContext.getMessage("today", null, "Today", request.getLocale()));
-	    		} else if (tomorrow.equals(day)) {
-			    dateDisplayNames.put(day, this.applicationContext.getMessage("tomorrow", null, "Tomorrow", request.getLocale()));
+			    	dateDisplayNames.put(day, applicationContext.getMessage("today", null, "Today", request.getLocale()));
+				} else if (tomorrow.equals(day)) {
+			    	dateDisplayNames.put(day, this.applicationContext.getMessage("tomorrow", null, "Tomorrow", request.getLocale()));
 	    		} else {
-			    dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
+			    	dateDisplayNames.put(day, displayDf.print(event.getEvent().getDayStart()));
 	    		}
 	    	}
-	    	
+
 	    	// add the event to the by-day map
 	    	eventsByDay.get(day).add(event);
 		}
-		
+
         log.trace("Prepared the following eventsByDay collection for user {}: {}",
                 request.getRemoteUser(), eventsByDay);
 
@@ -195,14 +188,14 @@ public class AjaxCalendarController implements ApplicationContextAware {
             // Return null so response is not committed before portal decides to return HTTP 304 or cached response.
             return null;
         }
-        
+
         log.trace("Sending a full response for user {}", request.getRemoteUser());
 
         // create new content with new validation tag
         response.getCacheControl().setETag(etag);
         // Must have expiration time > 0 to use response.getCacheControl().setUseCachedContent(true)
         response.getCacheControl().setExpirationTime(1);
-        
+
         long overallTime = System.currentTimeMillis() - startTime;
         log.debug("AjaxCalendarController took {} ms to produce JSON model", overallTime);
 

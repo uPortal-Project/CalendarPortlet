@@ -19,47 +19,41 @@
 
 package org.jasig.portlet.calendar.mvc.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
 
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
-
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.jasig.portlet.calendar.mvc.CalendarHelper;
-import org.jasig.portlet.calendar.mvc.UICalendarEventsBuilder;
+import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.portlet.MockResourceRequest;
 import org.springframework.mock.web.portlet.MockResourceResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.portlet.ModelAndView;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 /**
@@ -67,18 +61,18 @@ import org.springframework.web.portlet.ModelAndView;
  * @version $Revision$
  */
 public class AjaxCalendarControllerTest {
+	// Hashcode of model object that used an empty CalendarDisplayEvent set.
+	private static final String emptyEventsModelHashcode="-971201553";
 
 	private AjaxCalendarController testee;
 	private MockResourceRequest request;
 	private MockResourceResponse response;
-	private String partialWellFormedResourceID = "1122104_7_";
-	@Mock
-	private CalendarHelper mockHelper;
-	@Mock
-	private UICalendarEventsBuilder mockUICalendarEventsBuilder;
-	private Map<String, Object> nonEmptyMap;
-	private String modelEtag;
-	
+	private Set<CalendarDisplayEvent> events;
+	private Set<CalendarDisplayEvent> emptyEvents;
+	@Mock private CalendarHelper mockHelper;
+	@Mock private Map<String, Object> nonEmptyMap;
+	@Mock private ApplicationContext appContext;
+
 	@Before
 	public void setUp() {
 		initMocks(this);
@@ -87,99 +81,65 @@ public class AjaxCalendarControllerTest {
 		response = new MockResourceResponse();
 		nonEmptyMap = new HashMap<String, Object>();
 		nonEmptyMap.put("aaa", new Object());
-		modelEtag = ""+nonEmptyMap.hashCode();
-		request.setResourceID(partialWellFormedResourceID+modelEtag);
+		request.setResourceID("01032011-7");
 		ReflectionTestUtils.setField(testee, "helper", mockHelper);
-		ReflectionTestUtils.setField(testee, "uiCalendarEventBuiler", mockUICalendarEventsBuilder);
+
+		emptyEvents = new HashSet<CalendarDisplayEvent>();
+		events = new HashSet<CalendarDisplayEvent>();
+
+		when(appContext.getMessage(eq("date.formatter.display"), any(Object[].class), anyString(), any(Locale.class))).thenReturn("EEE MMM d");
+		testee.setApplicationContext(appContext);
 	}
 	
 	@Test
 	public void testWhenRequestEtagMatchesModelEtagThenEmptyModelAndViewReturned() throws Exception{
-		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
-		ModelAndView result=testee.getEventList(request, response);
-		assertEquals("empty",result.getViewName());
-		assertTrue(result.getModel().isEmpty());
-	}
-	
-	@Test
-	public void testWhenRequestEtagMatchesModelEtagThenResponseIs304() throws Exception{
-		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
-		ModelAndView result=testee.getEventList(request, response);
-		assertEquals("304",response.getProperty(ResourceResponse.HTTP_STATUS_CODE));
+		request.setProperty(ResourceRequest.ETAG, emptyEventsModelHashcode);
+		when(mockHelper.getEventList(any(List.class), any(Interval.class), eq(request))).thenReturn(emptyEvents);
+		ModelAndView result = testee.getEventList(request, response);
+		assertEquals(1, response.getCacheControl().getExpirationTime());
+		assertTrue(response.getCacheControl().useCachedContent());
+		assertNull("Null should be returned for eTag match",result);
 	}
 	
 	@Test
 	public void testWhenRequestEtagDoesNotMatchModelEtagThenPopulatedModelAndViewReturned() throws Exception{
-		request.setResourceID(partialWellFormedResourceID+modelEtag+"67676767");
-		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
-		ModelAndView result=testee.getEventList(request, response);
+		events.add(createEvent(null, null));
+		when(mockHelper.getEventList(any(List.class), any(Interval.class), eq(request))).thenReturn(events);
+		ModelAndView result = testee.getEventList(request, response);
 		assertEquals("json",result.getViewName());
 		assertFalse(result.getModel().isEmpty());
-	}
-	
-	@Test
-	public void testAddLongEventToDateMap() throws IOException, URISyntaxException, ParseException {
-		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
-        DateFormat df = new SimpleDateFormat("EEEE MMMM d");
-		df.setTimeZone(tz);
-		
-		Calendar cal = Calendar.getInstance(tz);
-		cal.set(Calendar.YEAR, 2011);
-		cal.set(Calendar.MONTH, 0);
-		cal.set(Calendar.DATE, 3);
-		cal.set(Calendar.HOUR_OF_DAY, 4);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		Date start = cal.getTime();
-		
-		cal.add(Calendar.DATE, 1);
-		Date periodStart = cal.getTime();
-		
-		cal.add(Calendar.DATE, 1);
-		Date end = cal.getTime();
-		
-		Period period = new Period(new DateTime(periodStart), new DateTime(end));
-		
-		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
-		List<CalendarDisplayEvent> events = new ArrayList<CalendarDisplayEvent>();
-//		events.addAll(controller.getJsonEvents(event, period, tz));
-//		Collections.sort(events);
-//		assertEquals(2, events.size());
-//		
-//		assertEquals("Tuesday January 4", df.format(events.get(0).getDayStart()));
-//		assertEquals("Wednesday January 5", df.format(events.get(1).getDayStart()));
-		
+		assertEquals(1, ((Map) result.getModel().get("dateMap")).size());
+		assertEquals(1, ((Map) result.getModel().get("dateNames")).size());
 	}
 
-	@Test
-	public void testAddShortEventToDateMap() throws IOException, URISyntaxException, ParseException {
-		TimeZone tz = TimeZone.getTimeZone("America/Los Angeles");
-        DateFormat df = new SimpleDateFormat("EEEE MMMM d");
-		df.setTimeZone(tz);
-		
-		Calendar cal = Calendar.getInstance(tz);
-		cal.set(Calendar.YEAR, 2011);
-		cal.set(Calendar.MONTH, 0);
-		cal.set(Calendar.DATE, 3);
-		cal.set(Calendar.HOUR_OF_DAY, 4);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		Date start = cal.getTime();
-		
-		cal.add(Calendar.HOUR, 12);
-		Date end = cal.getTime();
+	/**
+	 * Returns a <code>CalendarDisplayEvent</code> at the indicated start and duration.  Either of the parameters
+	 * can be null which would use default values.  Currently eventStart defaults to use the default timezone.
+	 *
+	 * @param eventStart Start of the event.  If null defaults to Jan 3, 2011 at 4:00am
+	 * @param duration Duration of the event.  If null defaults to 1 hour.
+	 * @return CalendarDisplayEvent
+	 */
+	private CalendarDisplayEvent createEvent(org.joda.time.DateTime eventStart, Duration duration) {
+		if (eventStart == null) {
+			eventStart = new org.joda.time.DateTime(2011, 1, 3, 4, 0);
+		}
 
-		Period period = new Period(new DateTime(start), new DateTime(end));
-	
-		VEvent event = new VEvent(new DateTime(start), new DateTime(end), "Test Event");
-//		Set<CalendarDisplayEvent> events = controller.getJsonEvents(event, period, tz);
-//		assertEquals(1, events.size());
-//
-//		Iterator<CalendarDisplayEvent> dateIter = events.iterator();
-//		assertEquals("Monday January 3", df.format(dateIter.next().getDayStart()));
+		org.joda.time.DateTime eventEnd = eventStart.plus(duration != null ? duration : new Duration(1000 * 60 * 60));
 		
+		VEvent event = new VEvent(new DateTime(eventStart.toDate()), new DateTime(eventEnd.toDate()),
+				"Test Event 1 day");
+
+		org.joda.time.DateTime startOfTheSpecificDay = eventStart.withTimeAtStartOfDay();
+		org.joda.time.DateTime endOfTheSpecificDay = eventStart.plusDays(1).withTimeAtStartOfDay();
+		Interval specificDayInterval = new Interval(startOfTheSpecificDay, endOfTheSpecificDay);
+
+		// event interval only goes to the end of the day if it extends beyond the day
+		Interval eventInterval = new Interval(eventStart,
+				eventEnd.isAfter(endOfTheSpecificDay) ? endOfTheSpecificDay : eventEnd);
+		DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter();
+		DateTimeFormatter timeFormatter = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
+
+		return new CalendarDisplayEvent(event, eventInterval, specificDayInterval, dateFormatter, timeFormatter);
 	}
-
 }

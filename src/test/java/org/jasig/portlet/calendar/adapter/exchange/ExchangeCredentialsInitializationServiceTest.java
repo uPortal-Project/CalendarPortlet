@@ -28,12 +28,14 @@ import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.portlet.MockPortletPreferences;
 import org.springframework.mock.web.portlet.MockPortletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ExchangeCredentialsInitializationServiceTest {
 
@@ -55,12 +57,21 @@ public class ExchangeCredentialsInitializationServiceTest {
         service.setMailAttribute("email");
     }
 
+    private UsernamePasswordCredentials getRegularCredentials() {
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        return (UsernamePasswordCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+    }
+
+    private NTCredentials getNTCredentials() {
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        return (NTCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+    }
+
     @Test
     public void testInitializeNoDomain() {
         service.initialize(request);
 
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        final UsernamePasswordCredentials credentials = getRegularCredentials();
         assertEquals("email@foo.net", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
     }
@@ -70,8 +81,7 @@ public class ExchangeCredentialsInitializationServiceTest {
         service.setNtlmDomain("testDomain");
         service.initialize(request);
 
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final NTCredentials credentials = (NTCredentials) requestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        final NTCredentials credentials = getNTCredentials();
         assertEquals("user", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
         assertEquals("testDomain".toUpperCase(), credentials.getDomain());
@@ -86,25 +96,31 @@ public class ExchangeCredentialsInitializationServiceTest {
 
         service.initialize(request);
 
-        final RequestAttributes newRequestAttributes = RequestContextHolder.getRequestAttributes();
-        final NTCredentials credentials = (NTCredentials) newRequestAttributes.getAttribute(ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+        final NTCredentials credentials = getNTCredentials();
         assertEquals("user", credentials.getUserName());
         assertEquals("pass", credentials.getPassword());
         assertEquals("testDomain".toUpperCase(), credentials.getDomain());
+
+        final RequestAttributes newRequestAttributes = RequestContextHolder.getRequestAttributes();
         assertEquals("testVal", newRequestAttributes.getAttribute("testAttr", RequestAttributes.SCOPE_SESSION));
     }
 
     @Test
-    public void testExchangeImpersonation() {
+    public void testExchangeImpersonation() throws Exception {
+        service.setNtlmDomain("testDomain");
+
         request = new MockPortletRequest();
         MockPortletPreferences mockPreferences = new MockPortletPreferences();
-        mockPreferences.setValue("wsUser", "blah@ed.ac.uk");
-        mockPreferences.setValue("wsPassword", "rand");
+        mockPreferences.setValue("exchangeImpersonationUsername", "blah@ed.ac.uk");
+        mockPreferences.setValue("exchangeImpersonationPassword", "rand");
         ((MockPortletRequest)request).setPreferences(mockPreferences);
-        service = new ExchangeCredentialsInitializationService();
+
+        assertTrue(service.usesExchangeImpersonation(request));
 
         service.initialize(request);
-        assertEquals("blah@ed.ac.uk", ExchangeCredentialsInitializationService.credentials.getUserName());
-        assertEquals("rand", ExchangeCredentialsInitializationService.credentials.getPassword());
+        final NTCredentials credentials = getNTCredentials();
+        assertEquals("blah@ed.ac.uk", credentials.getUserName());
+        assertEquals("rand", credentials.getPassword());
+        assertEquals("", credentials.getDomain());
     }
 }

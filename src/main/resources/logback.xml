@@ -30,8 +30,8 @@
 <configuration scan="true" scanPeriod="30 seconds">
   <contextName>calendar</contextName>
 
-  <!-- 
-   | Propagate log levels to java.util.logging 
+  <!--
+   | Propagate log levels to java.util.logging
    +-->
   <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
     <resetJUL>true</resetJUL>
@@ -43,9 +43,9 @@
   <jmxConfigurator />
 
   <!-- 
-   | Specify a local property that sets up the logging directory
+   | Specify a local property that sets up the logging directory (to tomcat's logs directory).
    +-->
-  <property scope="local" name="LOG_DIR" value="/home/jwennmacher/applications/uportal-tomcat-7.0.39/logs/" />
+  <property scope="local" name="LOG_DIR" value="${calendar.webapp.root}/../../logs" />
 
   <!--
    | Setup a file based logger that rolls

@@ -24,19 +24,34 @@ import javax.portlet.PortletRequest;
 import org.jasig.portlet.calendar.service.IInitializationService;
 
 /**
- * Description
+ * Initialization service specific to Exchange credentials-related information.
  *
  * @author James Wennmacher, jwennmacher@unicon.net
  */
 
 public interface IExchangeCredentialsInitializationService extends IInitializationService {
-    String getUsernameAttribute();
 
-    String getMailAttribute();
-
+    /**
+     * Return the configured NTLM Domain if set.  May be null or empty string.
+     *
+     * @param request Portlet Request
+     * @return Configured NTLM Domain (may be null or empty string).
+     */
     String getNtlmDomain(PortletRequest request);
 
+    /**
+     * Returns true if this portlet is configured to use Exchange Impersonation, else false.
+     * @param request Portlet Request
+     * @return true if this portlet is configured to use Exchange Impersonation, else false.
+     */
     boolean usesExchangeImpersonation(PortletRequest request);
 
+    /**
+     * Calculate the NT account ID string in the form of username@NTDomain of the user whose account is being
+     * accessed if Exchange Impersonation is being used, else null if not using Exchange Impersonation.
+     *
+     * @param request Portlet Request
+     * @return account ID of the user whose account is being accessed with Exchange Impersonation, else null
+     */
     String getImpersonatedAccountId(PortletRequest request);
 }

@@ -23,9 +23,7 @@
 		</property>
 	</bean>
 	<import resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml" />
-	<!-- <import -->
-	<!-- resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml" 
-		/> -->
+	<!-- <import resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml"/> -->
 	<bean id="xmlviewresolver" class="org.jasig.portlet.calendar.util.MockViewResolver" /><!-- 
 		overwriting the real bean -->
 	<bean id="CacheExpiresFilter"

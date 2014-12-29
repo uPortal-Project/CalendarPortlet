@@ -22,13 +22,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-    http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
     <!-- User timezone options -->
 	<util:list id="timeZones">
@@ -192,16 +190,21 @@
         p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
         p:titleKey="exchange.ws.integration" 
         p:descriptionKey="exchange.ws.integration"
-        p:emailAttribute="mail"
-        p:requestServerVersion="${exchangeWs.requestServerVersion}"
-        p:localDomainName="${localdomainname}">
+        p:credentialsService-ref="exchangeCredentialsInitializationService"
+        p:emailAttribute="${userinfo.mail.key}"
+        p:requestServerVersion="${exchangeWs.requestServerVersion}">
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
                   p:includePeriod="true"/>
         </property>
     </bean>
 
-    <!-- 
+    <bean id="exchangeCredentialsInitializationService"
+          class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
+          p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"
+          p:mailAttribute="${userinfo.mail.key}" p:ntlmDomain="${exchangeWs.ntlm.domain}"/>
+
+    <!--
      | CalDAV adapter for calendars available via the CalDAV protocol.
      |
      | For Google the URL format is https://www.google.com/calendar/dav/calid/events.

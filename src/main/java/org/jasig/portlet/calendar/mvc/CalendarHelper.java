@@ -18,6 +18,16 @@
  */
 package org.jasig.portlet.calendar.mvc;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -35,10 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletSession;
-import java.util.*;
 
 /**
  * @author Chris Waymire (chris@waymire.net)

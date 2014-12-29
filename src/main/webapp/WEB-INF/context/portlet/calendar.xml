@@ -66,9 +66,9 @@
         <!--
             Uncomment the following section for MS Exchange calendars
         -->
-        <bean class="org.jasig.portlet.calendar.adapter.exchange.ExchangeCredentialsInitializationService"
-              p:usernameAttribute="${userinfo.userid.key}" p:passwordAttribute="${userinfo.password.key}"
-              p:mailAttribute="${userinfo.mail.key}" p:ntlmDomain="${ntlm.domain}"/>
+        <!--
+        <ref bean="exchangeCredentialsInitializationService"/>
+        -->
 
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.

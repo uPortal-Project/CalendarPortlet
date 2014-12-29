@@ -1,15 +1,11 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
@@ -25,7 +21,10 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.portlet.ModelAndView;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CalendarControllerTest {
 
@@ -65,13 +64,13 @@ public class CalendarControllerTest {
 		ReflectionTestUtils.setField(testee,"viewSelector",viewSelectorMock);
 	}
 	@Test
-	public void testDatePickerIsHiddenByDefault(){
+	public void testDatePickerIsShownByDefault(){
 		when(viewSelectorMock.getCalendarViewName(eq(mockRequest))).thenReturn("calendar");
 		mockSession.setAttribute("startDate", new DateMidnight());
 		mockSession.setAttribute("days", 1);
 		ModelAndView mv = testee.getCalendar(null,mockRequest);
 		Map<String,Object> model = (Map<String, Object>) mv.getModel().get("model");
-		assertEquals("false",model.get("showDatePicker"));
+		assertEquals("true",model.get("showDatePicker"));
 		
 	}
 }
