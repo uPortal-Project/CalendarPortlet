@@ -135,7 +135,7 @@
     <!--
      | View resolvers, look for a named view bean before going to JSP resolution
      +-->
-    <bean class="org.springframework.web.servlet.view.XmlViewResolver"
+    <bean id="xmlviewresolver" class="org.springframework.web.servlet.view.XmlViewResolver"
             p:order="0" p:location="/WEB-INF/context/views.xml"/>
 
     <!-- JSP view resolver -->

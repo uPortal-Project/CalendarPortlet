@@ -41,6 +41,9 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * Exchange server (username is simple username, ntlm domain required) and another exchange adapter connected to
  * Office365 (username is email address, no ntlm domain) with the behavior determined by a combination of
  * portlet preferences and bean configuration.
+ *
+ * ExchangeCredentialsInitializationService stores a username and password (taken from read-only portlet preferences which
+ * will be used to authenticate against exchange.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
@@ -56,17 +59,17 @@ public class ExchangeCredentialsInitializationService implements IInitialization
     /**
      * Set the name of the user attribute to be used for retrieving the Exchange
      * authentication username from the portlet UserInfo map. 
-     * 
+     *
      * @param usernameAttribute
      */
     public void setUsernameAttribute(String usernameAttribute) {
         this.usernameAttribute = usernameAttribute;
     }
-    
+
     /**
      * Set the name of the user attribute to be used for retrieving the Exchange
      * authentication password from the portlet UserInfo map.
-     * 
+     *
      * @param passwordAttribute
      */
     public void setPasswordAttribute(String passwordAttribute) {
@@ -84,7 +87,7 @@ public class ExchangeCredentialsInitializationService implements IInitialization
 
     /**
      * Set the domain () of this machine for NTLM authentication.
-     * 
+     *
      * @param ntlmDomain NT Domain
      */
     public void setNtlmDomain(String ntlmDomain) {
@@ -120,6 +123,12 @@ public class ExchangeCredentialsInitializationService implements IInitialization
                         + " is enabled in portlet.xml and populated via LDAP or other approach");
             }
             credentials= new UsernamePasswordCredentials(emailAddress, password);
+
+            // TODO Revise for exchange impersonation
+            //do not fill in the domain field else authentication fails with a 503, service not available response
+            credentials = new NTCredentials(prefs.getValue("wsUser", ""), prefs.getValue("wsPassword", ""),
+                    "paramDoesNotSeemToMatter", "");
+
         }
 
         // cache the credentials object to this thread

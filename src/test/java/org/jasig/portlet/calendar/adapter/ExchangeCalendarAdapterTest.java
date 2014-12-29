@@ -26,9 +26,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +66,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceOperations;
 
@@ -98,7 +99,7 @@ public class ExchangeCalendarAdapterTest {
     @Mock ICacheKeyGenerator keyGenerator;
 
     ExchangeCalendarAdapter adapter = spy(new ExchangeCalendarAdapter());  
-    String emailAddress = "user1@school.edu";
+    String user = "user1";
     Resource sampleExchangeResponse;
     Interval interval;
 
@@ -112,9 +113,10 @@ public class ExchangeCalendarAdapterTest {
         
         when(keyGenerator.getKey(any(CalendarConfiguration.class), any(Interval.class), any(PortletRequest.class), anyString())).thenReturn("key");
         adapter.setCacheKeyGenerator(keyGenerator);
-        
+        ReflectionTestUtils.setField(adapter, "userNameAttribute", "user.login.id");
+        ReflectionTestUtils.setField(adapter, "localDomainName", "ed.ac.uk");
         adapter.setEmailAttribute("email");
-        when(request.getAttribute(PortletRequest.USER_INFO)).thenReturn(Collections.singletonMap("email", emailAddress));
+        when(request.getAttribute(PortletRequest.USER_INFO)).thenReturn(Collections.singletonMap("user.login.id", user));
 
         DateTime start = new DateTime(2010, 10, 1, 0, 0, DateTimeZone.UTC);
         interval = new Interval(start, start.plusMonths(1));
@@ -124,20 +126,21 @@ public class ExchangeCalendarAdapterTest {
         when(webService.marshalSendAndReceive(any(), any(WebServiceMessageCallback.class))).thenReturn(response);
     }
     
+    
     @Test
     public void testCache() throws DatatypeConfigurationException {
-        doReturn(Collections.<VEvent>emptySet()).when(adapter).retrieveExchangeEvents(config, interval, emailAddress);
+        doReturn(Collections.<VEvent>emptySet()).when(adapter).retrieveExchangeEvents(config, interval, user+"@ed.ac.uk", user);
         adapter.getEvents(config, interval, request);
         adapter.getEvents(config, interval, request);
-        verify(adapter, times(1)).retrieveExchangeEvents(config, interval, emailAddress);
+        verify(adapter, times(1)).retrieveExchangeEvents(config, interval, user+"@ed.ac.uk", user);
     }
  
-    @Test 
+    @Test
     public void testRetrieveEvents() throws IOException, DatatypeConfigurationException {
         
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         List<VEvent> events = new ArrayList<VEvent>();
-        events.addAll(adapter.retrieveExchangeEvents(config, interval, emailAddress));
+        events.addAll(adapter.retrieveExchangeEvents(config, interval, user+"@ed.ac.uk", user));
         
         Collections.sort(events, new VEventStartComparator());
         assertEquals(2, events.size());

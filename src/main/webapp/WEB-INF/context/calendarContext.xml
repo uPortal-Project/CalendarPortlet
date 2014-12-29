@@ -31,18 +31,46 @@
     http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
     <!-- User timezone options -->
-    <util:list id="timeZones">
-        <!--<value>America/Halifax</value>-->
-        <value>America/New_York</value>
-        <value>America/Chicago</value>
-        <value>America/Denver</value>
-        <value>America/Phoenix</value>
-        <value>America/Los_Angeles</value>
-        <value>America/Anchorage</value>
-        <value>US/Hawaii</value>
-    </util:list>
-
-
+	<util:list id="timeZones">
+		<value>Europe/London</value>
+		<value>Etc/GMT+0</value>
+		<value>Etc/GMT+1</value>
+		<value>Etc/GMT+10</value>
+		<value>Etc/GMT+11</value>
+		<value>Etc/GMT+12</value>
+		<value>Etc/GMT+2</value>
+		<value>Etc/GMT+3</value>
+		<value>Etc/GMT+4</value>
+		<value>Etc/GMT+5</value>
+		<value>Etc/GMT+6</value>
+		<value>Etc/GMT+7</value>
+		<value>Etc/GMT+8</value>
+		<value>Etc/GMT+9</value>
+		<value>Etc/GMT-0</value>
+		<value>Etc/GMT-1</value>
+		<value>Etc/GMT-10</value>
+		<value>Etc/GMT-11</value>
+		<value>Etc/GMT-12</value>
+		<value>Etc/GMT-13</value>
+		<value>Etc/GMT-14</value>
+		<value>Etc/GMT-2</value>
+		<value>Etc/GMT-3</value>
+		<value>Etc/GMT-4</value>
+		<value>Etc/GMT-5</value>
+		<value>Etc/GMT-6</value>
+		<value>Etc/GMT-7</value>
+		<value>Etc/GMT-8</value>
+		<value>Etc/GMT-9</value>
+		<value>America/New_York</value>
+		<value>America/Chicago</value>
+		<value>America/Denver</value>
+		<value>America/Phoenix</value>
+		<value>America/Los_Angeles</value>
+		<value>America/Anchorage</value>
+		<value>Pacific/Honolulu</value>
+	</util:list>
+    
+    
     <!--
      | CALENDAR ADAPTER REGISTRATIONS 
      +-->
@@ -158,14 +186,15 @@
           p:destinationProvider-ref="destinationProvider" p:messageSender-ref="webServiceMessageSender"
           p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller">
         <qualifier value="exchange" />
-    </bean>
-    <bean id="exchangeAdapter"
-          class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
-          p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
-          p:titleKey="exchange.ws.integration"
-          p:descriptionKey="exchange.ws.integration"
-          p:emailAttribute="mail"
-          p:requestServerVersion="${exchangeWs.requestServerVersion}">
+    </bean>            
+    <bean id="exchangeAdapter" 
+        class="org.jasig.portlet.calendar.adapter.ExchangeCalendarAdapter"
+        p:cache-ref="calendarCache" p:webServiceOperations-ref="webServiceTemplate"
+        p:titleKey="exchange.ws.integration" 
+        p:descriptionKey="exchange.ws.integration"
+        p:emailAttribute="mail"
+        p:requestServerVersion="${exchangeWs.requestServerVersion}"
+        p:localDomainName="${localdomainname}">
         <property name="cacheKeyGenerator">
             <bean class="org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl"
                   p:includePeriod="true"/>

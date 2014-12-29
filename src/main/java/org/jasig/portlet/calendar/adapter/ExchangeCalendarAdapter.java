@@ -19,7 +19,6 @@
 
 package org.jasig.portlet.calendar.adapter;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -31,8 +30,6 @@ import javax.portlet.PortletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.namespace.QName;
-import javax.xml.transform.TransformerException;
 
 import com.microsoft.exchange.messages.FreeBusyResponseType;
 import com.microsoft.exchange.messages.GetUserAvailabilityRequest;
@@ -60,21 +57,19 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.util.StringUtil;
 import org.jasig.portlet.calendar.CalendarConfiguration;
+import org.jasig.portlet.calendar.adapter.exchange.ExchangeWebServiceCallBack;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceOperations;
-import org.springframework.ws.soap.SoapHeaderElement;
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 /**
  * Queries Exchange Web Services API for calendar events.
- * 
+ *
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
@@ -82,13 +77,18 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
 
     protected final static String AVAILABILITY_SOAP_ACTION = "http://schemas.microsoft.com/exchange/services/2006/messages/GetUserAvailability";
     protected final static String UTC = "UTC";
-    
+
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     private WebServiceOperations webServiceOperations;
-    
+
     public void setWebServiceOperations(WebServiceOperations webServiceOperations) {
         this.webServiceOperations = webServiceOperations;
+    }
+
+    private String localDomainName;
+    public void setLocalDomainName(String localDomainName) {
+        this.localDomainName = localDomainName;
     }
 
     private Cache cache;
@@ -108,15 +108,16 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
     public void setCacheKeyPrefix(String cacheKeyPrefix) {
         this.cacheKeyPrefix = cacheKeyPrefix;
     }
-    
+
     private String emailAttribute = "mail";
-    
+    private String userNameAttribute="uid";
+
     public void setEmailAttribute(String emailAttribute) {
         this.emailAttribute = emailAttribute;
     }
-    
-    private String requestServerVersion = "Exchange2007_SP1";  // default
-    
+
+    private String requestServerVersion = "Exchange2007_SP1";  // see configuration.properties which sets this value
+
     public void setRequestServerVersion(final String requestServerVersion) {
         this.requestServerVersion = requestServerVersion;
     }
@@ -126,20 +127,23 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
      * @see org.jasig.portlet.calendar.adapter.ICalendarAdapter#getEvents(org.jasig.portlet.calendar.CalendarConfiguration, net.fortuna.ical4j.model.Period, javax.portlet.PortletRequest)
      */
     public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
-            Interval interval, PortletRequest request) throws CalendarException {
-        
+                                      Interval interval, PortletRequest request) throws CalendarException {
+
         // try to get the cached calendar
-        
+
         @SuppressWarnings("unchecked")
         Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
         String email = userInfo.get(this.emailAttribute);
 
-        String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(email));
+        String impersonationID =  getImpersonatedAccountId(request);
+
+        String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, 
+                cacheKeyPrefix.concat(".").concat(email).concat(".").concat(impersonationID));
         Element cachedElement = this.cache.get(key);
         CalendarEventSet eventSet;
         if (cachedElement == null) {
             log.debug("Retreiving exchange events for account " + email);
-            Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, interval, email);
+            Set<VEvent> events = retrieveExchangeEvents(calendarConfiguration, interval, email, impersonationID);
             log.debug("Exchange adapter found " + events.size() + " events");
 
             // save the calendar event set to the cache
@@ -147,62 +151,60 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         } else {
             eventSet = (CalendarEventSet) cachedElement.getValue();
         }
-        
+
         return eventSet;
+    }
+
+    /**
+     * Calculate the account ID string of the user whose account is being accessed if Exchange Impersonation 
+     * is being used, else null if not using Exchange Impersonation.
+     * 
+     * @param request Portlet Request
+     * @return account ID of the user whose account is being accessed with Exchange Impersonation, else null 
+     */
+    private String getImpersonatedAccountId(PortletRequest request) {
+        Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+        String username = userInfo.get(this.userNameAttribute);
+        
+        String impersonationID =  StringUtils.isNotBlank(username) && StringUtils.isNotBlank(localDomainName) ?
+                username +"@"+ localDomainName : null;
+        return impersonationID;
     }
 
     /**
      * Retrieve a set of CalendarEvents from the Exchange server for the specified
      * period and email address.
-     * 
+     *
      * @param calendar
      * @param interval
-     * @param emailAddress
+     * @param emailAddress email address of the user to retrieve events for if not using Exchange Impersonation
+     * @param impersonatedId Id of the user to retrieve events for if using Exchange Impersonation, else null
      * @return
      * @throws CalendarException
      */
     public Set<VEvent> retrieveExchangeEvents(CalendarConfiguration calendar,
-            Interval interval, String emailAddress) throws CalendarException {
+                                              Interval interval, String emailAddress, String impersonatedId) throws CalendarException {
 
         if (log.isDebugEnabled()) {
             log.debug("Retrieving exchange events for period: " + interval);
         }
 
         Set<VEvent> events = new HashSet<VEvent>();
-        
+
         try {
-            
+
             // construct the SOAP request object to use
             GetUserAvailabilityRequest soapRequest = getAvailabilityRequest(interval, emailAddress);
-            
-            final WebServiceMessageCallback actionCallback = new SoapActionCallback(
-                    AVAILABILITY_SOAP_ACTION);
-            
-            final WebServiceMessageCallback customCallback = new WebServiceMessageCallback() {
-
-                @Override
-                public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
-                    actionCallback.doWithMessage(message);
-                    SoapMessage soap = (SoapMessage) message;
-                    QName rsv = new QName(
-                            "http://schemas.microsoft.com/exchange/services/2006/types", 
-                            "RequestServerVersion", 
-                            "ns3"); 
-                    SoapHeaderElement version = soap.getEnvelope().getHeader()
-                                                    .addHeaderElement(rsv);
-                    version.addAttribute(new QName("Version"), requestServerVersion);
-                }
-                
-            };
-            
+            final WebServiceMessageCallback customCallback = new ExchangeWebServiceCallBack(emailAddress, 
+                    AVAILABILITY_SOAP_ACTION, requestServerVersion, impersonatedId);
             // use the request to retrieve data from the Exchange server
             GetUserAvailabilityResponse response = (GetUserAvailabilityResponse) webServiceOperations
                     .marshalSendAndReceive(soapRequest, customCallback);
-            
+
             // for each FreeBusy response, parse the list of events
             for (FreeBusyResponseType freeBusy : response
                     .getFreeBusyResponseArray().getFreeBusyResponses()) {
-                
+
                 ArrayOfCalendarEvent eventArray = freeBusy.getFreeBusyView().getCalendarEventArray();
                 if (eventArray != null && eventArray.getCalendarEvents() != null) {
                     List<com.microsoft.exchange.types.CalendarEvent> msEvents = eventArray.getCalendarEvents();
@@ -213,7 +215,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
                     }
                 }
             }
-            
+
         } catch (DatatypeConfigurationException e) {
             throw new CalendarException(e);
         }
@@ -234,7 +236,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         address.setName("");
         mailbox.setAttendeeType(MeetingAttendeeType.REQUIRED);
         mailbox.setExcludeConflicts(false);
-        mailbox.setEmail(address);            
+        mailbox.setEmail(address);
         mailboxes.getMailboxDatas().add(mailbox);
         soapRequest.setMailboxDataArray(mailboxes);
 
@@ -242,26 +244,26 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         FreeBusyViewOptions view = new FreeBusyViewOptions();
         view.setMergedFreeBusyIntervalInMinutes(60);
         view.getRequestedView().add("DetailedMerged");
-        
+
         Duration dur = new Duration();
-        
-        XMLGregorianCalendar start = getXmlDate(interval.getStart()); 
-        XMLGregorianCalendar end = getXmlDate(interval.getEnd()); 
+
+        XMLGregorianCalendar start = getXmlDate(interval.getStart());
+        XMLGregorianCalendar end = getXmlDate(interval.getEnd());
         dur.setEndTime(end);
         dur.setStartTime(start);
-        
+
         view.setTimeWindow(dur);
         soapRequest.setFreeBusyViewOptions(view);
-        
+
         // set the bias to the start time's timezone offset (in minutes 
         // rather than milliseconds)
         TimeZone tz = new TimeZone();
         java.util.TimeZone tZone = java.util.TimeZone.getTimeZone(UTC);
         tz.setBias(tZone.getRawOffset() / 1000 / 60 );
-        
+
         // TODO: time zone standard vs. daylight info is temporarily hard-coded
         SerializableTimeZoneTime standard = new SerializableTimeZoneTime();
-        standard.setBias(0);            
+        standard.setBias(0);
         standard.setDayOfWeek(DayOfWeekType.SUNDAY);
         standard.setDayOrder((short)1);
         standard.setMonth((short)11);
@@ -274,19 +276,19 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         daylight.setTime("02:00:00");
         tz.setStandardTime(standard);
         tz.setDaylightTime(daylight);
-        
+
         soapRequest.setTimeZone(tz);
-        
+
         return soapRequest;
     }
-    
+
     /**
      * Return an internal API CalendarEvent for an Microsoft CalendarEvent object.
-     * 
+     *
      * @param calendarId
      * @param msEvent
      * @return
-     * @throws DatatypeConfigurationException 
+     * @throws DatatypeConfigurationException
      */
     protected VEvent getInternalEvent(long calendarId, com.microsoft.exchange.types.CalendarEvent msEvent) throws DatatypeConfigurationException {
         DatatypeFactory factory = DatatypeFactory.newInstance();
@@ -311,22 +313,22 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         PropertyList newprops = new PropertyList();
         newprops.add(new Uid(msEvent.getCalendarEventDetails().getID()));
         newprops.add(new DtStamp());
-        
+
         newprops.add(new DtStart(eventStart));
         newprops.add(new DtEnd(eventEnd));
         newprops.add(new Summary(msEvent.getCalendarEventDetails().getSubject()));
         if (StringUtils.isNotBlank(msEvent.getCalendarEventDetails().getLocation())) {
             newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
         }
-        
+
         VEvent event = new VEvent(newprops);
         return event;
-        
+
     }
 
     /**
      * Get an XMLGregorianCalendar for the specified date.
-     * 
+     *
      * @param date
      * @return
      * @throws DatatypeConfigurationException
@@ -334,7 +336,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
     protected XMLGregorianCalendar getXmlDate(DateTime date) throws DatatypeConfigurationException {
         // construct an XMLGregorianCalendar
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-        XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(); 
+        XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar();
         start.setYear(date.getYear());
         start.setMonth(date.getMonthOfYear());
         start.setTime(date.getHourOfDay(), date.getMinuteOfHour(),
@@ -342,5 +344,5 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
         start.setDay(date.getDayOfMonth());
         return start;
     }
-    
+
 }

@@ -20,6 +20,8 @@
 package org.jasig.portlet.calendar.mvc.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,18 +32,34 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VEvent;
 
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
+import org.jasig.portlet.calendar.mvc.CalendarHelper;
+import org.jasig.portlet.calendar.mvc.UICalendarEventsBuilder;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.springframework.mock.web.portlet.MockResourceRequest;
+import org.springframework.mock.web.portlet.MockResourceResponse;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.portlet.ModelAndView;
 
 
 /**
@@ -50,11 +68,53 @@ import org.junit.Test;
  */
 public class AjaxCalendarControllerTest {
 
-	private AjaxCalendarController controller;
+	private AjaxCalendarController testee;
+	private MockResourceRequest request;
+	private MockResourceResponse response;
+	private String partialWellFormedResourceID = "1122104_7_";
+	@Mock
+	private CalendarHelper mockHelper;
+	@Mock
+	private UICalendarEventsBuilder mockUICalendarEventsBuilder;
+	private Map<String, Object> nonEmptyMap;
+	private String modelEtag;
 	
 	@Before
 	public void setUp() {
-		controller = new AjaxCalendarController();
+		initMocks(this);
+		testee = new AjaxCalendarController();
+		request = new MockResourceRequest();
+		response = new MockResourceResponse();
+		nonEmptyMap = new HashMap<String, Object>();
+		nonEmptyMap.put("aaa", new Object());
+		modelEtag = ""+nonEmptyMap.hashCode();
+		request.setResourceID(partialWellFormedResourceID+modelEtag);
+		ReflectionTestUtils.setField(testee, "helper", mockHelper);
+		ReflectionTestUtils.setField(testee, "uiCalendarEventBuiler", mockUICalendarEventsBuilder);
+	}
+	
+	@Test
+	public void testWhenRequestEtagMatchesModelEtagThenEmptyModelAndViewReturned() throws Exception{
+		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
+		ModelAndView result=testee.getEventList(request, response);
+		assertEquals("empty",result.getViewName());
+		assertTrue(result.getModel().isEmpty());
+	}
+	
+	@Test
+	public void testWhenRequestEtagMatchesModelEtagThenResponseIs304() throws Exception{
+		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
+		ModelAndView result=testee.getEventList(request, response);
+		assertEquals("304",response.getProperty(ResourceResponse.HTTP_STATUS_CODE));
+	}
+	
+	@Test
+	public void testWhenRequestEtagDoesNotMatchModelEtagThenPopulatedModelAndViewReturned() throws Exception{
+		request.setResourceID(partialWellFormedResourceID+modelEtag+"67676767");
+		when(mockUICalendarEventsBuilder.buildUIEvents(any(Set.class), eq(request), any(List.class))).thenReturn(nonEmptyMap);
+		ModelAndView result=testee.getEventList(request, response);
+		assertEquals("json",result.getViewName());
+		assertFalse(result.getModel().isEmpty());
 	}
 	
 	@Test

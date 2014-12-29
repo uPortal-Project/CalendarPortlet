@@ -43,7 +43,20 @@
         </portlet-info>
         
         <portlet-preferences>
-            
+
+            <!-- Used for impersonation-based Exchange Web Services -->
+             <preference>
+                <name>wsUser</name>
+                <value>masterusername@domain</value>
+             	<read-only>true</read-only>
+            </preference>
+            <!-- Used for impersonation-based Exchange Web Services -->
+            <preference>
+                <name>wsPassword</name>
+                <value>masteruserpassword</value>
+            	<read-only>true</read-only>
+            </preference>
+           
             <!-- Default display timezone -->
             <preference>
                 <name>timezone</name>
@@ -134,14 +147,19 @@
         <name>casProxyTicket</name>
     </user-attribute>
 
-    <!-- Uncomment to use cached password authentication (also needed for Exchange Web Services integration) -->
-    <user-attribute>
+    <!-- Uncomment to use cached password authentication (also needed for non-impersonation Exchange Web Services integration) -->
+     <user-attribute>
         <name>password</name>
     </user-attribute>
 
-    <!-- Uncomment for Office365 Exchange Web Services integration -->
+    <!-- Uncomment for non-impersonation Exchange/Office365 Exchange Web Services integration -->
     <user-attribute>
         <name>mail</name>
+    </user-attribute>
+    
+    <!-- Used for impersonation-based Exchange Web Services -->
+    <user-attribute>
+        <name>uid</name>
     </user-attribute>
 
     <user-attribute>
