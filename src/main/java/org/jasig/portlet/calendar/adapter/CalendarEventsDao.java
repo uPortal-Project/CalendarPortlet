@@ -250,11 +250,12 @@ public class CalendarEventsDao {
             final Interval theSpecificDay = new Interval(startOfTheSpecificDay.getMillis(), endOfTheSpecificDay.getMillis(), usersConfiguredDateTimeZone);
 
             /*
-             * The test if the event interval has two parts: one more subtle than the other. The later test of overlaps()
-             * is an obvious test if the event happens in the specific day. The former test handles the special case
-             * where a zero-duration event abuts the specific day. The abuts() method checks to see if the intervals
-             * touch on either start or end of the interval. Here, we prefer to associate the event with the start of
-             * the next day instead of the end of the previous day.
+             * Test if the event interval abuts the start of the day or is within the day.
+             * This start time check is needed for the corner case where a zero duration interval
+             * is set for midnight.
+             * The start times are tested directly as opposed to using abuts() because that method
+             * also returns true if the intervals abut at the end of the day. We want to associate
+             * instant events that start at midnight with the starting day, not the ending day.
              */
             if (theSpecificDay.getStart().isEqual(eventStart) || theSpecificDay.overlaps(eventInterval)) {
                 final CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, theSpecificDay, df, tf);
