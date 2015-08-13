@@ -60,9 +60,9 @@ public class HibernateCalendarSetDao implements ICalendarSetDao {
      */
     public CalendarSet<?> getCalendarSet(PortletRequest request) {
 
-        final CalendarSet<UserDefinedCalendarConfiguration> set = new CalendarSet<UserDefinedCalendarConfiguration>();
         final Set<UserDefinedCalendarConfiguration> calendars = new HashSet<UserDefinedCalendarConfiguration>();
-        set.setConfigurations(calendars);
+        final CalendarSet<UserDefinedCalendarConfiguration> set
+                = new CalendarSet<UserDefinedCalendarConfiguration>(calendars);
 
         final String username = getUsername(request);
         if (username != null) {

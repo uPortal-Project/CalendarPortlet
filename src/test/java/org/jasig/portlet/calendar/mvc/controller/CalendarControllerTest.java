@@ -37,26 +37,25 @@ public class CalendarControllerTest {
 	private CalendarController testee;
 	private MockRenderRequest mockRequest;
 	private MockPortletSession mockSession;
-	
+
 	@Before
 	public void startUp(){
 		mockRequest = new MockRenderRequest();
 		mockSession = new MockPortletSession();
 		initMocks(this);
 		calendarDao = new ICalendarSetDao() {
-			
+
 			@Override
 			public CalendarSet<?> getCalendarSet(PortletRequest request) {
 				return calendarSet;
 			}
-			
+
 			@Override
 			public List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(PortletRequest request) {
 				return null;
 			}
 		};
-		calendarSet = new CalendarSet<UserDefinedCalendarConfiguration>();
-		calendarSet.setConfigurations(Collections.emptySet());
+		calendarSet = new CalendarSet<UserDefinedCalendarConfiguration>(Collections.emptySet());
 		testee = new CalendarController();
 		mockRequest.setSession(mockSession);
 		ReflectionTestUtils.setField(testee,"initializationServices",Collections.singletonList(mockIInitializationService));
@@ -71,6 +70,6 @@ public class CalendarControllerTest {
 		ModelAndView mv = testee.getCalendar(null,mockRequest);
 		Map<String,Object> model = (Map<String, Object>) mv.getModel().get("model");
 		assertEquals("true",model.get("showDatePicker"));
-		
+
 	}
 }
