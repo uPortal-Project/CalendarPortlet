@@ -41,11 +41,11 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
     private final DateTime dayEnd;
     private final boolean isAllDay;
     private final boolean isMultiDay;
-    
+
     private final String summary;
     private final String description;
     private final String location;
-    
+
     private final String dateStartTime;
     private final String dateEndTime;
     private final String startTime;
@@ -63,6 +63,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
      * @param tf time formatter to represent time displays
      */
     public CalendarDisplayEvent(VEvent event, Interval eventInterval, Interval theSpecificDay, DateTimeFormatter df, DateTimeFormatter tf) {
+        assert theSpecificDay.abuts(eventInterval) || theSpecificDay.overlaps(eventInterval) : "Event interval is not in the specified day!";
 
         this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;
         this.description = event.getDescription() != null ? event.getDescription().getValue() : null;
@@ -75,7 +76,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
         } else {
             dayStart = eventInterval.getStart();
         }
-        
+
         if (event.getEndDate() == null) {
             dayEnd = dayStart;
         } else if (eventInterval.getEnd().isAfter(theSpecificDay.getEnd())) {
@@ -85,7 +86,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
             dayEnd = eventInterval.getEnd();
         }
         this.isMultiDay = multi;
-        
+
         this.dateStartTime = tf.print(dayStart);
         this.startTime = tf.print(eventInterval.getStart());
         this.startDate = df.print(eventInterval.getStart());
@@ -102,25 +103,25 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
 
         Interval dayEventInterval = new Interval(dayStart, dayEnd);
         this.isAllDay = dayEventInterval.equals(theSpecificDay);
-        
+
     }
-	
+
     public String getSummary() {
         return this.summary;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public String getLocation() {
         return this.location;
     }
-    
+
     public String getDateStartTime() {
         return this.dateStartTime;
     }
-    
+
     public String getDateEndTime() {
         return this.dateEndTime;
     }
@@ -128,7 +129,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
     public String getStartTime() {
         return this.startTime;
     }
-    
+
     public String getEndTime() {
         return this.endTime;
     }
@@ -136,7 +137,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
     public String getStartDate() {
         return this.startDate;
     }
-    
+
     public String getEndDate() {
         return this.endDate;
     }
@@ -144,11 +145,11 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
     public boolean isAllDay() {
         return this.isAllDay;
     }
-    
+
     public boolean isMultiDay() {
         return this.isMultiDay;
     }
-    
+
     public DateTime getDayStart() {
         return this.dayStart;
     }
@@ -157,9 +158,9 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
         return this.dayEnd;
     }
 
-    public int compareTo(CalendarDisplayEvent event) {      
+    public int compareTo(CalendarDisplayEvent event) {
         // Order events by start date, then end date, then summary.
-        // If all properties are equal, use the calendar and event ids to 
+        // If all properties are equal, use the calendar and event ids to
         // ensure similar events from different calendars are not misinterpreted
         // as identical.
         return (new CompareToBuilder())
@@ -167,7 +168,7 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
                 .append(this.dayEnd, event.dayEnd)
                 .append(this.getSummary(), event.getSummary())
                 // The UID class doesn't implement comparable and will give
-                // rise to a ClassCastException if it's actually tested. 
+                // rise to a ClassCastException if it's actually tested.
                 // .append(this.event.getUid(), event.event.getUid())
                 .toComparison();
     }
@@ -183,11 +184,11 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
                 .append(this.dayEnd, event.dayEnd)
                 .append(this.getSummary(), event.getSummary())
                 // The UID class doesn't implement comparable and will give
-                // rise to a ClassCastException if it's actually tested. 
+                // rise to a ClassCastException if it's actually tested.
                 // .append(this.event.getUid(), event.event.getUid())
                 .isEquals();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31)
