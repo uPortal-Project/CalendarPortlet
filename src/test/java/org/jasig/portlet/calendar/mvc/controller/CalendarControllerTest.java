@@ -11,7 +11,6 @@ import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.IViewSelector;
-import org.jasig.portlet.calendar.service.IInitializationService;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +27,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CalendarControllerTest {
 
-	@Mock
-	private IInitializationService mockIInitializationService;
 	@Mock
 	private IViewSelector viewSelectorMock;
 	private ICalendarSetDao calendarDao;
@@ -58,7 +55,6 @@ public class CalendarControllerTest {
 		calendarSet = new CalendarSet<UserDefinedCalendarConfiguration>(Collections.emptySet());
 		testee = new CalendarController();
 		mockRequest.setSession(mockSession);
-		ReflectionTestUtils.setField(testee,"initializationServices",Collections.singletonList(mockIInitializationService));
 		ReflectionTestUtils.setField(testee,"calendarSetDao",calendarDao);
 		ReflectionTestUtils.setField(testee,"viewSelector",viewSelectorMock);
 	}
