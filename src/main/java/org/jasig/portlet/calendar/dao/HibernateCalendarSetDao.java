@@ -73,6 +73,8 @@ public class HibernateCalendarSetDao implements ICalendarSetDao {
 
             calendars.addAll(cals);
 
+        } else {
+            log.warn("username is null -- returning empty calendar set");
         }
         return set;
     }
@@ -86,6 +88,7 @@ public class HibernateCalendarSetDao implements ICalendarSetDao {
             // For this ICalendarSetDao, the list is the unfiltered collection from CalendarStore...
             return calendarStore.getPredefinedCalendarConfigurations(username, false);
         } else {
+            log.warn("username is null -- returning empty calendar configuration list");
             return new ArrayList<PredefinedCalendarConfiguration>();
         }
     }
