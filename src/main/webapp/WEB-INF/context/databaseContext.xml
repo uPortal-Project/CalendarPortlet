@@ -29,9 +29,41 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:datasource.properties"/>
-    <!-- Load the datasource.properties to get hibernate.dialect defined -->
-    <util:properties id="datasourceProps" location="classpath:datasource.properties"/>
+	<bean id="propertyConfigurer"
+		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+		<property name="locations">
+			<list>
+				<value>classpath:datasource.properties</value>
+				<!--
+                 |  The following files optionally allow deployers to set or override many uPortal
+                 |  configuration settings in a outside the control of the build/deploy cycle, SCM,
+                 |  and Tomcat.
+                 |
+                 |  Reasons for choosing that may include:
+                 |    - Desire to keep sensitive information out of your Git repository
+                 |    - Ability to change some common settings without a full build and deploy cycle
+                 |    - Building a WAR/EAR that is environment-independent.
+                 |
+                 |  Any property defined in the above files that is referenced in the Spring context
+                 |  may be overridden in one (or both) of these files.
+                 |
+                 |  The default location for overrides is ${CATALINA_HOME}/portal/overrides.properties;
+                 |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument
+                 |  or as an environment variable.
+                 |
+                 |  The first two files (overrides.properties) are intended to contain properties,
+                 |  such as database secrets, that are shared between uPortal and portlets.
+                 |  The latter two files (NotificationPortlet_overrides.properties) are for properties
+                 |  that are specific to this portlet.
+                 +-->
+				<value>file:${CATALINA_HOME}/portal/overrides.properties</value>
+				<value>file:${PORTAL_HOME}/overrides.properties</value>
+				<value>file:${CATALINA_HOME}/portal/CalendarPortlet_overrides.properties</value>
+				<value>file:${PORTAL_HOME}/CalendarPortlet_overrides.properties</value>
+			</list>
+		</property>
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
 
     <!--
      | HIBERNATE CONFIGURATION
@@ -60,7 +92,9 @@
 		</property>
 	</bean>
 	
-	<bean id="abstractHibernateTemplate" abstract="true" p:sessionFactory-ref="sessionFactory"/>
+	<bean id="abstractHibernateTemplate" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
 	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager"
