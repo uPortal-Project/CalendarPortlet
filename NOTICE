@@ -24,6 +24,7 @@ This project includes:
   ant-launcher under Apache License, Version 2.0
   AntLR under BSD License
   AOP alliance under Public Domain
+  Apache Commons Collections under Apache License, Version 2.0
   Apache Log4j under The Apache Software License, Version 2.0
   Apache Pluto Portlet Tag Library under The Apache Software License, Version 2.0
   asm under Apache License, Version 2.0
@@ -37,7 +38,6 @@ This project includes:
   castor under Apache License, Version 2.0
   Cernunnos - Core under Apache 2
   cglib under Apache License, Version 2.0
-  Collections under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
