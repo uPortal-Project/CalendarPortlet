@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2</version>
+                <version>3.2.2</version>
             </dependency>
             <!-- Used w/ Exchange WS
              | NOTE:  Do not upgrade to httpclient 4.2.5. It errors to on premise Exchange server with
