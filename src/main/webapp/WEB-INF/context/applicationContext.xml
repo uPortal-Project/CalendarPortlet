@@ -111,18 +111,6 @@
      | GENERAL PORTLET CONFIGURATION
      +-->
 
-    <!-- Properties configuration -->
-    <bean id="propertyConfigurer"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-        lazy-init="false">
-        <property name="locations">
-            <list>
-                <value>classpath:datasource.properties</value>
-                <value>classpath:configuration.properties</value>
-            </list>
-        </property>
-    </bean>
-
     <!-- Message source for this context, loaded from localized "messages_xx" files -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
         p:basenames="i18n/messages" p:useCodeAsDefaultMessage="true"/>

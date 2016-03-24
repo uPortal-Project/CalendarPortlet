@@ -38,7 +38,6 @@
           lazy-init="false">
         <property name="locations">
             <list>
-                <value>classpath:datasource.properties</value>
                 <value>classpath:configuration.properties</value>
             </list>
         </property>
