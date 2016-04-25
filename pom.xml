@@ -918,10 +918,6 @@
                             </tasks>
                         </configuration>
                     </execution>
-                    <!-- The data-export capability is broken as of 2/15/2013. I moved it from the profile section to this section
-                         to use the new custom lifecycle phase data-export but do not have time to debug and figure out why it is
-                         broken - just enough time to verify that moving it here didn't break it :-).  See CAP-137. -->
-                    <!-- To export the calendar db tables, use mvn -Ddir=dir data-export -->
                     <execution>
                         <id>data-export</id>
                         <phase>data-export</phase>
@@ -949,9 +945,6 @@
                                         <pathelement location="${servlet.jar}" />
                                         <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
                                     </classpath>
-                                    <!-- This may be helpful to troubleshoot CAP-137 -->
-                                    <!--<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" />-->
-
                                     <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
                                     <arg value="${dir}" />
                                     <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
