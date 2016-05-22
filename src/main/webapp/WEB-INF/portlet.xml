@@ -86,6 +86,12 @@
                 <value>up</value>
             </preference>
 
+            <!-- whitelist of predefined calendar-definitions by fname -->
+            <preference>
+                <name>calendarWhitelist</name>
+                <value></value>
+            </preference>
+
             <!-- For exchange integration to override the NTLM domain from configuration.properties.  Typically
                  used when you have both Office365 integration (can't have an NTLM domain) and on-premise
                  Exchange integration (requires NTLM domain).  Empty string means no impact.
