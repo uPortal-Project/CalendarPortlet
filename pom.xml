@@ -60,7 +60,7 @@
         <repository>
             <id>caldav4j.repo</id>
             <name>CalDav4J Repository</name>
-            <url>http://caldav4j.googlecode.com/svn/maven/</url>
+            <url>https://raw.githubusercontent.com/caldav4j/maven/master/repo/</url>
         </repository>
     </repositories>
     
