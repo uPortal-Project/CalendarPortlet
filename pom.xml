@@ -58,9 +58,8 @@
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-            <id>caldav4j.repo</id>
-            <name>Only for CalDav4J Repository</name>
-            <url>https://jitpack.io</url>
+            <id>3rd-party-embedded</id>
+            <url>file://${project.basedir}/3rd-party/repository</url>
         </repository>
     </repositories>
     
