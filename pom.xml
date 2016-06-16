@@ -822,6 +822,7 @@
                         <exclude>bin/**</exclude>
                         <exclude>.idea/**</exclude> <!-- Exclude intelliJ files -->
                         <exclude>overlays/**</exclude> <!-- Exclude intelliJ files -->
+                        <exclude>3rd-party/**</exclude>
                     </excludes>
                     <mapping>
                         <channel>XML_STYLE</channel>
