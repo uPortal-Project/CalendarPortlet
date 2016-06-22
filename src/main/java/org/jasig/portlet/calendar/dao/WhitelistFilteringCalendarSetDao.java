@@ -89,8 +89,7 @@ public class WhitelistFilteringCalendarSetDao implements ICalendarSetDao {
             }
         }
 
-        final CalendarSet<CalendarConfiguration> rslt = new CalendarSet<CalendarConfiguration>(configurations);
-        return rslt;
+        return new CalendarSet<CalendarConfiguration>(configurations);
 
     }
 
@@ -132,9 +131,15 @@ public class WhitelistFilteringCalendarSetDao implements ICalendarSetDao {
 
     private List<String> getWhitelist(PortletRequest req) {
         final PortletPreferences prefs = req.getPreferences();
-        @SuppressWarnings("unchecked")
-        final List<String> rslt = Arrays.asList(prefs.getValues(CALENDAR_WHITELIST_PREFERENCE, new String[0]));
-        return rslt;
+        final String[] prefValues = prefs.getValues(CALENDAR_WHITELIST_PREFERENCE, new String[0]);
+        final List<String> whitelist = new ArrayList<String>();
+        for (String fname : prefValues) {
+            final String trimFname = fname.trim();
+            if (!trimFname.isEmpty()) {
+                whitelist.add(trimFname);
+            }
+        }
+        return whitelist;
     }
 
 }
