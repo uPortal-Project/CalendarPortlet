@@ -37,6 +37,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.calendar.CalendarConfiguration;
@@ -253,10 +254,10 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
      * @return the body of the http response as a stream
      * @throws CalendarException wraps all potential {@link Exception} types 
      */
-    protected InputStream retrieveCalendarHttp(String url, Credentials credentials)
-            throws CalendarException {
-        HttpClient client = new HttpClient();
-        if(null != credentials) {
+    protected InputStream retrieveCalendarHttp(String url, Credentials credentials) throws CalendarException {
+
+        final HttpClient client = new HttpClient();
+        if (null != credentials) {
             client.getState().setCredentials(AuthScope.ANY, credentials);
         }
         GetMethod get = null;
@@ -266,19 +267,27 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             if(log.isDebugEnabled()) {
                 log.debug("Retrieving calendar " + url);
             }
+
             get = new GetMethod(url);
-            int rc = client.executeMethod(get);
-            if(rc == HttpStatus.SC_OK) {
+            final int rc = client.executeMethod(get);
+            if (rc == HttpStatus.SC_OK) {
                 // return the response body
                 log.debug("request completed successfully");
-                InputStream in = get.getResponseBodyAsStream();
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                IOUtils.copyLarge(in, buffer);
+                final InputStream responseBody = get.getResponseBodyAsStream();
+
+                /*
+                 * CAP-207:  Some HTTP endpoints seem to provide XML documents
+                 * that begin with a "Byte Order Mark" which causes a parsing
+                 * failure.  This BOMInputStream strips the BOM is present.
+                 */
+                final BOMInputStream bomIn = new BOMInputStream(responseBody);
+
+                final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                IOUtils.copyLarge(bomIn, buffer);
                 return new ByteArrayInputStream(buffer.toByteArray());
-            }
-            else {
-                log.warn("HttpStatus for " + url + ":" + rc);
-                throw new CalendarException("non successful status code retrieving " + url + ", status code: " + rc);
+            } else {
+                log.warn("HttpStatus for " + url + ":  " + rc);
+                throw new CalendarException("Non-successful status code retrieving url '" + url + "';  status code: " + rc);
             }
         } catch (HttpException e) {
             log.warn("Error fetching iCalendar feed", e);
