@@ -140,15 +140,17 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
     public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
             Interval interval, PortletRequest request) throws CalendarException {
 
-        // Some HTTP iCal providers, such as Google, don't allow you to specify
-        // the interval in the RESTful call so you get the whole calendar. To
-        // avoid receiving the entire calendar every time you need a specific
-        // interval, break up the caching into two stages.
-        //
-        // Stage 1 caches the entire calendar (or partial if the REST call supports intervals).
-        //
-        // Stage 2 filters the cached calendar down to the requested interval and
-        // caches the calendar events for that interval.
+        /*
+         *  Some HTTP iCal providers, such as Google, don't allow you to specify
+         *  the interval in the RESTful call so you get the whole calendar. To
+         *  avoid receiving the entire calendar every time you need a specific
+         *  interval, break up the caching into two stages.
+         *
+         *  Stage 1 caches the entire calendar (or partial if the REST call supports intervals).
+         *
+         *  Stage 2 filters the cached calendar down to the requested interval and
+         *  caches the calendar events for that interval.
+         */
 
         // Stage 1: Try to get the cached calendar.
         String url = this.urlCreator.constructUrl(calendarConfiguration, interval, request);
@@ -181,7 +183,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving calendar from cache, key:" + intermediateCacheKey);
             }
-            calendar = (T) cachedCalendar.getValue();
+            calendar = (T) cachedCalendar.getObjectValue();
         }
 
         // The cache key for retrieving a calendar over HTTP may not include
@@ -228,7 +230,7 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving calendar event set from cache, key:" + processorCacheKey);
             }
-            eventSet = (CalendarEventSet) cachedElement.getValue();
+            eventSet = (CalendarEventSet) cachedElement.getObjectValue();
         }
 
         return eventSet;
