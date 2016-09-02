@@ -17,4 +17,4 @@
     under the License.
 ====
 
-Documentation currently resides at http://www.ja-sig.org/wiki/display/PLT/CalendarPortlet.
+Documentation currently resides at https://wiki.jasig.org/display/PLT/Calendar+Portlet
