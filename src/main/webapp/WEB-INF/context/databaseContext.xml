@@ -29,8 +29,15 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="propertyConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+    <bean id="propertyConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertySourcesPlaceholderConfigurer" lazy-init="false">
+        <!--
+         | Supports encrypted properties within the location(s) listed in this
+         | bean.  The password is the environment variable "UP_JASYPT_KEY"
+         | (see http://www.jasypt.org/).
+         +-->
+        <constructor-arg>
+            <bean class="org.jasig.portlet.calendar.spring.StringEncryptorFactoryBean" />
+        </constructor-arg>
         <property name="locations">
             <list>
                 <value>classpath:datasource.properties</value>

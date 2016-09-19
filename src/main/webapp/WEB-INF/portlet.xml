@@ -150,10 +150,21 @@
         <name>user.login.id</name>
     </user-attribute>
 
-    <!-- Uncomment to use Proxy CAS authentication -->
+    <!--
+     | Uncomment the 'casProxyTicket' attribute to use Proxy CAS authentication.
+     |
+     | Be aware, however, that this feature may cause large amounts of traffic
+     | between your CAS serever and portal server(s), especially if you have a
+     | lot of Calendar portlets.  This phenomenon occurs because CAS proxy
+     | tickets are short-lived;  the portal must request a new one for every
+     | render of a portlet that asks for one.
+     +-->
+    <!--
     <user-attribute>
+        <description>CAS Proxy Ticket</description>
         <name>casProxyTicket</name>
     </user-attribute>
+    -->
 
     <!-- For cached password authentication (also needed for non-impersonation Exchange Web Services integration) -->
      <user-attribute>
