@@ -21,12 +21,9 @@
 <!--
  | Arguments:
  |   $1 = Directory (absolute or relative) from which to import;  sub-directories are scanned
- |   $2 = Regex expression used to match paths from within $1 [NOT IMPLEMENTED]
  +-->
-
 <with>
     <attribute key="importDir">${$1}</attribute>
-    <attribute key="importExportContextFile">${$2}</attribute>
     <attribute key="importPattern">.*</attribute>
       <!-- 
        | IMPORT_FILE_EXTENSIONS:  The file types we support, in the order they should be imported.
@@ -37,7 +34,7 @@
     <attribute key="IMPORT_FILE_EXTENSIONS">${groovy(['.pcd.xml','.pcs.xml','.ucd.xml'])}</attribute>
     <attribute key="IMPORT_LOG_PREFIX">[CAL-IMPORT] </attribute>
     <subtasks>
-        <with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext(importExportContextFile))}">
+        <with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext('classpath:/context/importExportContext.xml'))}">
             <for-each items="${IMPORT_FILE_EXTENSIONS}" attribute-name="extension">
                 <file-iterator dir="${importDir}">
                     <if test="${groovy(Attributes.LOCATION.endsWith(extension))}">

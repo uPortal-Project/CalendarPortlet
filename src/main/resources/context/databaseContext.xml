@@ -111,7 +111,7 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
         p:dataSource-ref="dataSource" p:configLocation="classpath:hibernate.cfg.xml"/>
 
-    <bean id="dataSource" 
+    <bean id="dataSource"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource"
         p:driverClassName="${hibernate.connection.driver_class}"
         p:url="${hibernate.connection.url}"

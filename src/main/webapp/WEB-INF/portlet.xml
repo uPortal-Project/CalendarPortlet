@@ -30,7 +30,7 @@
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>/WEB-INF/context/portlet/calendar.xml</value>
+            <value>classpath:/context/portlet/calendar.xml</value>
         </init-param>
         <supports>
             <mime-type>text/html</mime-type>
@@ -40,7 +40,7 @@
         <portlet-info>
             <title>My Calendar</title>
         </portlet-info>
-        
+
         <portlet-preferences>
 
             <!-- If specified, Calendar uses impersonation-based Exchange Web Services. Value should be something like
@@ -70,7 +70,7 @@
                 <name>days</name>
                 <value>7</value>
             </preference>
-            
+
             <!-- Optionally disable users' access to the preferences screen -->
             <preference>
                 <name>disablePreferences</name>
@@ -102,7 +102,7 @@
             </preference>
 
         </portlet-preferences>
-        
+
         <!--
             Administrative role mapping.  This mapping is required if you
             want to use the administrative features.
@@ -141,7 +141,7 @@
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-publishing-event>
     </portlet>
-    
+
     <!-- 
         Username with which to associate user data.  Must match the value 
         of "userinfo.userid.key" in configuration.properties. 

@@ -43,12 +43,12 @@
         <url>https://github.com/Jasig/CalendarPortlet</url>
       <tag>HEAD</tag>
   </scm>
-    
+
     <issueManagement>
         <url>${jasig-issues-base}/CAP</url>
         <system>${jasig-issues-system}</system>
     </issueManagement>
-    
+
     <repositories>
         <repository>
             <id>jasig-3rd-party</id>
@@ -718,8 +718,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 
@@ -922,7 +922,6 @@
 
                                     <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
                                     <arg value="${dir}" />
-                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -956,7 +955,6 @@
                                     </classpath>
                                     <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
                                     <arg value="${dir}" />
-                                    <arg value="${basedir}/src/main/webapp/WEB-INF/context/importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>

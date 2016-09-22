@@ -28,10 +28,10 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 <!-- 	<import resource="classpath:applicationContext.xml" /> -->
 
-	<import resource="file:src/main/webapp/WEB-INF/context/applicationContext.xml" />
-	<import resource="file:src/main/webapp/WEB-INF/context/portlet/calendar.xml" />
-	<import resource="file:src/main/webapp/WEB-INF/context/calendarContext.xml" />
-	<import resource="file:src/main/webapp/WEB-INF/context/databaseContext.xml" />
+	<import resource="classpath:/context/applicationContext.xml" />
+	<import resource="classpath:/context/portlet/calendar.xml" />
+	<import resource="classpath:/context/calendarContext.xml" />
+	<import resource="classpath:/context/databaseContext.xml" />
 
 	<!-- propertyConfigurer must be after context/databaseContext.xml so it can override the
 	     PropertyPlaceholderConfigurer in that file. -->

@@ -25,16 +25,14 @@
 
 <with>
     <attribute key="exportDir">${$1}</attribute>
-    <attribute key="importExportContextFile">${$2}</attribute>
-
     <attribute key="EXPORT_LOG_PREFIX">[CAL-EXPORT] </attribute>
     <subtasks>
-    	<with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext(importExportContextFile))}">
-	        <with-attribute key="exportTasks" value="${groovy(PORTAL_CONTEXT.getBean('exportTasks'))}">
-	            <for-each items="${exportTasks}" attribute-name="task">
-	                <crn task="${task}"/>
-	            </for-each>
-	        </with-attribute>
-	</with-attribute>
+        <with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portlet.calendar.spring.PortletApplicationContextLocator.getApplicationContext('classpath:/context/importExportContext.xml'))}">
+            <with-attribute key="exportTasks" value="${groovy(PORTAL_CONTEXT.getBean('exportTasks'))}">
+                <for-each items="${exportTasks}" attribute-name="task">
+                    <crn task="${task}"/>
+                </for-each>
+            </with-attribute>
+    </with-attribute>
     </subtasks>
 </with>

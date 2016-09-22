@@ -18,9 +18,6 @@
  */
 package org.jasig.portlet.calendar.spring;
 
-import java.io.File;
-import java.net.URL;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -31,6 +28,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -49,12 +47,17 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * access to the {@link ServletContext}
  *  
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletApplicationContextLocator implements ServletContextListener {
     private static Log LOGGER = LogFactory.getLog(PortletApplicationContextLocator.class);
-    
+
     private static final SingletonDoubleCheckedCreator<ConfigurableApplicationContext> applicationContextCreator = new PortletApplicationContextCreator();
+
+    /**
+     * Subset of the main context;  used in hbm2dll and importing
+     */
+    public static final String DATABASE_CONTEXT_LOCATION = "classpath:/context/importExportContext.xml";
+
     private static Throwable directCreatorThrowable;
     private static ServletContext servletContext;
 
@@ -71,7 +74,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
     public void contextDestroyed(ServletContextEvent sce) {
         servletContext = null;
     }
-    
+
     /**
      * @return <code>true</code> if a WebApplicationContext is available, <code>false</code> if only an ApplicationContext is available
      * @deprecated Only needed for using {@link #getRequiredWebApplicationContext()} or {@link #getWebApplicationContext()}.
@@ -80,7 +83,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
     public static boolean isRunningInWebApplication() {
         return servletContext != null;
     }
-    
+
     /**
      * @return The WebApplicationContext for the portal
      * @throws IllegalStateException if no ServletContext is available to retrieve a WebApplicationContext for or if the root WebApplicationContext could not be found
@@ -92,7 +95,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
         if (context == null) {
             throw new IllegalStateException("No ServletContext is available to load a WebApplicationContext for. Is this ServletContextListener not configured or has the ServletContext been destroyed?");
         }
-        
+
         return WebApplicationContextUtils.getRequiredWebApplicationContext(context);
     }
 
@@ -106,7 +109,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
         if (context == null) {
             return null;
         }
-        
+
         return WebApplicationContextUtils.getWebApplicationContext(context);
     }
 
@@ -123,7 +126,7 @@ public class PortletApplicationContextLocator implements ServletContextListener 
 
         if (context != null) {
             LOGGER.debug("Using WebApplicationContext");
-            
+
             if (applicationContextCreator.isCreated()) {
                 final IllegalStateException createException = new IllegalStateException("A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. " +
                         "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
@@ -138,10 +141,10 @@ public class PortletApplicationContextLocator implements ServletContextListener 
             }
             return webApplicationContext;
         }
-        
+
         return applicationContextCreator.get(importExportContextFile);
     }
-    
+
     /**
      * If the ApplicationContext returned by {@link #getApplicationContext()} is 'portal managed' the shutdown hook
      * for the context is called, closing and cleaning up all spring managed resources.
@@ -159,30 +162,24 @@ public class PortletApplicationContextLocator implements ServletContextListener 
             LOGGER.error(createException, createException);
         }
     }
-    
+
     /**
      * Creator class that knows how to instantiate the lazily initialized portal application context if needed
      */
     private static class PortletApplicationContextCreator extends SingletonDoubleCheckedCreator<ConfigurableApplicationContext> {
-        
+
         @Override
         protected ConfigurableApplicationContext createSingleton(Object... args) {
             LOGGER.info("Creating new lazily initialized GenericApplicationContext for the portal");
 
             final long startTime = System.currentTimeMillis();
-            
+
             final GenericApplicationContext genericApplicationContext = new GenericApplicationContext();
             final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(genericApplicationContext);
             reader.setDocumentReaderClass(LazyInitByDefaultBeanDefinitionDocumentReader.class);
-            
-            File file = new File(".");
-            try {
-                URL context = file.toURI().toURL();
-                URL location = new URL(context, (String) args[0]);
-                reader.loadBeanDefinitions(location.toExternalForm());
-            } catch (Exception e) {
-                LOGGER.error("Failed to load bean definitions", e);
-            }
+
+            final Resource resource = genericApplicationContext.getResource((String) args[0]);
+            reader.loadBeanDefinitions(resource);
 
             genericApplicationContext.refresh();
             genericApplicationContext.registerShutdownHook();

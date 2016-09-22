@@ -19,19 +19,22 @@
     under the License.
 
 -->
-<web-app id="jasig-calendar-portlets" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app 
+    xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
-    
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    metadata-complete="true"
+    version="3.0">
+
     <display-name>Calendar Portlets</display-name>
     <description>Calendar Portlets</description>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/context/applicationContext.xml,
-            /WEB-INF/context/calendarContext.xml,
-            /WEB-INF/context/databaseContext.xml
+            classpath:/context/applicationContext.xml,
+            classpath:/context/calendarContext.xml,
+            classpath:/context/databaseContext.xml
         </param-value>
     </context-param>
     <context-param>
@@ -55,7 +58,7 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <!-- Validation filter delegates to spring configuration in WEB-INF/context/applicationContext.jsp -->
+    <!-- Validation filter delegates to spring configuration in applicationContext.xml -->
     <filter>
         <filter-name>CAS Validation Filter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -64,7 +67,7 @@
             <param-value>ticketValidationFilter</param-value>
         </init-param>
     </filter>
-    
+
     <filter>
         <filter-name>pageCachingFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -73,7 +76,7 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-    
+
     <filter>
         <filter-name>CacheExpiresFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -83,7 +86,7 @@
         <filter-name>CAS Validation Filter</filter-name>
         <url-pattern>/proxy/receptor</url-pattern>
     </filter-mapping>
-    
+
     <filter-mapping>
         <filter-name>pageCachingFilter</filter-name>
         <url-pattern>*.js</url-pattern>
@@ -96,10 +99,13 @@
         <url-pattern>*.css</url-pattern>
     </filter-mapping>
 
-    
     <servlet>
         <servlet-name>ViewRendererServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/spring-servlet.xml</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -108,15 +114,15 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>ViewRendererServlet</servlet-name>
         <url-pattern>/WEB-INF/servlet/view</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
         <url-pattern>/ajax/*</url-pattern>
     </servlet-mapping>
-    
+
 </web-app>
