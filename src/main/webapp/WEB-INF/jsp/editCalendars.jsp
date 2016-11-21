@@ -161,7 +161,7 @@
             <portlet:actionURL var="postUrl"><portlet:param name="action" value="editPreferences"/></portlet:actionURL>
             <form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}" class="form-horizontal" role="form">
                 <div class="form-group">
-                    <label class="col-md-3 control-label"><spring:message code="time.zone"/></label>
+                    <label for="timezone" class="col-md-3 control-label"><spring:message code="time.zone"/></label>
                     <div class="col-md-3">
                         <form:select path="timezone" class="form-control">
                             <c:forEach items="${timezones}" var="zone">

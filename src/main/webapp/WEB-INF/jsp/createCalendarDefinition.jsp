@@ -52,13 +52,13 @@
                         </spring:hasBindErrors>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><spring:message code="calendar.functional.name"/></label>
+                        <label for="fname" class="col-md-4 control-label"><spring:message code="calendar.functional.name"/></label>
                         <div class="col-md-8">
                             <form:input class="form-control" path="fname"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><spring:message code="calendar.type"/></label>
+                        <label for="className" class="col-md-4 control-label"><spring:message code="calendar.type"/></label>
                         <div class="col-md-8">
                             <form:select class="form-control" path="className">
                                 <c:forEach items="${ adapters }" var="adapter">
