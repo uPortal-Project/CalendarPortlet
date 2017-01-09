@@ -25,29 +25,29 @@
 
 <div class="upcal-edit-urlview container-fluid bootstrap-styles">
 
-	<h4><spring:message code="edit.calendar"/></h4>
+    <h4><spring:message code="edit.calendar"/></h4>
 
     <portlet:actionURL var="postUrl"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
     <form:form name="calendar" cssClass="form-horizontal" commandName="userHttpIcalCalendarForm" action="${postUrl}">
 
-	    <spring:hasBindErrors name="userHttpIcalCalendarForm">
-	        <div class="portlet-msg-error" role="alert">
-	            <form:errors path="*" element="div"/>
-	        </div> <!-- end: portlet-msg -->
-	    </spring:hasBindErrors>
+        <spring:hasBindErrors name="userHttpIcalCalendarForm">
+            <div class="portlet-msg-error" role="alert">
+                <form:errors path="*" element="div"/>
+            </div> <!-- end: portlet-msg -->
+        </spring:hasBindErrors>
 
         <form:hidden path="id"/>
 
         <div class="form-group">
-			<label class="portlet-form-field-label col-md-3 control-label">
-			    <spring:message code="calendar.name"/>:
-			</label>
+            <label for="name" class="portlet-form-field-label col-md-3 control-label">
+                <spring:message code="calendar.name"/>:
+            </label>
             <div class="col-md-9">
                 <form:input cssClass="form-control" path="name" size="50"/>
             </div>
         </div>
         <div class="form-group">
-            <label class="portlet-form-field-label col-md-3 control-label">
+            <label for="url" class="portlet-form-field-label col-md-3 control-label">
                 <spring:message code="calendar.url"/>:
             </label>
             <div class="col-md-9">
