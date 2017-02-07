@@ -1,23 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jasig.portlet.calendar.adapter;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -33,82 +33,77 @@ import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.joda.time.Interval;
 
-import javax.portlet.PortletRequest;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
+public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter
+    implements ICalendarAdapter {
 
+  protected final Log log = LogFactory.getLog(this.getClass());
 
-public class ConfigurableFileCalendarAdapter extends AbstractCalendarAdapter implements ICalendarAdapter {
+  private Cache cache;
+  private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
+  private ICacheKeyGenerator cacheKeyGenerator = new DefaultCacheKeyGeneratorImpl();
+  private String cacheKeyPrefix = "default";
 
-	protected final Log log = LogFactory.getLog(this.getClass());
+  public CalendarEventSet getEvents(
+      CalendarConfiguration calendarConfiguration, Interval interval, PortletRequest request)
+      throws CalendarException {
+    Set<VEvent> events = Collections.emptySet();
 
-	private Cache cache;
-	private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
-	private ICacheKeyGenerator cacheKeyGenerator = new DefaultCacheKeyGeneratorImpl();
-	private String cacheKeyPrefix = "default";
+    String fileName = calendarConfiguration.getCalendarDefinition().getParameters().get("file");
 
-	
-	public CalendarEventSet getEvents(CalendarConfiguration calendarConfiguration,
-			Interval interval, PortletRequest request) throws CalendarException {
-		Set<VEvent> events = Collections.emptySet();
-		
-		String fileName = calendarConfiguration.getCalendarDefinition().getParameters().get("file");
-		
-		// try to get the cached calendar
-		String key = cacheKeyGenerator.getKey(calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(fileName));
-		Element cachedElement = this.cache.get(key);
-        CalendarEventSet eventSet;
-		if (cachedElement == null) {
-			// read in the data
-			Calendar calendar = retrieveCalendar(fileName);
-			// run the stream through the processor
-			events = contentProcessor.getEvents(interval, calendar);
-			log.debug("contentProcessor found " + events.size() + " events");
+    // try to get the cached calendar
+    String key =
+        cacheKeyGenerator.getKey(
+            calendarConfiguration, interval, request, cacheKeyPrefix.concat(".").concat(fileName));
+    Element cachedElement = this.cache.get(key);
+    CalendarEventSet eventSet;
+    if (cachedElement == null) {
+      // read in the data
+      Calendar calendar = retrieveCalendar(fileName);
+      // run the stream through the processor
+      events = contentProcessor.getEvents(interval, calendar);
+      log.debug("contentProcessor found " + events.size() + " events");
 
-            // save the calendar event set to the cache
-            eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
-        } else {
-            eventSet = (CalendarEventSet) cachedElement.getValue();
-		}
-		
-		return eventSet;
-	}
+      // save the calendar event set to the cache
+      eventSet = insertCalendarEventSetIntoCache(this.cache, key, events);
+    } else {
+      eventSet = (CalendarEventSet) cachedElement.getValue();
+    }
 
-	protected Calendar retrieveCalendar(String fileName)
-			throws CalendarException {
+    return eventSet;
+  }
 
-		if(log.isDebugEnabled()) {
-			log.debug("Retrieving calendar " + fileName);
-		}
+  protected Calendar retrieveCalendar(String fileName) throws CalendarException {
 
-		try {
-            return Calendars.load(fileName);
+    if (log.isDebugEnabled()) {
+      log.debug("Retrieving calendar " + fileName);
+    }
 
-		} catch (ParserException e) {
-			log.warn("Error loading iCalendar file feed", e);
-			throw new CalendarException("Error fetching iCalendar file feed", e);
-		} catch (IOException e) {
-			log.warn("Error loading iCalendar file feed", e);
-			throw new CalendarException("Error loading iCalendar feed", e);
-		} finally {
-		}
-	}
+    try {
+      return Calendars.load(fileName);
 
-	public void setCache(Cache cache) {
-		this.cache = cache;
-	}
+    } catch (ParserException e) {
+      log.warn("Error loading iCalendar file feed", e);
+      throw new CalendarException("Error fetching iCalendar file feed", e);
+    } catch (IOException e) {
+      log.warn("Error loading iCalendar file feed", e);
+      throw new CalendarException("Error loading iCalendar feed", e);
+    } finally {
+    }
+  }
 
-	public void setContentProcessor(IContentProcessor contentProcessor) {
-		this.contentProcessor = contentProcessor;
-	}
+  public void setCache(Cache cache) {
+    this.cache = cache;
+  }
 
-	public void setCacheKeyGenerator(ICacheKeyGenerator cacheKeyGenerator) {
-		this.cacheKeyGenerator = cacheKeyGenerator;
-	}
+  public void setContentProcessor(IContentProcessor contentProcessor) {
+    this.contentProcessor = contentProcessor;
+  }
 
-	public void setCacheKeyPrefix(String cacheKeyPrefix) {
-		this.cacheKeyPrefix = cacheKeyPrefix;
-	}
-	
+  public void setCacheKeyGenerator(ICacheKeyGenerator cacheKeyGenerator) {
+    this.cacheKeyGenerator = cacheKeyGenerator;
+  }
+
+  public void setCacheKeyPrefix(String cacheKeyPrefix) {
+    this.cacheKeyPrefix = cacheKeyPrefix;
+  }
 }

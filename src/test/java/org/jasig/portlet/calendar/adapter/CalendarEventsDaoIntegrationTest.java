@@ -1,22 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jasig.portlet.calendar.adapter;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
@@ -46,153 +43,146 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/testContext.xml")
 public class CalendarEventsDaoIntegrationTest {
 
-	CalendarEventsDao eventsDao;
-	IContentProcessor<Calendar> processor;
-	Resource calendarFile;
+  CalendarEventsDao eventsDao;
+  IContentProcessor<Calendar> processor;
+  Resource calendarFile;
 
-	@Autowired(required = true)
-	ApplicationContext context;
+  @Autowired(required = true)
+  ApplicationContext context;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-		eventsDao = new CalendarEventsDao();
-		eventsDao.setMessageSource((MessageSource) context.getBean("messageSource"));
-		processor = new ICalendarContentProcessorImpl();
-		calendarFile = context.getResource("classpath:sampleEvents.ics");
-	}
+    eventsDao = new CalendarEventsDao();
+    eventsDao.setMessageSource((MessageSource) context.getBean("messageSource"));
+    processor = new ICalendarContentProcessorImpl();
+    calendarFile = context.getResource("classpath:sampleEvents.ics");
+  }
 
-	@Test
-	public void testGetEvents() throws IOException, URISyntaxException, ParseException {
+  @Test
+  public void testGetEvents() throws IOException, URISyntaxException, ParseException {
 
-		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-		DateMidnight start = new DateMidnight(2012, 7, 3, tz);
-		Interval interval = new Interval(start, start.plusDays(7));
+    DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+    DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+    Interval interval = new Interval(start, start.plusDays(7));
 
-		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-		Set<VEvent> events = processor.getEvents(interval, c);
+    Calendar c = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, c);
 
-		assertEquals(2, events.size());
+    assertEquals(2, events.size());
 
-		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+    List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-		for (VEvent event : events) {
-			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
-		}
-		Collections.sort(displayEvents);
+    for (VEvent event : events) {
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    }
+    Collections.sort(displayEvents);
 
-		CalendarDisplayEvent event = displayEvents.get(0);
-		assertEquals("12:00 AM", event.getStartTime());
+    CalendarDisplayEvent event = displayEvents.get(0);
+    assertEquals("12:00 AM", event.getStartTime());
 
-		event = displayEvents.get(1);
-		assertEquals(9, event.getDayStart().getHourOfDay());
+    event = displayEvents.get(1);
+    assertEquals(9, event.getDayStart().getHourOfDay());
+  }
 
-	}
+  @Test
+  public void testGetEventsAlternateTimezone()
+      throws IOException, URISyntaxException, ParseException {
 
-	@Test
-	public void testGetEventsAlternateTimezone() throws IOException, URISyntaxException, ParseException {
+    DateTimeZone tz = DateTimeZone.forID("America/Chicago");
+    DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+    Interval interval = new Interval(start, start.plusDays(7));
 
-		DateTimeZone tz = DateTimeZone.forID("America/Chicago");
-		DateMidnight start = new DateMidnight(2012, 7, 3, tz);
-		Interval interval = new Interval(start, start.plusDays(7));
+    Calendar c = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, c);
 
-		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-		Set<VEvent> events = processor.getEvents(interval, c);
+    assertEquals(2, events.size());
 
-		assertEquals(2, events.size());
+    List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+    for (VEvent event : events) {
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    }
+    Collections.sort(displayEvents);
 
-		for (VEvent event : events) {
-			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
-		}
-		Collections.sort(displayEvents);
+    CalendarDisplayEvent event = displayEvents.get(0);
+    assertEquals(0, event.getDayStart().getHourOfDay());
 
-		CalendarDisplayEvent event = displayEvents.get(0);
-		assertEquals(0, event.getDayStart().getHourOfDay());
+    event = displayEvents.get(1);
+    assertEquals(11, event.getDayStart().getHourOfDay());
+  }
 
-		event = displayEvents.get(1);
-		assertEquals(11, event.getDayStart().getHourOfDay());
+  @Test
+  public void testGetArizonaEvent() throws IOException, URISyntaxException, ParseException {
 
-	}
+    DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+    DateMidnight start = new DateMidnight(2013, 2, 3, tz);
+    Interval interval = new Interval(start, start.plusDays(7));
 
-	@Test
-	public void testGetArizonaEvent() throws IOException, URISyntaxException, ParseException {
+    Calendar c = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, c);
 
-		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-		DateMidnight start = new DateMidnight(2013, 2, 3, tz);
-		Interval interval = new Interval(start, start.plusDays(7));
+    assertEquals(1, events.size());
 
-		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-		Set<VEvent> events = processor.getEvents(interval, c);
+    List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-		assertEquals(1, events.size());
+    for (VEvent event : events) {
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    }
+    Collections.sort(displayEvents);
 
-		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+    CalendarDisplayEvent event = displayEvents.get(0);
+    assertEquals("9:00 AM", event.getStartTime());
+  }
 
-		for (VEvent event : events) {
-			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
-		}
-		Collections.sort(displayEvents);
+  @Test
+  public void testGetUTCEvent() throws IOException, URISyntaxException, ParseException {
 
-		CalendarDisplayEvent event = displayEvents.get(0);
-		assertEquals("9:00 AM", event.getStartTime());
+    DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+    DateMidnight start = new DateMidnight(2013, 1, 3, tz);
+    Interval interval = new Interval(start, start.plusDays(7));
 
-	}
+    Calendar c = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, c);
 
-	@Test
-	public void testGetUTCEvent() throws IOException, URISyntaxException, ParseException {
+    assertEquals(1, events.size());
 
-		DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
-		DateMidnight start = new DateMidnight(2013, 1, 3, tz);
-		Interval interval = new Interval(start, start.plusDays(7));
+    List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-		Set<VEvent> events = processor.getEvents(interval, c);
+    for (VEvent event : events) {
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    }
+    Collections.sort(displayEvents);
 
-		assertEquals(1, events.size());
+    CalendarDisplayEvent event = displayEvents.get(0);
+    assertEquals("2:00 PM", event.getStartTime());
+  }
 
-		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
+  @Test
+  public void testGetBedeworkEvent() throws IOException, URISyntaxException, ParseException {
 
-		for (VEvent event : events) {
-			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
-		}
-		Collections.sort(displayEvents);
+    DateTimeZone tz = DateTimeZone.forID("America/Phoenix");
+    DateMidnight start = new DateMidnight(2014, 2, 2, tz);
+    Interval interval = new Interval(start, start.plusDays(1));
 
-		CalendarDisplayEvent event = displayEvents.get(0);
-		assertEquals("2:00 PM", event.getStartTime());
+    Calendar c = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, c);
 
-	}
+    assertEquals(1, events.size());
 
-	@Test
-	public void testGetBedeworkEvent() throws IOException, URISyntaxException, ParseException {
+    List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
-		DateTimeZone tz = DateTimeZone.forID("America/Phoenix");
-		DateMidnight start = new DateMidnight(2014, 2, 2, tz);
-		Interval interval = new Interval(start, start.plusDays(1));
+    for (VEvent event : events) {
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    }
+    Collections.sort(displayEvents);
 
-		Calendar c  = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
-		Set<VEvent> events = processor.getEvents(interval, c);
-
-		assertEquals(1, events.size());
-
-		List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
-
-		for (VEvent event : events) {
-			displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
-		}
-		Collections.sort(displayEvents);
-
-		CalendarDisplayEvent event = displayEvents.get(0);
-		assertEquals("2:00 PM", event.getStartTime());
-
-	}
-
+    CalendarDisplayEvent event = displayEvents.get(0);
+    assertEquals("2:00 PM", event.getStartTime());
+  }
 }
