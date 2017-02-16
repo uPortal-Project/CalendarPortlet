@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jasig.portlet.calendar.dao;
 
@@ -22,124 +18,118 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.PredefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.PredefinedCalendarDefinition;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
- * Decorates another instance of {@link ICalendarSetDao} and filters the results
- * it provides by the specified whitelist, unless the list is empty.  In that
- * case all results will be displayed.
+ * Decorates another instance of {@link ICalendarSetDao} and filters the results it provides by the
+ * specified whitelist, unless the list is empty. In that case all results will be displayed.
  *
  * @author awills
  */
 public class WhitelistFilteringCalendarSetDao implements ICalendarSetDao {
 
-    private ICalendarSetDao enclosedCalendarSetDao;
+  private ICalendarSetDao enclosedCalendarSetDao;
 
-    public void setEnclosedCalendarSetDao(ICalendarSetDao enclosedCalendarSetDao) {
-        this.enclosedCalendarSetDao = enclosedCalendarSetDao;
-    }
+  public void setEnclosedCalendarSetDao(ICalendarSetDao enclosedCalendarSetDao) {
+    this.enclosedCalendarSetDao = enclosedCalendarSetDao;
+  }
 
-    /**
-     * If this preference is non-empty, only calendar-definitions whose fnames
-     * appear in the whitelist will be shown.
-     */
-    private static final String CALENDAR_WHITELIST_PREFERENCE = "calendarWhitelist";
+  /**
+   * If this preference is non-empty, only calendar-definitions whose fnames appear in the whitelist
+   * will be shown.
+   */
+  private static final String CALENDAR_WHITELIST_PREFERENCE = "calendarWhitelist";
 
-    @Override
-    public CalendarSet<?> getCalendarSet(PortletRequest req) {
+  @Override
+  public CalendarSet<?> getCalendarSet(PortletRequest req) {
 
-        final CalendarSet<? extends CalendarConfiguration> unmodifiedSet =
-                enclosedCalendarSetDao.getCalendarSet(req);
+    final CalendarSet<? extends CalendarConfiguration> unmodifiedSet =
+        enclosedCalendarSetDao.getCalendarSet(req);
 
-        final List<String> whitelist = getWhitelist(req);
-        if (whitelist.size() == 0) {
-            // No filtering to do...
-            return unmodifiedSet;
-        }
-
-        /*
-         * A whitelist of allowed calender-definition fnames has been defined,
-         * so we must filter out calendar-definitions that are not on the list
-         */
-
-        final Set<CalendarConfiguration> configurations = new HashSet<CalendarConfiguration>();
-
-        final Set<? extends CalendarConfiguration> rawSet = unmodifiedSet.getConfigurations();
-        for (CalendarConfiguration config : rawSet) {
-            if (config.getCalendarDefinition() instanceof PredefinedCalendarDefinition) {
-                final PredefinedCalendarDefinition pdef = (PredefinedCalendarDefinition)
-                        config.getCalendarDefinition();
-                // Make sure it appears on the whitelist
-                if (whitelist.contains(pdef.getFname())) {
-                    configurations.add(config);
-                }
-            } else {
-                // User-defined calendar-definitions always pass through;  if you
-                // intend to prevent them, set disablePreferences to 'true'
-                configurations.add(config);
-            }
-        }
-
-        return new CalendarSet<CalendarConfiguration>(configurations);
-
-    }
-
-    @Override
-    public List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(
-            PortletRequest req) {
-
-        final List<PredefinedCalendarConfiguration> unmodifiedList =
-                enclosedCalendarSetDao.getAvailablePredefinedCalendarConfigurations(req);
-
-        final List<String> whitelist = getWhitelist(req);
-        if (whitelist.size() == 0) {
-            // No filtering to do...
-            return unmodifiedList;
-        }
-
-        /*
-         * A whitelist of allowed calender-definition fnames has been defined,
-         * so we must filter out calendar-definitions that are not on the list
-         */
-
-        final List<PredefinedCalendarConfiguration> rslt = new ArrayList<PredefinedCalendarConfiguration>();
-
-        for (PredefinedCalendarConfiguration config :  unmodifiedList) {
-            final PredefinedCalendarDefinition pdef = (PredefinedCalendarDefinition)
-                    config.getCalendarDefinition();
-            if (whitelist.contains(pdef.getFname())) {
-                rslt.add(config);
-            }
-        }
-
-        return rslt;
-
+    final List<String> whitelist = getWhitelist(req);
+    if (whitelist.size() == 0) {
+      // No filtering to do...
+      return unmodifiedSet;
     }
 
     /*
-     * Implementation
+     * A whitelist of allowed calender-definition fnames has been defined,
+     * so we must filter out calendar-definitions that are not on the list
      */
 
-    private List<String> getWhitelist(PortletRequest req) {
-        final PortletPreferences prefs = req.getPreferences();
-        final String[] prefValues = prefs.getValues(CALENDAR_WHITELIST_PREFERENCE, new String[0]);
-        final List<String> whitelist = new ArrayList<String>();
-        for (String fname : prefValues) {
-            final String trimFname = fname.trim();
-            if (!trimFname.isEmpty()) {
-                whitelist.add(trimFname);
-            }
+    final Set<CalendarConfiguration> configurations = new HashSet<CalendarConfiguration>();
+
+    final Set<? extends CalendarConfiguration> rawSet = unmodifiedSet.getConfigurations();
+    for (CalendarConfiguration config : rawSet) {
+      if (config.getCalendarDefinition() instanceof PredefinedCalendarDefinition) {
+        final PredefinedCalendarDefinition pdef =
+            (PredefinedCalendarDefinition) config.getCalendarDefinition();
+        // Make sure it appears on the whitelist
+        if (whitelist.contains(pdef.getFname())) {
+          configurations.add(config);
         }
-        return whitelist;
+      } else {
+        // User-defined calendar-definitions always pass through;  if you
+        // intend to prevent them, set disablePreferences to 'true'
+        configurations.add(config);
+      }
     }
 
+    return new CalendarSet<CalendarConfiguration>(configurations);
+  }
+
+  @Override
+  public List<PredefinedCalendarConfiguration> getAvailablePredefinedCalendarConfigurations(
+      PortletRequest req) {
+
+    final List<PredefinedCalendarConfiguration> unmodifiedList =
+        enclosedCalendarSetDao.getAvailablePredefinedCalendarConfigurations(req);
+
+    final List<String> whitelist = getWhitelist(req);
+    if (whitelist.size() == 0) {
+      // No filtering to do...
+      return unmodifiedList;
+    }
+
+    /*
+     * A whitelist of allowed calender-definition fnames has been defined,
+     * so we must filter out calendar-definitions that are not on the list
+     */
+
+    final List<PredefinedCalendarConfiguration> rslt =
+        new ArrayList<PredefinedCalendarConfiguration>();
+
+    for (PredefinedCalendarConfiguration config : unmodifiedList) {
+      final PredefinedCalendarDefinition pdef =
+          (PredefinedCalendarDefinition) config.getCalendarDefinition();
+      if (whitelist.contains(pdef.getFname())) {
+        rslt.add(config);
+      }
+    }
+
+    return rslt;
+  }
+
+  /*
+   * Implementation
+   */
+
+  private List<String> getWhitelist(PortletRequest req) {
+    final PortletPreferences prefs = req.getPreferences();
+    final String[] prefValues = prefs.getValues(CALENDAR_WHITELIST_PREFERENCE, new String[0]);
+    final List<String> whitelist = new ArrayList<String>();
+    for (String fname : prefValues) {
+      final String trimFname = fname.trim();
+      if (!trimFname.isEmpty()) {
+        whitelist.add(trimFname);
+      }
+    }
+    return whitelist;
+  }
 }
