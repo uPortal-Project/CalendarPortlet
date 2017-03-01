@@ -18,7 +18,7 @@
     under the License.
 
 -->
-<ehcache>
+<ehcache name="test">
 
     <!-- Default ehcache -->
     <defaultCache
@@ -33,5 +33,5 @@
         timeToLiveSeconds="600"
         overflowToDisk="false"
         memoryStoreEvictionPolicy="LRU"/>
-    
+
 </ehcache>
