@@ -1,5 +1,7 @@
 # CalendarPortlet
 
+[![Build Status](https://travis-ci.org/Jasig/CalendarPortlet.svg?branch=master)](https://travis-ci.org/Jasig/CalendarPortlet)
+
 This is a [Sponsored Portlet][] in the Apereo uPortal project.
 
 ## Configuration
