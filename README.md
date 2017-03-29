@@ -1,6 +1,7 @@
 # CalendarPortlet
 
-[![Build Status](https://travis-ci.org/Jasig/CalendarPortlet.svg?branch=master)](https://travis-ci.org/Jasig/CalendarPortlet)
+[![Linux Build Status](https://travis-ci.org/Jasig/CalendarPortlet.svg?branch=master)](https://travis-ci.org/Jasig/CalendarPortlet)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/d8e32yt07o12mg23/branch/master?svg=true)](https://ci.appveyor.com/project/ChristianMurphy/calendarportlet/branch/master)
 
 This is a [Sponsored Portlet][] in the Apereo uPortal project.
 
