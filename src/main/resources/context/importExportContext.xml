@@ -154,6 +154,6 @@
         </property>
     </bean>
 
-    <!-- Used to [drop and] create the Announcements database schema from the command line -->
+    <!-- Used to [drop and] create the Calendar database schema from the command line -->
     <bean id="schemaCreator" class="org.jasig.portlet.calendar.util.SchemaCreator" />
 </beans>
