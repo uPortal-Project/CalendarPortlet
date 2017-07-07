@@ -47,19 +47,19 @@
         <property name="displayed" type="boolean">
             <column name="DISPLAYED"/>
         </property>
-        
-        
+
+
         <!-- SUBCLASSES -->
         
         <!-- user-defined calendars and their configurations -->
         <subclass name="org.jasig.portlet.calendar.PredefinedCalendarConfiguration"
             discriminator-value="PD">
             
-            <many-to-one 
-                name="calendarDefinition" 
-                class="org.jasig.portlet.calendar.PredefinedCalendarDefinition" 
-                column="CALENDAR_ID" 
-                cascade="none" lazy="false"/> 
+            <many-to-one
+                name="calendarDefinition"
+                class="org.jasig.portlet.calendar.PredefinedCalendarDefinition"
+                column="CALENDAR_ID"
+                cascade="none" lazy="false"/>
             
             <!-- other user-specific preferences -->
             <map name="preferences" lazy="false" table="CALENDAR_PREFERENCE" cascade="all-delete-orphan"> 
@@ -75,11 +75,11 @@
         <subclass name="org.jasig.portlet.calendar.UserDefinedCalendarConfiguration"
             discriminator-value="UD">
             
-            <many-to-one 
-                name="calendarDefinition" 
+            <many-to-one
+                name="calendarDefinition"
                 class="org.jasig.portlet.calendar.UserDefinedCalendarDefinition"
                 column="CALENDAR_ID"
-                cascade="all" lazy="false"/> 
+                cascade="all" lazy="false"/>
             
         </subclass>
         
