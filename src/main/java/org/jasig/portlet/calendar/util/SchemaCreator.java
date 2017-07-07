@@ -15,6 +15,7 @@
 
 package org.jasig.portlet.calendar.util;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -76,9 +77,9 @@ public class SchemaCreator implements ApplicationContextAware {
                 .getBean(SESSION_FACTORY_BEAN_NAME, LocalSessionFactoryBean.class);
         final DataSource dataSource = applicationContext.getBean(DATA_SOURCE_BEAN_NAME, DataSource.class);
 
-        try {
+        try (final Connection conn = dataSource.getConnection()) {
             final Configuration cfg = sessionFactoryBean.getConfiguration();
-            final SchemaExport schemaExport = new SchemaExport(cfg, dataSource.getConnection());
+            final SchemaExport schemaExport = new SchemaExport(cfg, conn);
             schemaExport.execute(true, true, false, false);
 
             final List<Exception> exceptions = schemaExport.getExceptions();
