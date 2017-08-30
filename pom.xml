@@ -229,6 +229,39 @@
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>1.6.2</version>
             </dependency>
+            <!-- Provides the PortalPropertySourcesPlaceholderConfigurer
+                 that supports global.properties and Jasypt encryption-->
+            <dependency>
+                <groupId>org.jasig.portal</groupId>
+                <artifactId>uPortal-spring</artifactId>
+                <version>5.0.0-M4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uPortal-api-internal</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uPortal-security-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uPortal-security-mvc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uPortal-tools</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.oauth.core</groupId>
+                        <artifactId>oauth</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-webmvc</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.jasig.portlet.courses</groupId>
                 <artifactId>courses-portlet-dao</artifactId>
@@ -350,6 +383,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -515,6 +553,10 @@
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
