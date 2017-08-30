@@ -33,15 +33,7 @@
     <context:annotation-config/>
 
     <!-- Properties configuration -->
-    <bean id="propertyConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-          lazy-init="false">
-        <property name="locations">
-            <list>
-                <value>classpath:configuration.properties</value>
-            </list>
-        </property>
-    </bean>
+    <bean parent="propertyConfigurer"/>
 
     <bean id="calendarSetDao" class="org.jasig.portlet.calendar.dao.WhitelistFilteringCalendarSetDao">
         <property name="enclosedCalendarSetDao">
