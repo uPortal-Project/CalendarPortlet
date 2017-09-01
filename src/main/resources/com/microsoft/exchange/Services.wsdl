@@ -1013,11 +1013,13 @@
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="ExchangeWebService">
-      <wsdl:port name="ExchangeWebPort" binding="tns:ExchangeServiceBinding">
-             <soap:address location="https://mail.school.edu/EWS/exchange.asmx"></soap:address>
-             <!-- For Office 365 integration, use the following URL instead.
-             <soap:address location="https://outlook.office365.com/EWS/Exchange.asmx"></soap:address>
-             -->
-      </wsdl:port>
+    <wsdl:port name="ExchangeWebPort" binding="tns:ExchangeServiceBinding">
+      <!-- The WSDL for Calendar portlet Exchange WS integration comes pre-configured for Office 365.-->
+      <soap:address location="https://outlook.office365.com/EWS/Exchange.asmx"></soap:address>
+      <!-- To integrate with a local Exchange service, use something like the following instead... -->
+      <!--
+      <soap:address location="https://mail.school.edu/EWS/exchange.asmx"></soap:address>
+      -->
+    </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
