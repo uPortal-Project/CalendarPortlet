@@ -49,6 +49,7 @@ public class ExchangeCredentialsInitializationServiceTest {
     request = new MockPortletRequest();
     request.setAttribute(PortletRequest.USER_INFO, userInfo);
     service = new ExchangeCredentialsInitializationService();
+    service.setEnabled(true);
     service.setPasswordAttribute("pass");
     service.setUsernameAttribute("username");
     service.setMailAttribute("email");

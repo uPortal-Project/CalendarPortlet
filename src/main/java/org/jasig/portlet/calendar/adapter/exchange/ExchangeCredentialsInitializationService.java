@@ -28,6 +28,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jasig.portlet.calendar.adapter.CalendarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
@@ -51,21 +52,36 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * Office365) and potentially different environments (different credentials for test environment)
  * the credentials are obtained from a combination of portlet preferences and bean configuration
  * (property files).
- *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class ExchangeCredentialsInitializationService
-    implements IExchangeCredentialsInitializationService {
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        implements IExchangeCredentialsInitializationService {
+
   public static final String PREFS_NTDOMAIN = "exchangeNtlmDomain";
   public static final String PREFS_IMPERSONATION_USERNAME = "exchangeImpersonationUsername";
   public static final String PREFS_IMPERSONATION_PASSWORD = "exchangeImpersonationPassword";
+
+  @Value("${ExchangeCredentialsInitializationService.enabled:false}")
+  private boolean enabled;
+
+  @Value("${ExchangeCredentialsInitializationService.exchangeImpersonationUsername:}")
+  private String exchangeImpersonationUsername;
+
+  @Value("${ExchangeCredentialsInitializationService.exchangeImpersonationPassword:}")
+  private String exchangeImpersonationPassword;
 
   private String usernameAttribute = "user.login.id";
   private String passwordAttribute = "password";
   private String mailAttribute = "mail";
   private String ntlmDomain = null;
+
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  /**
+   * For unit testing.
+   */
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
   /**
    * Set the name of the user attribute to be used for retrieving the Exchange authentication
@@ -123,71 +139,77 @@ public class ExchangeCredentialsInitializationService
 
   public void initialize(PortletRequest request) {
 
-    Object credentials;
-    PortletPreferences prefs = request.getPreferences();
+    logger.debug("{} is {}", getClass().getSimpleName(), (enabled ? "ENABLED" : "DISABLED"));
 
-    // 1. Exchange Impersonation
-    if (usesExchangeImpersonation(request)) {
-      String exchangeImpersonationUsername = prefs.getValue(PREFS_IMPERSONATION_USERNAME, "");
-      String exchangeImpersonationPassword = prefs.getValue(PREFS_IMPERSONATION_PASSWORD, "");
+    if (enabled) { // false by default
+      Object credentials;
 
-      //do not fill in the domain field else authentication fails with a 503, service not available response
-      credentials =
-          new NTCredentials(
-              exchangeImpersonationUsername,
-              exchangeImpersonationPassword,
-              "paramDoesNotSeemToMatter",
-              "");
-      logger.debug("Creating Exchange Impersonation credentials for EWS call");
-    } else {
+      // 1. Exchange Impersonation
+      if (usesExchangeImpersonation(request)) {
+        final String exchangeImpersonationUsername = evaluateExchangeImpersonationUsername(request);
+        final String exchangeImpersonationPassword = evaluateExchangeImpersonationPassword(request);
 
-      // Get the password from the UserInfo map.
-      @SuppressWarnings("unchecked")
-      Map<String, String> userInfo =
-          (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
-      String password = userInfo.get(passwordAttribute);
-      if (password == null) {
-        throw new CalendarException(
-            "Required user attribute password is null. Insure user-attribute password"
-                + " is enabled in portlet.xml and CAS ClearPass is configured properly");
-      }
+        //do not fill in the domain field else authentication fails with a 503, service not available response
+        credentials =
+                new NTCredentials(
+                        exchangeImpersonationUsername,
+                        exchangeImpersonationPassword,
+                        "paramDoesNotSeemToMatter",
+                        "");
 
-      // 2. If the domain is specified, return NT credentials from the username, password, and domain.
-      String ntDomain = getNtlmDomain(request);
-      if (StringUtils.isNotBlank(ntDomain)) {
-        String username = userInfo.get(usernameAttribute);
-        credentials = createNTCredentials(ntDomain, username, password);
-        logger.debug("Creating NT credentials for {}", username);
+        logger.debug("Created Exchange Impersonation credentials for EWS call; " +
+                "exchangeImpersonationUsername='{}', exchangeImpersonationPassword.length={}",
+                exchangeImpersonationUsername, exchangeImpersonationPassword.length());
       } else {
-        // 3. Otherwise construct credentials from the email address and password for Office365 integration.
-        String emailAddress = userInfo.get(this.mailAttribute);
-        if (emailAddress == null) {
+
+        // Get the password from the UserInfo map.
+        @SuppressWarnings("unchecked")
+        final Map<String, String> userInfo =
+                (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+        final String password = userInfo.get(passwordAttribute);
+        if (password == null) {
           throw new CalendarException(
-              "Required user attribute email address is null. Insure user-attribute mail"
-                  + " is enabled in portlet.xml and populated via LDAP or other approach");
+                  "Required user attribute password is null. Insure user-attribute password"
+                          + " is enabled in portlet.xml and CAS ClearPass is configured properly");
         }
-        credentials = new UsernamePasswordCredentials(emailAddress, password);
-        logger.debug("Creating simple username/password credentials for {}", emailAddress);
+
+        // 2. If the domain is specified, return NT credentials from the username, password, and domain.
+        final String ntDomain = getNtlmDomain(request);
+        if (StringUtils.isNotBlank(ntDomain)) {
+          final String username = userInfo.get(usernameAttribute);
+          credentials = createNTCredentials(ntDomain, username, password);
+          logger.debug("Creating NT credentials for {}", username);
+        } else {
+          // 3. Otherwise construct credentials from the email address and password for Office365 integration.
+          final String emailAddress = userInfo.get(this.mailAttribute);
+          if (emailAddress == null) {
+            throw new CalendarException(
+                    "Required user attribute email address is null. Insure user-attribute mail"
+                            + " is enabled in portlet.xml and populated via LDAP or other approach");
+          }
+          credentials = new UsernamePasswordCredentials(emailAddress, password);
+          logger.debug("Creating simple username/password credentials for {}", emailAddress);
+        }
       }
+
+      // cache the credentials object to this thread
+      RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+      if (requestAttributes == null) {
+        requestAttributes = new PortletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(requestAttributes);
+      }
+      requestAttributes.setAttribute(
+              ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE,
+              credentials,
+              RequestAttributes.SCOPE_SESSION);
     }
 
-    // cache the credentials object to this thread
-    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-    if (requestAttributes == null) {
-      requestAttributes = new PortletRequestAttributes(request);
-      RequestContextHolder.setRequestAttributes(requestAttributes);
-    }
-    requestAttributes.setAttribute(
-        ExchangeWsCredentialsProvider.EXCHANGE_CREDENTIALS_ATTRIBUTE,
-        credentials,
-        RequestAttributes.SCOPE_SESSION);
   }
 
   @Override
   public boolean usesExchangeImpersonation(PortletRequest request) {
-    PortletPreferences prefs = request.getPreferences();
-    String exchangeImpersonationUsername = prefs.getValue(PREFS_IMPERSONATION_USERNAME, "");
-    String exchangeImpersonationPassword = prefs.getValue(PREFS_IMPERSONATION_PASSWORD, "");
+    final String exchangeImpersonationUsername = evaluateExchangeImpersonationUsername(request);
+    final String exchangeImpersonationPassword = evaluateExchangeImpersonationPassword(request);
     if (StringUtils.isBlank(exchangeImpersonationUsername)
         != StringUtils.isBlank(exchangeImpersonationPassword)) {
       logger.error(
@@ -250,4 +272,27 @@ public class ExchangeCredentialsInitializationService
     // construct a credentials object from the username and password
     return new NTCredentials(username, password, "paramDoesNotSeemToMatter", ntlmDomain);
   }
+
+  private String evaluateExchangeImpersonationUsername(PortletRequest req) {
+    final PortletPreferences prefs = req.getPreferences();
+    // Old method...
+    String rslt = prefs.getValue(PREFS_IMPERSONATION_USERNAME, "");
+    if (StringUtils.isBlank(rslt) && StringUtils.isNotBlank(exchangeImpersonationUsername)) {
+      // New method
+      rslt = exchangeImpersonationUsername;
+    }
+    return rslt;
+  }
+
+  private String evaluateExchangeImpersonationPassword(PortletRequest req) {
+    final PortletPreferences prefs = req.getPreferences();
+    // Old method...
+    String rslt = prefs.getValue(PREFS_IMPERSONATION_PASSWORD, "");
+    if (StringUtils.isBlank(rslt) && StringUtils.isNotBlank(exchangeImpersonationPassword)) {
+      // New method
+      rslt = exchangeImpersonationPassword;
+    }
+    return rslt;
+  }
+
 }

@@ -54,11 +54,11 @@
               p:userToken="${userinfo.userid.key}" p:calendarStore-ref="calendarStore"/>
 
         <!--
-            Uncomment the following section for MS Exchange calendars
+            Exchange WS Integration:
+            Disabled by default;  define the following property in the PropertySourcesPlaceholderConfigurer to use...
+              -> ExchangeCredentialsInitializationService.enabled=true
         -->
-        <!--
         <ref bean="exchangeCredentialsInitializationService"/>
-        -->
 
         <!--
             Uncomment the following section if you are using CAS authenticated calendar adapters.
