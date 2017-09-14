@@ -30,12 +30,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * When the hibernate3-maven-plugin:hbm2ddl goal is executed, this class provides connections from
- * the Spring ApplicationContext, which is capable of using encrypted database connection settings
- * (in datasource.properties).
+ * When the hibernate3-maven-plugin:hbm2ddl goal is executed <em>via Maven</em>, this class provides
+ * connections from the Spring ApplicationContext, which is capable of using encrypted database
+ * connection settings.  This class is not necessary for Gradle-based database initialization via
+ * uPortal-start.  It is therefore DEPRECATED.
  *
  * @author drewwills
  */
+@Deprecated
 public class ApplicationContextConnectionProvider implements ConnectionProvider {
 
   private static final String DATA_SOURCE_BEAN_NAME = "dataSource";
