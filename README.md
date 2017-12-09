@@ -1,5 +1,6 @@
 # CalendarPortlet
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.portlet/CalendarPortlet/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jasig.portlet/CalendarPortlet)
 [![Linux Build Status](https://travis-ci.org/Jasig/CalendarPortlet.svg?branch=master)](https://travis-ci.org/Jasig/CalendarPortlet)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/d8e32yt07o12mg23/branch/master?svg=true)](https://ci.appveyor.com/project/ChristianMurphy/calendarportlet/branch/master)
 
