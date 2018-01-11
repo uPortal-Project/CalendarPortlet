@@ -307,7 +307,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate</artifactId>
-                <version>3.2.3.ga</version>
+                <version>3.2.7.ga</version>
                 <exclusions>
                     <exclusion>
                         <groupId>net.sf.ehcache</groupId>
@@ -315,11 +315,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- Needed for schema reset;  version compatible with org.hibernate:hibernate:3.2.3.ga -->
+            <!-- Needed for schema reset;  version compatible with org.hibernate:hibernate:3.2.7.ga -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools</artifactId>
-                <version>3.2.3.GA</version>
+                <version>3.2.4.GA</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas.client</groupId>
