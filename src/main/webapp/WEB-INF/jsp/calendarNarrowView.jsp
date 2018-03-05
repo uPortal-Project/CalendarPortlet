@@ -30,7 +30,7 @@
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
 <div id="${n}container" class="${n}upcal-miniview">
-    <div class="container-fluid bootstrap-styles upcal-events">
+    <div class="container-fluid upcal-events">
         <div class="upcal-event-view">
             <div class="row">
                 <div class="col-md-12">
