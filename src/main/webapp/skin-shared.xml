@@ -21,9 +21,6 @@
 <resources xmlns="http://www.jasig.org/uportal/web/skin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
-    <css included="aggregated" resource="true">/rs/fontawesome/4.7.0/css/font-awesome.min.css</css>
-    <css included="plain" resource="true">/rs/fontawesome/4.7.0/css/font-awesome.min.css</css>
-
     <js included="plain" resource="true">/rs/backbone/0.9.2/backbone-0.9.2.js</js>
     <js included="aggregated" resource="true">/rs/backbone/0.9.2/backbone-0.9.2.min.js</js>
 
