@@ -41,8 +41,9 @@
     </div>
     <div class="row" role="main">
         <div class="col-md-6 col-md-offset-2">
-            <portlet:renderURL escapeXml='false' var="postUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
-            <form:form name="calendar" commandName="calendarDefinitionForm" action="${postUrl}" class="form-horizontal" role="form">
+            <!-- It's unusual to use a renderURL here, but there's no server-side behavior that violates the principals of Render vs. Action. -->
+            <portlet:renderURL escapeXml='false' var="formRenderUrl"><portlet:param name="action" value="createCalendarDefinition2"/></portlet:renderURL>
+            <form:form name="calendar" commandName="calendarDefinitionForm" action="${formRenderUrl}" class="form-horizontal" role="form" method="GET">
                 <div class="row">
                     <div class="col-md-12">
                         <spring:hasBindErrors name="calendarDefinitionForm">
