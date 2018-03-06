@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
+import javax.portlet.WindowState;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +37,6 @@ import org.jasig.portlet.calendar.CalendarSet;
 import org.jasig.portlet.calendar.adapter.CalendarLinkException;
 import org.jasig.portlet.calendar.adapter.ICalendarAdapter;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
-import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
@@ -54,14 +55,15 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 @RequestMapping("VIEW")
 public class CalendarController implements ApplicationContextAware {
 
-  public static final String PREFERENCE_DISABLE_PREFERENCES = "disablePreferences";
-  public static final String PREFERENCE_DISABLE_ADMINISTRATION = "disableAdministration";
+  private static final String PREFERENCE_DISABLE_PREFERENCES = "disablePreferences";
+  private static final String PREFERENCE_DISABLE_ADMINISTRATION = "disableAdministration";
+
+  private static final String CALENDAR_WIDE_VIEW = "calendarWideView";
+  private static final String CALENDAR_NARROW_VIEW = "calendarNarrowView";
 
   protected final Log log = LogFactory.getLog(this.getClass());
 
   @Autowired private ICalendarSetDao calendarSetDao;
-
-  @Autowired private IViewSelector viewSelector;
 
   private ApplicationContext applicationContext;
 
@@ -87,7 +89,7 @@ public class CalendarController implements ApplicationContextAware {
 
     PortletPreferences prefs = request.getPreferences();
 
-    Map<String, Object> model = new HashMap<String, Object>();
+    Map<String, Object> model = new HashMap<>();
 
     // get the list of hidden calendars
     @SuppressWarnings("unchecked")
@@ -97,7 +99,7 @@ public class CalendarController implements ApplicationContextAware {
     // indicate if the current user is a guest (unauthenticated) user
     model.put("guest", request.getRemoteUser() == null);
 
-    /**
+    /*
      * Add and remove calendars from the hidden list. Hidden calendars will be fetched, but rendered
      * invisible in the view.
      */
@@ -124,8 +126,8 @@ public class CalendarController implements ApplicationContextAware {
     String showDatePicker = prefs.getValue("showDatePicker", "true");
     model.put("showDatePicker", showDatePicker);
 
-    /** Find our desired starting and ending dates. */
-    Interval interval = null;
+    /* Find our desired starting and ending dates. */
+    Interval interval;
 
     if (!StringUtils.isEmpty(intervalString)) {
       interval = Interval.parse(intervalString);
@@ -157,15 +159,15 @@ public class CalendarController implements ApplicationContextAware {
     model.put("today", today.toDate());
     model.put("tomorrow", today.plusDays(1).toDate());
 
-    /** retrieve the calendars defined for this portlet instance */
+    /* retrieve the calendars defined for this portlet instance */
     CalendarSet<?> set = calendarSetDao.getCalendarSet(request);
-    List<CalendarConfiguration> calendars = new ArrayList<CalendarConfiguration>();
+    List<CalendarConfiguration> calendars = new ArrayList<>();
     calendars.addAll(set.getConfigurations());
     Collections.sort(calendars, new CalendarConfigurationByNameComparator());
     model.put("calendars", calendars);
 
-    Map<Long, Integer> colors = new HashMap<Long, Integer>();
-    Map<Long, String> links = new HashMap<Long, String>();
+    Map<Long, Integer> colors = new HashMap<>();
+    Map<Long, String> links = new HashMap<>();
     int index = 0;
     for (CalendarConfiguration callisting : calendars) {
 
@@ -214,6 +216,12 @@ public class CalendarController implements ApplicationContextAware {
         Boolean.valueOf(prefs.getValue(PREFERENCE_DISABLE_ADMINISTRATION, "false"));
     model.put(PREFERENCE_DISABLE_ADMINISTRATION, disableAdmin);
 
-    return new ModelAndView(viewSelector.getCalendarViewName(request), "model", model);
+    // Select a view
+    final WindowState windowState = request.getWindowState();
+    final String viewName = WindowState.MAXIMIZED.equals(windowState) || "DETACHED".equalsIgnoreCase(windowState.toString())
+            ? CALENDAR_WIDE_VIEW
+            : CALENDAR_NARROW_VIEW;
+
+    return new ModelAndView(viewName, "model", model);
   }
 }
