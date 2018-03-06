@@ -34,7 +34,7 @@
 
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>2.5.3-SNAPSHOT</version>
+    <version>2.6.0-SNAPSHOT</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
@@ -790,8 +790,6 @@
                             <includes>
                                 <include>skin.xml</include>
                                 <include>skin-shared.xml</include>
-                                <include>skin-mobile.xml</include>
-                                <include>skin-mobile-shared.xml</include>
                             </includes>
                             <sharedJavaScriptDirectory>scripts/</sharedJavaScriptDirectory>
                         </configuration>

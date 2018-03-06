@@ -39,7 +39,6 @@ import org.jasig.portlet.calendar.UserDefinedCalendarConfiguration;
 import org.jasig.portlet.calendar.dao.CalendarStore;
 import org.jasig.portlet.calendar.dao.ICalendarSetDao;
 import org.jasig.portlet.calendar.mvc.CalendarPreferencesCommand;
-import org.jasig.portlet.calendar.mvc.IViewSelector;
 import org.jasig.portlet.calendar.service.SessionSetupInitializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
@@ -61,23 +60,52 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 public class EditCalendarSubscriptionsController {
 
   private static final String FORM_NAME = "calendarPreferencesCommand";
+  private static final String EDIT_CALENDARS_VIEW_NAME = "editCalendars";
+
+  private Map<String, String> predefinedEditActions = new HashMap<>();
+  private List<String> timeZones = null;
+
+  private CalendarStore calendarStore;
+
+  private ICalendarSetDao calendarSetDao;
 
   protected final Log log = LogFactory.getLog(this.getClass());
+
+  @Required
+  @Resource(name = "predefinedEditActions")
+  public void setPredefinedEditActions(Map<String, String> predefinedEditActions) {
+    this.predefinedEditActions = predefinedEditActions;
+  }
+
+  /**
+   * Set the list of time zone IDs that should be presented as options for user time zones.
+   */
+  @Required
+  @Resource(name = "timeZones")
+  public void setTimeZones(List<String> timeZones) {
+    this.timeZones = timeZones;
+  }
+
+  @Required
+  @Resource(name = "calendarStore")
+  public void setCalendarStore(CalendarStore calendarStore) {
+    this.calendarStore = calendarStore;
+  }
+
+  @Autowired
+  public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
+    this.calendarSetDao = calendarSetDao;
+  }
 
   @RequestMapping
   public ModelAndView viewEditOptions(RenderRequest request, RenderResponse response) {
     return viewSubscriptions(request, response);
   }
 
-  @ActionMapping
-  public void defaultAction(ActionRequest request) {
-    // default action mapping
-  }
-
   @RequestMapping(params = "action=editSubscriptions")
   public ModelAndView viewSubscriptions(RenderRequest request, RenderResponse response) {
 
-    Map<String, Object> model = new HashMap<String, Object>();
+    Map<String, Object> model = new HashMap<>();
     PortletSession session = request.getPortletSession();
 
     // get user information
@@ -117,8 +145,12 @@ public class EditCalendarSubscriptionsController {
     model.put("predefinedEditActions", predefinedEditActions);
 
     // return the edit view
-    String view = viewSelector.getEditViewName(request);
-    return new ModelAndView(view, "model", model);
+    return new ModelAndView(EDIT_CALENDARS_VIEW_NAME, "model", model);
+  }
+
+  @ActionMapping
+  public void defaultAction(ActionRequest request) {
+    // default action mapping
   }
 
   @ActionMapping(params = "action=deleteUserCalendar")
@@ -187,11 +219,6 @@ public class EditCalendarSubscriptionsController {
 
   /**
    * Process the preferences update request.
-   *
-   * @param request
-   * @param response
-   * @param form
-   * @throws Exception
    */
   @ActionMapping(params = "action=editPreferences")
   public void updatePreferences(
@@ -204,7 +231,7 @@ public class EditCalendarSubscriptionsController {
 
     // If the timezone preference is read only don't try to change it.
     // Pluto will throw an exception if you do.
-    if (prefs.isReadOnly("timezone") == false) {
+    if (!prefs.isReadOnly("timezone")) {
       prefs.setValue("timezone", form.getTimezone());
       prefs.store();
 
@@ -221,8 +248,6 @@ public class EditCalendarSubscriptionsController {
 
   /**
    * Return the list of available time zone IDs.
-   *
-   * @return
    */
   @ModelAttribute("timezones")
   public List<String> getTimeZones() {
@@ -231,10 +256,6 @@ public class EditCalendarSubscriptionsController {
 
   /**
    * Return a pre-populated preferences form for the current user.
-   *
-   * @param request
-   * @return
-   * @throws Exception
    */
   @ModelAttribute(FORM_NAME)
   public CalendarPreferencesCommand getForm(PortletRequest request) throws Exception {
@@ -244,46 +265,4 @@ public class EditCalendarSubscriptionsController {
     return form;
   }
 
-  private Map<String, String> predefinedEditActions = new HashMap<String, String>();
-
-  @Required
-  @Resource(name = "predefinedEditActions")
-  public void setPredefinedEditActions(Map<String, String> predefinedEditActions) {
-    this.predefinedEditActions = predefinedEditActions;
-  }
-
-  private List<String> timeZones = null;
-
-  /**
-   * Set the list of time zone IDs that should be presented as options for user time zones.
-   *
-   * @param timeZones
-   */
-  @Required
-  @Resource(name = "timeZones")
-  public void setTimeZones(List<String> timeZones) {
-    this.timeZones = timeZones;
-  }
-
-  private CalendarStore calendarStore;
-
-  @Required
-  @Resource(name = "calendarStore")
-  public void setCalendarStore(CalendarStore calendarStore) {
-    this.calendarStore = calendarStore;
-  }
-
-  private ICalendarSetDao calendarSetDao;
-
-  @Autowired(required = true)
-  public void setCalendarSetDao(ICalendarSetDao calendarSetDao) {
-    this.calendarSetDao = calendarSetDao;
-  }
-
-  private IViewSelector viewSelector;
-
-  @Autowired(required = true)
-  public void setViewSelector(IViewSelector viewSelector) {
-    this.viewSelector = viewSelector;
-  }
 }

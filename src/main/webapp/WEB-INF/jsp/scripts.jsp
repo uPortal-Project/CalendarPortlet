@@ -18,7 +18,7 @@
     under the License.
 
 --%>
-<rs:aggregatedResources path="skin${ mobile ? '-mobile' : '' }${ usePortalJsLibs ? '-shared' : '' }.xml"/>
+<rs:aggregatedResources path="skin${ usePortalJsLibs ? '-shared' : '' }.xml"/>
 
 <script type="text/javascript">
     <rs:compressJs>
