@@ -63,9 +63,11 @@
                                     </portlet:renderURL>
                                 </td>
                                 <td>
-                                    <a class="upcal-edit" href="${ editCalendarUrl }" title="<spring:message code="edit.calendar"/>">
-                                        <span><i class="fa fa-edit"></i> <spring:message code="edit.calendar"/></span>
-                                    </a>
+                                    <button class="btn-link"> <!-- button added to match styling of delete action below -->
+                                      <a class="upcal-edit" href="${ editCalendarUrl }" title="<spring:message code="edit.calendar"/>">
+                                          <span><i class="fa fa-edit"></i> <spring:message code="edit.calendar"/></span>
+                                      </a>
+                                    </button>
                                 </td>
                                 <td>
                                     <!-- Delete -->
@@ -73,9 +75,13 @@
                                         <portlet:param name="action" value="deleteSharedCalendar"/>
                                         <portlet:param name="calendarId" value="${ calendar.id }"/>
                                     </portlet:actionURL>
-                                    <a class="upcal-delete" href="${ deleteCalendarUrl }" title="<spring:message code="delete.calendar"/>">
-                                        <span><i class="fa fa-trash-o"></i> <spring:message code="delete.calendar"/></span>
-                                    </a>
+                                    <form action="${deleteCalendarUrl}" method="post">
+                                      <button type="submit" class="btn-link">
+                                        <a class="upcal-delete" href="javascript:void(0);" title="<spring:message code="delete.calendar"/>">
+                                            <span><i class="fa fa-trash-o"></i> <spring:message code="delete.calendar"/></span>
+                                        </a>
+                                      </button>
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>

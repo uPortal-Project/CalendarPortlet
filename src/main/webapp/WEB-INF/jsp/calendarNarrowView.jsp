@@ -24,8 +24,8 @@
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="showDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='true'/></portlet:actionURL>
-<portlet:actionURL var="hideDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='false'/></portlet:actionURL>
+<portlet:renderURL var="showDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='true'/></portlet:renderURL>
+<portlet:renderURL var="hideDatePickerURL" escapeXml="false"><portlet:param name='action' value='showDatePicker'/><portlet:param name='show' value='false'/></portlet:renderURL>
 
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
