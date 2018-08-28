@@ -256,6 +256,7 @@ ${n}.jQuery(function() {
         showDatePicker(show);
         $.ajax({
             url: show == "true" ? "${showDatePickerURL}" : "${hideDatePickerURL}",
+            method: 'POST',
             success: function (data) {
             }
         });

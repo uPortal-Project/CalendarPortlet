@@ -68,9 +68,13 @@
                                 <portlet:param name="action" value="deleteUserCalendar"/>
                                 <portlet:param name="configurationId" value="${ calendar.id }"/>
                             </portlet:actionURL>
-                            <a href="${ deleteCalendarUrl }" title="<spring:message code="delete.calendar"/>">
-                                <span><i class="fa fa-trash-o"></i> <spring:message code="delete.calendar"/></span>
-                            </a>
+                            <form action="${ deleteCalendarUrl }" method="post">
+                              <button type="submit" class="btn-link">
+                                <a href="javascript:void(0);" title="<spring:message code="delete.calendar"/>">
+                                    <span><i class="fa fa-trash-o"></i> <spring:message code="delete.calendar"/></span>
+                                </a>
+                              </button>
+                            </form>
                         </td>
                     </tr>
                 </c:forEach>
@@ -93,15 +97,23 @@
                             <c:choose>
                                 <c:when test="${ calendar.displayed }">
                                     <portlet:actionURL var="displayURL"><portlet:param name="action" value="hideCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
-                                    <a href="${ displayURL }">
-                                        <span><i class="fa fa-eye-slash"></i> <spring:message code="hide"/></span>
-                                    </a>
+                                    <form action="${ displayURL }" method="post">
+                                      <button type="submit" class="btn-link">
+                                        <a href="javascript:void(0);">
+                                            <span><i class="fa fa-eye-slash"></i> <spring:message code="hide"/></span>
+                                        </a>
+                                      </button>
+                                    </form>
                                 </c:when>
                                 <c:otherwise>
                                     <portlet:actionURL var="displayURL"><portlet:param name="action" value="showCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
-                                    <a class="upcal-inactive" href="${ displayURL }">
-                                        <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
-                                    </a>
+                                    <form action="${ displayURL }" method="post">
+                                      <button type="submit" class="btn-link">
+                                        <a class="upcal-inactive" href="javascript:void(0);">
+                                            <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
+                                        </a>
+                                      </button>
+                                    </form>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -132,9 +144,13 @@
                                 <portlet:param name="action" value="addSharedCalendar"/>
                                 <portlet:param name="definitionId" value="${ calendar.id }"/>
                             </portlet:actionURL>
-                            <a class="upcal-inactive" href="${ displayURL }">
-                                <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
-                            </a>
+                            <form action="${ displayURL }" method="post">
+                              <button type="submit" class="btn-link">
+                                <a class="upcal-inactive" href="javascript:void(0);">
+                                    <span><i class="fa fa-eye"></i> <spring:message code="show"/></span>
+                                </a>
+                              </button>
+                            </form>
                         </td>
                         <td>
                             <span><spring:escapeBody htmlEscape="true">${ calendar.name }</spring:escapeBody></span>
