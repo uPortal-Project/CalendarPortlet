@@ -34,14 +34,14 @@
 
     <name>Calendar Portlet</name>
     <description>Calendar Portlet.</description>
-    <version>2.6.0-SNAPSHOT</version>
+    <version>2.6.0</version>
     <url>${jasig-site-base}/CalendarPortlet/${project.version}</url>
 
     <scm>
         <connection>scm:git:git://github.com/Jasig/CalendarPortlet.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/CalendarPortlet.git</developerConnection>
         <url>https://github.com/Jasig/CalendarPortlet</url>
-      <tag>HEAD</tag>
+      <tag>CalendarPortlet-2.6.0</tag>
   </scm>
 
     <issueManagement>
