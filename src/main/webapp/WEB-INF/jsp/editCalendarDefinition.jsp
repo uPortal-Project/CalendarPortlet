@@ -74,7 +74,7 @@
     </div>
 
     <div class="row" role="main">
-        <portlet:actionURL var="postUrl"><portlet:param name="action" value="editCalendarDefinition"/></portlet:actionURL>
+        <portlet:actionURL var="postUrl" escapeXml="false"><portlet:param name="action" value="editCalendarDefinition"/></portlet:actionURL>
         <form:form id="${n}parameters" name="calendar" commandName="calendarDefinitionForm" action="${postUrl}" class="form-horizontal" role="form">
             <spring:hasBindErrors name="calendarDefinitionForm">
                 <div class="col-md-12">

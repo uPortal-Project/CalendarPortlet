@@ -27,7 +27,7 @@
 
     <h4><spring:message code="edit.calendar"/></h4>
 
-    <portlet:actionURL var="postUrl"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
+    <portlet:actionURL var="postUrl" escapeXml="false"><portlet:param name="action" value="editUrl"/></portlet:actionURL>
     <form:form name="calendar" cssClass="form-horizontal" commandName="userHttpIcalCalendarForm" action="${postUrl}">
 
         <spring:hasBindErrors name="userHttpIcalCalendarForm">

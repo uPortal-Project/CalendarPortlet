@@ -64,7 +64,7 @@
                         </td>
                         <td>
                             <!-- Delete -->
-                            <portlet:actionURL var="deleteCalendarUrl">
+                            <portlet:actionURL var="deleteCalendarUrl" escapeXml="false">
                                 <portlet:param name="action" value="deleteUserCalendar"/>
                                 <portlet:param name="configurationId" value="${ calendar.id }"/>
                             </portlet:actionURL>
@@ -96,7 +96,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${ calendar.displayed }">
-                                    <portlet:actionURL var="displayURL"><portlet:param name="action" value="hideCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
+                                    <portlet:actionURL var="displayURL" escapeXml="false"><portlet:param name="action" value="hideCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
                                     <form action="${ displayURL }" method="post">
                                       <button type="submit" class="btn-link">
                                         <a href="javascript:void(0);">
@@ -106,7 +106,7 @@
                                     </form>
                                 </c:when>
                                 <c:otherwise>
-                                    <portlet:actionURL var="displayURL"><portlet:param name="action" value="showCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
+                                    <portlet:actionURL var="displayURL" escapeXml="false"><portlet:param name="action" value="showCalendar"/><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:actionURL>
                                     <form action="${ displayURL }" method="post">
                                       <button type="submit" class="btn-link">
                                         <a class="upcal-inactive" href="javascript:void(0);">
@@ -140,7 +140,7 @@
                 <c:forEach items="${ model.hiddencalendars }" var="calendar">
                     <tr>
                         <td>
-                            <portlet:actionURL var="displayURL">
+                            <portlet:actionURL var="displayURL" escapeXml="false">
                                 <portlet:param name="action" value="addSharedCalendar"/>
                                 <portlet:param name="definitionId" value="${ calendar.id }"/>
                             </portlet:actionURL>
@@ -174,7 +174,7 @@
                     </a>
                 </p>
             </div>
-            <portlet:actionURL var="postUrl"><portlet:param name="action" value="editPreferences"/></portlet:actionURL>
+            <portlet:actionURL var="postUrl" escapeXml="false"><portlet:param name="action" value="editPreferences"/></portlet:actionURL>
             <form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}" class="form-horizontal" role="form">
                 <div class="form-group">
                     <label for="timezone" class="col-md-3 control-label"><spring:message code="time.zone"/></label>
