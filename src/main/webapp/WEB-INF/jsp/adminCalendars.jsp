@@ -71,7 +71,7 @@
                                 </td>
                                 <td>
                                     <!-- Delete -->
-                                    <portlet:actionURL var="deleteCalendarUrl" escapeXml="false">
+                                    <portlet:actionURL var="deleteCalendarUrl">
                                         <portlet:param name="action" value="deleteSharedCalendar"/>
                                         <portlet:param name="calendarId" value="${ calendar.id }"/>
                                     </portlet:actionURL>
