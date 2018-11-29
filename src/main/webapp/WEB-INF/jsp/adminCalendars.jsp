@@ -88,6 +88,7 @@
                     </table>
                 </c:otherwise>
             </c:choose>
+            <h5><spring:message code="calendar.a.require.logout"/></h5>
         </div>
     </div>
 </div>
