@@ -47,7 +47,7 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements Calen
   public void storeCalendarDefinition(CalendarDefinition listing) {
     try {
 
-      getHibernateTemplate().saveOrUpdate(listing);
+      getHibernateTemplate().merge(listing);
       getHibernateTemplate().flush();
 
     } catch (HibernateException ex) {
@@ -62,7 +62,7 @@ public class HibernateCalendarStore extends HibernateDaoSupport implements Calen
   public void storeCalendarConfiguration(CalendarConfiguration configuration) {
     try {
 
-      getHibernateTemplate().saveOrUpdate(configuration);
+      getHibernateTemplate().merge(configuration);
       getHibernateTemplate().flush();
 
     } catch (HibernateException ex) {
