@@ -4,7 +4,7 @@
       ":rebaseStalePrs",
       ":preserveSemverRanges"
     ],
-    "gradle": {
+    "maven": {
       "enabled": true
     },
     "renovateFork": true
