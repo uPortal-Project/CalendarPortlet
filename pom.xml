@@ -88,7 +88,7 @@
         <spring.version>3.1.3.RELEASE</spring.version>
         <uportal-libs.version>5.1.0</uportal-libs.version>
         <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
-        <mockito.version>1.8.4</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
 
         <!-- The JDBC Driver used by the calendar portlet -->
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
