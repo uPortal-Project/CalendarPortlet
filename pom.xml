@@ -410,7 +410,7 @@
             <dependency>
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-security</artifactId>
-                <version>2.4.5.RELEASE</version>
+                <version>3.0.7.RELEASE</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.sun.xml.wss</groupId>
