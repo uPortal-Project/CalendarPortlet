@@ -276,48 +276,47 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
     }
     GetMethod get = null;
 
-      if(url.contains("webcal://")){
-          return tryWebcalHttps(get,url,client);
-      }else{
-          return tryHttp(get,url,client);
-      }
+    if(url.contains("webcal://")){
+      return tryWebcalHttps(get,url,client);
+    }else{
+      return tryHttp(get,url,client);
+    }
   }
 
-    protected InputStream tryHttp(GetMethod get, String url, HttpClient client) throws CalendarException{
-        try {
+  protected InputStream tryHttp(GetMethod get, String url, HttpClient client) throws CalendarException{
+      try {
+          if (log.isDebugEnabled()) {
+              log.debug("Retrieving calendar " + url);
+          }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieving calendar " + url);
-            }
-
-            get = new GetMethod(url);
-            final int rc = client.executeMethod(get);
-            if (rc == HttpStatus.SC_OK) {
+          get = new GetMethod(url);
+          final int rc = client.executeMethod(get);
+          if (rc == HttpStatus.SC_OK) {
                 // return the response body
                 return getCalendarResponse(get);
-            } else {
-                log.warn("HttpStatus for " + url + ":  " + rc);
-                throw new CalendarException(
-                        "Non-successful status code retrieving url '" + url + "';  status code: " + rc);
-            }
-        } catch(ConnectTimeoutException e) {
-            log.warn("Error fetching iCalendar feed for "+ url, e);
-            throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
-        } catch(SocketTimeoutException e){
-            log.warn("Error fetching iCalendar feed for "+ url, e);
-            throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
-        } catch (HttpException e) {
-            log.warn("Error fetching iCalendar feed for "+ url, e);
-            throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
-        } catch (IOException e) {
-            log.warn("Error fetching iCalendar feed for "+ url, e);
-            throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
-        } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
-        }
-    }
+          } else {
+              log.warn("HttpStatus for " + url + ":  " + rc);
+              throw new CalendarException(
+                      "Non-successful status code retrieving url '" + url + "';  status code: " + rc);
+          }
+      } catch(ConnectTimeoutException e) {
+          log.warn("Error fetching iCalendar feed for "+ url, e);
+          throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
+      } catch(SocketTimeoutException e){
+          log.warn("Error fetching iCalendar feed for "+ url, e);
+          throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
+      } catch (HttpException e) {
+          log.warn("Error fetching iCalendar feed for "+ url, e);
+          throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
+      } catch (IOException e) {
+          log.warn("Error fetching iCalendar feed for "+ url, e);
+          throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
+      } finally {
+          if (get != null) {
+              get.releaseConnection();
+          }
+      }
+  }
 
     protected InputStream tryWebcalHttps(GetMethod get, String url, HttpClient client) throws CalendarException{
         try {
@@ -357,6 +356,8 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
             }
         }
     }
+
+
 
     protected InputStream tryWebcalHttp(GetMethod get, String url, HttpClient client) throws CalendarException{
         try{
