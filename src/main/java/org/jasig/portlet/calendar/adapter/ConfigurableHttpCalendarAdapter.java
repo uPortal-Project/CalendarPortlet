@@ -22,11 +22,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.Set;
 import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -37,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.params.CoreConnectionPNames;
 import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.caching.DefaultCacheKeyGeneratorImpl;
 import org.jasig.portlet.calendar.caching.ICacheKeyGenerator;
@@ -260,7 +263,14 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
   protected InputStream retrieveCalendarHttp(String url, Credentials credentials)
       throws CalendarException {
 
+    final int TIMEOUT_MS = 3 * 1000;
     final HttpClient client = new HttpClient();
+
+    //fixing where broken https links never connect. just keeps retrying.
+    client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, TIMEOUT_MS );
+    client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, TIMEOUT_MS);
+    client.getParams().setParameter("http.connection-manager.timeout", new Long(TIMEOUT_MS));
+
     if (null != credentials) {
       client.getState().setCredentials(AuthScope.ANY, credentials);
     }
@@ -294,6 +304,12 @@ public final class ConfigurableHttpCalendarAdapter<T> extends AbstractCalendarAd
         throw new CalendarException(
             "Non-successful status code retrieving url '" + url + "';  status code: " + rc);
       }
+    } catch(ConnectTimeoutException e) {
+      log.warn("Error fetching iCalendar feed for "+ url, e);
+      throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
+    } catch(SocketTimeoutException e){
+      log.warn("Error fetching iCalendar feed for "+ url, e);
+      throw new CalendarException("Error fetching iCalendar feed for "+ url, e);
     } catch (HttpException e) {
       log.warn("Error fetching iCalendar feed", e);
       throw new CalendarException("Error fetching iCalendar feed", e);
