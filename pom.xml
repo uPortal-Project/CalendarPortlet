@@ -80,7 +80,7 @@
         <hibernateTools.version>3.6.0.Final</hibernateTools.version>
         <icu4j.version>51.3</icu4j.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
-        <joda-time.version>2.10.1</joda-time.version>
+        <joda-time.version>2.10.2</joda-time.version>
         <logbackVersion>1.2.3</logbackVersion>
         <resource-server.version>1.0.42</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
