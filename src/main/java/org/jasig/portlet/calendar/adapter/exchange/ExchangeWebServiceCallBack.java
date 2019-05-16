@@ -25,7 +25,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.annotation.NotThreadSafe;
+import org.apache.http.annotation.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
@@ -35,7 +35,7 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 import org.springframework.xml.transform.StringSource;
 
-@NotThreadSafe
+@Contract()
 public class ExchangeWebServiceCallBack implements WebServiceMessageCallback {
   private final Logger log = LoggerFactory.getLogger(getClass());
   private static final String impersonationFirstPart =
