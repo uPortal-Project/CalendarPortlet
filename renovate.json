@@ -1,11 +1,4 @@
 {
-    "extends": [
-      "config:base",
-      ":rebaseStalePrs",
-      ":preserveSemverRanges"
-    ],
-    "maven": {
-      "enabled": true
-    },
-    "renovateFork": true
+  "extends": ["config:base", ":rebaseStalePrs", ":preserveSemverRanges"],
+  "renovateFork": true
 }
