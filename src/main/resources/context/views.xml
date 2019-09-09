@@ -27,8 +27,9 @@
 
     <!-- JSON data view -->
     <bean name="json" 
-        class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"
-        p:disableCaching="false"/>
+        class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"
+          p:contentType="application/json"
+          p:disableCaching="false"/>
 
     <!-- Empty view -->
     <bean name="empty" 
