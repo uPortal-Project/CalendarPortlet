@@ -34,7 +34,8 @@
         <param-value>
             classpath:/context/applicationContext.xml,
             classpath:/context/calendarContext.xml,
-            classpath:/context/databaseContext.xml
+            classpath:/context/databaseContext.xml,
+            classpath:/properties/contextOverrides/*.xml
         </param-value>
     </context-param>
     <context-param>
