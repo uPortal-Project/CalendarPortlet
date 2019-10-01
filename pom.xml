@@ -81,7 +81,7 @@
         <icu4j.version>51.3</icu4j.version>
         <jackson.version>2.9.10</jackson.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
-        <joda-time.version>2.10.3</joda-time.version>
+        <joda-time.version>2.10.4</joda-time.version>
         <logbackVersion>1.2.3</logbackVersion>
         <resource-server.version>1.3.1</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
