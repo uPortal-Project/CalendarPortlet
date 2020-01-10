@@ -246,7 +246,7 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
+                <version>1.9.14-MULE-002</version>
             </dependency>
             <!-- Provides the PortalPropertySourcesPlaceholderConfigurer
                  that supports global.properties and Jasypt encryption-->
