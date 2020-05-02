@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.11.1</version>
+                <version>1.4.12-java7</version>
             </dependency>
             <!-- Transitive of both commons-httpclient (as v1.2) and courses-portlet-dao
                  (as v1.6). You'd think Maven would favor the higher version number, but
