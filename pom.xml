@@ -84,7 +84,7 @@
         <joda-time.version>2.10.8</joda-time.version>
         <logbackVersion>1.2.3</logbackVersion>
         <resource-server.version>1.3.1</resource-server.version>
-        <servlet-api.version>3.0.1</servlet-api.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
         <slf4jVersion>1.7.30</slf4jVersion>
         <spring.version>4.3.26.RELEASE</spring.version>
         <spring-ws.version>2.4.6.RELEASE</spring-ws.version>
