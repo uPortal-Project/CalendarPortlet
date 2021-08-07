@@ -284,7 +284,7 @@
             <dependency>
                 <groupId>org.jasig.portlet.courses</groupId>
                 <artifactId>courses-portlet-dao</artifactId>
-                <version>1.0.0-M3</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.portlet.utils</groupId>
