@@ -59,14 +59,6 @@
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-            <id>Antricore</id>
-            <name>Atricore Repository</name>
-            <!-- mirror of even more Codehaus artifacts -->
-            <url>http://repository.atricore.org/m2-release-repository/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
             <id>3rd-party-embedded</id>
             <url>file://${project.basedir}/3rd-party/repository</url>
         </repository>
@@ -130,7 +122,29 @@
                         <groupId>rhino</groupId>
                         <artifactId>js</artifactId>
                     </exclusion>
+		    <exclusion>
+                        <groupId>javax.script</groupId>
+                        <artifactId>script-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.script</groupId>
+                        <artifactId>groovy-engine</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+	     <dependency>
+                <!-- for cernunnos -->
+                <groupId>javax.script</groupId>
+                <artifactId>script-api</artifactId>
+                <version>1.0-osgi</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+            <!-- for cernunnos -->
+                <groupId>javax.script</groupId>
+                <artifactId>groovy-engine</artifactId>
+                <version>1.1</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.ibm.icu</groupId>
@@ -1127,6 +1141,23 @@
                     </execution>
                 </executions>
             </plugin>
+	    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+			<configuration>
+				<doclint>none</doclint>
+			</configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -1143,6 +1174,7 @@
                     </execution>
                 </executions>
             </plugin>
+	    -->
         </plugins>
     </build>
     <profiles>
