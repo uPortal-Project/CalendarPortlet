@@ -76,7 +76,8 @@
         <hibernate.version>3.6.10.Final</hibernate.version>
         <hibernateTools.version>3.6.0.Final</hibernateTools.version>
         <icu4j.version>65.1</icu4j.version>
-        <jackson.version>2.12.1</jackson.version>
+        <jackson.version>2.13.3</jackson.version>
+        <jackson-databind.version>2.13.3</jackson-databind.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.10.8</joda-time.version>
         <logbackVersion>1.2.3</logbackVersion>
@@ -256,21 +257,6 @@
                 <artifactId>nekohtml</artifactId>
                 <version>1.9.22</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
             <!-- Provides the PortalPropertySourcesPlaceholderConfigurer
                  that supports global.properties and Jasypt encryption-->
             <dependency>
@@ -365,6 +351,16 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools</artifactId>
                 <version>${hibernateTools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas.client</groupId>
@@ -599,12 +595,12 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
