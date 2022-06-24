@@ -24,7 +24,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.jasig.portlet.calendar.spring.PortletApplicationContextLocator;
@@ -52,7 +53,7 @@ public class SchemaCreator implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private final Logger logger = Logger.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static void main(String[] args) {
 
