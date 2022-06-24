@@ -19,7 +19,8 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jasig.parent</groupId>
@@ -41,8 +42,8 @@
         <connection>scm:git:git://github.com/Jasig/CalendarPortlet.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/CalendarPortlet.git</developerConnection>
         <url>https://github.com/Jasig/CalendarPortlet</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <url>${jasig-issues-base}/CAP</url>
@@ -55,8 +56,12 @@
             <name>Mulesoft Repository</name>
             <!-- mirror of most Codehaus artifacts -->
             <url>https://repository.mulesoft.org/nexus/content/repositories/public</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>3rd-party-embedded</id>
@@ -122,7 +127,7 @@
                         <groupId>rhino</groupId>
                         <artifactId>js</artifactId>
                     </exclusion>
-		    <exclusion>
+                    <exclusion>
                         <groupId>javax.script</groupId>
                         <artifactId>script-api</artifactId>
                     </exclusion>
@@ -130,13 +135,13 @@
                         <groupId>javax.script</groupId>
                         <artifactId>groovy-engine</artifactId>
                     </exclusion>
-		    <exclusion>
-			<groupId>commons-logging</groupId>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-	     <dependency>
+            <dependency>
                 <!-- for cernunnos -->
                 <groupId>javax.script</groupId>
                 <artifactId>script-api</artifactId>
@@ -144,7 +149,7 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-            <!-- for cernunnos -->
+                <!-- for cernunnos -->
                 <groupId>javax.script</groupId>
                 <artifactId>groovy-engine</artifactId>
                 <version>1.1</version>
@@ -420,7 +425,7 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
                 <version>${spring.version}</version>
-		<exclusions>
+                <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
@@ -500,7 +505,7 @@
             </dependency>
 
             <!-- For sl4j/logback logging, see https://wiki.jasig.org/display/PLT/Logging+Best+Practices -->
-	    <dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4jVersion}</version>
@@ -552,7 +557,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-	     <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
@@ -868,36 +873,36 @@
                     </execution>
                 </executions>
             </plugin>
-                <plugin>
-                    <groupId>org.jvnet.jaxb2.maven2</groupId>
-                    <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>0.14.0</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <!-- <generateDirectory>src/main/java</generateDirectory> -->
-                        <bindingDirectory>src/main/binding</bindingDirectory>
-                        <schemaDirectory>src/main/xsd</schemaDirectory>
-                        <episode>false</episode>
-                        <extension>true</extension>
-                        <args>
-                            <arg>-XtoString</arg>
-                            <arg>-Xequals</arg>
-                            <arg>-XhashCode</arg>
-                        </args>
-                        <plugins>
-                            <plugin>
-                                <groupId>org.jvnet.jaxb2_commons</groupId>
-                                <artifactId>jaxb2-basics</artifactId>
-                                <version>${jaxb2basicsVersion}</version>
-                            </plugin>
-                        </plugins>
-                    </configuration>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.14.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- <generateDirectory>src/main/java</generateDirectory> -->
+                    <bindingDirectory>src/main/binding</bindingDirectory>
+                    <schemaDirectory>src/main/xsd</schemaDirectory>
+                    <episode>false</episode>
+                    <extension>true</extension>
+                    <args>
+                        <arg>-XtoString</arg>
+                        <arg>-Xequals</arg>
+                        <arg>-XhashCode</arg>
+                    </args>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jvnet.jaxb2_commons</groupId>
+                            <artifactId>jaxb2-basics</artifactId>
+                            <version>${jaxb2basicsVersion}</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -991,8 +996,8 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
 
                                 <!--
                                  | The following specifies failonerror=false because it will produce an exception like...
@@ -1008,11 +1013,12 @@
                                  +-->
 
                                 <java failonerror="false" classname="org.jasig.portlet.calendar.util.SchemaCreator">
-                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml"/>
                                     <classpath>
-                                        <pathelement location="${project.build.directory}/${project.artifactId}/WEB-INF/context" />
-                                        <pathelement path="${runtime_classpath}" />
-                                        <pathelement path="${plugin_classpath}" />
+                                        <pathelement
+                                                location="${project.build.directory}/${project.artifactId}/WEB-INF/context"/>
+                                        <pathelement path="${runtime_classpath}"/>
+                                        <pathelement path="${plugin_classpath}"/>
                                     </classpath>
                                 </java>
                             </tasks>
@@ -1045,25 +1051,27 @@
                         <configuration>
                             <tasks>
                                 <!-- Set default value of data location if it is not set -->
-                                <property name="dir" value="${basedir}/src/main/data" />
+                                <property name="dir" value="${basedir}/src/main/data"/>
 
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
                                 <!-- Provided jars don't seem to be added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
+                                <property name="servlet.jar"
+                                          value="${maven.dependency.javax.servlet.servlet-api.jar.path}"/>
 
                                 <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml"/>
                                     <classpath>
-                                        <pathelement path="${runtime_classpath}" />
-                                        <pathelement path="${plugin_classpath}" />
-                                        <pathelement location="${servlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
+                                        <pathelement path="${runtime_classpath}"/>
+                                        <pathelement path="${plugin_classpath}"/>
+                                        <pathelement location="${servlet.jar}"/>
+                                        <pathelement
+                                                path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
                                     </classpath>
 
-                                    <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
-                                    <arg value="${dir}" />
+                                    <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml"/>
+                                    <arg value="${dir}"/>
                                 </java>
                             </tasks>
                         </configuration>
@@ -1078,25 +1086,27 @@
                             <tasks>
 
                                 <fail unless="dir">
-                                    You must set the "dir" parameter.  (-Ddir={something})
+                                    You must set the "dir" parameter. (-Ddir={something})
                                 </fail>
 
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
                                 <!-- Provided jars don't seem to be added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
-                                <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
+                                <property name="servlet.jar"
+                                          value="${maven.dependency.javax.servlet.servlet-api.jar.path}"/>
 
                                 <java failonerror="true" fork="true" classname="org.danann.cernunnos.runtime.Main">
-                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                    <sysproperty key="logback.configurationFile" value="command-line.logback.xml"/>
                                     <classpath>
-                                        <pathelement path="${runtime_classpath}" />
-                                        <pathelement path="${plugin_classpath}" />
-                                        <pathelement location="${servlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
+                                        <pathelement path="${runtime_classpath}"/>
+                                        <pathelement path="${plugin_classpath}"/>
+                                        <pathelement location="${servlet.jar}"/>
+                                        <pathelement
+                                                path="${project.build.directory}/${project.artifactId}/WEB-INF/classes"/>
                                     </classpath>
-                                    <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml" />
-                                    <arg value="${dir}" />
+                                    <arg value="classpath://org/jasig/portlet/calendar/io/export.crn.xml"/>
+                                    <arg value="${dir}"/>
                                 </java>
                             </tasks>
                         </configuration>
@@ -1145,7 +1155,7 @@
                     </execution>
                 </executions>
             </plugin>
-	    <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.4.0</version>
@@ -1155,53 +1165,35 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-			<configuration>
-				<doclint>none</doclint>
-			</configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <doclint>none</doclint>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-	    -->
         </plugins>
     </build>
     <profiles>
-    <profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>-XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
-							<excludes>
-								<exclude>**/ExchangeCalendarAdapterIntegrationTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+                            <excludes>
+                                <exclude>**/ExchangeCalendarAdapterIntegrationTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>disable-java8-doclint</id>
             <activation>
@@ -1212,19 +1204,19 @@
             </properties>
         </profile>
         <profile>
-			<id>system_test</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>-XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+            <id>system_test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>site</id>
             <distributionManagement>
