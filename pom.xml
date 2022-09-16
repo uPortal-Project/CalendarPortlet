@@ -85,7 +85,7 @@
         <slf4jVersion>1.7.35</slf4jVersion>
         <spring.version>4.3.30.RELEASE</spring.version>
         <spring-ws.version>2.4.6.RELEASE</spring-ws.version>
-        <uportal-libs.version>5.9.0</uportal-libs.version>
+        <uportal-libs.version>5.11.1</uportal-libs.version>
         <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
         <mockito.version>1.10.19</mockito.version>
 
