@@ -80,10 +80,10 @@
         <jackson-databind.version>2.13.4</jackson-databind.version>
         <jaxb2basicsVersion>0.6.0</jaxb2basicsVersion>
         <joda-time.version>2.12.0</joda-time.version>
-        <logbackVersion>1.4.4</logbackVersion>
+        <logbackVersion>1.3.5</logbackVersion>
         <resource-server.version>1.3.1</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
-        <slf4jVersion>1.7.36</slf4jVersion>
+        <slf4jVersion>2.0.6</slf4jVersion>
         <spring.version>4.3.30.RELEASE</spring.version>
         <spring-ws.version>2.4.6.RELEASE</spring-ws.version>
         <uportal-libs.version>5.11.1</uportal-libs.version>
@@ -145,16 +145,9 @@
             <dependency>
                 <!-- for cernunnos -->
                 <groupId>javax.script</groupId>
-                <artifactId>script-api</artifactId>
-                <version>1.0-osgi</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <!-- for cernunnos -->
-                <groupId>javax.script</groupId>
                 <artifactId>groovy-engine</artifactId>
                 <version>1.1</version>
-                <scope>runtime</scope>
+                <classifier>jdk14</classifier>
             </dependency>
             <dependency>
                 <groupId>com.ibm.icu</groupId>
@@ -196,6 +189,10 @@
                 <version>3.1</version>
                 <exclusions>
                     <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>junit</groupId>
                         <artifactId>junit</artifactId>
                     </exclusion>
@@ -216,6 +213,12 @@
                 <groupId>org.mnode.ical4j</groupId>
                 <artifactId>ical4j</artifactId>
                 <version>1.0.8</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -294,11 +297,31 @@
                 <groupId>org.jasig.portlet.courses</groupId>
                 <artifactId>courses-portlet-dao</artifactId>
                 <version>1.0.0-M3</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.portlet.utils</groupId>
                 <artifactId>portlet-form-resources</artifactId>
                 <version>1.0.0-M1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -351,6 +374,12 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools</artifactId>
                 <version>${hibernateTools.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -382,6 +411,14 @@
                 <artifactId>caldav4j</artifactId>
                 <version>0.7</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>net.fortuna.ical4j</groupId>
                         <artifactId>ical4j</artifactId>
@@ -457,12 +494,22 @@
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-core</artifactId>
                 <version>${spring-ws.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-security</artifactId>
                 <version>${spring-ws.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>com.sun.xml.wss</groupId>
                         <artifactId>xws-security</artifactId>
@@ -581,6 +628,12 @@
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
+        </dependency>
+        <dependency>
+            <!-- for cernunnos -->
+            <groupId>javax.script</groupId>
+            <artifactId>groovy-engine</artifactId>
+            <classifier>jdk14</classifier>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -847,6 +900,22 @@
                                 <requireJavaVersion>
                                     <version>1.6</version>
                                 </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>commons-logging:*</exclude>
+                                        <exclude>log4j:*</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                     </execution>
