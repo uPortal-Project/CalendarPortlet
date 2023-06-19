@@ -72,7 +72,7 @@
         <!-- Dependency versions -->
         <cas.version>3.6.2</cas.version>
         <hsqldb.version>2.3.2</hsqldb.version>
-        <hibernate.version>3.6.10.Final</hibernate.version>
+        <hibernate.version>5.3.20.Final</hibernate.version>
         <hibernateTools.version>3.6.0.Final</hibernateTools.version>
         <icu4j.version>72.1</icu4j.version>
         <jackson.version>2.14.2</jackson.version>
