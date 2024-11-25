@@ -147,7 +147,9 @@ public class AjaxCalendarControllerTest {
     DateTimeFormatter timeFormatter =
         new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
 
+    int calendarIndex=0;
+
     return new CalendarDisplayEvent(
-        event, eventInterval, specificDayInterval, dateFormatter, timeFormatter);
+        event, eventInterval, specificDayInterval, dateFormatter, timeFormatter, calendarIndex);
   }
 }

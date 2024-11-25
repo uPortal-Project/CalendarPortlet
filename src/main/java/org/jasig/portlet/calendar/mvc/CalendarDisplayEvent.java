@@ -52,6 +52,8 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
   private final String startDate;
   private final String endDate;
 
+  private final int calendarIndex;
+
   /**
    * Constructs an object from specified data.
    *
@@ -66,13 +68,16 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
       Interval eventInterval,
       Interval theSpecificDay,
       DateTimeFormatter df,
-      DateTimeFormatter tf) {
+      DateTimeFormatter tf,
+      int calendarIndex) {
     assert theSpecificDay.abuts(eventInterval) || theSpecificDay.overlaps(eventInterval)
         : "Event interval is not in the specified day!";
 
     this.summary = event.getSummary() != null ? event.getSummary().getValue() : null;
     this.description = event.getDescription() != null ? event.getDescription().getValue() : null;
     this.location = event.getLocation() != null ? event.getLocation().getValue() : null;
+
+    this.calendarIndex = calendarIndex;
 
     boolean multi = false;
     if (eventInterval.getStart().isBefore(theSpecificDay.getStart())) {
@@ -161,6 +166,8 @@ public class CalendarDisplayEvent implements Comparable<CalendarDisplayEvent> {
   public DateTime getDayEnd() {
     return this.dayEnd;
   }
+
+  public int getCalendarIndex(){ return this.calendarIndex; }
 
   public int compareTo(CalendarDisplayEvent event) {
     // Order events by start date, then end date, then summary.
