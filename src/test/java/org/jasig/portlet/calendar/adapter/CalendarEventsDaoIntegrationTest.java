@@ -82,8 +82,10 @@ public class CalendarEventsDaoIntegrationTest {
 
     List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
+    int calendarIndex=0;
+
     for (VEvent event : events) {
-      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex));
     }
     Collections.sort(displayEvents);
 
@@ -109,8 +111,10 @@ public class CalendarEventsDaoIntegrationTest {
 
     List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
+    int calendarIndex=0;
+
     for (VEvent event : events) {
-      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex));
     }
     Collections.sort(displayEvents);
 
@@ -135,8 +139,10 @@ public class CalendarEventsDaoIntegrationTest {
 
     List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
+    int calendarIndex=0;
+
     for (VEvent event : events) {
-      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex));
     }
     Collections.sort(displayEvents);
 
@@ -158,8 +164,10 @@ public class CalendarEventsDaoIntegrationTest {
 
     List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
+    int calendarIndex=0;
+
     for (VEvent event : events) {
-      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex));
     }
     Collections.sort(displayEvents);
 
@@ -181,8 +189,10 @@ public class CalendarEventsDaoIntegrationTest {
 
     List<CalendarDisplayEvent> displayEvents = new ArrayList<CalendarDisplayEvent>();
 
+    int calendarIndex=0;
+
     for (VEvent event : events) {
-      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+      displayEvents.addAll(eventsDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex));
     }
     Collections.sort(displayEvents);
 
