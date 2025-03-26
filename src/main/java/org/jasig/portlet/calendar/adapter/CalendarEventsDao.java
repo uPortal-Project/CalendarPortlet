@@ -120,7 +120,8 @@ public class CalendarEventsDao {
       CalendarConfiguration calendar,
       Interval interval,
       PortletRequest request,
-      DateTimeZone usersConfiguredDateTimeZone) {
+      DateTimeZone usersConfiguredDateTimeZone,
+      int calendarIndex) {
 
     // Get the set of calendar events for the requested period.
     // We invoke the adapter before checking cache because we expect the adapter
@@ -159,7 +160,7 @@ public class CalendarEventsDao {
       for (VEvent event : eventSet.getEvents()) {
         try {
           displayEvents.addAll(
-              getDisplayEvents(event, interval, request.getLocale(), usersConfiguredDateTimeZone));
+              getDisplayEvents(event, interval, request.getLocale(), usersConfiguredDateTimeZone, calendarIndex));
         } catch (ParseException e) {
           log.error("Exception parsing event", e);
         } catch (IOException e) {
@@ -214,7 +215,7 @@ public class CalendarEventsDao {
    * @throws ParseException
    */
   protected Set<CalendarDisplayEvent> getDisplayEvents(
-      VEvent e, Interval interval, Locale locale, DateTimeZone usersConfiguredDateTimeZone)
+      VEvent e, Interval interval, Locale locale, DateTimeZone usersConfiguredDateTimeZone, int calendarIndex)
       throws IOException, URISyntaxException, ParseException {
 
     final VEvent event = (VEvent) e.copy();
@@ -280,7 +281,7 @@ public class CalendarEventsDao {
        */
       if (theSpecificDay.getStart().isEqual(eventStart) || theSpecificDay.overlaps(eventInterval)) {
         final CalendarDisplayEvent json =
-            new CalendarDisplayEvent(event, eventInterval, theSpecificDay, df, tf);
+            new CalendarDisplayEvent(event, eventInterval, theSpecificDay, df, tf, calendarIndex);
         events.add(json);
       }
 
