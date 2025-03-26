@@ -106,10 +106,10 @@ public class AjaxCalendarController implements ApplicationContextAware {
 
     final Set<CalendarDisplayEvent> calendarEvents = helper.getEventList(errors, interval, request);
 
-    int index = 0;
+
     final Set<JsonCalendarEventWrapper> events = new TreeSet<JsonCalendarEventWrapper>();
     for (CalendarDisplayEvent e : calendarEvents) {
-      events.add(new JsonCalendarEventWrapper(e, index++));
+      events.add(new JsonCalendarEventWrapper(e, e.getCalendarIndex()));
     }
 
     /*
