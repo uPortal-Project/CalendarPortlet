@@ -40,6 +40,7 @@ jobs:
           - zulu
         java-version:
           - 17
+          - 21
         include:
           - platform: windows-latest
             java-distribution: adopt-hotspot
