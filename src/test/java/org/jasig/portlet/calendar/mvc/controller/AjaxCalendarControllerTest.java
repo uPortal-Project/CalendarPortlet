@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
@@ -83,9 +83,14 @@ public class AjaxCalendarControllerTest {
     emptyEvents = new HashSet<CalendarDisplayEvent>();
     events = new HashSet<CalendarDisplayEvent>();
 
+    when(mockHelper.getEventList(any(), any(), any())).thenReturn(emptyEvents);
+
     when(appContext.getMessage(
-            eq("date.formatter.display"), any(Object[].class), anyString(), any(Locale.class)))
-        .thenReturn("EEE MMM d");
+            anyString(),
+            any(),
+            anyString(),
+            any()))
+            .thenReturn("EEE MMM d");
     testee.setApplicationContext(appContext);
   }
 

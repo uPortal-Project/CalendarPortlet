@@ -87,7 +87,7 @@
         <spring-ws.version>2.4.7.RELEASE</spring-ws.version>
         <uportal-libs.version>5.13.1</uportal-libs.version>
         <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
-        <mockito.version>1.10.19</mockito.version>
+        <mockito.version>5.8.0</mockito.version>
 
         <!-- The JDBC Driver used by the calendar portlet -->
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
@@ -924,8 +924,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
 
@@ -963,7 +963,7 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.14.0</version>
+                <version>0.15.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -994,6 +994,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <warName>CalendarPortlet</warName>
@@ -1020,6 +1021,13 @@
                         </overlay>
                     </overlays>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-archiver</artifactId>
+                        <version>4.9.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
