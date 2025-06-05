@@ -1,7 +1,7 @@
 # CalendarPortlet
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.portlet/CalendarPortlet/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jasig.portlet/CalendarPortlet)
-[![build status](https://github.com/uPortal-Project/CalendarPortlet/workflows/CI/badge.svg?branch=master)](https://github.com/uPortal-Project/CalendarPortlet/actions)
+[![build status](https://github.com/uPortal-Project/CalendarPortlet/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/uPortal-Project/CalendarPortlet/actions/workflows/CI.yml)
 
 This is a [Sponsored Portlet][] in the Apereo uPortal project.
 
