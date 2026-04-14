@@ -19,7 +19,6 @@
 
 --%>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
@@ -34,13 +33,13 @@
         </div>
         <div class="col-md-6">
             <portlet:renderURL var="returnUrl" portletMode="view"/>
-            <a class="pull-right" href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
+            <a class="float-end" href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
                 <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
             </a>
         </div>
     </div>
     <div class="row" role="main">
-        <div class="col-md-6 col-md-offset-2">
+        <div class="col-md-6 offset-md-2">
             <!-- It's unusual to use a renderURL here, but there's no server-side behavior that violates the principals of Render vs. Action. -->
             <portlet:renderURL escapeXml='false' var="formRenderUrl"/>
             <form:form name="calendar" commandName="calendarDefinitionForm" action="${formRenderUrl}" class="form-horizontal" role="form" method="GET">
@@ -69,7 +68,7 @@
                                 </c:forEach>
                             </form:select>
                         </div>
-                        <div class="upcal-button-group col-md-offset-3 col-md-6">
+                        <div class="upcal-button-group offset-md-3 col-md-6">
                             <button type="submit" class="btn btn-primary"><spring:message code="next"/></button>
                             <portlet:renderURL var="returnToAdminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
                             <a class="btn btn-link" href="${ returnToAdminUrl }"><spring:message code="cancel"/></a>

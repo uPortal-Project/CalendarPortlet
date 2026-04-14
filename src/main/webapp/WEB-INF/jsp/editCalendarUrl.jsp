@@ -54,7 +54,7 @@
                 <form:input cssClass="form-control" path="url" size="50"/>
             </div>
         </div>
-        <div class="upcal-button-group col-md-offset-3 col-md-6">
+        <div class="upcal-button-group offset-md-3 col-md-6">
             <button type="submit" class="portlet-form-button btn btn-primary">
                 <spring:message code="save.calendar"/>
             </button>

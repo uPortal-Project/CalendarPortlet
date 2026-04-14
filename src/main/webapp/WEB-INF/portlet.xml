@@ -79,7 +79,7 @@
 
             <preference>
                 <name>usePortalJsLibs</name>
-                <value>false</value>
+                <value>true</value>
             </preference>
             <preference>
                 <name>portalJsNamespace</name>

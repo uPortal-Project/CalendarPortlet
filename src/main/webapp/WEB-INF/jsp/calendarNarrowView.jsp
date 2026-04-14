@@ -39,24 +39,24 @@
                         <div class="col-md-6">
                             <h5><spring:message code="view"/></h5>
                             <div class="btn-group">
-                                <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                                <button days="1" href="javascript:;" class="btn btn-secondary upcal-range-day">
                                     <spring:message code="day"/>
                                 </button>
-                                <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                                <button days="7" href="javascript:;" class="btn btn-secondary upcal-range-day active">
                                     <spring:message code="week"/>
                                 </button>
-                                <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                                <button days="31" href="javascript:;" class="btn btn-secondary upcal-range-day">
                                     <spring:message code="month"/>
                                 </button>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <h5 class="text-right"><spring:message code="date.picker"/></h5>
-                            <div class="btn-group pull-right">
-                                <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-default upcal-range-datepicker">
+                            <div class="btn-group float-end">
+                                <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-secondary upcal-range-datepicker">
                                     <spring:message code="show"/>
                                 </button>
-                                <button type="button" show="false" href="javascript:;" id="${n}hideDatePicker" class="btn btn-default upcal-range-datepicker">
+                                <button type="button" show="false" href="javascript:;" id="${n}hideDatePicker" class="btn btn-secondary upcal-range-datepicker">
                                     <spring:message code="hide"/>
                                 </button>
                             </div>
@@ -85,7 +85,7 @@
             <div class="row">
                 <!-- View Links -->
                 <div class="col-md-12 upcal-view-links">
-                    <a id="${n}viewMoreEventsLink" class="btn btn-link pull-right"
+                    <a id="${n}viewMoreEventsLink" class="btn btn-link float-end"
                        href="<portlet:renderURL windowState="maximized"/>"
                        title="<spring:message code="view.more.events"/>">
                         <spring:message code="view.more.events"/> <i class="fa fa-arrow-right"></i>
@@ -212,7 +212,7 @@
 
 </script>
 
-<script type="text/javascript"><rs:compressJs>
+<script type="text/javascript">
 ${n}.jQuery(function() {
     var $ = ${n}.jQuery;
     var _ = ${n}._;
@@ -277,4 +277,4 @@ ${n}.jQuery(function() {
     showDatePicker("${model.showDatePicker}");
     view.getEvents();
 });
-</rs:compressJs></script>
+</script>

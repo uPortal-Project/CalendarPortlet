@@ -19,7 +19,6 @@
 
 --%>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
@@ -35,16 +34,16 @@
         <div class="col-md-8">
             <c:if test="${ sessionScope.isAdmin }">
                 <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
-                <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+                <a class="float-end" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
                     <i class="fa fa-gears"></i> <spring:message code="calendar.administration"/></a>
             </c:if>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 offset-md-2">
             <h5><spring:message code="my.calendars"/></h5>
         </div>
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 offset-md-2">
             <table class="table tabale-condensed">
                 <c:forEach items="${ model.mycalendars }" var="calendar">
                     <tr>
@@ -80,7 +79,7 @@
                 </c:forEach>
             </table>
         </div>
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 offset-md-2">
             <portlet:renderURL var="addCalendar">
                 <portlet:param name="action" value="editUrl"/>
             </portlet:renderURL>
@@ -88,7 +87,7 @@
                 <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
             </a>
         </div>
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 offset-md-2">
             <h5><spring:message code="preconfigured.calendars"/></h5>
             <table class="table table-condensed">
                 <c:forEach items="${ model.calendars }" var="calendar">
@@ -179,7 +178,7 @@
                 <div class="form-group">
                     <label for="timezone" class="col-md-3 control-label"><spring:message code="time.zone"/></label>
                     <div class="col-md-3">
-                        <form:select path="timezone" class="form-control">
+                        <form:select path="timezone" class="form-select">
                             <c:forEach items="${timezones}" var="zone">
                                 <spring:message var="message" code="timezone.${ zone }" text="${ zone }"/>
                                 <form:option label="${message}" value="${ zone }"/>
@@ -188,7 +187,7 @@
                         <form:errors path="timezone" cssClass="alert alert-danger"/>
                     </div>
                 </div>
-                <div class="upcal-button-group col-md-offset-3 col-md-6">
+                <div class="upcal-button-group offset-md-3 col-md-6">
                     <button type="submit" class="btn btn-primary"><spring:message code="save.preferences"/></button>
                     <a class="btn btn-link" href="${ returnUrl }"><spring:message code="cancel"/></a>
                 </div>
@@ -198,12 +197,12 @@
 
     <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
 
-        <script type="text/javascript"><rs:compressJs>
+        <script type="text/javascript">
         ${n}.jQuery(function() {
             var $ = ${n}.jQuery;
             $("#${n}calendar-submission-success").slideDown("slow");
         });
-        </rs:compressJs></script>
+        </script>
     </c:if>
 
 </div>
