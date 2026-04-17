@@ -77,14 +77,6 @@
                 <value>false</value>
             </preference>
 
-            <preference>
-                <name>usePortalJsLibs</name>
-                <value>true</value>
-            </preference>
-            <preference>
-                <name>portalJsNamespace</name>
-                <value>up</value>
-            </preference>
 
             <!-- whitelist of predefined calendar-definitions by fname -->
             <preference>

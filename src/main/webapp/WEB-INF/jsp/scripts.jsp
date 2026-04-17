@@ -18,23 +18,13 @@
     under the License.
 
 --%>
-<rs:aggregatedResources path="skin${ usePortalJsLibs ? '-shared' : '' }.xml"/>
+<rs:aggregatedResources path="skin-shared.xml"/>
 
 <script type="text/javascript">
     var ${n} = ${n} || {};
-    <c:choose>
-        <c:when test="${!usePortalJsLibs}">
-            ${n}.jQuery = jQuery.noConflict(true);
-            ${n}._ = _.noConflict();
-            ${n}.Backbone = Backbone.noConflict();
-        </c:when>
-        <c:otherwise>
-            <c:set var="ns"><c:if test="${ not empty portalJsNamespace }">${ portalJsNamespace }.</c:if></c:set>
-            ${n}.jQuery = ${ ns }jQuery;
-            ${n}._ = ${ ns }_;
-            ${n}.Backbone = ${ ns }Backbone;
-        </c:otherwise>
-    </c:choose>
+    ${n}.jQuery = up.jQuery;
+    ${n}._ = up._;
+    ${n}.Backbone = up.Backbone;
     if (!upcal.initialized) upcal.init(${n}.jQuery, ${n}._, ${n}.Backbone);
     ${n}.upcal = upcal;
 </script>
