@@ -39,13 +39,13 @@
                         <div class="col-md-6">
                             <h5><spring:message code="view"/></h5>
                             <div class="btn-group">
-                                <button days="1" href="javascript:;" class="btn btn-secondary upcal-range-day">
+                                <button type="button" days="1" class="btn btn-secondary upcal-range-day">
                                     <spring:message code="day"/>
                                 </button>
-                                <button days="7" href="javascript:;" class="btn btn-secondary upcal-range-day active">
+                                <button type="button" days="7" class="btn btn-secondary upcal-range-day active">
                                     <spring:message code="week"/>
                                 </button>
-                                <button days="31" href="javascript:;" class="btn btn-secondary upcal-range-day">
+                                <button type="button" days="31" class="btn btn-secondary upcal-range-day">
                                     <spring:message code="month"/>
                                 </button>
                             </div>
@@ -53,10 +53,10 @@
                         <div class="col-md-6">
                             <h5 class="text-end"><spring:message code="date.picker"/></h5>
                             <div class="btn-group float-end">
-                                <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-secondary upcal-range-datepicker">
+                                <button type="button" show="true" id="${n}showDatePicker" class="btn btn-secondary upcal-range-datepicker">
                                     <spring:message code="show"/>
                                 </button>
-                                <button type="button" show="false" href="javascript:;" id="${n}hideDatePicker" class="btn btn-secondary upcal-range-datepicker">
+                                <button type="button" show="false" id="${n}hideDatePicker" class="btn btn-secondary upcal-range-datepicker">
                                     <spring:message code="hide"/>
                                 </button>
                             </div>
