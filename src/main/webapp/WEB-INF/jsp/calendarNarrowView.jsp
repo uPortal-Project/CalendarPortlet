@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="text-right"><spring:message code="date.picker"/></h5>
+                            <h5 class="text-end"><spring:message code="date.picker"/></h5>
                             <div class="btn-group float-end">
                                 <button type="button" show="true" href="javascript:;" id="${n}showDatePicker" class="btn btn-secondary upcal-range-datepicker">
                                     <spring:message code="show"/>
