@@ -55,13 +55,13 @@
                 <div class="upcal-type-selector">
                     <h3><spring:message code="view"/></h3>
                     <div class="btn-group">
-                        <button days="1" href="javascript:;" class="btn btn-secondary upcal-range-day">
+                        <button type="button" days="1" class="btn btn-secondary upcal-range-day">
                             <spring:message code="day"/>
                         </button>
-                        <button days="7" href="javascript:;" class="btn btn-secondary upcal-range-day active">
+                        <button type="button" days="7" class="btn btn-secondary upcal-range-day active">
                             <spring:message code="week"/>
                         </button>
-                        <button days="31" href="javascript:;" class="btn btn-secondary upcal-range-day">
+                        <button type="button" days="31" class="btn btn-secondary upcal-range-day">
                             <spring:message code="month"/>
                         </button>
                     </div>
