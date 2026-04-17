@@ -25,7 +25,7 @@
 
 <portlet:renderURL portletMode="view" var="returnUrl"/>
 
-<div class="container-fluid">
+<div class="container-fluid upcal-portlet">
 
     <div class="row">
         <div class="col-md-4">
@@ -44,7 +44,7 @@
             <h5><spring:message code="my.calendars"/></h5>
         </div>
         <div class="col-md-8 offset-md-2">
-            <table class="table tabale-condensed">
+            <table class="table table-sm">
                 <c:forEach items="${ model.mycalendars }" var="calendar">
                     <tr>
                         <!-- Calendar name -->
