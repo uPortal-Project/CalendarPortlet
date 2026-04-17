@@ -22,14 +22,6 @@ if (!upcal.init) {
 
     upcal.init = function ($, _, Backbone) {
 
-        // Restore standard ERB template delimiters - uPortal overrides these to {{ }} syntax
-        _.templateSettings = {
-            evaluate: /<%([^%>]+)%>/g,
-            interpolate: /<%=([^%>]+)%>/g,
-            escape: /<%-([^%>]+)%>/g
-        };
-
-
         /* DATA MODELS */
 
         upcal.CalendarDay = Backbone.Model.extend({
