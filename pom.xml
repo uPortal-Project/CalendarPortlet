@@ -22,9 +22,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.parent</groupId>
-        <artifactId>jasig-parent</artifactId>
-        <version>41</version>
+        <groupId>org.jasig.portlet</groupId>
+        <artifactId>uportal-portlet-parent</artifactId>
+        <version>46</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -166,11 +166,6 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.15</version>
             </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.2</version>
-            </dependency>
             <!-- Used w/ Exchange WS
              | NOTE:  Do not upgrade to httpclient 4.2.5. It errors to on premise Exchange server with
              | exchange.NtlmAuthHttpClient.[] - Malformed challenge: Invalid scheme identifier: Negotiate
@@ -243,6 +238,13 @@
                 <groupId>jcifs</groupId>
                 <artifactId>jcifs</artifactId>
                 <version>1.3.17</version>
+                <exclusions>
+                    <!-- jcifs pulls servlet-api 2.4 which is banned by uportal-portlet-parent. -->
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -319,6 +321,11 @@
                     <exclusion>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <!-- Pulls commons-collections 3.2.2 (CVE-2015-6420), banned by parent. -->
+                    <exclusion>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -425,6 +432,11 @@
                     <exclusion>
                         <groupId>net.sf.ehcache</groupId>
                         <artifactId>ehcache</artifactId>
+                    </exclusion>
+                    <!-- Pulls servlet-api 2.4-20040521 (banned by parent). -->
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -587,10 +599,6 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -1060,8 +1068,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- Renamed from maven-notice-plugin; v2.0.0 inherited from uportal-portlet-parent works on Java 11. -->
                 <groupId>org.jasig.maven</groupId>
-                <artifactId>maven-notice-plugin</artifactId>
+                <artifactId>notice-maven-plugin</artifactId>
                 <configuration>
                     <noticeTemplate>NOTICE.template</noticeTemplate>
                     <generateChildNotices>false</generateChildNotices>
