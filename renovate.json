@@ -1,4 +1,58 @@
 {
-  "extends": ["config:base", ":rebaseStalePrs", ":preserveSemverRanges"],
-  "renovateFork": true
+  "extends": [
+    "config:base",
+    ":rebaseStalePrs",
+    ":preserveSemverRanges"
+  ],
+  "renovateFork": true,
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "javax.portlet:portlet-api"
+      ],
+      "allowedVersions": "< 3.0",
+      "description": "uPortal runs JSR-286 (Portlet API 2.0). Portlet API 3.x (JSR-362) is a different container contract and is not supported."
+    },
+    {
+      "matchPackageNames": [
+        "org.springframework:spring-framework-bom",
+        "org.springframework:spring-aop",
+        "org.springframework:spring-beans",
+        "org.springframework:spring-context",
+        "org.springframework:spring-context-support",
+        "org.springframework:spring-core",
+        "org.springframework:spring-jdbc",
+        "org.springframework:spring-orm",
+        "org.springframework:spring-test",
+        "org.springframework:spring-tx",
+        "org.springframework:spring-web",
+        "org.springframework:spring-webmvc",
+        "org.springframework:spring-webmvc-portlet",
+        "org.springframework.data:spring-data-jpa"
+      ],
+      "allowedVersions": "< 5.0",
+      "description": "This portlet is pinned to Spring Framework 4.3.x. Next-major bumps require a coordinated migration."
+    },
+    {
+      "matchPackageNames": [
+        "org.springframework.ws:spring-ws-core",
+        "org.springframework.ws:spring-ws-security"
+      ],
+      "allowedVersions": "< 3.0",
+      "description": "This portlet is pinned to Spring Framework 4.3.x. Next-major bumps require a coordinated migration."
+    },
+    {
+      "matchPackageNames": [
+        "org.hibernate:hibernate-core",
+        "org.hibernate:hibernate-ehcache",
+        "org.hibernate:hibernate-entitymanager",
+        "org.hibernate:hibernate-jpamodelgen",
+        "org.hibernate:hibernate-tools",
+        "org.hibernate:hibernate-validator",
+        "org.hibernate.orm:hibernate-core"
+      ],
+      "allowedVersions": "< 4.0",
+      "description": "Pinned to Hibernate 3.6.x. Later majors require Jakarta EE or Java 17+, neither of which match this portlet."
+    }
+  ]
 }
