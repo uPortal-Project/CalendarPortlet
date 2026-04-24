@@ -25,21 +25,21 @@
 
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-<div id="${n}container" class="container-fluid">
+<div id="${n}container" class="container-fluid upcal-portlet">
     <c:if test="${ !model.guest && !(model.disablePreferences && (!sessionScope.isAdmin || model.disableAdministration)) }">
         <div class="row">
             <div class="col-md-12">
                 <c:if test="${ sessionScope.isAdmin && !model.disableAdministration }">
                     <portlet:renderURL var="adminUrl" portletMode="edit"><portlet:param name="action" value="administration"/></portlet:renderURL>
-                    <a class="pull-right" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
+                <a class="float-end" href="${ adminUrl }" title="<spring:message code="calendar.administration"/>">
                         <i class="fa fa-gears"></i>
                         <spring:message code="calendar.administration"/>
                     </a>
                 </c:if>
                 <c:if test="${ !model.disablePreferences && !model.guest }">
-                    <span class="pull-right">&nbsp;|&nbsp;</span>
+                    <span class="float-end">&nbsp;|&nbsp;</span>
                     <portlet:renderURL var="preferencesUrl" portletMode="edit"><portlet:param name="action" value="editPreferences"/></portlet:renderURL>
-                    <a class="pull-right" href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
+                    <a class="float-end" href="${ preferencesUrl }" title="<spring:message code="edit.calendar.preferences"/>">
                         <i class="fa fa-key"></i>
                         <spring:message code="preferences"/>
                     </a>
@@ -55,13 +55,13 @@
                 <div class="upcal-type-selector">
                     <h3><spring:message code="view"/></h3>
                     <div class="btn-group">
-                        <button days="1" href="javascript:;" class="btn btn-default upcal-range-day">
+                        <button type="button" days="1" class="btn btn-secondary upcal-range-day">
                             <spring:message code="day"/>
                         </button>
-                        <button days="7" href="javascript:;" class="btn btn-default upcal-range-day active">
+                        <button type="button" days="7" class="btn btn-secondary upcal-range-day active">
                             <spring:message code="week"/>
                         </button>
-                        <button days="31" href="javascript:;" class="btn btn-default upcal-range-day">
+                        <button type="button" days="31" class="btn btn-secondary upcal-range-day">
                             <spring:message code="month"/>
                         </button>
                     </div>
@@ -113,7 +113,7 @@
                             </c:choose>
                             <span><spring:escapeBody htmlEscape="true">${ calendar.calendarDefinition.name }</spring:escapeBody></span>
                             <portlet:resourceURL var="exportCalendarUrl" id="exportUserCalendar"><portlet:param name="configurationId" value="${ calendar.id }"/></portlet:resourceURL>
-                            <a href="${ exportCalendarUrl }" class="pull-right" title="<spring:message code='export.calendar'/>">
+                            <a href="${ exportCalendarUrl }" class="ms-auto" title="<spring:message code='export.calendar'/>">
                                 <span><i class="fa fa-download"></i> <spring:message code="export"/></span>
                             </a>
                         </li>
@@ -215,7 +215,7 @@
 
 </script>
 
-<script type="text/javascript"><rs:compressJs>
+<script type="text/javascript">
 ${n}.jQuery(function() {
     var $ = ${n}.jQuery;
     var _ = ${n}._;
@@ -224,12 +224,12 @@ ${n}.jQuery(function() {
 
     var ListView = upcal.EventListView.extend({
         el: "#${n}container .upcal-event-view",
-        template: _.template($("#event-list-template").html())
+        template: _.template($("#event-list-template").html(), {evaluate: /<%([^%>]+)%>/g, interpolate: /<%=([^%>]+)%>/g, escape: /<%-([^%>]+)%>/g})
     });
 
     var DetailView = upcal.EventDetailView.extend({
         el: "#${n}container .upcal-event-details",
-        template: _.template($("#event-detail-template").html())
+        template: _.template($("#event-detail-template").html(), {evaluate: /<%([^%>]+)%>/g, interpolate: /<%=([^%>]+)%>/g, escape: /<%-([^%>]+)%>/g})
     });
 
     var view = new upcal.CalendarView({
@@ -256,4 +256,4 @@ ${n}.jQuery(function() {
     view.getEvents();
 
 });
-    </rs:compressJs></script>
+    </script>

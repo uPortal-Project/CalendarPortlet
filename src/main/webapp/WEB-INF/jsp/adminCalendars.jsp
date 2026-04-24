@@ -19,7 +19,6 @@
 
 --%>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
-<rs:aggregatedResources path="${ usePortalJsLibs ? '/skin-shared.xml' : '/skin.xml' }"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 
@@ -27,7 +26,7 @@
     <div class="row">
         <div class="col-md-12">
             <!-- Add Calendar -->
-            <div class="pull-right">
+            <div class="float-end">
                 <portlet:renderURL var="addCalendarUrl"><portlet:param name="action" value="createCalendarDefinition"/></portlet:renderURL>
                 <a href="${ addCalendarUrl }" title="<spring:message code="add.a.calendar"/>">
                     <i class="fa fa-plus"></i> <spring:message code="add.a.calendar"/>
@@ -40,7 +39,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 offset-md-3">
             <h4><spring:message code="calendar.administration"/></h4>
             <c:choose>
                 <c:when test="${ empty calendars }">

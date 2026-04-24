@@ -22,16 +22,6 @@ if (!upcal.init) {
 
     upcal.init = function ($, _, Backbone) {
 
-        /*
-         * Whenever we get a valid collection of events from the server, hold 
-         * on to it;  we will "replay" it if our next request is an ETag-match.
-         * 
-         * (NB:  Oddly this ETag business seems to affect different browsers 
-         * different ways.  On FireFox, an ETag match seems provide the $.ajax() 
-         * call with valid data;  on Chrome, nothing.)
-         */
-        var cache = new Array();
-
         /* DATA MODELS */
 
         upcal.CalendarDay = Backbone.Model.extend({
@@ -153,21 +143,18 @@ if (!upcal.init) {
             initialize: function () {
                 var view = this;
 
-				var language = window.navigator.userLanguage || window.navigator.language;
-				if ($.datepicker.regional[language] != undefined) $.datepicker.setDefaults($.datepicker.regional[language]);
-				else if ($.datepicker.regional[language.substring(0, 2)] != undefined) $.datepicker.setDefaults($.datepicker.regional[language.substring(0, 2).toLowerCase()]);
-				else $.datepicker.setDefaults($.datepicker.regional['']);
+                var language = window.navigator.userLanguage || window.navigator.language;
+                if ($.datepicker.regional[language] != undefined) $.datepicker.setDefaults($.datepicker.regional[language]);
+                else if ($.datepicker.regional[language.substring(0, 2)] != undefined) $.datepicker.setDefaults($.datepicker.regional[language.substring(0, 2).toLowerCase()]);
+                else $.datepicker.setDefaults($.datepicker.regional['']);
 
-                // initialize the jQuery UI datepicker
-				// even internationalization of datepicker we need to keep the English dateformat to pass it in ajax call
                 $(view.get("container")).find(".upcal-inline-calendar").datepicker({
                     inline: true,
-					dateFormat: 'mm/dd/yy',
+                    dateFormat: 'mm/dd/yy',
                     changeMonth: false,
                     changeYear: false,
                     defaultDate: this.get("startDate"),
                     onSelect: function(date) {
-                        // when a new date is selected, update the event list
                         view.set("startDate", date);
                         view.getEvents(view.get("startDate"), view.get("days"));
                     }

@@ -61,23 +61,26 @@
 }
 
 .upcal-wideview {
-    > .row {
-        margin-left: 350px;
-        margin-right: 0;
-    }
+    display: flex;
+    flex-wrap: wrap;
+
     .upcal-calendar-grid {
-        float: left;
         width: 325px;
+        flex-shrink: 0;
+    }
+
+    > .row {
+        flex: 1;
+        margin-left: 0;
+        margin-right: 0;
+        min-width: 0;
     }
 
     @media only screen and (max-width: 768px) {
-        .upcal-calendar-grid {
-            float: none;
-            margin: 0 auto;
-        }
+        flex-direction: column;
 
-        > .row {
-            margin-left: 0;
+        .upcal-calendar-grid {
+            width: 100%;
         }
     }
 }
@@ -85,10 +88,49 @@
 .upcal-my-calendars {
     padding-bottom: 10px;
     border-left: 1px solid #eee;
+    ul li {
+        display: flex;
+        align-items: center;
+        gap: 0.4em;
+    }
 }
 
 .upcal-button-group {
     margin-top: 30px;
+}
+
+// Bootstrap 5 polyfills
+.upcal-portlet {
+    button.btn-link {
+        color: #333333 !important;
+        padding: 0;
+        background: none !important;
+        border: none !important;
+        text-decoration: none;
+        font-size: inherit;
+        &:hover {
+            color: #333333 !important;
+            text-decoration: underline;
+        }
+    }
+
+    .control-label {
+        display: block;
+        text-align: right;
+        padding-top: 7px;
+        font-weight: bold;
+    }
+
+    h4, h5 {
+        font-weight: bold;
+    }
+
+    .form-horizontal .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
 }
 
 .upcal-type-selector {

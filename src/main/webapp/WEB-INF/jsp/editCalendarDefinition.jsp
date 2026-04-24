@@ -23,7 +23,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-<script type="text/javascript"><rs:compressJs>
+<script type="text/javascript">
     ${n}.jQuery(function() {
         var $ = ${n}.jQuery;
         var _ = ${n}._;
@@ -55,7 +55,7 @@
         });
 
     });
-</rs:compressJs></script>
+</script>
 
 <div class="container-fluid" role="section">
     <div class="row">
@@ -64,7 +64,7 @@
         </div>
         <div class="col-md-8">
         <!-- Return to Calendar -->
-            <div class="pull-right">
+            <div class="float-end">
                 <portlet:renderURL var="returnUrl" portletMode="view"/>
                 <a href="${ returnUrl }" title="<spring:message code="return.to.calendar"/>">
                     <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
@@ -112,7 +112,7 @@
                     <form:checkboxes items="${ availableRoles }" path="role" element="div class='checkbox'"/>
                 </div>
             </div>
-            <div class="upcal-button-group col-md-offset-3 col-md-6">
+            <div class="upcal-button-group offset-md-3 col-md-6">
                 <button type="submit" class="btn btn-primary"><spring:message code="save.calendar"/></button>
                 <portlet:renderURL var="returnToAdminUrl"><portlet:param name="action" value="administration"/></portlet:renderURL>
                 <a class="btn btn-link" href="${ returnToAdminUrl }"><spring:message code="cancel"/></a>
