@@ -104,7 +104,7 @@
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>serializer</artifactId>
-                <version>2.7.3</version>
+                <version>2.7.3-atlassian-hosted</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -521,7 +521,7 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>serializer</artifactId>
-            <version>2.7.3</version>
+            <version>2.7.3-atlassian-hosted</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
