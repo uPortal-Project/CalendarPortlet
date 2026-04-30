@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jasig.portlet</groupId>
         <artifactId>uportal-portlet-parent</artifactId>
-        <version>48</version>
+        <version>49</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -823,29 +823,22 @@
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
-                    <aggregate>true</aggregate>
+                    <!--
+                      | Parent v49 provides the standard excludes (LICENSE,
+                      | NOTICE, NOTICE.template, target/**, pom.xml.*,
+                      | release.properties, bin/**, .idea/**, overlays/**,
+                      | .gitignore, **/src/main/webapp/rs/**) and standard
+                      | mappings (channel/less/tag/xjb/etc). Local block
+                      | keeps only the CalendarPortlet-specific excludes
+                      | and the <portlet> mapping.
+                    +-->
                     <excludes>
-                        <exclude>.gitignore</exclude>
-                        <exclude>target/**</exclude>
-                        <exclude>pom.xml.*</exclude>
-                        <exclude>release.properties</exclude>
-                        <exclude>LICENSE</exclude>
-                        <exclude>NOTICE</exclude>
-                        <exclude>NOTICE.template</exclude>
                         <exclude>src/main/resources/com/microsoft/exchange/Services.wsdl</exclude>
                         <exclude>src/test/resources/sampleEvents.ics</exclude>
-                        <exclude>**/src/main/webapp/rs/**</exclude>
-                        <exclude>bin/**</exclude>
-                        <exclude>.idea/**</exclude> <!-- Exclude intelliJ files -->
-                        <exclude>overlays/**</exclude> <!-- Exclude intelliJ files -->
                         <exclude>3rd-party/**</exclude>
                     </excludes>
                     <mapping>
-                        <channel>XML_STYLE</channel>
-                        <less>SLASHSTAR_STYLE</less>
                         <portlet>XML_STYLE</portlet>
-                        <tag>DYNASCRIPT_STYLE</tag>
-                        <xjb>XML_STYLE</xjb>
                     </mapping>
                 </configuration>
             </plugin>
