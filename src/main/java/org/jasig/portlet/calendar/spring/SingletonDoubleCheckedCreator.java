@@ -19,8 +19,8 @@
 package org.jasig.portlet.calendar.spring;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Provides a DoubleCheckedCreator impl that tracks the singleton instance internally

@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.search.PortletUrl;
 import org.jasig.portal.search.PortletUrlParameter;
 import org.jasig.portal.search.SearchConstants;

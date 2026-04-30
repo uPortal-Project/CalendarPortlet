@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.annotation.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
