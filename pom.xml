@@ -166,7 +166,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
+            <version>1.22.0</version>
         </dependency>
         <!-- NOTE: Do not upgrade httpclient to 4.2.5. It errors to on-premise Exchange
              with NtlmAuthHttpClient Malformed challenge / Unauthorized [401]. -->
