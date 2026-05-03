@@ -21,7 +21,7 @@ package org.jasig.portlet.calendar.adapter.exchange;
 import java.util.Map;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;

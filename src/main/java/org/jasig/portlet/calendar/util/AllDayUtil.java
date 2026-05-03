@@ -21,7 +21,7 @@ package org.jasig.portlet.calendar.util;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * AllDayUtil determines whether a particular event should be classified as an "all-day" event in
