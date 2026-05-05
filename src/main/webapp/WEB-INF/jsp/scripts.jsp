@@ -25,6 +25,19 @@
     ${n}.jQuery = up.jQuery;
     ${n}._ = up._;
     ${n}.Backbone = up.Backbone;
+    // uPortal's respondr.xsl resets the shared up._.templateSettings to
+    // Mustache-style sigils. Our Underscore templates use the standard
+    // sigils, so each _.template() call must pass these settings
+    // explicitly to avoid the raw template source leaking into the
+    // rendered output. The view JSPs already use the ${"<%"}/${"%>"}
+    // EL trick to emit literal Underscore sigils into the rendered HTML;
+    // we use the same trick here so the regex literals survive JSP's
+    // own scriptlet parser.
+    ${n}.upcalTemplateSettings = {
+        interpolate: /${"<%"}=([\s\S]+?)${"%>"}/g,
+        evaluate:    /${"<%"}([\s\S]+?)${"%>"}/g,
+        escape:      /${"<%"}-([\s\S]+?)${"%>"}/g
+    };
     if (!upcal.initialized) upcal.init(${n}.jQuery, ${n}._, ${n}.Backbone);
     ${n}.upcal = upcal;
 </script>

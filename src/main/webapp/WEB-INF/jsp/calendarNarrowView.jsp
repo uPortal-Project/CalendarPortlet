@@ -221,12 +221,12 @@ ${n}.jQuery(function() {
 
     var ListView = upcal.EventListView.extend({
         el: "#${n}container .upcal-event-view",
-        template: _.template($("#event-list-template").html())
+        template: _.template($("#event-list-template").html(), ${n}.upcalTemplateSettings)
     });
 
     var DetailView = upcal.EventDetailView.extend({
         el: "#${n}container .upcal-event-details",
-        template: _.template($("#event-detail-template").html())
+        template: _.template($("#event-detail-template").html(), ${n}.upcalTemplateSettings)
     });
 
     var view = new upcal.CalendarView({
