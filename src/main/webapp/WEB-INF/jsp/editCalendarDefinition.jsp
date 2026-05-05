@@ -35,8 +35,9 @@
                 this.render();
             },
             render: function( ){
-                // Compile the template using underscore
-                var template = _.template( $("#${n}roleParamTemplate").html(), {} );
+                // Compile the template using underscore. Pass our template
+                // settings explicitly — see scripts.jsp for why.
+                var template = _.template( $("#${n}roleParamTemplate").html(), ${n}.upcalTemplateSettings );
                 // Load the compiled HTML into the Backbone "el"
                 this.$el.html( template );
             }
