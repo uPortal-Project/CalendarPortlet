@@ -24,15 +24,6 @@
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="showDatePickerURL" escapeXml="false">
-    <portlet:param name="action" value="showDatePicker"/>
-    <portlet:param name="show" value="true"/>
-</portlet:actionURL>
-<portlet:actionURL var="hideDatePickerURL" escapeXml="false">
-    <portlet:param name="action" value="showDatePicker"/>
-    <portlet:param name="show" value="false"/>
-</portlet:actionURL>
-
 <%-- skin/CSS bundle (the JS/Backbone init from scripts.jsp is intentionally
      omitted; the <calendar-portlet> element below provides its own UI.) --%>
 <rs:aggregatedResources path="skin-shared.xml"/>
@@ -43,9 +34,6 @@
             events-url='<portlet:resourceURL id="START-DAYS"/>'
             start-date='<fmt:formatDate value="${model.startDate}" type="date" pattern="MM/dd/yyyy" timeZone="${ model.timezone }"/>'
             days="${ model.days }"
-            show-date-picker="${ model.showDatePicker }"
-            show-date-picker-url="${ showDatePickerURL }"
-            hide-date-picker-url="${ hideDatePickerURL }"
             view-more-events-url="<portlet:renderURL windowState='maximized'/>">
             <script type="application/json" class="upcal-i18n">
             {
@@ -53,9 +41,6 @@
                 "day": "<spring:message code='day' javaScriptEscape='true'/>",
                 "week": "<spring:message code='week' javaScriptEscape='true'/>",
                 "month": "<spring:message code='month' javaScriptEscape='true'/>",
-                "datePicker": "<spring:message code='date.picker' javaScriptEscape='true'/>",
-                "show": "<spring:message code='show' javaScriptEscape='true'/>",
-                "hide": "<spring:message code='hide' javaScriptEscape='true'/>",
                 "loading": "<spring:message code='loading' javaScriptEscape='true'/>",
                 "noEvents": "<spring:message code='no.events' javaScriptEscape='true'/>",
                 "allDay": "<spring:message code='all.day' javaScriptEscape='true'/>",

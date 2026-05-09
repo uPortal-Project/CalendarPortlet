@@ -27,15 +27,20 @@
  * Configuration: server-rendered URLs and date come in via attributes; i18n
  * strings come in via a single <script type="application/json"> child so
  * Spring's javaScriptEscape="true" handles each value cleanly.
+ *
+ * Layout (no show/hide datepicker toggle; the input is always visible):
+ *   - Day/Week/Month range buttons
+ *   - <input type="date"> for date selection (browser provides the
+ *     calendar-grid popup on click)
+ *   - <h4> month label naming what's being shown (e.g. "May 2026")
+ *   - Events list / loading / errors
+ *   - "View more events" link
  */
 class CalendarPortlet extends HTMLElement {
     #days = 7;
     #startDate = null;
     #eventsUrl = null;
-    #showDatePickerUrl = null;
-    #hideDatePickerUrl = null;
     #viewMoreEventsUrl = null;
-    #showDatePicker = false;
     #i18n = {};
     #lastFetched = { keys: [], dateMap: {}, dateNames: {} };
 
@@ -43,10 +48,7 @@ class CalendarPortlet extends HTMLElement {
         this.#days = parseInt(this.getAttribute("days") || "7", 10);
         this.#startDate = this.getAttribute("start-date");
         this.#eventsUrl = this.getAttribute("events-url");
-        this.#showDatePickerUrl = this.getAttribute("show-date-picker-url");
-        this.#hideDatePickerUrl = this.getAttribute("hide-date-picker-url");
         this.#viewMoreEventsUrl = this.getAttribute("view-more-events-url");
-        this.#showDatePicker = this.getAttribute("show-date-picker") === "true";
 
         const i18nNode = this.querySelector('script[type="application/json"].upcal-i18n');
         if (i18nNode) {
@@ -60,6 +62,7 @@ class CalendarPortlet extends HTMLElement {
 
         this.#renderShell();
         this.#attachListeners();
+        this.#updateMonthLabel();
         this.#fetchEvents();
     }
 
@@ -67,36 +70,24 @@ class CalendarPortlet extends HTMLElement {
         const t = this.#i18n;
         this.innerHTML = `
             <div class="upcal-event-view">
-                <div class="row">
+                <div class="row upcal-range">
                     <div class="col-md-12">
-                        <div class="row upcal-range">
-                            <div class="col-md-6">
-                                <h5>${this.#esc(t.view ?? "View")}</h5>
-                                <div class="btn-group" role="group">
-                                    <button type="button" data-days="1" class="btn btn-secondary upcal-range-day${this.#days === 1 ? " active" : ""}">${this.#esc(t.day ?? "Day")}</button>
-                                    <button type="button" data-days="7" class="btn btn-secondary upcal-range-day${this.#days === 7 ? " active" : ""}">${this.#esc(t.week ?? "Week")}</button>
-                                    <button type="button" data-days="31" class="btn btn-secondary upcal-range-day${this.#days === 31 ? " active" : ""}">${this.#esc(t.month ?? "Month")}</button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h5 class="text-end">${this.#esc(t.datePicker ?? "Date Picker")}</h5>
-                                <div class="btn-group float-end" role="group">
-                                    <button type="button" data-show="true" class="btn btn-secondary upcal-range-datepicker${this.#showDatePicker ? " active" : ""}">${this.#esc(t.show ?? "Show")}</button>
-                                    <button type="button" data-show="false" class="btn btn-secondary upcal-range-datepicker${!this.#showDatePicker ? " active" : ""}">${this.#esc(t.hide ?? "Hide")}</button>
-                                </div>
-                            </div>
+                        <h5>${this.#esc(t.view ?? "View")}</h5>
+                        <div class="btn-group" role="group">
+                            <button type="button" data-days="1" class="btn btn-secondary upcal-range-day${this.#days === 1 ? " active" : ""}">${this.#esc(t.day ?? "Day")}</button>
+                            <button type="button" data-days="7" class="btn btn-secondary upcal-range-day${this.#days === 7 ? " active" : ""}">${this.#esc(t.week ?? "Week")}</button>
+                            <button type="button" data-days="31" class="btn btn-secondary upcal-range-day${this.#days === 31 ? " active" : ""}">${this.#esc(t.month ?? "Month")}</button>
                         </div>
                     </div>
                 </div>
-                <div class="row upcal-inline-calendar-row" style="display:${this.#showDatePicker ? "" : "none"}">
+                <div class="row upcal-date-row">
                     <div class="col-md-12">
-                        <div class="upcal-inline-calendar">
-                            <input type="date" class="form-control upcal-date-input" value="${this.#esc(this.#dateInputValue())}">
-                        </div>
+                        <input type="date" class="form-control upcal-date-input" value="${this.#esc(this.#dateInputValue())}">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
+                        <h4 class="upcal-month-label"></h4>
                         <div class="upcal-loading-message">
                             <p class="text-center"><i class="fa fa-spinner fa-spin"></i> ${this.#esc(t.loading ?? "Loading...")}</p>
                         </div>
@@ -138,24 +129,6 @@ class CalendarPortlet extends HTMLElement {
             });
         });
 
-        this.querySelectorAll(".upcal-range-datepicker").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const show = btn.dataset.show === "true";
-                this.querySelectorAll(".upcal-range-datepicker").forEach((b) => b.classList.remove("active"));
-                btn.classList.add("active");
-                this.#showDatePicker = show;
-                const calRow = this.querySelector(".upcal-inline-calendar-row");
-                if (calRow) calRow.style.display = show ? "" : "none";
-
-                const url = show ? this.#showDatePickerUrl : this.#hideDatePickerUrl;
-                if (url) {
-                    fetch(url, { method: "POST" }).catch((err) =>
-                        console.warn("calendar-portlet: failed to persist date-picker preference", err)
-                    );
-                }
-            });
-        });
-
         const dateInput = this.querySelector(".upcal-date-input");
         if (dateInput) {
             dateInput.addEventListener("change", (ev) => {
@@ -163,6 +136,7 @@ class CalendarPortlet extends HTMLElement {
                 if (!value) return;
                 const [y, m, d] = value.split("-");
                 this.#startDate = `${m}/${d}/${y}`;
+                this.#updateMonthLabel();
                 this.#fetchEvents();
             });
         }
@@ -174,6 +148,37 @@ class CalendarPortlet extends HTMLElement {
                 this.#showListView();
             });
         }
+    }
+
+    #updateMonthLabel() {
+        const label = this.querySelector(".upcal-month-label");
+        if (!label) return;
+        const date = this.#parseStartDate();
+        if (!date) {
+            label.textContent = "";
+            return;
+        }
+        const locale =
+            document.documentElement.getAttribute("lang") ||
+            navigator.language ||
+            "en";
+        try {
+            label.textContent = new Intl.DateTimeFormat(locale, {
+                month: "long",
+                year: "numeric",
+            }).format(date);
+        } catch {
+            label.textContent = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        }
+    }
+
+    #parseStartDate() {
+        if (!this.#startDate) return null;
+        const parts = this.#startDate.split("/");
+        if (parts.length !== 3) return null;
+        const [m, d, y] = parts.map(Number);
+        if (!m || !d || !y) return null;
+        return new Date(y, m - 1, d);
     }
 
     async #fetchEvents() {
@@ -376,11 +381,12 @@ class CalendarPortlet extends HTMLElement {
     }
 
     #dateInputValue() {
-        if (!this.#startDate) return "";
-        const parts = this.#startDate.split("/");
-        if (parts.length !== 3) return "";
-        const [m, d, y] = parts;
-        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+        const date = this.#parseStartDate();
+        if (!date) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
     }
 
     #esc(str) {
