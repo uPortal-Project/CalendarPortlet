@@ -32,8 +32,8 @@
  *   - Day/Week/Month range buttons
  *   - <input type="date"> for date selection (browser provides the
  *     calendar-grid popup on click)
- *   - <h4> month label naming what's being shown (e.g. "May 2026")
- *   - Events list / loading / errors
+ *   - Events list / loading / errors -- each day row carries its own
+ *     "Saturday, May 9" heading, so no separate month label is needed.
  *   - "View more events" link
  */
 class CalendarPortlet extends HTMLElement {
@@ -62,7 +62,6 @@ class CalendarPortlet extends HTMLElement {
 
         this.#renderShell();
         this.#attachListeners();
-        this.#updateMonthLabel();
         this.#fetchEvents();
     }
 
@@ -87,7 +86,6 @@ class CalendarPortlet extends HTMLElement {
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <h4 class="upcal-month-label"></h4>
                         <div class="upcal-loading-message">
                             <p class="text-center"><i class="fa fa-spinner fa-spin"></i> ${this.#esc(t.loading ?? "Loading...")}</p>
                         </div>
@@ -136,7 +134,6 @@ class CalendarPortlet extends HTMLElement {
                 if (!value) return;
                 const [y, m, d] = value.split("-");
                 this.#startDate = `${m}/${d}/${y}`;
-                this.#updateMonthLabel();
                 this.#fetchEvents();
             });
         }
@@ -147,28 +144,6 @@ class CalendarPortlet extends HTMLElement {
                 ev.preventDefault();
                 this.#showListView();
             });
-        }
-    }
-
-    #updateMonthLabel() {
-        const label = this.querySelector(".upcal-month-label");
-        if (!label) return;
-        const date = this.#parseStartDate();
-        if (!date) {
-            label.textContent = "";
-            return;
-        }
-        const locale =
-            document.documentElement.getAttribute("lang") ||
-            navigator.language ||
-            "en";
-        try {
-            label.textContent = new Intl.DateTimeFormat(locale, {
-                month: "long",
-                year: "numeric",
-            }).format(date);
-        } catch {
-            label.textContent = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
         }
     }
 
