@@ -25,11 +25,25 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- Jackson ObjectMapper with JodaModule registered so org.joda.time
+         types (CalendarDisplayEvent.dayStart, dayEnd, etc.) serialize to
+         JSON instead of failing with InvalidDefinitionException. The
+         default ObjectMapper Spring would otherwise hand the JSON view
+         has no Joda support out of the box. -->
+    <bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+        <property name="modules">
+            <list>
+                <bean class="com.fasterxml.jackson.datatype.joda.JodaModule"/>
+            </list>
+        </property>
+    </bean>
+
     <!-- JSON data view -->
-    <bean name="json" 
+    <bean name="json"
         class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"
           p:contentType="application/json"
-          p:disableCaching="false"/>
+          p:disableCaching="false"
+          p:objectMapper-ref="jacksonObjectMapper"/>
 
     <!-- Empty view -->
     <bean name="empty" 
