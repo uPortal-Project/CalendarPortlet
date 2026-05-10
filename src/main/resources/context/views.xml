@@ -25,11 +25,23 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- Jackson ObjectMapper with JodaModule registered so org.joda.time
+         types (CalendarDisplayEvent.dayStart, dayEnd, etc.) serialize to
+         JSON instead of failing with InvalidDefinitionException. We use
+         Spring's Jackson2ObjectMapperFactoryBean (the plain ObjectMapper
+         has no `modules` setter) and let the SPI service loader pick up
+         every Jackson module on the classpath. jackson-datatype-joda
+         registers itself this way, so adding the dep is enough. -->
+    <bean id="jacksonObjectMapper"
+          class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"
+          p:findModulesViaServiceLoader="true"/>
+
     <!-- JSON data view -->
-    <bean name="json" 
+    <bean name="json"
         class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"
           p:contentType="application/json"
-          p:disableCaching="false"/>
+          p:disableCaching="false"
+          p:objectMapper-ref="jacksonObjectMapper"/>
 
     <!-- Empty view -->
     <bean name="empty" 
