@@ -24,8 +24,7 @@
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<%-- skin/CSS bundle (the JS/Backbone init from scripts.jsp is intentionally
-     omitted; the <calendar-portlet> element below provides its own UI.) --%>
+<%-- skin/CSS bundle (Bootstrap, FontAwesome, calendar.css). --%>
 <rs:aggregatedResources path="skin-shared.xml"/>
 
 <div id="${n}container" class="${n}upcal-miniview upcal-portlet upcal-narrowview">
