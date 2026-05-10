@@ -21,42 +21,12 @@
 <%@ taglib prefix="editPreferences" tagdir="/WEB-INF/tags/edit-preferences" %>
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
-<jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
 
-<script type="text/javascript">
-    ${n}.jQuery(function() {
-        var $ = ${n}.jQuery;
-        var _ = ${n}._;
-        var Backbone = ${n}.Backbone;
-        var upcal = ${n}.upcal;
-
-        var RoleParamView = Backbone.View.extend({
-            initialize: function() {
-                this.render();
-            },
-            render: function( ){
-                // Compile the template using underscore. Pass our template
-                // settings explicitly — see scripts.jsp for why.
-                var template = _.template( $("#${n}roleParamTemplate").html(), ${n}.upcalTemplateSettings );
-                // Load the compiled HTML into the Backbone "el"
-                this.$el.html( template );
-            }
-        });
-
-        $("#${n}parameters .role-params").delegate("a.delete-parameter-value-link", "click", function() {
-            var link = this;
-            $(link).parent().remove();
-        });
-
-        $("#${n}parameters .role-params a.add-parameter-value-link").click(function() {
-            var link = this;
-            var roleParamView = new RoleParamView();
-//            console.log(roleParamView);
-            $(link).before(roleParamView.$el);
-        });
-
-    });
-</script>
+<%-- skin/CSS bundle. The legacy scripts.jsp include (which set up the
+     up.jQuery / up._ / up.Backbone globals and a Backbone view for the
+     role-params row) has been replaced below by a vanilla <template>
+     element + addEventListener logic. --%>
+<rs:aggregatedResources path="skin-shared.xml"/>
 
 <div class="container-fluid" role="section">
     <div class="row">
@@ -123,11 +93,40 @@
 </div>
 
 
-<script id="${n}roleParamTemplate" type="text/template">
-    <div class="col-md-3">
-        <input name="role" type="text" class="form-control"/>
+<template id="${n}roleParamTemplate">
+    <div class="role-param-row">
+        <div class="col-md-3">
+            <input name="role" type="text" class="form-control"/>
+        </div>
+        <div class="col-md-3">
+            <a class="delete-parameter-value-link" href="javascript:void(0)"><spring:message code="remove.role"/></a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove.role"/></a>
-    </div>
+</template>
+
+<script>
+(function () {
+    var ns = "${n}";
+    var template = document.getElementById(ns + "roleParamTemplate");
+    var paramsForm = document.getElementById(ns + "parameters");
+    if (!template || !paramsForm) {
+        return;
+    }
+
+    paramsForm.querySelectorAll(".role-params a.add-parameter-value-link").forEach(function (addLink) {
+        addLink.addEventListener("click", function (ev) {
+            ev.preventDefault();
+            var clone = template.content.cloneNode(true);
+            addLink.parentNode.insertBefore(clone, addLink);
+        });
+    });
+
+    paramsForm.addEventListener("click", function (ev) {
+        var deleteLink = ev.target.closest("a.delete-parameter-value-link");
+        if (!deleteLink) return;
+        ev.preventDefault();
+        var row = deleteLink.closest(".role-param-row");
+        if (row) row.remove();
+    });
+})();
 </script>
