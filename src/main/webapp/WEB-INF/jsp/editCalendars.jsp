@@ -21,7 +21,13 @@
 <jsp:directive.include file="/WEB-INF/jsp/include.jsp"/>
 <c:set var="n"><portlet:namespace/></c:set>
 <jsp:directive.include file="/WEB-INF/jsp/css.jsp"/>
-<jsp:directive.include file="/WEB-INF/jsp/scripts.jsp"/>
+
+<%-- skin/CSS bundle. The legacy scripts.jsp include (which set up
+     up.jQuery / up._ / up.Backbone globals) is no longer needed -- this
+     view's only client-side behavior was a one-line jQuery slideDown for
+     the "preferences saved" confirmation, replaced below by a plain
+     conditional JSP render. --%>
+<rs:aggregatedResources path="skin-shared.xml"/>
 
 <portlet:renderURL portletMode="view" var="returnUrl"/>
 
@@ -165,14 +171,16 @@
     <div class="row">
         <c:if test="${model.timezoneReadOnly == false}">
             <h4><spring:message code="preferences"/></h4>
-            <div id="${n}calendar-submission-success" class="col=md-12" style="display: none;">
-                <p>
-                    <spring:message code="your.preferences.have.been.saved.successfully"/>
-                    <a href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar"/>">
-                        <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
-                    </a>
-                </p>
-            </div>
+            <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
+                <div class="col-md-12">
+                    <p>
+                        <spring:message code="your.preferences.have.been.saved.successfully"/>
+                        <a href="<portlet:renderURL portletMode="view"/>" title="<spring:message code="return.to.calendar"/>">
+                            <i class="fa fa-arrow-left"></i> <spring:message code="return.to.calendar"/>
+                        </a>
+                    </p>
+                </div>
+            </c:if>
             <portlet:actionURL var="postUrl"><portlet:param name="action" value="editPreferences"/></portlet:actionURL>
             <form:form name="calendar" commandName="calendarPreferencesCommand" action="${postUrl}" class="form-horizontal" role="form">
                 <div class="form-group">
@@ -194,15 +202,5 @@
             </form:form>
         </c:if>
     </div>
-
-    <c:if test="${renderRequest.parameterMap['preferencesSaved'][0] == 'true'}">
-
-        <script type="text/javascript">
-        ${n}.jQuery(function() {
-            var $ = ${n}.jQuery;
-            $("#${n}calendar-submission-success").slideDown("slow");
-        });
-        </script>
-    </c:if>
 
 </div>
