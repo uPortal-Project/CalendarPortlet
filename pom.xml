@@ -83,7 +83,7 @@
         <servlet-api.version>4.0.1</servlet-api.version>
         <spring.version>4.3.30.RELEASE</spring.version>
         <spring-ws.version>2.4.7.RELEASE</spring-ws.version>
-        <uportal-libs.version>5.17.3</uportal-libs.version>
+        <uportal-libs.version>5.17.5</uportal-libs.version>
         <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
         <mockito.version>5.8.0</mockito.version>
         <bouncycastle.version>1.84</bouncycastle.version>
