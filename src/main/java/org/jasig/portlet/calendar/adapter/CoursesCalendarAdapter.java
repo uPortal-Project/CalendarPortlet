@@ -60,6 +60,7 @@ import org.jasig.portlet.courses.model.xml.TermList;
 import org.jasig.portlet.courses.model.xml.personal.Course;
 import org.jasig.portlet.courses.model.xml.personal.CoursesByTerm;
 import org.joda.time.Interval;
+import org.joda.time.LocalTime;
 
 /**
  * Implementation of {@link org.jasig.portlet.calendar.adapter.ICalendarAdapter} that creates a
@@ -163,8 +164,8 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
       // and interval starting Fri 10/31 (meaning 10/31 12:00am) works as expected.
 
       // Determine if the interval overlaps any terms.
-      if (interval.getStart().isBefore(term.getEnd().getTimeInMillis())
-          && interval.getEnd().isAfter(term.getStart().getTimeInMillis())) {
+      if (interval.getStart().isBefore(term.getEnd().getMillis())
+          && interval.getEnd().isAfter(term.getStart().getMillis())) {
 
         Calendar calendar = retrieveCourseCalendar(request, interval, calendarConfiguration, term);
         Set<VEvent> events = contentProcessor.getEvents(interval, calendar);
@@ -221,8 +222,8 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     calendar.getProperties().add(Version.VERSION_2_0);
     calendar.getProperties().add(CalScale.GREGORIAN);
 
-    java.util.Calendar termStartDate = term.getStart();
-    java.util.Calendar termEndDate = term.getEnd();
+    java.util.Calendar termStartDate = term.getStart() != null ? term.getStart().toGregorianCalendar() : null;
+    java.util.Calendar termEndDate = term.getEnd() != null ? term.getEnd().toGregorianCalendar() : null;
 
     CoursesByTerm coursesByTerm = courseDao.getCoursesByTerm(request, term.getCode());
     if (coursesByTerm == null) {
@@ -361,7 +362,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
   private TimeZone selectTimeZone(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
     java.util.TimeZone jdkTz = null;
     if (courseMeeting.getStartDate() != null) {
-      jdkTz = courseMeeting.getStartDate().getTimeZone();
+      jdkTz = courseMeeting.getStartDate().getZone().toTimeZone();
     } else if (termStartDate != null) {
       jdkTz = termStartDate.getTimeZone();
     } else {
@@ -393,7 +394,8 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     log.trace("Examining courseMeeting=" + courseMeeting);
 
-    java.util.Calendar cmStartDate = courseMeeting.getStartDate();
+    java.util.Calendar cmStartDate = courseMeeting.getStartDate() != null
+        ? courseMeeting.getStartDate().toGregorianCalendar() : null;
     log.trace("cmStartDate=" + cmStartDate);
     java.util.Calendar candidateStartDate =
         cmStartDate != null && !cmStartDate.getTime().before(termStartDate.getTime())
@@ -426,7 +428,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
       }
     }
 
-    java.util.Calendar meetingStartTime = courseMeeting.getStartTime().toGregorianCalendar();
+    java.util.Calendar meetingStartTime = localTimeToCalendar(courseMeeting.getStartTime());
     java.util.Calendar rslt = combineDateAndTime(actualStartDate, meetingStartTime);
 
     return rslt;
@@ -435,17 +437,32 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
   // For recurring events end date date is the event end time on the event start date.
   private java.util.Calendar calculateFirstMeetingEndTime(
       java.util.Calendar firstMeetingStartTime, CourseMeeting courseMeeting) {
-    java.util.Calendar meetingEndTime = courseMeeting.getEndTime().toGregorianCalendar();
+    java.util.Calendar meetingEndTime = localTimeToCalendar(courseMeeting.getEndTime());
     return combineDateAndTime(firstMeetingStartTime, meetingEndTime);
   }
 
   // End date is the end date specified in the meeting or the term end date.
   private java.util.Calendar calculateRecurrenceEndDate(
       CourseMeeting courseMeeting, java.util.Calendar termDate) {
-    java.util.Calendar meetingDate = courseMeeting.getEndDate();
-    java.util.Calendar meetingTime = courseMeeting.getEndTime().toGregorianCalendar();
+    java.util.Calendar meetingDate = courseMeeting.getEndDate() != null
+        ? courseMeeting.getEndDate().toGregorianCalendar() : null;
+    java.util.Calendar meetingTime = localTimeToCalendar(courseMeeting.getEndTime());
 
     java.util.Calendar endDate = meetingDate != null ? meetingDate : termDate;
     return combineDateAndTime(endDate, meetingTime);
+  }
+
+  /**
+   * Convert a Joda {@link LocalTime} to a {@link java.util.Calendar} with only the time-of-day
+   * fields populated (date fields default to epoch).
+   */
+  private java.util.Calendar localTimeToCalendar(LocalTime localTime) {
+    java.util.Calendar cal = java.util.Calendar.getInstance();
+    cal.clear();
+    cal.set(java.util.Calendar.HOUR_OF_DAY, localTime.getHourOfDay());
+    cal.set(java.util.Calendar.MINUTE, localTime.getMinuteOfHour());
+    cal.set(java.util.Calendar.SECOND, localTime.getSecondOfMinute());
+    cal.set(java.util.Calendar.MILLISECOND, localTime.getMillisOfSecond());
+    return cal;
   }
 }
