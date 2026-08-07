@@ -127,7 +127,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
     // define a DateFormat object that uniquely identifies dates in a way
     // that can easily be ordered
     DateTimeFormatter orderableDf =
-        new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter().withZone(tz);
+        new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter().withZone(tz).withLocale(request.getLocale());
 
     // define a DateFormat object that can produce user-facing display
     // as user-facing get it from i18N
@@ -136,7 +136,7 @@ public class AjaxCalendarController implements ApplicationContextAware {
             "date.formatter.display", null, "EEE MMM d", request.getLocale());
     // names for dates
     DateTimeFormatter displayDf =
-        new DateTimeFormatterBuilder().appendPattern(displayPattern).toFormatter().withZone(tz);
+        new DateTimeFormatterBuilder().appendPattern(displayPattern).toFormatter().withZone(tz).withLocale(request.getLocale());
 
     // define "today" and "tomorrow" so we can display these specially in the user interface
     DateMidnight now = new DateMidnight(tz);
