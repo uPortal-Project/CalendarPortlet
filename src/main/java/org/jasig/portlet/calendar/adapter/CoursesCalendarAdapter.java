@@ -18,13 +18,12 @@
  */
 package org.jasig.portlet.calendar.adapter;
 
-import java.net.SocketException;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.TimeZone;
@@ -32,7 +31,6 @@ import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStamp;
@@ -41,8 +39,10 @@ import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Summary;
-import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.util.UidGenerator;
+import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
+import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
+import net.fortuna.ical4j.transform.recurrence.Frequency;
+import net.fortuna.ical4j.util.RandomUidGenerator;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
@@ -81,14 +81,10 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
   private ICacheKeyGenerator cacheKeyGenerator = new RequestAttributeCacheKeyGeneratorImpl();
   private IContentProcessor contentProcessor = new ICalendarContentProcessorImpl();
   private String cacheKeyPrefix = "courseDao";
-  private final UidGenerator uidGenerator;
+  private final RandomUidGenerator uidGenerator;
 
   public CoursesCalendarAdapter() {
-    try {
-      this.uidGenerator = new UidGenerator("uidGen");
-    } catch (SocketException e) {
-      throw new RuntimeException("Failed to create UidGenerator", e);
-    }
+    this.uidGenerator = new RandomUidGenerator();
   }
 
   /** Map dayCode strings from courses-portlet-api to iCal4j WeekDay objects. */
@@ -219,8 +215,8 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     Calendar calendar = new Calendar();
     calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
-    calendar.getProperties().add(Version.VERSION_2_0);
-    calendar.getProperties().add(CalScale.GREGORIAN);
+    calendar.getProperties().add(ImmutableVersion.VERSION_2_0);
+    calendar.getProperties().add(ImmutableCalScale.GREGORIAN);
 
     java.util.Calendar termStartDate = term.getStart() != null ? term.getStart().toGregorianCalendar() : null;
     java.util.Calendar termEndDate = term.getEnd() != null ? term.getEnd().toGregorianCalendar() : null;
@@ -310,17 +306,9 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     // Currently assuming you always have at least one day of week specified; e.g. no course
     // meeting with start/end date and time specified but not day of week
 
-    DateTime eventStart = new DateTime();
-    eventStart.setTime(firstMeetingStartTime.getTimeInMillis());
-    eventStart.setTimeZone(tz);
-
-    DateTime eventEnd = new DateTime();
-    eventEnd.setTime(firstMeetingEndTime.getTimeInMillis());
-    eventStart.setTimeZone(tz);
-
-    DateTime recurUntil = new DateTime();
-    recurUntil.setTime(recurrenceEndDate.getTimeInMillis());
-    eventStart.setTimeZone(tz);
+    Instant eventStart = Instant.ofEpochMilli(firstMeetingStartTime.getTimeInMillis());
+    Instant eventEnd = Instant.ofEpochMilli(firstMeetingEndTime.getTimeInMillis());
+    Instant recurUntil = Instant.ofEpochMilli(recurrenceEndDate.getTimeInMillis());
 
     // create a property list representing the event
     PropertyList props = new PropertyList();
@@ -342,7 +330,10 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
     List<String> courseDays = courseMeeting.getDayIds();
     if (courseDays != null && courseDays.size() > 0) {
-      Recur recur = new Recur(Recur.WEEKLY, recurUntil);
+      Recur recur = new Recur.Builder()
+          .frequency(Frequency.WEEKLY)
+          .until(recurUntil)
+          .build();
       for (String dayOfWeek : courseDays) {
         WeekDay day = DAYS.valueOf(dayOfWeek).getIcalWeekDay();
         if (day != null) {
