@@ -75,9 +75,11 @@ public class JsonCalendarEventTest {
             "Test Event");
     Interval eventInterval = new Interval(start, end);
 
+    int calendarIndex=0;
+
     DateMidnight dateStart = new DateMidnight(date, tz);
     Interval day = new Interval(dateStart, dateStart.plusDays(1));
-    CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
+    CalendarDisplayEvent json = new CalendarDisplayEvent(event, eventInterval, day, df, tf, calendarIndex);
     assertEquals("4:00 AM", json.getDateStartTime());
     assertEquals("12:00 AM", json.getDateEndTime());
     assertEquals("Monday January 3", json.getStartDate());
@@ -88,14 +90,14 @@ public class JsonCalendarEventTest {
     assertFalse(json.isAllDay());
 
     day = new Interval(dateStart.plusDays(1), dateStart.plusDays(2));
-    json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
+    json = new CalendarDisplayEvent(event, eventInterval, day, df, tf, calendarIndex);
     assertEquals("12:00 AM", json.getDateStartTime());
     assertEquals("12:00 AM", json.getDateEndTime());
     assertTrue(json.isMultiDay());
     assertTrue(json.isAllDay());
 
     day = new Interval(dateStart.plusDays(2), dateStart.plusDays(3));
-    json = new CalendarDisplayEvent(event, eventInterval, day, df, tf);
+    json = new CalendarDisplayEvent(event, eventInterval, day, df, tf, calendarIndex);
     assertEquals("12:00 AM", json.getDateStartTime());
     assertEquals("4:00 AM", json.getDateEndTime());
     assertTrue(json.isMultiDay());
