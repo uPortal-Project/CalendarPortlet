@@ -97,6 +97,7 @@ public class CalendarHelper implements ApplicationContextAware {
     DateTimeZone tz = DateTimeZone.forID(timezone);
     Set<CalendarDisplayEvent> events = new TreeSet<CalendarDisplayEvent>();
 
+    int calendarIndex=0; //to keep the color of the calendar consistent with the order in the main controller
     for (CalendarConfiguration callisting : calendars) {
       // don't bother to fetch hidden calendars
       if (hiddenCalendars.get(callisting.getId()) == null) {
@@ -105,7 +106,7 @@ public class CalendarHelper implements ApplicationContextAware {
           ICalendarAdapter adapter =
               (ICalendarAdapter)
                   applicationContext.getBean(callisting.getCalendarDefinition().getClassName());
-          events.addAll(calendarEventsDao.getEvents(adapter, callisting, interval, request, tz));
+          events.addAll(calendarEventsDao.getEvents(adapter, callisting, interval, request, tz, calendarIndex));
         } catch (NoSuchBeanDefinitionException ex) {
           log.error("Calendar class instance could not be found: " + ex.getMessage());
         } catch (UserFeedbackCalendarException sce) {
@@ -123,6 +124,7 @@ public class CalendarHelper implements ApplicationContextAware {
                   + "\" is currently unavailable.");
         }
       }
+      calendarIndex++;
     }
     return events;
   }

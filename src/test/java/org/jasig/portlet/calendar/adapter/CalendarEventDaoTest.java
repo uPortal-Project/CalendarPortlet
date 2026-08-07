@@ -109,7 +109,9 @@ public class CalendarEventDaoTest {
     DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
     Interval interval = new Interval(intervalStart, intervalStop);
 
-    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+    int calendarIndex=0;
+
+    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz,calendarIndex);
 
     assertEquals(1, events.size());
   }
@@ -134,7 +136,9 @@ public class CalendarEventDaoTest {
     DateMidnight intervalStop = new DateMidnight(2012, 1, 31, tz);
     Interval interval = new Interval(intervalStart, intervalStop);
 
-    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+    int calendarIndex=0;
+
+    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex);
 
     assertEquals(1, events.size());
   }
@@ -155,7 +159,9 @@ public class CalendarEventDaoTest {
     DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
     Interval interval = new Interval(intervalStart, intervalStop);
 
-    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+    int calendarIndex=0;
+
+    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex);
 
     assertEquals(2, events.size());
   }
@@ -174,7 +180,9 @@ public class CalendarEventDaoTest {
     DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
     Interval interval = new Interval(intervalStart, intervalStop);
 
-    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+    int calendarIndex=0;
+
+    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex);
 
     assertEquals(1, events.size());
   }
@@ -193,7 +201,9 @@ public class CalendarEventDaoTest {
     DateMidnight intervalStop = new DateMidnight(2012, 1, 5, tz);
     Interval interval = new Interval(intervalStart, intervalStop);
 
-    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz);
+    int calendarIndex=0;
+
+    Set<CalendarDisplayEvent> events = eventDao.getDisplayEvents(event, interval, Locale.US, tz, calendarIndex);
 
     assertEquals(1, events.size());
   }
