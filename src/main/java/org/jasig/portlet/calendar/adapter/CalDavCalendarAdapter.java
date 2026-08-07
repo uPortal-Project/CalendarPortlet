@@ -19,15 +19,16 @@
 package org.jasig.portlet.calendar.adapter;
 
 import java.net.URL;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.IdentityHashMap;
 import java.util.Set;
 import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -212,10 +213,10 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
     Period period =
         new Period(
-            new net.fortuna.ical4j.model.DateTime(interval.getStartMillis()),
-            new net.fortuna.ical4j.model.DateTime(interval.getEndMillis()));
+            Instant.ofEpochMilli(interval.getStartMillis()).atZone(ZoneOffset.UTC),
+            Instant.ofEpochMilli(interval.getEndMillis()).atZone(ZoneOffset.UTC));
 
-    Set<VEvent> events = new HashSet<VEvent>();
+    Set<VEvent> events = Collections.newSetFromMap(new IdentityHashMap<>());
 
     // if the calendar is null, return empty set
     if (calendar == null) {
@@ -225,8 +226,7 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
 
     // retrieve the list of events for this calendar within the
     // specified time period
-    for (Iterator<Component> i = calendar.getComponents().iterator(); i.hasNext(); ) {
-      Component component = i.next();
+    for (Component component : calendar.getComponents()) {
       if (component.getName().equals("VEVENT")) {
         VEvent event = (VEvent) component;
         if (log.isTraceEnabled()) {
@@ -234,21 +234,17 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
         }
         // calculate the recurrence set for this event
         // for the specified time period
-        PeriodList periods = event.calculateRecurrenceSet(period);
+        Set<Period> periods = event.calculateRecurrenceSet(period);
 
         // add each recurrence instance to the event list
-        for (Iterator<Period> iter = periods.iterator(); iter.hasNext(); ) {
-          Period eventper = iter.next();
-
-          PropertyList props = event.getProperties();
+        for (Period eventper : periods) {
 
           // create a new property list, setting the date
           // information to this event period
           PropertyList newprops = new PropertyList();
           newprops.add(new DtStart(eventper.getStart()));
           newprops.add(new DtEnd(eventper.getEnd()));
-          for (Iterator<Property> iter2 = props.iterator(); iter2.hasNext(); ) {
-            Property prop = iter2.next();
+          for (Property prop : event.getProperties()) {
 
             // only add non-date-related properties
             if (!(prop instanceof DtStart)
