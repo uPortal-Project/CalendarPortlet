@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Description;
@@ -93,7 +92,7 @@ public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
         // we only want to add this feed if it's in the desired time period
         if (start != null && interval.contains(start.getTime())) {
 
-          props.add(new DtStart(new DateTime(start), true));
+          props.add(new DtStart(start.toInstant(), true));
           props.add(new Summary(entry.getTitle()));
           props.add(new Description(entry.getDescription().getValue()));
 

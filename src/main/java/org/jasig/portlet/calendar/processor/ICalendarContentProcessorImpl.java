@@ -20,9 +20,11 @@ package org.jasig.portlet.calendar.processor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.IdentityHashMap;
 import java.util.Set;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarParserImpl;
@@ -30,7 +32,6 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -38,7 +39,6 @@ import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Duration;
 import net.fortuna.ical4j.model.property.ExDate;
-import net.fortuna.ical4j.model.property.ExRule;
 import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import org.apache.commons.logging.Log;
@@ -66,10 +66,8 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
       return calendar;
 
     } catch (IOException e) {
-      //            log.error("IOException in getEvents", e);
       throw new CalendarException("caught IOException", e);
     } catch (ParserException e) {
-      //            log.error("ParserException in getEvents", e);
       throw new CalendarException("caught ParserException", e);
     }
   }
@@ -88,16 +86,20 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
    * @return
    * @throws CalendarException
    */
-  @SuppressWarnings("unchecked")
   protected final Set<VEvent> convertCalendarToEvents(
       net.fortuna.ical4j.model.Calendar calendar, Interval interval) throws CalendarException {
 
+    // Use ZonedDateTime for the period so that recurrence rules using calendar units
+    // (YEARLY, MONTHLY, etc.) can be expanded correctly. Instant does not support
+    // calendar-based arithmetic like plus(years).
     Period period =
         new Period(
-            new net.fortuna.ical4j.model.DateTime(interval.getStartMillis()),
-            new net.fortuna.ical4j.model.DateTime(interval.getEndMillis()));
+            Instant.ofEpochMilli(interval.getStartMillis()).atZone(ZoneOffset.UTC),
+            Instant.ofEpochMilli(interval.getEndMillis()).atZone(ZoneOffset.UTC));
 
-    Set<VEvent> events = new HashSet<VEvent>();
+    // Use identity-based set because ical4j 4.x VEvent.equals() uses UID equality,
+    // which would collapse recurring event instances that share the same UID.
+    Set<VEvent> events = Collections.newSetFromMap(new IdentityHashMap<>());
 
     // if the calendar is null, return empty set
     if (calendar == null) {
@@ -107,12 +109,11 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
 
     // retrieve the list of events for this calendar within the
     // specified time period
-    for (Iterator<Component> it = calendar.getComponents().iterator(); it.hasNext(); ) {
+    for (Component component : calendar.getComponents()) {
       /*
        * CAP-143:  Log a warning and ignore events that cannot be
        * processed at this stage
        */
-      Component component = it.next();
       try {
         if (component.getName().equals("VEVENT")) {
           VEvent event = (VEvent) component;
@@ -121,56 +122,29 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
           }
           // calculate the recurrence set for this event
           // for the specified time period
-          PeriodList periods = event.calculateRecurrenceSet(period);
+          Set<Period> periods = event.calculateRecurrenceSet(period);
 
           // add each recurrence instance to the event list
-          for (Iterator<Period> iter = periods.iterator(); iter.hasNext(); ) {
-            Period eventper = iter.next();
+          for (Period eventper : periods) {
             if (log.isDebugEnabled()) {
-              log.debug(
-                  "Found time period staring at "
-                      + eventper.getStart().isUtc()
-                      + ", "
-                      + eventper.getStart().getTimeZone()
-                      + ", "
-                      + event.getStartDate().getTimeZone()
-                      + ", "
-                      + event.getStartDate().isUtc());
+              log.debug("Found time period starting at " + eventper.getStart());
             }
-
-            PropertyList props = event.getProperties();
 
             // create a new property list, setting the date
             // information to this event period
             PropertyList newprops = new PropertyList();
-            DtStart start;
-            if (event.getStartDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-              start = new DtStart(new net.fortuna.ical4j.model.DateTime(eventper.getStart()));
-            } else {
-              start = new DtStart(new net.fortuna.ical4j.model.Date(eventper.getStart()));
-            }
-            newprops.add(start);
-            if (event.getEndDate() != null) {
-              DtEnd end;
-              if (event.getEndDate().getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-                end = new DtEnd(new net.fortuna.ical4j.model.DateTime(eventper.getEnd()));
-              } else {
-                end = new DtEnd(new net.fortuna.ical4j.model.Date(eventper.getEnd()));
-              }
-              newprops.add(end);
-            }
-            for (Iterator<Property> iter2 = props.iterator(); iter2.hasNext(); ) {
-              Property prop = iter2.next();
+            newprops = newprops.add(new DtStart(eventper.getStart()));
+            newprops = newprops.add(new DtEnd(eventper.getEnd()));
 
+            for (Property prop : event.getProperties()) {
               // only add non-date-related properties
               if (!(prop instanceof DtStart)
                   && !(prop instanceof DtEnd)
                   && !(prop instanceof Duration)
                   && !(prop instanceof RRule)
                   && !(prop instanceof RDate)
-                  && !(prop instanceof ExRule)
                   && !(prop instanceof ExDate)) {
-                newprops.add(prop);
+                newprops = newprops.add(prop);
               }
             }
 

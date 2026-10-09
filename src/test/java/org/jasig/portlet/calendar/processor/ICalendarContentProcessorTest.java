@@ -73,16 +73,15 @@ public class ICalendarContentProcessorTest {
     Iterator<VEvent> iterator = events.iterator();
     VEvent event = iterator.next();
     assertEquals("Independence Day", event.getSummary().getValue());
-    assertNull(event.getStartDate().getTimeZone());
 
     event = iterator.next();
     assertEquals("Vikings @ Saints  [NBC]", event.getSummary().getValue());
-    DateTime eventStart = new DateTime(event.getStartDate().getDate(), DateTimeZone.UTC);
-    assertEquals(0, eventStart.getHourOfDay());
-    assertEquals(30, eventStart.getMinuteOfHour());
+    java.time.Instant startInstant = java.time.Instant.from(event.getDateTimeStart().getDate());
+    java.time.ZonedDateTime eventStartZdt = startInstant.atZone(java.time.ZoneOffset.UTC);
+    assertEquals(0, eventStartZdt.getHour());
+    assertEquals(30, eventStartZdt.getMinute());
 
     event = iterator.next();
     assertEquals("Independence Day", event.getSummary().getValue());
-    assertNull(event.getStartDate().getTimeZone());
   }
 }

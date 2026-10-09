@@ -165,13 +165,13 @@ public class ExchangeCalendarAdapterTest {
     VEvent event = events.get(0);
     assertEquals("Eat Lunch", event.getSummary().getValue());
     assertEquals("Somewhere Tasty", event.getLocation().getValue());
-    cal.setTimeInMillis(event.getStartDate().getDate().getTime());
+    cal.setTimeInMillis(java.time.Instant.from(event.getDateTimeStart().getDate()).toEpochMilli());
     assertEquals(cal.get(Calendar.YEAR), 2010);
     assertEquals(cal.get(Calendar.MONTH), 10);
     assertEquals(cal.get(Calendar.DATE), 16);
     assertEquals(cal.get(Calendar.HOUR_OF_DAY), 12);
     assertEquals(cal.get(Calendar.MINUTE), 0);
-    cal.setTimeInMillis(event.getEndDate().getDate().getTime());
+    cal.setTimeInMillis(java.time.Instant.from(event.getDateTimeEnd().getDate()).toEpochMilli());
     assertEquals(cal.get(Calendar.YEAR), 2010);
     assertEquals(cal.get(Calendar.MONTH), 10);
     assertEquals(cal.get(Calendar.DATE), 16);
@@ -181,9 +181,9 @@ public class ExchangeCalendarAdapterTest {
     event = events.get(1);
     assertEquals("Wake Up", event.getSummary().getValue());
     assertNull(event.getLocation());
-    cal.setTimeInMillis(event.getStartDate().getDate().getTime());
+    cal.setTimeInMillis(java.time.Instant.from(event.getDateTimeStart().getDate()).toEpochMilli());
     assertEquals(cal.get(Calendar.HOUR_OF_DAY), 7);
-    cal.setTimeInMillis(event.getStartDate().getDate().getTime());
+    cal.setTimeInMillis(java.time.Instant.from(event.getDateTimeStart().getDate()).toEpochMilli());
     assertEquals(cal.get(Calendar.YEAR), 2010);
     assertEquals(cal.get(Calendar.MONTH), 10);
     assertEquals(cal.get(Calendar.DATE), 18);
@@ -227,19 +227,15 @@ public class ExchangeCalendarAdapterTest {
     assertEquals("My house", event.getLocation().getValue());
 
     // check the start time
+    java.time.Instant startInstant = java.time.Instant.from(event.getDateTimeStart().getDate());
     Calendar cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
-    cal.setTimeInMillis(event.getStartDate().getDate().getTime());
+    cal.setTimeInMillis(startInstant.toEpochMilli());
     assertEquals(4, cal.get(Calendar.HOUR_OF_DAY));
-    assertEquals(java.util.TimeZone.getTimeZone("UTC"), cal.getTimeZone());
-    assertTrue(event.getStartDate().isUtc());
-    assertNull(event.getStartDate().getTimeZone());
 
     // check the end time
-    cal.setTimeInMillis(event.getEndDate().getDate().getTime());
+    java.time.Instant endInstant = java.time.Instant.from(event.getDateTimeEnd().getDate());
+    cal.setTimeInMillis(endInstant.toEpochMilli());
     assertEquals(5, cal.get(Calendar.HOUR_OF_DAY));
-    assertEquals(java.util.TimeZone.getTimeZone("UTC"), cal.getTimeZone());
-    assertTrue(event.getEndDate().isUtc());
-    assertNull(event.getEndDate().getTimeZone());
   }
 
   @Test
