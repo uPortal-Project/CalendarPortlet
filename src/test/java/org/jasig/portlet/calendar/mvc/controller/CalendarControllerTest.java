@@ -21,7 +21,7 @@ package org.jasig.portlet.calendar.mvc.controller;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.portlet.PortletRequest;

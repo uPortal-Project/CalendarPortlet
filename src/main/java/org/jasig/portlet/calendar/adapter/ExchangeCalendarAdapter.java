@@ -347,9 +347,7 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
       throws DatatypeConfigurationException {
     DatatypeFactory factory = DatatypeFactory.newInstance();
 
-    // create a new UTC-based DateTime to represent the event start time
-    net.fortuna.ical4j.model.DateTime eventStart = new net.fortuna.ical4j.model.DateTime();
-    eventStart.setUtc(true);
+    // create a new UTC-based Instant to represent the event start time
     Calendar startCal =
         msEvent
             .getStartTime()
@@ -357,11 +355,9 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
                 java.util.TimeZone.getTimeZone(UTC),
                 Locale.getDefault(),
                 factory.newXMLGregorianCalendar());
-    eventStart.setTime(startCal.getTimeInMillis());
+    java.time.Instant eventStart = java.time.Instant.ofEpochMilli(startCal.getTimeInMillis());
 
-    // create a new UTC-based DateTime to represent the event ent time
-    net.fortuna.ical4j.model.DateTime eventEnd = new net.fortuna.ical4j.model.DateTime();
-    eventEnd.setUtc(true);
+    // create a new UTC-based Instant to represent the event end time
     Calendar endCal =
         msEvent
             .getEndTime()
@@ -369,18 +365,18 @@ public class ExchangeCalendarAdapter extends AbstractCalendarAdapter implements 
                 java.util.TimeZone.getTimeZone(UTC),
                 Locale.getDefault(),
                 factory.newXMLGregorianCalendar());
-    eventEnd.setTime(endCal.getTimeInMillis());
+    java.time.Instant eventEnd = java.time.Instant.ofEpochMilli(endCal.getTimeInMillis());
 
     // create a property list representing the new event
     PropertyList newprops = new PropertyList();
-    newprops.add(new Uid(msEvent.getCalendarEventDetails().getID()));
-    newprops.add(new DtStamp());
+    newprops = newprops.add(new Uid(msEvent.getCalendarEventDetails().getID()));
+    newprops = newprops.add(new DtStamp());
 
-    newprops.add(new DtStart(eventStart));
-    newprops.add(new DtEnd(eventEnd));
-    newprops.add(new Summary(msEvent.getCalendarEventDetails().getSubject()));
+    newprops = newprops.add(new DtStart(eventStart));
+    newprops = newprops.add(new DtEnd(eventEnd));
+    newprops = newprops.add(new Summary(msEvent.getCalendarEventDetails().getSubject()));
     if (StringUtils.isNotBlank(msEvent.getCalendarEventDetails().getLocation())) {
-      newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
+      newprops = newprops.add(new Location(msEvent.getCalendarEventDetails().getLocation()));
     }
 
     VEvent event = new VEvent(newprops);
