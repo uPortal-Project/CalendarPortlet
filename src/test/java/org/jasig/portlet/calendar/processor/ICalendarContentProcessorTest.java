@@ -20,6 +20,7 @@ package org.jasig.portlet.calendar.processor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,6 +74,9 @@ public class ICalendarContentProcessorTest {
     Iterator<VEvent> iterator = events.iterator();
     VEvent event = iterator.next();
     assertEquals("Independence Day", event.getSummary().getValue());
+    // All-day (DATE-only) event: in ical4j 4.x the "no timezone" invariant
+    // (previously getStartDate().getTimeZone() == null) is a java.time.LocalDate.
+    assertTrue(event.getDateTimeStart().getDate() instanceof java.time.LocalDate);
 
     event = iterator.next();
     assertEquals("Vikings @ Saints  [NBC]", event.getSummary().getValue());
@@ -83,5 +87,6 @@ public class ICalendarContentProcessorTest {
 
     event = iterator.next();
     assertEquals("Independence Day", event.getSummary().getValue());
+    assertTrue(event.getDateTimeStart().getDate() instanceof java.time.LocalDate);
   }
 }

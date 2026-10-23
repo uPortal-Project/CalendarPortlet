@@ -51,9 +51,11 @@ public class VEventStartComparator implements Comparator<VEvent> {
     int comp = start1.compareTo(start2);
     if (comp != 0) return comp;
 
-    // Same start — compare end dates
-    DtEnd e1 = event1.getDateTimeEnd();
-    DtEnd e2 = event2.getDateTimeEnd();
+    // Same start — compare end dates. getEndDate(true) derives DTEND from DTSTART +
+    // DURATION when the event has no explicit DTEND, so DURATION-only events sort by
+    // their real end rather than as though they had none.
+    DtEnd e1 = event1.getEndDate(true).orElse(null);
+    DtEnd e2 = event2.getEndDate(true).orElse(null);
     Instant end1 = e1 != null ? toInstant(e1.getDate()) : null;
     Instant end2 = e2 != null ? toInstant(e2.getDate()) : null;
 
@@ -79,6 +81,16 @@ public class VEventStartComparator implements Comparator<VEvent> {
     return 0;
   }
 
+  /**
+   * Reduce a temporal to an {@link Instant} for ordering. Floating values (DATE-only or
+   * zoneless DATETIME) have no inherent instant, so they are deliberately anchored at UTC here.
+   *
+   * <p>This differs from {@code CalendarEventsDao}, which anchors floating events in the user's
+   * configured timezone for display placement. That divergence is intentional: this comparator is
+   * a context-free sorting utility with no access to a user or request, so UTC gives a stable,
+   * deterministic total order (and it is consistent within this comparator, anchoring both start
+   * and end the same way). It is not involved in user-facing timezone placement.
+   */
   private static Instant toInstant(Temporal temporal) {
     if (temporal == null) return null;
     if (temporal instanceof Instant) return (Instant) temporal;

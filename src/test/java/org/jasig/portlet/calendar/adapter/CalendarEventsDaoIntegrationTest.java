@@ -189,4 +189,44 @@ public class CalendarEventsDaoIntegrationTest {
     CalendarDisplayEvent event = displayEvents.get(0);
     assertEquals("2:00 PM", event.getStartTime());
   }
+
+  /**
+   * An event may specify DURATION instead of DTEND (RFC 5545 §3.6.1). The end must be derived
+   * from DTSTART + DURATION; otherwise the event collapses to zero length.
+   *
+   * <p>This test exercises {@code getDisplayEvents} with a raw, un-expanded DURATION-only event
+   * (as an adapter such as Exchange/CalDav can supply). The iCalendar content processor rebuilds
+   * events with an explicit DtEnd from the computed recurrence period, so a DURATION-only event
+   * only reaches the end-date handling when it comes straight from an adapter rather than through
+   * recurrence expansion. The event starts at 15:00 UTC with DURATION PT1H, so in UTC it runs
+   * 3:00 PM - 4:00 PM.
+   */
+  @Test
+  public void testGetDurationOnlyEvent() throws IOException, URISyntaxException, ParseException {
+
+    DateTimeZone tz = DateTimeZone.forID("UTC");
+    DateMidnight start = new DateMidnight(2015, 1, 15, tz);
+    Interval interval = new Interval(start, start.plusDays(1));
+
+    // A DURATION-only VEvent: DTSTART 2015-01-15T15:00:00Z, DURATION PT1H, no DTEND.
+    java.time.Instant eventStart = java.time.Instant.parse("2015-01-15T15:00:00Z");
+    net.fortuna.ical4j.model.PropertyList props = new net.fortuna.ical4j.model.PropertyList();
+    props = props.add(new net.fortuna.ical4j.model.property.Uid("dur0001"));
+    props = props.add(new net.fortuna.ical4j.model.property.Summary("Duration Only Event"));
+    props = props.add(new net.fortuna.ical4j.model.property.DtStart<>(eventStart));
+    props = props.add(
+        new net.fortuna.ical4j.model.property.Duration(java.time.Duration.ofHours(1)));
+    VEvent event = new VEvent(props);
+
+    List<CalendarDisplayEvent> displayEvents =
+        new ArrayList<CalendarDisplayEvent>(
+            eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+    Collections.sort(displayEvents);
+
+    assertEquals(1, displayEvents.size());
+    CalendarDisplayEvent displayEvent = displayEvents.get(0);
+    assertEquals("3:00 PM", displayEvent.getStartTime());
+    // The key assertion: the end is derived from DTSTART + DURATION, not collapsed to the start.
+    assertEquals("4:00 PM", displayEvent.getEndTime());
+  }
 }

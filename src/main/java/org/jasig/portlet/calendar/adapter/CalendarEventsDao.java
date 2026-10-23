@@ -226,8 +226,12 @@ public class CalendarEventsDao {
 
     net.fortuna.ical4j.model.property.DtStart dtStart =
         event.getDateTimeStart();
+    // getEndDate(true) derives DTEND from DTSTART + DURATION when the event carries a
+    // DURATION instead of an explicit DTEND (RFC 5545 §3.6.1 allows either). The raw
+    // getDateTimeEnd() accessor returns null for DURATION-only events, which would
+    // collapse them to zero length.
     net.fortuna.ical4j.model.property.DtEnd dtEnd =
-        event.getDateTimeEnd();
+        event.getEndDate(true).orElse(null);
 
     java.time.temporal.Temporal startTemporal = dtStart != null ? dtStart.getDate() : null;
     java.time.temporal.Temporal endTemporal = dtEnd != null ? dtEnd.getDate() : null;
@@ -270,9 +274,13 @@ public class CalendarEventsDao {
             usersConfiguredDateTimeZone);
       }
     } else {
-      // Non-floating event (has timezone or is Instant/ZonedDateTime)
-      long startMillis = startTemporal != null ? toEpochMillis(startTemporal) : 0;
-      long endMillis = endTemporal != null ? toEpochMillis(endTemporal) : 0;
+      // Non-floating event (has timezone or is Instant/ZonedDateTime). Anchor any zoneless
+      // value (e.g. an unresolvable-TZID event ical4j returns as LocalDateTime) on the user's
+      // configured zone rather than the server's default.
+      final java.time.ZoneId userZone =
+          java.time.ZoneId.of(usersConfiguredDateTimeZone.getID());
+      long startMillis = startTemporal != null ? toEpochMillis(startTemporal, userZone) : 0;
+      long endMillis = endTemporal != null ? toEpochMillis(endTemporal, userZone) : 0;
       
       eventStart = new DateTime(startMillis, usersConfiguredDateTimeZone);
       if (endTemporal != null) {
@@ -362,16 +370,22 @@ public class CalendarEventsDao {
 
   /**
    * Convert a java.time.temporal.Temporal to epoch milliseconds for Joda-Time interop.
+   *
+   * <p>{@code Instant} and {@code ZonedDateTime} are absolute, so {@code zone} does not affect
+   * them. For zoneless values ({@code LocalDateTime} / {@code LocalDate}) the supplied {@code zone}
+   * is used to anchor them. This is reachable in the non-floating branch when an event carries a
+   * TZID that ical4j cannot resolve (it then yields a {@code LocalDateTime}); anchoring on the
+   * user's configured zone rather than the server's default keeps the result correct for the user.
    */
-  static long toEpochMillis(java.time.temporal.Temporal temporal) {
+  static long toEpochMillis(java.time.temporal.Temporal temporal, java.time.ZoneId zone) {
     if (temporal instanceof java.time.Instant) {
       return ((java.time.Instant) temporal).toEpochMilli();
     } else if (temporal instanceof java.time.LocalDateTime) {
       return ((java.time.LocalDateTime) temporal)
-          .atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+          .atZone(zone).toInstant().toEpochMilli();
     } else if (temporal instanceof java.time.LocalDate) {
       return ((java.time.LocalDate) temporal)
-          .atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+          .atStartOfDay(zone).toInstant().toEpochMilli();
     } else if (temporal instanceof java.time.ZonedDateTime) {
       return ((java.time.ZonedDateTime) temporal).toInstant().toEpochMilli();
     }

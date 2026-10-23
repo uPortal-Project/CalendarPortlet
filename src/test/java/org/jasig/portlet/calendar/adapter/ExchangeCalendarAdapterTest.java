@@ -227,13 +227,19 @@ public class ExchangeCalendarAdapterTest {
     assertEquals("My house", event.getLocation().getValue());
 
     // check the start time
-    java.time.Instant startInstant = java.time.Instant.from(event.getDateTimeStart().getDate());
+    // In ical4j 4.x the UTC invariant (previously getStartDate().isUtc() /
+    // getTimeZone() == null) is expressed as the temporal being a java.time.Instant.
+    java.time.temporal.Temporal startTemporal = event.getDateTimeStart().getDate();
+    assertTrue(startTemporal instanceof java.time.Instant);
+    java.time.Instant startInstant = java.time.Instant.from(startTemporal);
     Calendar cal = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
     cal.setTimeInMillis(startInstant.toEpochMilli());
     assertEquals(4, cal.get(Calendar.HOUR_OF_DAY));
 
     // check the end time
-    java.time.Instant endInstant = java.time.Instant.from(event.getDateTimeEnd().getDate());
+    java.time.temporal.Temporal endTemporal = event.getDateTimeEnd().getDate();
+    assertTrue(endTemporal instanceof java.time.Instant);
+    java.time.Instant endInstant = java.time.Instant.from(endTemporal);
     cal.setTimeInMillis(endInstant.toEpochMilli());
     assertEquals(5, cal.get(Calendar.HOUR_OF_DAY));
   }

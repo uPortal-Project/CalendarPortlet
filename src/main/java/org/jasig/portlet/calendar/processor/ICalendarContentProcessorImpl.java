@@ -39,6 +39,7 @@ import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Duration;
 import net.fortuna.ical4j.model.property.ExDate;
+import net.fortuna.ical4j.model.property.ExRule;
 import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import org.apache.commons.logging.Log;
@@ -143,6 +144,7 @@ public class ICalendarContentProcessorImpl implements IContentProcessor<Calendar
                   && !(prop instanceof Duration)
                   && !(prop instanceof RRule)
                   && !(prop instanceof RDate)
+                  && !(prop instanceof ExRule)
                   && !(prop instanceof ExDate)) {
                 newprops = newprops.add(prop);
               }
