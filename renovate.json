@@ -23,8 +23,8 @@
     },
     {
       "matchPackagePrefixes": ["org.hibernate:", "org.hibernate.orm:"],
-      "allowedVersions": "< 4.0",
-      "description": "Pinned to Hibernate 3.6.x. Hibernate 4+ needs Spring 5+; Hibernate 6+ additionally requires Jakarta EE and Java 17+."
+      "enabled": false,
+      "description": "Pinned to Hibernate 3.6.x (plain 3.6.10.Final, not the Atlassian fork). Hibernate 4+ needs Spring 5+; Hibernate 6+ additionally requires Jakarta EE and Java 17+. Fully disabled (not just allowedVersions) so that Renovate's org.hibernate -> org.hibernate.orm replacement PRs and -atlassian-N version bumps are also suppressed; the allowedVersions constraint alone does not gate replacement update-types."
     },
     {
       "matchPackageNames": [
