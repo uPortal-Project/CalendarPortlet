@@ -62,17 +62,17 @@
                 days="${ model.days }">
                 <script type="application/json" class="upcal-i18n">
                 {
-                    "view": "<spring:message code='view' javaScriptEscape='true'/>",
-                    "day": "<spring:message code='day' javaScriptEscape='true'/>",
-                    "week": "<spring:message code='week' javaScriptEscape='true'/>",
-                    "month": "<spring:message code='month' javaScriptEscape='true'/>",
-                    "loading": "<spring:message code='loading' javaScriptEscape='true'/>",
-                    "noEvents": "<spring:message code='no.events' javaScriptEscape='true'/>",
-                    "allDay": "<spring:message code='all.day' javaScriptEscape='true'/>",
-                    "location": "<spring:message code='location' javaScriptEscape='true'/>",
+                    "view": "<upcal:jsonMessage code='view'/>",
+                    "day": "<upcal:jsonMessage code='day'/>",
+                    "week": "<upcal:jsonMessage code='week'/>",
+                    "month": "<upcal:jsonMessage code='month'/>",
+                    "loading": "<upcal:jsonMessage code='loading'/>",
+                    "noEvents": "<upcal:jsonMessage code='no.events'/>",
+                    "allDay": "<upcal:jsonMessage code='all.day'/>",
+                    "location": "<upcal:jsonMessage code='location'/>",
                     "description": "Description",
                     "link": "Link",
-                    "returnToCalendar": "<spring:message code='return.to.calendar' javaScriptEscape='true'/>"
+                    "returnToCalendar": "<upcal:jsonMessage code='return.to.calendar'/>"
                 }
                 </script>
             </calendar-portlet>
