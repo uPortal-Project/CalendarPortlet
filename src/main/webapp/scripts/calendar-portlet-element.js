@@ -25,8 +25,8 @@
  * Playwright smoke tests in uPortal-start carry over without changes.
  *
  * Configuration: server-rendered URLs and date come in via attributes; i18n
- * strings come in via a single <script type="application/json"> child so
- * Spring's javaScriptEscape="true" handles each value cleanly.
+ * strings come in via a single <script type="application/json"> child, each
+ * value written by <upcal:jsonMessage> so that it is escaped for JSON.
  *
  * Layout (no show/hide datepicker toggle; the input is always visible):
  *   - Day/Week/Month range buttons

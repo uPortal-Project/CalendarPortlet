@@ -241,6 +241,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <!-- For JsonMessageTag.  The parent manages the version and the scope. -->
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jsp-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jcifs</groupId>
             <artifactId>jcifs</artifactId>
             <version>1.3.17</version>
