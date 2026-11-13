@@ -92,21 +92,21 @@ public class RssContentProcessorImpl implements IContentProcessor<SyndFeed> {
         // we only want to add this feed if it's in the desired time period
         if (start != null && interval.contains(start.getTime())) {
 
-          props.add(new DtStart(start.toInstant(), true));
-          props.add(new Summary(entry.getTitle()));
-          props.add(new Description(entry.getDescription().getValue()));
+          props = props.add(new DtStart(start.toInstant(), true));
+          props = props.add(new Summary(entry.getTitle()));
+          props = props.add(new Description(entry.getDescription().getValue()));
 
           // use the RSS item Guid as the Uid for this event
           String guid = null;
           if (entry instanceof Item && ((Item) entry).getGuid() != null) {
             guid = ((Item) entry).getGuid().getValue();
-            props.add(new Uid(guid));
+            props = props.add(new Uid(guid));
           }
 
           // try to find a link for this event
           if (entry.getLink() != null) {
             try {
-              props.add(new Url(new URI(entry.getLink())));
+              props = props.add(new Url(new URI(entry.getLink())));
             } catch (URISyntaxException e1) {
             }
           }
