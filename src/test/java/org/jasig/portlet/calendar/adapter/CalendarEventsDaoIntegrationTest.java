@@ -19,8 +19,10 @@
 package org.jasig.portlet.calendar.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -28,8 +30,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
+import org.jasig.portlet.calendar.CalendarConfiguration;
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
@@ -39,6 +45,7 @@ import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -188,6 +195,45 @@ public class CalendarEventsDaoIntegrationTest {
 
     CalendarDisplayEvent event = displayEvents.get(0);
     assertEquals("2:00 PM", event.getStartTime());
+  }
+
+  /**
+   * {@code getCalendar} backs the "export calendar" (.ics download) action. In ical4j 4.x the lists
+   * returned by {@code Calendar.getProperties()} and {@code getComponents()} are unmodifiable, so
+   * the calendar must be assembled through the {@code Calendar} API rather than by adding to those
+   * lists. The calendar must carry its required properties and every event, and must serialize.
+   */
+  @Test
+  public void testGetCalendarAssemblesPropertiesAndEvents() throws Exception {
+
+    DateTimeZone tz = DateTimeZone.forID("America/Los_Angeles");
+    DateMidnight start = new DateMidnight(2012, 7, 3, tz);
+    Interval interval = new Interval(start, start.plusDays(7));
+
+    Calendar source = processor.getIntermediateCalendar(interval, calendarFile.getInputStream());
+    Set<VEvent> events = processor.getEvents(interval, source);
+    assertEquals(2, events.size());
+
+    ICalendarAdapter adapter = Mockito.mock(ICalendarAdapter.class);
+    Mockito.when(adapter.getEvents(Mockito.any(), Mockito.any(), Mockito.any()))
+        .thenReturn(new CalendarEventSet("test-key", events));
+
+    Calendar calendar =
+        eventsDao.getCalendar(adapter, new CalendarConfiguration(), interval, null);
+
+    assertTrue(calendar.getProperty(Property.PRODID).isPresent());
+    assertTrue(calendar.getProperty(Property.VERSION).isPresent());
+    assertTrue(calendar.getProperty(Property.CALSCALE).isPresent());
+    assertEquals(2, calendar.getComponents(Component.VEVENT).size());
+
+    // The export action streams the calendar through CalendarOutputter
+    StringWriter out = new StringWriter();
+    new CalendarOutputter().output(calendar, out);
+    String ics = out.toString();
+    assertTrue(ics, ics.contains("BEGIN:VCALENDAR"));
+    assertTrue(ics, ics.contains("VERSION:2.0"));
+    assertTrue(ics, ics.contains("CALSCALE:GREGORIAN"));
+    assertTrue(ics, ics.contains("BEGIN:VEVENT"));
   }
 
   /**

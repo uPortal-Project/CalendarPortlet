@@ -30,9 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
 import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
 import net.sf.ehcache.Cache;
@@ -95,12 +93,14 @@ public class CalendarEventsDao {
 
     // Create a calendar from the events
     Calendar calendar = new Calendar();
-    calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
-    calendar.getProperties().add(ImmutableVersion.VERSION_2_0);
-    calendar.getProperties().add(ImmutableCalScale.GREGORIAN);
+    // In ical4j 4.x, getProperties() and getComponents() return unmodifiable lists; properties
+    // and components must be added through the Calendar itself.
+    calendar.add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+    calendar.add(ImmutableVersion.VERSION_2_0);
+    calendar.add(ImmutableCalScale.GREGORIAN);
 
     for (VEvent event : eventSet.getEvents()) {
-      calendar.getComponents().add(event);
+      calendar.add(event);
     }
     return calendar;
   }
