@@ -19,6 +19,8 @@
 package org.jasig.portlet.calendar.adapter;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +28,6 @@ import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Description;
@@ -214,9 +213,11 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     }
 
     Calendar calendar = new Calendar();
-    calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
-    calendar.getProperties().add(ImmutableVersion.VERSION_2_0);
-    calendar.getProperties().add(ImmutableCalScale.GREGORIAN);
+    // In ical4j 4.x, getProperties() and getComponents() return unmodifiable lists; properties
+    // and components must be added through the Calendar itself.
+    calendar.add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+    calendar.add(ImmutableVersion.VERSION_2_0);
+    calendar.add(ImmutableCalScale.GREGORIAN);
 
     java.util.Calendar termStartDate = term.getStart() != null ? term.getStart().toGregorianCalendar() : null;
     java.util.Calendar termEndDate = term.getEnd() != null ? term.getEnd().toGregorianCalendar() : null;
@@ -242,7 +243,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
 
         VEvent meetingEvent = createEvent(course, meeting, termStartDate, termEndDate);
         if (meetingEvent != null) { // Will be null if we can't parse it
-          calendar.getComponents().add(meetingEvent);
+          calendar.add(meetingEvent);
         }
       }
     }
@@ -285,7 +286,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
       return null;
     }
 
-    TimeZone tz = selectTimeZone(courseMeeting, termStartDate);
+    ZoneId zone = selectZone(courseMeeting, termStartDate);
 
     java.util.Calendar firstMeetingStartTime =
         calculateFirstMeetingStartTime(courseMeeting, termStartDate);
@@ -306,31 +307,38 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
     // Currently assuming you always have at least one day of week specified; e.g. no course
     // meeting with start/end date and time specified but not day of week
 
-    Instant eventStart = Instant.ofEpochMilli(firstMeetingStartTime.getTimeInMillis());
-    Instant eventEnd = Instant.ofEpochMilli(firstMeetingEndTime.getTimeInMillis());
-    Instant recurUntil = Instant.ofEpochMilli(recurrenceEndDate.getTimeInMillis());
+    // Anchor the event in the course's own zone, not UTC. The weekly recurrence is then computed
+    // in local time, so a class keeps meeting at the same wall-clock time (and on the same
+    // weekday) across daylight saving changes. An Instant start cannot be expanded by a WEEKLY
+    // recurrence rule at all.
+    ZonedDateTime eventStart =
+        Instant.ofEpochMilli(firstMeetingStartTime.getTimeInMillis()).atZone(zone);
+    ZonedDateTime eventEnd =
+        Instant.ofEpochMilli(firstMeetingEndTime.getTimeInMillis()).atZone(zone);
+    ZonedDateTime recurUntil =
+        Instant.ofEpochMilli(recurrenceEndDate.getTimeInMillis()).atZone(zone);
 
     // create a property list representing the event
     PropertyList props = new PropertyList();
 
-    props.add(uidGenerator.generateUid());
-    props.add(new DtStamp());
+    props = props.add(uidGenerator.generateUid());
+    props = props.add(new DtStamp());
 
-    props.add(new DtStart(eventStart));
-    props.add(new DtEnd(eventEnd));
+    props = props.add(new DtStart(eventStart));
+    props = props.add(new DtEnd(eventEnd));
 
-    props.add(new Summary(StringUtils.isNotBlank(course.getCode()) ? course.getCode() : "course"));
+    props = props.add(new Summary(StringUtils.isNotBlank(course.getCode()) ? course.getCode() : "course"));
 
     if (StringUtils.isNotBlank(course.getTitle())) {
-      props.add(new Description(course.getTitle()));
+      props = props.add(new Description(course.getTitle()));
     }
     if (StringUtils.isNotBlank(courseMeeting.getLocation().getDisplayName())) {
-      props.add(new Location(courseMeeting.getLocation().getDisplayName()));
+      props = props.add(new Location(courseMeeting.getLocation().getDisplayName()));
     }
 
     List<String> courseDays = courseMeeting.getDayIds();
     if (courseDays != null && courseDays.size() > 0) {
-      Recur recur = new Recur.Builder()
+      Recur<ZonedDateTime> recur = new Recur.Builder<ZonedDateTime>()
           .frequency(Frequency.WEEKLY)
           .until(recurUntil)
           .build();
@@ -343,14 +351,14 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
         }
       }
       RRule rrule = new RRule(recur);
-      props.add(rrule);
+      props = props.add(rrule);
     }
 
     VEvent event = new VEvent(props);
     return event;
   }
 
-  private TimeZone selectTimeZone(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
+  private ZoneId selectZone(CourseMeeting courseMeeting, java.util.Calendar termStartDate) {
     java.util.TimeZone jdkTz = null;
     if (courseMeeting.getStartDate() != null) {
       jdkTz = courseMeeting.getStartDate().getZone().toTimeZone();
@@ -360,9 +368,7 @@ public class CoursesCalendarAdapter extends AbstractCalendarAdapter implements I
       throw new IllegalArgumentException(
           "Arguments courseMeeting and termStartDate cannot both be null");
     }
-    TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-    TimeZone rslt = registry.getTimeZone(jdkTz.getID());
-    return rslt;
+    return jdkTz.toZoneId();
   }
 
   private java.util.Calendar combineDateAndTime(
