@@ -247,31 +247,19 @@ public class CalendarEventsDao {
 
     if (isFloating && startTemporal instanceof java.time.LocalDate) {
       // DATE-only floating event: interpret the date as midnight in the user's timezone
-      java.time.LocalDate startDate = (java.time.LocalDate) startTemporal;
-      eventStart = new DateTime(
-          startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth(),
-          0, 0, 0, 0, usersConfiguredDateTimeZone);
-      
+      eventStart =
+          startOfDay((java.time.LocalDate) startTemporal, usersConfiguredDateTimeZone);
+
       if (endTemporal instanceof java.time.LocalDate) {
-        java.time.LocalDate endDate = (java.time.LocalDate) endTemporal;
-        eventEnd = new DateTime(
-            endDate.getYear(), endDate.getMonthValue(), endDate.getDayOfMonth(),
-            0, 0, 0, 0, usersConfiguredDateTimeZone);
+        eventEnd = startOfDay((java.time.LocalDate) endTemporal, usersConfiguredDateTimeZone);
       }
     } else if (isFloating && startTemporal instanceof java.time.LocalDateTime) {
       // DATETIME floating event: interpret the time in the user's timezone
-      java.time.LocalDateTime startLdt = (java.time.LocalDateTime) startTemporal;
-      eventStart = new DateTime(
-          startLdt.getYear(), startLdt.getMonthValue(), startLdt.getDayOfMonth(),
-          startLdt.getHour(), startLdt.getMinute(), startLdt.getSecond(), 0,
-          usersConfiguredDateTimeZone);
-      
+      eventStart =
+          toDateTime((java.time.LocalDateTime) startTemporal, usersConfiguredDateTimeZone);
+
       if (endTemporal instanceof java.time.LocalDateTime) {
-        java.time.LocalDateTime endLdt = (java.time.LocalDateTime) endTemporal;
-        eventEnd = new DateTime(
-            endLdt.getYear(), endLdt.getMonthValue(), endLdt.getDayOfMonth(),
-            endLdt.getHour(), endLdt.getMinute(), endLdt.getSecond(), 0,
-            usersConfiguredDateTimeZone);
+        eventEnd = toDateTime((java.time.LocalDateTime) endTemporal, usersConfiguredDateTimeZone);
       }
     } else {
       // Non-floating event (has timezone or is Instant/ZonedDateTime). Anchor any zoneless
@@ -366,6 +354,31 @@ public class CalendarEventsDao {
             .withZone(timezone);
     this.timeFormatters.put(timezone.getID(), tf);
     return tf;
+  }
+
+  /**
+   * Interpret a floating (zoneless) date-time in the given zone.
+   *
+   * <p>Joda-Time's field-based {@code DateTime} constructors throw {@code IllegalInstantException}
+   * for a local time that does not exist because of a spring-forward DST gap. Floating times come
+   * from calendar data we do not control, so resolve a gap the way RFC 5545 §3.3.5 specifies: use
+   * the UTC offset in effect before the transition, which moves the time forward by the length of
+   * the gap (e.g. 2:30 AM becomes 3:30 AM).
+   */
+  static DateTime toDateTime(java.time.LocalDateTime local, DateTimeZone zone) {
+    final long localMillis = local.toInstant(java.time.ZoneOffset.UTC).toEpochMilli();
+    return new DateTime(zone.convertLocalToUTC(localMillis, false), zone);
+  }
+
+  /**
+   * The first instant of the given calendar date in the given zone. In a zone whose DST transition
+   * skips midnight there is no 00:00, so this is the first valid instant of the day (e.g. 01:00)
+   * rather than an exception.
+   */
+  static DateTime startOfDay(java.time.LocalDate date, DateTimeZone zone) {
+    return new org.joda.time.LocalDate(
+            date.getYear(), date.getMonthValue(), date.getDayOfMonth())
+        .toDateTimeAtStartOfDay(zone);
   }
 
   /**

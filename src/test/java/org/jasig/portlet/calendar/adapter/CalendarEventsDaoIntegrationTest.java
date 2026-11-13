@@ -40,6 +40,7 @@ import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.jasig.portlet.calendar.processor.ICalendarContentProcessorImpl;
 import org.jasig.portlet.calendar.processor.IContentProcessor;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.junit.Before;
@@ -234,6 +235,78 @@ public class CalendarEventsDaoIntegrationTest {
     assertTrue(ics, ics.contains("VERSION:2.0"));
     assertTrue(ics, ics.contains("CALSCALE:GREGORIAN"));
     assertTrue(ics, ics.contains("BEGIN:VEVENT"));
+  }
+
+  /**
+   * A floating DATE-TIME that does not exist in the user's zone (it falls in a spring-forward DST
+   * gap) must still be displayed. Joda-Time throws IllegalInstantException when asked to build such
+   * a local time, and the caller swallows that exception, so the event would silently vanish.
+   *
+   * <p>RFC 5545 §3.3.5: a local time that does not occur at a standard-to-daylight transition is
+   * interpreted using the UTC offset before the gap. 2:30 AM on 2026-03-08 in New York is therefore
+   * 07:30Z, which is 3:30 AM EDT.
+   */
+  @Test
+  public void testGetFloatingEventInDstGap() throws IOException, URISyntaxException, ParseException {
+
+    DateTimeZone tz = DateTimeZone.forID("America/New_York");
+    DateMidnight start = new DateMidnight(2026, 3, 8, tz);
+    Interval interval = new Interval(start, start.plusDays(1));
+
+    // Floating (no TZID): DTSTART 2026-03-08T02:30 (does not exist), DTEND 2026-03-08T04:00
+    net.fortuna.ical4j.model.PropertyList props = new net.fortuna.ical4j.model.PropertyList();
+    props = props.add(new net.fortuna.ical4j.model.property.Uid("gap0001"));
+    props = props.add(new net.fortuna.ical4j.model.property.Summary("Gap Event"));
+    props =
+        props.add(
+            new net.fortuna.ical4j.model.property.DtStart<>(
+                java.time.LocalDateTime.of(2026, 3, 8, 2, 30)));
+    props =
+        props.add(
+            new net.fortuna.ical4j.model.property.DtEnd<>(
+                java.time.LocalDateTime.of(2026, 3, 8, 4, 0)));
+    VEvent event = new VEvent(props);
+
+    List<CalendarDisplayEvent> displayEvents =
+        new ArrayList<CalendarDisplayEvent>(
+            eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+
+    assertEquals(1, displayEvents.size());
+    assertEquals("3:30 AM", displayEvents.get(0).getStartTime());
+  }
+
+  /**
+   * A floating all-day DATE in a zone whose DST transition skips midnight (Havana springs forward
+   * at 00:00 to 01:00) has no local midnight. The event must still be displayed, starting at the
+   * first valid instant of that day.
+   */
+  @Test
+  public void testGetFloatingAllDayEventInMidnightDstGap()
+      throws IOException, URISyntaxException, ParseException {
+
+    DateTimeZone tz = DateTimeZone.forID("America/Havana");
+    // Havana has no 2026-03-08T00:00, so build the interval from a valid mid-day instant
+    DateTime from = new DateTime(2026, 3, 7, 12, 0, tz);
+    Interval interval = new Interval(from, from.plusDays(3));
+
+    net.fortuna.ical4j.model.PropertyList props = new net.fortuna.ical4j.model.PropertyList();
+    props = props.add(new net.fortuna.ical4j.model.property.Uid("gap0002"));
+    props = props.add(new net.fortuna.ical4j.model.property.Summary("All Day Gap Event"));
+    props =
+        props.add(
+            new net.fortuna.ical4j.model.property.DtStart<>(java.time.LocalDate.of(2026, 3, 8)));
+    props =
+        props.add(
+            new net.fortuna.ical4j.model.property.DtEnd<>(java.time.LocalDate.of(2026, 3, 9)));
+    VEvent event = new VEvent(props);
+
+    List<CalendarDisplayEvent> displayEvents =
+        new ArrayList<CalendarDisplayEvent>(
+            eventsDao.getDisplayEvents(event, interval, Locale.US, tz));
+
+    assertTrue("expected the all-day event to be displayed", displayEvents.size() >= 1);
+    // The first valid instant of 2026-03-08 in Havana is 01:00
+    assertEquals(1, displayEvents.get(0).getDayStart().getHourOfDay());
   }
 
   /**
