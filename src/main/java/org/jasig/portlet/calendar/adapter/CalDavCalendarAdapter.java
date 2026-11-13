@@ -242,15 +242,17 @@ public class CalDavCalendarAdapter extends AbstractCalendarAdapter implements IC
           // create a new property list, setting the date
           // information to this event period
           PropertyList newprops = new PropertyList();
-          newprops.add(new DtStart(eventper.getStart()));
-          newprops.add(new DtEnd(eventper.getEnd()));
+          newprops = newprops.add(new DtStart(eventper.getStart()));
+          newprops = newprops.add(new DtEnd(eventper.getEnd()));
           for (Property prop : event.getProperties()) {
 
             // only add non-date-related properties
             if (!(prop instanceof DtStart)
                 && !(prop instanceof DtEnd)
                 && !(prop instanceof Duration)
-                && !(prop instanceof RRule)) newprops.add(prop);
+                && !(prop instanceof RRule)) {
+              newprops = newprops.add(prop);
+            }
           }
 
           // create the new event from our property list
