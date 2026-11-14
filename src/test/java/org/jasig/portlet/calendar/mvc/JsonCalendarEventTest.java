@@ -70,8 +70,8 @@ public class JsonCalendarEventTest {
 
     VEvent event =
         new VEvent(
-            new net.fortuna.ical4j.model.DateTime(start.toDate()),
-            new net.fortuna.ical4j.model.DateTime(end.toDate()),
+            java.time.Instant.ofEpochMilli(start.getMillis()),
+            java.time.Instant.ofEpochMilli(end.getMillis()),
             "Test Event");
     Interval eventInterval = new Interval(start, end);
 

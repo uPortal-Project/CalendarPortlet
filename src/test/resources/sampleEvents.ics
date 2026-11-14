@@ -58,7 +58,7 @@ BEGIN:VEVENT
 UID:5310d
 SUMMARY:uPortal Demo
 DESCRIPTION:Demonstration of uPortal awesomeness
-X-ALT-DESC;FMTTYPE=Test Meeting
+X-ALT-DESC;FMTTYPE=text/plain:Test Meeting
 LOCATION:Conference Room
 DTSTART;TZID="America/Phoenix":20130206T100000
 DTEND;TZID="America/Phoenix":20130206T113000

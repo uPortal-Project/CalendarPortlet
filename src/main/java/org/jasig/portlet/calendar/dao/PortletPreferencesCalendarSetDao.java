@@ -18,7 +18,7 @@
  */
 package org.jasig.portlet.calendar.dao;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
