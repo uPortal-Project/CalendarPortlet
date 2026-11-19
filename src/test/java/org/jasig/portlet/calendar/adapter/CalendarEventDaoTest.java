@@ -27,8 +27,6 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Locale;
 import java.util.Set;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryImpl;
 import net.fortuna.ical4j.model.component.VEvent;
 import org.jasig.portlet.calendar.mvc.CalendarDisplayEvent;
 import org.joda.time.DateMidnight;
@@ -51,7 +49,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CalendarEventDaoTest {
 
   CalendarEventsDao eventDao;
-  TimeZoneRegistry tzRegistry = new TimeZoneRegistryImpl();
 
   @Autowired(required = true)
   ApplicationContext context;
@@ -198,11 +195,7 @@ public class CalendarEventDaoTest {
     assertEquals(1, events.size());
   }
 
-  public net.fortuna.ical4j.model.DateTime getICal4jDate(DateTime date, DateTimeZone timezone) {
-    net.fortuna.ical4j.model.DateTime ical = new net.fortuna.ical4j.model.DateTime(date.toDate());
-    if (timezone != null) {
-      ical.setTimeZone(tzRegistry.getTimeZone(timezone.getID()));
-    }
-    return ical;
+  public java.time.Instant getICal4jDate(DateTime date, DateTimeZone timezone) {
+    return java.time.Instant.ofEpochMilli(date.getMillis());
   }
 }

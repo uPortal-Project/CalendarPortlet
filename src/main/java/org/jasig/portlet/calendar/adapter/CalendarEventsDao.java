@@ -30,9 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.portlet.PortletRequest;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
+import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
@@ -93,12 +93,14 @@ public class CalendarEventsDao {
 
     // Create a calendar from the events
     Calendar calendar = new Calendar();
-    calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
-    calendar.getProperties().add(Version.VERSION_2_0);
-    calendar.getProperties().add(CalScale.GREGORIAN);
+    // In ical4j 4.x, getProperties() and getComponents() return unmodifiable lists; properties
+    // and components must be added through the Calendar itself.
+    calendar.add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+    calendar.add(ImmutableVersion.VERSION_2_0);
+    calendar.add(ImmutableCalScale.GREGORIAN);
 
     for (VEvent event : eventSet.getEvents()) {
-      calendar.getComponents().add(event);
+      calendar.add(event);
     }
     return calendar;
   }
@@ -222,36 +224,68 @@ public class CalendarEventsDao {
     DateTime eventStart;
     DateTime eventEnd = null;
 
-    if (event.getStartDate().getTimeZone() == null && !event.getStartDate().isUtc()) {
-      if (log.isDebugEnabled()) {
-        log.debug("Identified event " + event.getSummary() + " as a floating event");
-      }
+    net.fortuna.ical4j.model.property.DtStart dtStart =
+        event.getDateTimeStart();
+    // getEndDate(true) derives DTEND from DTSTART + DURATION when the event carries a
+    // DURATION instead of an explicit DTEND (RFC 5545 §3.6.1 allows either). The raw
+    // getDateTimeEnd() accessor returns null for DURATION-only events, which would
+    // collapse them to zero length.
+    net.fortuna.ical4j.model.property.DtEnd dtEnd =
+        event.getEndDate(true).orElse(null);
 
-      int offset = usersConfiguredDateTimeZone.getOffset(event.getStartDate().getDate().getTime());
+    java.time.temporal.Temporal startTemporal = dtStart != null ? dtStart.getDate() : null;
+    java.time.temporal.Temporal endTemporal = dtEnd != null ? dtEnd.getDate() : null;
+
+    // Check if event is "floating" (no timezone, represented as LocalDate or LocalDateTime)
+    // In ical4j 4.x, getParameter returns Optional, so check isEmpty()
+    boolean hasTzid = dtStart != null 
+        && dtStart.getParameter("TZID").isPresent();
+    boolean isFloating = dtStart != null
+        && !hasTzid
+        && !(startTemporal instanceof java.time.Instant)
+        && !(startTemporal instanceof java.time.ZonedDateTime);
+
+    if (isFloating && startTemporal instanceof java.time.LocalDate) {
+      // DATE-only floating event: interpret the date as midnight in the user's timezone
       eventStart =
-          new DateTime(
-              event.getStartDate().getDate().getTime() - offset, usersConfiguredDateTimeZone);
-      if (event.getEndDate() != null) {
-        eventEnd =
-            new DateTime(
-                event.getEndDate().getDate().getTime() - offset, usersConfiguredDateTimeZone);
-      }
+          startOfDay((java.time.LocalDate) startTemporal, usersConfiguredDateTimeZone);
 
+      if (endTemporal instanceof java.time.LocalDate) {
+        eventEnd = startOfDay((java.time.LocalDate) endTemporal, usersConfiguredDateTimeZone);
+      }
+    } else if (isFloating && startTemporal instanceof java.time.LocalDateTime) {
+      // DATETIME floating event: interpret the time in the user's timezone
+      eventStart =
+          toDateTime((java.time.LocalDateTime) startTemporal, usersConfiguredDateTimeZone);
+
+      if (endTemporal instanceof java.time.LocalDateTime) {
+        eventEnd = toDateTime((java.time.LocalDateTime) endTemporal, usersConfiguredDateTimeZone);
+      }
     } else {
-      eventStart = new DateTime(event.getStartDate().getDate(), usersConfiguredDateTimeZone);
-      if (event.getEndDate() != null) {
-        eventEnd = new DateTime(event.getEndDate().getDate(), usersConfiguredDateTimeZone);
+      // Non-floating event (has timezone or is Instant/ZonedDateTime). Anchor any zoneless
+      // value (e.g. an unresolvable-TZID event ical4j returns as LocalDateTime) on the user's
+      // configured zone rather than the server's default.
+      final java.time.ZoneId userZone =
+          java.time.ZoneId.of(usersConfiguredDateTimeZone.getID());
+      long startMillis = startTemporal != null ? toEpochMillis(startTemporal, userZone) : 0;
+      long endMillis = endTemporal != null ? toEpochMillis(endTemporal, userZone) : 0;
+      
+      eventStart = new DateTime(startMillis, usersConfiguredDateTimeZone);
+      if (endTemporal != null) {
+        eventEnd = new DateTime(endMillis, usersConfiguredDateTimeZone);
       }
     }
 
     if (eventEnd == null) {
       eventEnd = eventStart;
     }
+    
+    long startMillis = eventStart.getMillis();
 
     // Multi-day events may begin in the past;  make sure to choose a date in range for the first pass...
     final Date firstDayToProcess =
-        interval.contains(event.getStartDate().getDate().getTime())
-            ? event.getStartDate().getDate()
+        interval.contains(startMillis)
+            ? new Date(startMillis)
             : interval.getStart().toDate();
 
     DateMidnight startOfTheSpecificDay =
@@ -320,5 +354,55 @@ public class CalendarEventsDao {
             .withZone(timezone);
     this.timeFormatters.put(timezone.getID(), tf);
     return tf;
+  }
+
+  /**
+   * Interpret a floating (zoneless) date-time in the given zone.
+   *
+   * <p>Joda-Time's field-based {@code DateTime} constructors throw {@code IllegalInstantException}
+   * for a local time that does not exist because of a spring-forward DST gap. Floating times come
+   * from calendar data we do not control, so resolve a gap the way RFC 5545 §3.3.5 specifies: use
+   * the UTC offset in effect before the transition, which moves the time forward by the length of
+   * the gap (e.g. 2:30 AM becomes 3:30 AM).
+   */
+  static DateTime toDateTime(java.time.LocalDateTime local, DateTimeZone zone) {
+    final long localMillis = local.toInstant(java.time.ZoneOffset.UTC).toEpochMilli();
+    return new DateTime(zone.convertLocalToUTC(localMillis, false), zone);
+  }
+
+  /**
+   * The first instant of the given calendar date in the given zone. In a zone whose DST transition
+   * skips midnight there is no 00:00, so this is the first valid instant of the day (e.g. 01:00)
+   * rather than an exception.
+   */
+  static DateTime startOfDay(java.time.LocalDate date, DateTimeZone zone) {
+    return new org.joda.time.LocalDate(
+            date.getYear(), date.getMonthValue(), date.getDayOfMonth())
+        .toDateTimeAtStartOfDay(zone);
+  }
+
+  /**
+   * Convert a java.time.temporal.Temporal to epoch milliseconds for Joda-Time interop.
+   *
+   * <p>{@code Instant} and {@code ZonedDateTime} are absolute, so {@code zone} does not affect
+   * them. For zoneless values ({@code LocalDateTime} / {@code LocalDate}) the supplied {@code zone}
+   * is used to anchor them. This is reachable in the non-floating branch when an event carries a
+   * TZID that ical4j cannot resolve (it then yields a {@code LocalDateTime}); anchoring on the
+   * user's configured zone rather than the server's default keeps the result correct for the user.
+   */
+  static long toEpochMillis(java.time.temporal.Temporal temporal, java.time.ZoneId zone) {
+    if (temporal instanceof java.time.Instant) {
+      return ((java.time.Instant) temporal).toEpochMilli();
+    } else if (temporal instanceof java.time.LocalDateTime) {
+      return ((java.time.LocalDateTime) temporal)
+          .atZone(zone).toInstant().toEpochMilli();
+    } else if (temporal instanceof java.time.LocalDate) {
+      return ((java.time.LocalDate) temporal)
+          .atStartOfDay(zone).toInstant().toEpochMilli();
+    } else if (temporal instanceof java.time.ZonedDateTime) {
+      return ((java.time.ZonedDateTime) temporal).toInstant().toEpochMilli();
+    }
+    // Fallback
+    return java.time.Instant.from(temporal).toEpochMilli();
   }
 }

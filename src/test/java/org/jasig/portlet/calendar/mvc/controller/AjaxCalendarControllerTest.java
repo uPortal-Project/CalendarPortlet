@@ -137,7 +137,9 @@ public class AjaxCalendarControllerTest {
 
     VEvent event =
         new VEvent(
-            new DateTime(eventStart.toDate()), new DateTime(eventEnd.toDate()), "Test Event 1 day");
+            java.time.Instant.ofEpochMilli(eventStart.getMillis()),
+            java.time.Instant.ofEpochMilli(eventEnd.getMillis()),
+            "Test Event 1 day");
 
     org.joda.time.DateTime startOfTheSpecificDay = eventStart.withTimeAtStartOfDay();
     org.joda.time.DateTime endOfTheSpecificDay = eventStart.plusDays(1).withTimeAtStartOfDay();

@@ -18,8 +18,12 @@
  */
 package org.jasig.portlet.calendar;
 
+import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.Comparator;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
 
 /**
  * VEventStartComparator compares to VEvents and orders them by starting date. For events that start
@@ -35,17 +39,32 @@ public class VEventStartComparator implements Comparator<VEvent> {
    */
   public int compare(VEvent event1, VEvent event2) {
 
-    if (event1.getStartDate().getDate().before(event2.getStartDate().getDate())) return -1;
-    else if (event1.getStartDate().getDate().after(event2.getStartDate().getDate())) return 1;
-    else if (event1.getStartDate().getDate().equals(event2.getStartDate().getDate())) {
-      if (event1.getEndDate() == null && event2.getEndDate() == null) return 0;
-      else if (event1.getEndDate() == null) return -1;
-      else if (event2.getEndDate() == null) return 1;
-      if (event1.getEndDate().getDate().before(event2.getEndDate().getDate())) return -1;
-      else if (event1.getEndDate().getDate().before(event2.getEndDate().getDate())) return 1;
+    DtStart s1 = event1.getDateTimeStart();
+    DtStart s2 = event2.getDateTimeStart();
+    Instant start1 = s1 != null ? toInstant(s1.getDate()) : null;
+    Instant start2 = s2 != null ? toInstant(s2.getDate()) : null;
+
+    if (start1 == null || start2 == null) {
+      return start1 == null ? (start2 == null ? 0 : -1) : 1;
     }
 
-    int comp = 0;
+    int comp = start1.compareTo(start2);
+    if (comp != 0) return comp;
+
+    // Same start — compare end dates. getEndDate(true) derives DTEND from DTSTART +
+    // DURATION when the event has no explicit DTEND, so DURATION-only events sort by
+    // their real end rather than as though they had none.
+    DtEnd e1 = event1.getEndDate(true).orElse(null);
+    DtEnd e2 = event2.getEndDate(true).orElse(null);
+    Instant end1 = e1 != null ? toInstant(e1.getDate()) : null;
+    Instant end2 = e2 != null ? toInstant(e2.getDate()) : null;
+
+    if (end1 == null && end2 == null) return 0;
+    else if (end1 == null) return -1;
+    else if (end2 == null) return 1;
+
+    comp = end1.compareTo(end2);
+    if (comp != 0) return comp;
 
     if (event1.getSummary() != null && event2.getSummary() != null) {
       comp = event1.getSummary().getValue().compareTo(event2.getSummary().getValue());
@@ -60,5 +79,27 @@ public class VEventStartComparator implements Comparator<VEvent> {
       if (comp != 0) return comp;
     }
     return 0;
+  }
+
+  /**
+   * Reduce a temporal to an {@link Instant} for ordering. Floating values (DATE-only or
+   * zoneless DATETIME) have no inherent instant, so they are deliberately anchored at UTC here.
+   *
+   * <p>This differs from {@code CalendarEventsDao}, which anchors floating events in the user's
+   * configured timezone for display placement. That divergence is intentional: this comparator is
+   * a context-free sorting utility with no access to a user or request, so UTC gives a stable,
+   * deterministic total order (and it is consistent within this comparator, anchoring both start
+   * and end the same way). It is not involved in user-facing timezone placement.
+   */
+  private static Instant toInstant(Temporal temporal) {
+    if (temporal == null) return null;
+    if (temporal instanceof Instant) return (Instant) temporal;
+    if (temporal instanceof java.time.LocalDate) {
+      return ((java.time.LocalDate) temporal).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+    }
+    if (temporal instanceof java.time.LocalDateTime) {
+      return ((java.time.LocalDateTime) temporal).atZone(java.time.ZoneOffset.UTC).toInstant();
+    }
+    return Instant.from(temporal);
   }
 }
